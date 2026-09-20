@@ -739,7 +739,7 @@ enum CardCSV {
                 continue
             }
 
-            // A title written as "#LKNR1307 slides" carries its project, which
+            // A title written as "#ABC1234 slides" carries its project, which
             // is how a list pasted from elsewhere would say it.
             var cardTitle = title
             var projectName = Project.clean(field("project"))

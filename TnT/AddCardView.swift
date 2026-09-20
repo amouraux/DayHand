@@ -604,7 +604,7 @@ struct CardActionsSheet: View {
                 // Typing then dismissing by swipe must not lose the edit.
                 .onDisappear { commitTitle(item) }
                 .alert("New Project", isPresented: $isNamingProject) {
-                    TextField("LKNR1307", text: $newProjectName)
+                    TextField("ABC1234", text: $newProjectName)
                         .textInputAutocapitalization(.characters)
                         .autocorrectionDisabled()
                     Button("Add") {
@@ -714,7 +714,7 @@ struct CardActionsSheet: View {
 }
 
 /// Narrow the list to any mix of categories and projects. A card shows if it
-/// matches any of them: "Teaching, and also SFRD2026".
+/// matches any of them: "Teaching, and also STUDY2026".
 ///
 /// A sheet rather than a menu, because a menu closes after every tap and
 /// multi-select needs to stay open while several are picked. Projects sit under

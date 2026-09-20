@@ -183,8 +183,8 @@ written before categories were editable still resolve.
 
 ## Projects
 
-Most work cards begin with a subproject code — a course (LKNR1307), a study
-(SFRD2026). Make that a first-class **project**: one optional project per card,
+Most work cards begin with a subproject code — a course (ABC1234), a study
+(STUDY2026). Make that a first-class **project**: one optional project per card,
 typed as `#CODE`, shown as a coloured prefix.
 
 - **A project is its own record** (id, name, optional category, archived flag,
@@ -194,7 +194,7 @@ typed as `#CODE`, shown as a coloured prefix.
 - **Names match without regard to case, accents or a leading `#`**, and are
   shown as first written. A name is one word (spaces removed), so a space can
   finish it.
-- **A project fills in its category.** Choosing `#LKNR1307` sets Teaching; the
+- **A project fills in its category.** Choosing `#ABC1234` sets Teaching; the
   card can still be moved to another category.
 - **Entry (New Task).** Typing `#` plus letters shows matching projects as chips
   under the field (prefix matches first, then contains; most recently *created*
@@ -209,7 +209,7 @@ typed as `#CODE`, shown as a coloured prefix.
   cancelled sheet leaves nothing behind. Top-align the row: an empty vertical
   text field reports its placeholder's baseline lower than typed text.
 - **On the card** the project leads the title in the card's category colour
-  ("**LKNR1307** slides"), as one run of text, so the card is no taller. Yellow
+  ("**ABC1234** slides"), as one run of text, so the card is no taller. Yellow
   is darkened to ochre in light mode. There is no way to remove a project from
   the card face — that is the editor's job.
 - **Sort** within a tier by the displayed text (project + title), which keeps a
@@ -225,9 +225,9 @@ typed as `#CODE`, shown as a coloured prefix.
   merge into another, delete (cards keep their titles, lose the project).
 - **Converting old titles** is a one-time, reviewed step, never automatic:
   list first words used as prefixes, with their card counts and sample titles.
-  Code-like words (no lowercase letters, or letters with digits: NF, LKNR1307)
+  Code-like words (no lowercase letters, or letters with digits: NF, ABC1234)
   start ticked; ordinary words used on several cards (Payer, Email) start
-  unticked. Flag near-duplicates (SFRD vs SFRD2026) with a "Merge into" choice.
+  unticked. Flag near-duplicates (STUDY vs STUDY2026) with a "Merge into" choice.
   Strip the word and any following `-`/`:` from the title; never convert a
   one-word title. A new project takes the category most of its cards have.
 - **Groups (clusters) of projects**, such as Grants vs Ongoing within Research.

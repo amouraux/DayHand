@@ -171,8 +171,8 @@ struct CardCategory: Identifiable, Codable, Equatable, Hashable {
 
 // MARK: - Projects
 
-/// A subproject a card belongs to — a course code such as LKNR1307, a study
-/// such as SFRD2026. Typed as `#LKNR1307` and shown as a coloured prefix on the
+/// A subproject a card belongs to — a course code such as ABC1234, a study
+/// such as STUDY2026. Typed as `#ABC1234` and shown as a coloured prefix on the
 /// card.
 ///
 /// A project is its own record rather than text inside titles, so renaming or
@@ -222,7 +222,7 @@ struct Project: Identifiable, Codable, Equatable, Hashable {
         modifiedAt = try c.decodeIfPresent(Date.self, forKey: .modifiedAt) ?? .distantPast
     }
 
-    /// What two names are compared by, so `sfrd2026`, `SFRD2026` and `#SFRD2026`
+    /// What two names are compared by, so `sfrd2026`, `STUDY2026` and `#STUDY2026`
     /// are one project, not three.
     var key: String { Project.key(for: name) }
 
@@ -254,8 +254,8 @@ struct Project: Identifiable, Codable, Equatable, Hashable {
         (cleanGroup(label) ?? "").folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
     }
 
-    /// Stripped from both ends of a name: "SFRD2026:" and "(FRESCO)" are the
-    /// codes SFRD2026 and FRESCO.
+    /// Stripped from both ends of a name: "STUDY2026:" and "(ALPHA)" are the
+    /// codes STUDY2026 and ALPHA.
     static let edgePunctuation = CharacterSet(charactersIn: ":;,.-–—()[]{}\"'/")
 }
 
@@ -381,7 +381,7 @@ enum ProjectSuggestions {
 /// one-time conversion of cards written before projects existed.
 ///
 /// Nothing is converted automatically. Code-like words (capitals, or letters
-/// mixed with digits: LKNR1307, NF, FRESCO) are offered ticked; ordinary words
+/// mixed with digits: ABC1234, NF, ALPHA) are offered ticked; ordinary words
 /// used on several cards (Payer, Email) are offered unticked, because a verb at
 /// the start of a title is not a project.
 enum ProjectConversion {
@@ -391,7 +391,7 @@ enum ProjectConversion {
         let cardIDs: [UUID]
         let looksLikeCode: Bool
         /// Another candidate or existing project this one is probably the same
-        /// as — SFRD beside SFRD2026.
+        /// as — STUDY beside STUDY2026.
         let similar: [String]
 
         var id: String { Project.key(for: name) }
@@ -403,7 +403,7 @@ enum ProjectConversion {
         guard let space = trimmed.firstIndex(where: { $0.isWhitespace }) else { return nil }
         let word = Project.clean(String(trimmed[..<space]))
         var rest = String(trimmed[space...]).trimmingCharacters(in: .whitespaces)
-        // "SFRD2026 - update program" should become "update program".
+        // "STUDY2026 - update program" should become "update program".
         while let first = rest.first, "-–—:".contains(first) {
             rest = String(rest.dropFirst()).trimmingCharacters(in: .whitespaces)
         }

@@ -44,7 +44,7 @@ struct ProjectsView: View {
                         }
                     }
                 } footer: {
-                    Text("Cards written as \u{201C}LKNR1307 slides\u{201D} can become \u{201C}slides\u{201D} in project LKNR1307. You choose which words to convert.")
+                    Text("Cards written as \u{201C}ABC1234 slides\u{201D} can become \u{201C}slides\u{201D} in project ABC1234. You choose which words to convert.")
                 }
             }
 
@@ -78,7 +78,7 @@ struct ProjectsView: View {
 
             if store.projects.isEmpty && found.isEmpty {
                 Section {
-                    Text("Type # in a new task to create a project, such as #LKNR1307.")
+                    Text("Type # in a new task to create a project, such as #ABC1234.")
                         .foregroundStyle(.secondary)
                 }
             }
@@ -96,7 +96,7 @@ struct ProjectsView: View {
             }
         }
         .alert("New Project", isPresented: $isAdding) {
-            TextField("LKNR1307", text: $newName)
+            TextField("ABC1234", text: $newName)
                 .textInputAutocapitalization(.characters)
                 .autocorrectionDisabled()
             Button("Add") { store.ensureProject(named: newName, categoryID: nil) }
@@ -301,7 +301,7 @@ struct ProjectConversionView: View {
 
     @State private var chosen: Set<String> = []
     /// Candidate id -> the project name to convert it into, when it should be
-    /// folded into a similar one (SFRD into SFRD2026).
+    /// folded into a similar one (STUDY into STUDY2026).
     @State private var target: [String: String] = [:]
     @State private var didSeed = false
 
