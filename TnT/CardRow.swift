@@ -362,8 +362,23 @@ struct SectionHeader: View {
     let bucket: Bucket
     let count: Int
 
+    /// The stack's own colour, except COMPLETED, whose tint is clear — cards
+    /// there carry no wash — and which would otherwise draw no icon at all.
+    private var tint: Color {
+        bucket == .completed ? Color.secondary : bucket.tint
+    }
+
     var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 8) {
+        HStack(alignment: .firstTextBaseline, spacing: 10) {
+            // Drawn as a glyph rather than an Image so it sits on the title's
+            // baseline; an Image aligns by its own box and rides high. Smaller
+            // than the title, which is display-sized and would make the symbol
+            // the loudest thing on screen.
+            Text(Image(systemName: bucket.symbolName))
+                .font(.title2.weight(.semibold))
+                .foregroundStyle(tint)
+                .accessibilityHidden(true)
+
             Text(bucket.title)
                 .font(.largeTitle.bold())
                 .foregroundStyle(Color.primary)

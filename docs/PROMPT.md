@@ -59,7 +59,12 @@ cards grouped into five sections, in this fixed order: Inbox, Today, Tomorrow,
 Later, Completed.
 
 - Section headers are large — the size an iOS large navigation title would be —
-  showing the name plus a small dimmed count. They scroll with the content
+  led by the stack's own symbol in the stack's colour (the same symbols the
+  pickers use, so a stack looks the same everywhere; COMPLETED's tint is clear,
+  so its symbol takes the secondary colour), then the name and a small dimmed
+  count. The symbol is a glyph, not an image view, so it sits on the title's
+  baseline, and it is smaller than the display-sized title so the name still
+  leads. They scroll with the content
   rather than pinning; a pinned header parks under the status bar and collides
   with the clock.
 - Empty sections are hidden entirely.
