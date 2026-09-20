@@ -231,7 +231,9 @@ everywhere in the interface; never "subproject" or "tag".
   unticked. Flag near-duplicates (STUDY vs STUDY2026) with a "Merge into" choice.
   Strip the word and any following `-`/`:` from the title; never convert a
   one-word title. A new project takes the category most of its cards have.
-- **Groups (clusters) of projects**, such as Grants vs Ongoing within Research.
+- **Groups (clusters) of projects**, such as Holidays vs Clients within a
+  category. A group is a *kind* of project, never a state of one: when it is
+  worked on is what the stacks say, so examples must not read as timing.
   A group is a plain optional label on the project (`group`), not a record
   of its own: a category's groups are the distinct labels its projects carry,
   so a group exists while something is in it, nothing lingers, and syncing
