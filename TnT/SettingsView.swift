@@ -68,7 +68,7 @@ struct SettingsView: View {
                         }
                     }
                 } footer: {
-                    Text("Subprojects such as a course code or a study. Type # in a new task to use one.")
+                    Text("A project groups cards that belong to the same piece of work \u{2014} a trip, a client, a paper, a course. Type # in a new task to use one.")
                 }
 
                 Section {

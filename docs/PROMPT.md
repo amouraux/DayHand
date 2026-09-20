@@ -183,9 +183,10 @@ written before categories were editable still resolve.
 
 ## Projects
 
-Most work cards begin with a subproject code — a course (ABC1234), a study
-(STUDY2026). Make that a first-class **project**: one optional project per card,
-typed as `#CODE`, shown as a coloured prefix.
+Cards often begin with the name of the thing they belong to — a trip, a client,
+a paper, a course. Make that a first-class **project**: one optional project per
+card, typed as `#NAME`, shown as a coloured prefix. Call it a project
+everywhere in the interface; never "subproject" or "tag".
 
 - **A project is its own record** (id, name, optional category, archived flag,
   `modifiedAt`), referenced by id from the card — never text inside the title.

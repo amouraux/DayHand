@@ -13,7 +13,7 @@ final class TodoStore: ObservableObject {
     @Published private(set) var items: [TodoItem] = []
     /// The categories the user has defined, in the order they appear.
     @Published private(set) var categories: [CardCategory] = []
-    /// Subprojects — course codes, studies — in the order they were created.
+    /// Projects — a trip, a client, a paper — in the order they were created.
     @Published private(set) var projects: [Project] = []
     /// The category new cards start with, chosen in Settings.
     @Published private(set) var defaultCategoryID: UUID?
