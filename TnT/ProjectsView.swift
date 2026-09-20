@@ -44,7 +44,7 @@ struct ProjectsView: View {
                         }
                     }
                 } footer: {
-                    Text("Cards written as \u{201C}ABC1234 slides\u{201D} can become \u{201C}slides\u{201D} in project ABC1234. You choose which words to convert.")
+                    Text("Cards written as \u{201C}TRIP book flights\u{201D} can become \u{201C}book flights\u{201D} in project TRIP. You choose which words to convert.")
                 }
             }
 
@@ -78,7 +78,7 @@ struct ProjectsView: View {
 
             if store.projects.isEmpty && found.isEmpty {
                 Section {
-                    Text("Type # in a new task to create a project, such as #ABC1234.")
+                    Text("Type # in a new task to create a project, such as #TRIP.")
                         .foregroundStyle(.secondary)
                 }
             }
@@ -96,13 +96,13 @@ struct ProjectsView: View {
             }
         }
         .alert("New Project", isPresented: $isAdding) {
-            TextField("ABC1234", text: $newName)
+            TextField("TRIP", text: $newName)
                 .textInputAutocapitalization(.characters)
                 .autocorrectionDisabled()
             Button("Add") { store.ensureProject(named: newName, categoryID: nil) }
             Button("Cancel", role: .cancel) { }
         } message: {
-            Text("One word, such as a course code or a study name.")
+            Text("A short one-word name for something you are working on.")
         }
     }
 

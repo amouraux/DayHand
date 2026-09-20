@@ -171,9 +171,8 @@ struct CardCategory: Identifiable, Codable, Equatable, Hashable {
 
 // MARK: - Projects
 
-/// A subproject a card belongs to — a course code such as ABC1234, a study
-/// such as STUDY2026. Typed as `#ABC1234` and shown as a coloured prefix on the
-/// card.
+/// Something a card belongs to: a trip, a client, a paper, a course. Typed as
+/// `#TRIP` and shown as a coloured prefix on the card.
 ///
 /// A project is its own record rather than text inside titles, so renaming or
 /// merging one is a single change instead of a rewrite of every title, and it
@@ -468,7 +467,7 @@ struct TodoItem: Identifiable, Codable, Equatable {
     /// Optional category, independent of `bucket` and `dueDate`. Holds the id
     /// of a `CardCategory` the user has defined.
     var categoryID: UUID?
-    /// Optional subproject — a course code, a study — one per card. Holds the
+    /// Optional project — a trip, a client, a paper — one per card. Holds the
     /// id of a `Project`, so renaming the project renames it on every card.
     var projectID: UUID?
     /// Optional, and independent of `bucket`: a card in LATER can be dated today.

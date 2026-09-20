@@ -183,9 +183,10 @@ written before categories were editable still resolve.
 
 ## Projects
 
-Most work cards begin with a subproject code — a course (ABC1234), a study
-(STUDY2026). Make that a first-class **project**: one optional project per card,
-typed as `#CODE`, shown as a coloured prefix.
+Cards often begin with the name of the thing they belong to — a trip, a client,
+a paper, a course. Make that a first-class **project**: one optional project per
+card, typed as `#NAME`, shown as a coloured prefix. Call it a project
+everywhere in the interface; never "subproject" or "tag".
 
 - **A project is its own record** (id, name, optional category, archived flag,
   `modifiedAt`), referenced by id from the card — never text inside the title.
@@ -230,7 +231,9 @@ typed as `#CODE`, shown as a coloured prefix.
   unticked. Flag near-duplicates (STUDY vs STUDY2026) with a "Merge into" choice.
   Strip the word and any following `-`/`:` from the title; never convert a
   one-word title. A new project takes the category most of its cards have.
-- **Groups (clusters) of projects**, such as Grants vs Ongoing within Research.
+- **Groups (clusters) of projects**, such as Holidays vs Clients within a
+  category. A group is a *kind* of project, never a state of one: when it is
+  worked on is what the stacks say, so examples must not read as timing.
   A group is a plain optional label on the project (`group`), not a record
   of its own: a category's groups are the distinct labels its projects carry,
   so a group exists while something is in it, nothing lingers, and syncing

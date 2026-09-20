@@ -244,7 +244,7 @@ struct CardRow: View {
         .opacity(item.isCompleted ? 0.65 : 1)
     }
 
-    /// The title, led by the project in its category's colour: "ABC1234 slides".
+    /// The title, led by the project in its category's colour: "TRIP book flights".
     /// One run of text rather than a badge beside it, so a long title wraps
     /// naturally and the card is no taller than before.
     private var titleText: Text {

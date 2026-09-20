@@ -604,7 +604,7 @@ struct CardActionsSheet: View {
                 // Typing then dismissing by swipe must not lose the edit.
                 .onDisappear { commitTitle(item) }
                 .alert("New Project", isPresented: $isNamingProject) {
-                    TextField("ABC1234", text: $newProjectName)
+                    TextField("TRIP", text: $newProjectName)
                         .textInputAutocapitalization(.characters)
                         .autocorrectionDisabled()
                     Button("Add") {
@@ -614,7 +614,7 @@ struct CardActionsSheet: View {
                     }
                     Button("Cancel", role: .cancel) { }
                 } message: {
-                    Text("One word, such as a course code or a study name.")
+                    Text("A short one-word name for something you are working on.")
                 }
             }
         }
@@ -813,13 +813,13 @@ struct FilterSheet: View {
             .alert("New Group", isPresented: Binding(
                 get: { newGroupFor != nil }, set: { if !$0 { newGroupFor = nil } }
             ), presenting: newGroupFor) { project in
-                TextField("Grants", text: $nameField)
+                TextField("Holidays", text: $nameField)
                 Button("Move") {
                     withAnimation { store.setProjectGroup(project, to: nameField) }
                 }
                 Button("Cancel", role: .cancel) { }
             } message: { project in
-                Text("A group for \(project.name) and others like it, such as Grants or Ongoing.")
+                Text("A group for \(project.name) and others like it, such as Holidays or Clients.")
             }
             .alert("Rename Group", isPresented: Binding(
                 get: { renaming != nil }, set: { if !$0 { renaming = nil } }
