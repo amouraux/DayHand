@@ -1,0 +1,13 @@
+# Xcode
+build/
+build-mac/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcworkspace/xcuserdata/
+
+# macOS
+.DS_Store
+
+# Test binaries built by Tests/run.sh
+Tests/.build/
