@@ -251,5 +251,59 @@ do {
     expect(h.cards.first?.title == "old card" && h.projectNames.values.first == "NF", "last week's export with no header still reads by position")
 }
 
+
+// MARK: K — what a new install arrives with
+do {
+    let starter = StoreDocument.starter()
+    expect(!starter.cards.isEmpty, "a new install is not an empty screen")
+    expect(starter.cards.allSatisfy(\.isSample), "every starter card is marked a sample")
+    expect(Set(starter.cards.map(\.bucket)).count >= 4, "the cards show several stacks, not one")
+    expect(starter.cards.contains { $0.projectID != nil }, "one card carries a tag, to show tags exist")
+    expect(starter.cards.contains { $0.isCompleted }, "and one is done, so Completed is not a mystery")
+    expect(starter.categories.map(\.label) == ["Home", "Work", "Courses"], "the seeded categories suit anyone — got \(starter.categories.map(\.label))")
+
+    // A Later card may not be dated sooner than the day after tomorrow.
+    for card in starter.cards where card.bucket == .later {
+        if let due = card.dueDate {
+            expect(Scheduler.dayOffset(for: due) >= 2, "a starter card in Later is dated far enough out")
+        }
+    }
+    // The filing pass must leave the starter alone: nothing jumps stack on launch.
+    for card in starter.cards where !card.isCompleted {
+        if let due = card.dueDate, let implied = Scheduler.autoStack(for: due) {
+            expect(implied == card.bucket, "\(card.title) would be re-filed the moment it appeared")
+        }
+    }
+    expect(roundTrip(starter) == starter, "the starter document saves and loads unchanged")
+}
+
+// MARK: L — sweeping the samples away
+do {
+    var starter = StoreDocument.starter()
+    expect(starter.hasSampleCards, "samples are recognisable")
+
+    // The user edits one: it becomes theirs and must survive.
+    let keptID = starter.cards[0].id
+    starter.cards[0].isSample = false
+    starter.cards[0].title = "Buy milk"
+
+    let swept = starter.removingSampleCards()
+    expect(swept.cards.map(\.id) == [keptID], "only the untouched samples go")
+    expect(!swept.hasSampleCards, "and none are left")
+    expect(swept.projects.isEmpty, "the starter's tag goes with them when nothing uses it")
+
+    // A tag the user has put on a card of their own is kept.
+    var adopted = StoreDocument.starter()
+    let tag = adopted.projects[0].id
+    adopted.cards.append({
+        var mine = TodoItem(title: "book hotel", bucket: .later); mine.projectID = tag; return mine
+    }())
+    expect(adopted.removingSampleCards().projects.count == 1, "a tag still in use is kept")
+
+    // Nothing to sweep is a no-op, not a rebuild.
+    let plain = StoreDocument(cards: [TodoItem(title: "real card")])
+    expect(plain.removingSampleCards() == plain, "a document with no samples is untouched")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

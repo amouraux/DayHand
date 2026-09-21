@@ -35,7 +35,7 @@ struct ProjectsView: View {
                         Label {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Convert Title Prefixes…")
-                                Text("\(found.count) possible project\(found.count == 1 ? "" : "s") found in your titles")
+                                Text("\(found.count) possible projects found in your titles")
                                     .font(.footnote)
                                     .foregroundStyle(.secondary)
                             }
@@ -229,7 +229,7 @@ private struct ProjectEditor: View {
                     Label("Delete Project", systemImage: "trash")
                 }
             } footer: {
-                Text("\(store.cardCount(using: project)) card\(store.cardCount(using: project) == 1 ? "" : "s") in this project.")
+                Text("\(store.cardCount(using: project)) cards in this project.")
             }
         }
         .onAppear { name = project.name }
@@ -355,7 +355,7 @@ struct ProjectConversionView: View {
                                 Text("existing").font(.caption).foregroundStyle(.secondary)
                             }
                             Spacer()
-                            Text("\(candidate.cardIDs.count) card\(candidate.cardIDs.count == 1 ? "" : "s")")
+                            Text("\(candidate.cardIDs.count) cards")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }

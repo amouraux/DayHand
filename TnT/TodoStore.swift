@@ -594,6 +594,8 @@ final class TodoStore: ObservableObject {
         guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
         change(&items[index])
         items[index].modifiedAt = .stamp()
+        // Touched by the user, so it is their card now and survives the sweep.
+        items[index].isSample = false
         save()
     }
 
@@ -609,6 +611,7 @@ final class TodoStore: ObservableObject {
         let existing = storage.adoptSyncFile(at: url)
 
         if let existing {
+            discardSamples(given: existing)
             if replacingLocal {
                 // Take the file wholesale. No tombstones for what is dropped:
                 // these cards are being *abandoned*, not deleted, and marking
@@ -798,8 +801,23 @@ final class TodoStore: ObservableObject {
     // MARK: - Persistence and sync
 
     private func load() {
-        let document = storage.readLocal() ?? StoreDocument(categories: CardCategory.defaults)
-        apply(document)
+        if let document = storage.readLocal() {
+            apply(document)
+        } else {
+            // A first run: arrive with a few cards that show what the app does.
+            apply(StoreDocument.starter())
+            save()
+        }
+    }
+
+    /// Real cards from another device mean the sample ones have done their job.
+    /// Dropped without tombstones: they were never anywhere else, and a
+    /// tombstone would be a deletion to propagate rather than a tidy-up.
+    private func discardSamples(given remote: StoreDocument) {
+        guard !remote.cards.isEmpty, items.contains(where: { $0.isSample }) else { return }
+        items.removeAll { $0.isSample }
+        let used = Set(items.compactMap(\.projectID))
+        projects.removeAll { !used.contains($0.id) && $0.name == "TRIP" }
     }
 
     private func apply(_ incoming: StoreDocument) {
@@ -846,6 +864,7 @@ final class TodoStore: ObservableObject {
         storage.adoptCloudStorage { [weak self] remote in
             guard let self else { return }
             if let remote {
+                discardSamples(given: remote)
                 apply(document.merged(with: remote))
                 applyScheduledDates()
             }
@@ -860,6 +879,7 @@ final class TodoStore: ObservableObject {
         // Reading back our own write is the common case; bailing out when the
         // file already matches is what keeps this from looping.
         guard let remote = storage.read(), remote != document else { return }
+        discardSamples(given: remote)
         apply(document.merged(with: remote))
         applyScheduledDates()
         save()

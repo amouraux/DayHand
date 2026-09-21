@@ -1,6 +1,6 @@
-# Rebuild prompt — "TnT"
+# Rebuild prompt — "TnTomorrow" (TnT for short)
 
-Build an iPhone app in SwiftUI (iOS 17+, no third-party dependencies) called **TnT**
+Build an iPhone app in SwiftUI (iOS 17+, no third-party dependencies) called **TnTomorrow**
 (Today aNd Tomorrow): a to-do app where every task is a card in a single
 scrolling vertical stack.
 
@@ -51,6 +51,56 @@ place (see Card appearance).
 A deliberate move beats a date. If the user moves a dated card into a stack its
 date contradicts, drop the date rather than letting the next launch drag the card
 back — otherwise manual placement and the date fight each other.
+
+## Identity
+
+Named **TnTomorrow** in the App Store, shown as **TnTom** under the icon —
+a home-screen label has little room — and TnT for short in conversation.
+
+The app icon is three cards fanned out: a white one in front carrying a blue
+tick and two lines, a sunrise-orange one behind it with a sun, and a deep blue
+night card with a moon and stars. Today and tomorrow, said without a word.
+
+**No lettering** — an iOS icon almost never contains text, and at home-screen
+size a word turns to mush. Supply it **full bleed**, 1024 square, no
+transparency and no rounded corners of its own: iOS applies its own mask, and
+artwork that arrives already rounded shows the page in the corners and a second
+edge inside the system's. One icon serves both appearances.
+
+## First run
+
+A new install opens with a handful of **sample cards** that explain the app by
+being it: two in Today, two in Tomorrow, one in Later carrying a tag and a
+date, one in Inbox, one already completed. Better than an empty screen and a
+manual.
+
+Mark them, and clear the mark the moment the user edits one. The samples still
+untouched are swept away the first time real cards arrive from another device,
+so a second device set up later never pushes tutorial cards into the shared
+file. Drop them without tombstones: they were never anywhere else.
+
+The seeded categories are **Home, Work and Courses** — three that suit most
+people, renameable like anything else. Match an old file's fixed category names
+by label, not by position, or renaming the seeded three would refile old cards
+under the wrong one.
+
+## Languages
+
+English, French, Dutch, German, Spanish, Italian and Portuguese, through a
+String Catalog. No right-to-left language: the swipe gestures are written in
+terms of left and right, and mirroring them is work this has not done.
+
+Three things are easy to miss:
+
+- **The stack names live in the model layer** (`Bucket.title`) and are shown in
+  headings, pickers and sentences such as "Move to Tomorrow". They must be
+  localized like any other visible text, or the screen reads half-translated.
+- **Counts need real plurals.** Building them as `"\(n) card" + (n == 1 ? "" : "s")`
+  cannot be translated; give the catalog the whole sentence and let it vary.
+- **Seeded data is translated once, at first run** — the categories and the
+  sample cards. It is data from then on: changing the device language later
+  leaves what is already there alone, because renaming someone's categories
+  behind their back would be worse than a mixed-language Settings page.
 
 ## Screen
 
@@ -335,7 +385,11 @@ Each card has **one flat background colour, taken from its stack**. Keep it
 low-opacity over the system card colour so text stays readable in light and dark
 mode.
 
-Stack colours: Inbox gray, Today blue, Tomorrow orange, Later green. Completed
+Stack colours: Inbox gray, Today blue, Tomorrow orange, Later green, washed
+over the card at a strength chosen **per stack**, not one strength for all: the
+same wash separates a card from the grey page by very different amounts
+depending on the hue, and at a single value the orange and green cards nearly
+disappeared while the blue stood clear. Completed
 carries **no wash at all** — the strikethrough, filled checkmark and dimming
 already say "done", and every remaining colour is spoken for. Red is reserved
 exclusively for overdue.

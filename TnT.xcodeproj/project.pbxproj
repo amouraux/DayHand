@@ -17,6 +17,8 @@
 		D00000000000000000000008 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000000000000000000008 /* SettingsView.swift */; };
 		D00000000000000000000009 /* Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000000000000000000009 /* Sync.swift */; };
 		D0000000000000000000000B /* ProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000B /* ProjectsView.swift */; };
+		D0000000000000000000000C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000C /* PrivacyInfo.xcprivacy */; };
+		D0000000000000000000000D /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000D /* Localizable.xcstrings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,8 +32,10 @@
 		C00000000000000000000007 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C00000000000000000000008 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C00000000000000000000009 /* Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync.swift; sourceTree = "<group>"; };
-		C0000000000000000000000B /* ProjectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsView.swift; sourceTree = "<group>"; };
 		C0000000000000000000000A /* TnT.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TnT.entitlements; sourceTree = "<group>"; };
+		C0000000000000000000000D /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		C0000000000000000000000C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		C0000000000000000000000B /* ProjectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +79,8 @@
 				C0000000000000000000000A /* TnT.entitlements */,
 				C00000000000000000000003 /* TodoStore.swift */,
 				C00000000000000000000007 /* Assets.xcassets */,
+				C0000000000000000000000C /* PrivacyInfo.xcprivacy */,
+				C0000000000000000000000D /* Localizable.xcstrings */,
 			);
 			path = TnT;
 			sourceTree = "<group>";
@@ -89,6 +95,7 @@
 				B00000000000000000000003 /* Sources */,
 				B00000000000000000000004 /* Frameworks */,
 				B00000000000000000000005 /* Resources */,
+				B0000000000000000000000E /* Stamp build number */,
 			);
 			buildRules = (
 			);
@@ -121,6 +128,12 @@
 			knownRegions = (
 				en,
 				Base,
+				fr,
+				nl,
+				de,
+				es,
+				it,
+				"pt-PT",
 			);
 			mainGroup = A00000000000000000000002;
 			productRefGroup = A00000000000000000000003 /* Products */;
@@ -132,12 +145,33 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		B0000000000000000000000E /* Stamp build number */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
+			);
+			name = "Stamp build number";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Stamp the build number with the number of commits in this repository.\n#\n# App Store Connect refuses a build number it has already seen, and bumping one\n# by hand is remembered until the day it is not. The commit count only ever\n# grows, needs no edit to any file, and ties an uploaded build to an exact\n# commit: `git rev-list --count HEAD` on any revision tells you which.\n#\n# Only the built app is stamped, never the source, so this leaves no diff.\nplist=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n[ -f \"$plist\" ] || exit 0\n\ncount=$(cd \"${SRCROOT}\" && git rev-list --count HEAD 2>&1) || { echo \"warning: git failed: $count\"; exit 0; }\n[ -n \"$count\" ] || exit 0\n\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $count\" \"$plist\"\necho \"note: build number set to $count (commits in this repository)\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXResourcesBuildPhase section */
 		B00000000000000000000005 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				D00000000000000000000007 /* Assets.xcassets in Resources */,
+				D0000000000000000000000C /* PrivacyInfo.xcprivacy in Resources */,
+				D0000000000000000000000D /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -194,7 +228,7 @@
 				DEVELOPMENT_TEAM = ZL9BJ32RWX;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -251,7 +285,7 @@
 				DEVELOPMENT_TEAM = ZL9BJ32RWX;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -275,13 +309,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TnT/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = TnT;
+				INFOPLIST_KEY_CFBundleDisplayName = TnTom;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -306,13 +344,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TnT/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = TnT;
+				INFOPLIST_KEY_CFBundleDisplayName = TnTom;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

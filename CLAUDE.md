@@ -70,6 +70,20 @@ deletions. Two consequences:
 - Dark mode is not an afterthought. Colours on cards are checked for contrast;
   category tints are lightened in dark mode for exactly that reason.
 
+## Build numbers
+
+The build number is stamped by a script phase from `git rev-list --count HEAD`,
+into the built app only — never into the project, so it leaves no diff. App
+Store Connect refuses a build number it has already seen, and this one only
+ever grows.
+
+Two things make it work, and both look redundant until they are removed:
+
+- The phase declares the built `Info.plist` as an **input**, so Xcode schedules
+  it after the step that writes that file. Without it the stamp is overwritten.
+- `ENABLE_USER_SCRIPT_SANDBOXING = NO`, because the sandbox hides `.git` and
+  git then reports "not a git repository".
+
 ## Finishing a change
 
 Run the tests, build both platforms, then commit with a message that explains

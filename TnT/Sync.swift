@@ -190,6 +190,65 @@ extension StoreDocument {
 }
 
 extension StoreDocument {
+    /// What a brand-new install opens with: a few cards that explain the app by
+    /// being it, rather than an empty screen and a manual.
+    ///
+    /// Every card is marked `isSample`. Editing one clears the mark, and the
+    /// ones still untouched are swept away the first time real cards arrive
+    /// from another device — so a second device set up months later does not
+    /// push a handful of tutorial cards into the shared file.
+    static func starter(now: Date = Date()) -> StoreDocument {
+        let categories = CardCategory.defaults
+        let home = categories[0].id, work = categories[1].id
+        let trip = Project(name: String(localized: "TRIP", comment: "Seeded project on the sample card"), categoryID: home)
+
+        func card(_ title: String, _ bucket: Bucket, category: UUID? = nil,
+                  project: UUID? = nil, due: Date? = nil) -> TodoItem {
+            var card = TodoItem(title: title, bucket: bucket, categoryID: category,
+                                projectID: project, dueDate: due)
+            card.isSample = true
+            return card
+        }
+
+        let calendar = Calendar.current
+        let inAWeek = calendar.date(byAdding: .day, value: 7, to: calendar.startOfDay(for: now))
+
+        var done = card(String(localized: "Read how this works", comment: "Starter card, already completed"), .completed, category: home)
+        done.bucketBeforeCompletion = .today
+        // Stamped, not `now`: the document stores milliseconds, and a raw Date
+        // carries more, so saving and loading would alter what was just written.
+        done.completedAt = .stamp()
+
+        return StoreDocument(
+            categories: categories,
+            cards: [
+                card(String(localized: "Tap a card to move it to another stack", comment: "Starter card"), .today, category: home),
+                card(String(localized: "Swipe a card left to push it forward", comment: "Starter card"), .today, category: work),
+                card(String(localized: "Swipe right to edit, or to set a date", comment: "Starter card"), .tomorrow, category: work),
+                card(String(localized: "Nothing rolls over: cards stay where you put them", comment: "Starter card"), .tomorrow, category: home),
+                card(String(localized: "book flights", comment: "Starter card, tagged TRIP"), .later, category: home, project: trip.id, due: inAWeek),
+                card(String(localized: "Type # in a new task to tag it, as above", comment: "Starter card"), .inbox, category: home),
+                done
+            ],
+            projects: [trip]
+        )
+    }
+
+    var hasSampleCards: Bool { cards.contains { $0.isSample } }
+
+    /// Drops the sample cards still untouched, and the starter project with
+    /// them when nothing else uses it.
+    func removingSampleCards() -> StoreDocument {
+        guard hasSampleCards else { return self }
+        var result = self
+        result.cards.removeAll { $0.isSample }
+        let used = Set(result.cards.compactMap(\.projectID))
+        result.projects.removeAll { !used.contains($0.id) && $0.name == "TRIP" }
+        return result
+    }
+}
+
+extension StoreDocument {
     /// Two devices can each create the same project while apart — both typed
     /// #NEWCODE offline — and a merge then keeps both. Fold them into one,
     /// choosing the same survivor on every device so they agree without having
