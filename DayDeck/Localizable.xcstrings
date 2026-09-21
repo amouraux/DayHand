@@ -1816,18 +1816,6 @@
     "Completed": {
       "comment": "Stack name",
       "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Terminées"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Voltooid"
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
@@ -1840,10 +1828,22 @@
             "value": "Completadas"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminées"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
             "value": "Completate"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voltooid"
           }
         },
         "pt-PT": {
@@ -2131,6 +2131,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Data"
+          }
+        }
+      }
+    },
+    "DayDeck follows your device's language. To read it in another one, pick a language for this app in the system settings.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayDeck suit la langue de votre appareil. Pour le lire dans une autre, choisissez une langue pour cette app dans les réglages du système."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayDeck volgt de taal van je apparaat. Wil je het in een andere taal lezen, kies dan een taal voor deze app in de systeeminstellingen."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayDeck folgt der Sprache Ihres Geräts. Um es in einer anderen zu lesen, wählen Sie in den Systemeinstellungen eine Sprache für diese App."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayDeck sigue el idioma de tu dispositivo. Para leerlo en otro, elige un idioma para esta app en los ajustes del sistema."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayDeck segue la lingua del dispositivo. Per leggerlo in un'altra, scegli una lingua per questa app nelle impostazioni di sistema."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O DayDeck segue o idioma do seu dispositivo. Para o ler noutro, escolha um idioma para esta app nas definições do sistema."
           }
         }
       }
@@ -3105,18 +3145,6 @@
     "Inbox": {
       "comment": "Stack name",
       "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Réception"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Postvak"
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
@@ -3129,10 +3157,22 @@
             "value": "Bandeja"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réception"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
             "value": "In arrivo"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Postvak"
           }
         },
         "pt-PT": {
@@ -3393,21 +3433,49 @@
         }
       }
     },
-    "Later": {
-      "comment": "Stack name",
+    "Language": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Plus tard"
+            "value": "Langue"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Later"
+            "value": "Taal"
           }
         },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprache"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Idioma"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lingua"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Idioma"
+          }
+        }
+      }
+    },
+    "Later": {
+      "comment": "Stack name",
+      "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
@@ -3420,10 +3488,22 @@
             "value": "Más tarde"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plus tard"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
             "value": "Più tardi"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Later"
           }
         },
         "pt-PT": {
@@ -6425,18 +6505,6 @@
     "Today": {
       "comment": "Stack name",
       "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aujourd’hui"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vandaag"
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
@@ -6449,10 +6517,22 @@
             "value": "Hoy"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aujourd’hui"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
             "value": "Oggi"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vandaag"
           }
         },
         "pt-PT": {
@@ -6466,18 +6546,6 @@
     "Tomorrow": {
       "comment": "Stack name",
       "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Demain"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Morgen"
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
@@ -6490,10 +6558,22 @@
             "value": "Mañana"
           }
         },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demain"
+          }
+        },
         "it": {
           "stringUnit": {
             "state": "translated",
             "value": "Domani"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Morgen"
           }
         },
         "pt-PT": {
@@ -6948,5 +7028,5 @@
       }
     }
   },
-  "version": "1.0"
+  "version": "1.1"
 }

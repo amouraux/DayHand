@@ -92,6 +92,23 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    Button {
+                        openLanguageSettings()
+                    } label: {
+                        LabeledContent {
+                            Text(currentLanguage)
+                                .foregroundStyle(.secondary)
+                        } label: {
+                            Label("Language", systemImage: "globe")
+                        }
+                    }
+                } header: {
+                    Text("Language")
+                } footer: {
+                    Text("DayDeck follows your device's language. To read it in another one, pick a language for this app in the system settings.")
+                }
+
+                Section {
                     if let name = store.syncFileName {
                         LabeledContent {
                             Text(name).foregroundStyle(.secondary)
@@ -339,6 +356,28 @@ struct SettingsView: View {
 
     /// A sheet presented straight from a dialog's button can be swallowed while
     /// the dialog is still dismissing, so let the run loop turn over first.
+    /// The language the app is actually being read in, named in that language:
+    /// "Français", not "French", which is what the system settings will show.
+    private var currentLanguage: String {
+        let code = Bundle.main.preferredLocalizations.first ?? "en"
+        let locale = Locale(identifier: code)
+        let name = locale.localizedString(forLanguageCode: code) ?? code
+        return name.capitalized(with: locale)
+    }
+
+    /// iOS gives every app that ships more than one language its own Language
+    /// screen, so there is nothing to reimplement here — just a way to reach
+    /// it. macOS keeps the same choice in Language & Region instead.
+    private func openLanguageSettings() {
+        #if targetEnvironment(macCatalyst)
+        let url = URL(string: "x-apple.systempreferences:com.apple.Localization-Settings.extension")
+        #else
+        let url = URL(string: UIApplication.openSettingsURLString)
+        #endif
+        guard let url else { return }
+        UIApplication.shared.open(url)
+    }
+
     private func present(_ show: @escaping () -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: show)
     }

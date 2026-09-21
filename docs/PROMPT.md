@@ -87,7 +87,14 @@ under the wrong one.
 ## Languages
 
 English, French, Dutch, German, Spanish, Italian and Portuguese, through a
-String Catalog. No right-to-left language: the swipe gestures are written in
+String Catalog.
+
+Settings carries a **Language** row showing the language the app is being read
+in, which opens the system's own per-app language screen. Nothing is
+reimplemented: iOS gives any app shipping more than one localization its own
+Language screen, and macOS keeps the same choice in Language & Region. An
+in-app override would mean restarting the app to take effect, and would
+disagree with what the system believes. No right-to-left language: the swipe gestures are written in
 terms of left and right, and mirroring them is work this has not done.
 
 Three things are easy to miss:
