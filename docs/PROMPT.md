@@ -57,12 +57,15 @@ back — otherwise manual placement and the date fight each other.
 Named **TnTomorrow**, TnT for short, which is what the App Store listing and
 the label under the icon say.
 
-The app icon is the same stack of cards the app is made of: four rounded cards
-in the stack colours, fanning up and to the right, with the front one carrying
-a checkbox and two lines. **No lettering** — an iOS icon almost never contains
-text, and at home-screen size a word turns to mush. A light and a dark variant,
-both 1024x1024 with no transparency, drawn edge to edge: the system applies its
-own rounded mask.
+The app icon is three cards fanned out: a white one in front carrying a blue
+tick and two lines, a sunrise-orange one behind it with a sun, and a deep blue
+night card with a moon and stars. Today and tomorrow, said without a word.
+
+**No lettering** — an iOS icon almost never contains text, and at home-screen
+size a word turns to mush. Supply it **full bleed**, 1024 square, no
+transparency and no rounded corners of its own: iOS applies its own mask, and
+artwork that arrives already rounded shows the page in the corners and a second
+edge inside the system's. One icon serves both appearances.
 
 ## Screen
 
