@@ -54,8 +54,8 @@ back — otherwise manual placement and the date fight each other.
 
 ## Identity
 
-Named **TnTomorrow**, TnT for short, which is what the App Store listing and
-the label under the icon say.
+Named **TnTomorrow** in the App Store, shown as **TnTom** under the icon —
+a home-screen label has little room — and TnT for short in conversation.
 
 The app icon is three cards fanned out: a white one in front carrying a blue
 tick and two lines, a sunrise-orange one behind it with a sun, and a deep blue
