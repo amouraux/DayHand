@@ -347,7 +347,11 @@ Each card has **one flat background colour, taken from its stack**. Keep it
 low-opacity over the system card colour so text stays readable in light and dark
 mode.
 
-Stack colours: Inbox gray, Today blue, Tomorrow orange, Later green. Completed
+Stack colours: Inbox gray, Today blue, Tomorrow orange, Later green, washed
+over the card at a strength chosen **per stack**, not one strength for all: the
+same wash separates a card from the grey page by very different amounts
+depending on the hue, and at a single value the orange and green cards nearly
+disappeared while the blue stood clear. Completed
 carries **no wash at all** — the strikethrough, filled checkmark and dimming
 already say "done", and every remaining colour is spoken for. Red is reserved
 exclusively for overdue.

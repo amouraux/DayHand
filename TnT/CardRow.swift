@@ -63,6 +63,23 @@ extension CardCategory {
 }
 
 extension Bucket {
+    /// How strongly the stack's colour washes over the card in light mode.
+    ///
+    /// Not one value for all four: the same wash separates a card from the grey
+    /// page by very different amounts depending on the hue. At 26% the blue of
+    /// TODAY stood clear while the orange of TOMORROW and the green of LATER
+    /// were nearly invisible against the page — they are light colours to begin
+    /// with. These strengths bring all four to the same separation.
+    var lightWash: Double {
+        switch self {
+        case .inbox:     return 0.35
+        case .today:     return 0.27
+        case .tomorrow:  return 0.44
+        case .later:     return 0.44
+        case .completed: return 0
+        }
+    }
+
     var tint: Color {
         switch self {
         case .inbox:     return .gray
@@ -265,7 +282,7 @@ struct CardRow: View {
             .fill(Color(.secondarySystemGroupedBackground))
             .overlay {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(item.bucket.tint.opacity(colorScheme == .dark ? 0.16 : 0.26))
+                    .fill(item.bucket.tint.opacity(colorScheme == .dark ? 0.16 : item.bucket.lightWash))
             }
     }
 
