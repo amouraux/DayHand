@@ -227,10 +227,6 @@ struct CardRow: View {
             }
 
             Spacer(minLength: 0)
-
-            Image(systemName: "ellipsis")
-                .font(.caption)
-                .foregroundStyle(.tertiary)
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)

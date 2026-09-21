@@ -30,13 +30,15 @@ enum Bucket: String, Codable, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
+    /// Shown on the section headings, in the pickers and inside sentences such
+    /// as "Move to Tomorrow", so it is translated like any other visible text.
     var title: String {
         switch self {
-        case .inbox:     return "Inbox"
-        case .today:     return "Today"
-        case .tomorrow:  return "Tomorrow"
-        case .later:     return "Later"
-        case .completed: return "Completed"
+        case .inbox:     return String(localized: "Inbox", comment: "Stack name")
+        case .today:     return String(localized: "Today", comment: "Stack name")
+        case .tomorrow:  return String(localized: "Tomorrow", comment: "Stack name")
+        case .later:     return String(localized: "Later", comment: "Stack name")
+        case .completed: return String(localized: "Completed", comment: "Stack name")
         }
     }
 

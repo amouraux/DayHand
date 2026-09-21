@@ -200,7 +200,7 @@ extension StoreDocument {
     static func starter(now: Date = Date()) -> StoreDocument {
         let categories = CardCategory.defaults
         let home = categories[0].id, work = categories[1].id
-        let trip = Project(name: "TRIP", categoryID: home)
+        let trip = Project(name: String(localized: "TRIP", comment: "Seeded project on the sample card"), categoryID: home)
 
         func card(_ title: String, _ bucket: Bucket, category: UUID? = nil,
                   project: UUID? = nil, due: Date? = nil) -> TodoItem {

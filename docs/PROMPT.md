@@ -84,6 +84,24 @@ people, renameable like anything else. Match an old file's fixed category names
 by label, not by position, or renaming the seeded three would refile old cards
 under the wrong one.
 
+## Languages
+
+English, French, Dutch, German, Spanish, Italian and Portuguese, through a
+String Catalog. No right-to-left language: the swipe gestures are written in
+terms of left and right, and mirroring them is work this has not done.
+
+Three things are easy to miss:
+
+- **The stack names live in the model layer** (`Bucket.title`) and are shown in
+  headings, pickers and sentences such as "Move to Tomorrow". They must be
+  localized like any other visible text, or the screen reads half-translated.
+- **Counts need real plurals.** Building them as `"\(n) card" + (n == 1 ? "" : "s")`
+  cannot be translated; give the catalog the whole sentence and let it vary.
+- **Seeded data is translated once, at first run** — the categories and the
+  sample cards. It is data from then on: changing the device language later
+  leaves what is already there alone, because renaming someone's categories
+  behind their back would be worse than a mixed-language Settings page.
+
 ## Screen
 
 One screen, no app title and no navigation bar. A vertically scrolling stack of
