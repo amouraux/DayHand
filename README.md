@@ -1,7 +1,6 @@
-# TnTomorrow
+# DayDeck
 
-Shown as **TnTom** under the icon, TnT for short. A to-do app for iPhone and
-Mac, built in SwiftUI. Cards live in stacks you file
+A to-do app for iPhone and Mac, built in SwiftUI. Cards live in stacks you file
 them into — **Inbox, Today, Tomorrow, Later, Completed** — and nothing rolls
 over on its own.
 
@@ -25,7 +24,7 @@ into groups such as Grants and Ongoing.
 Requires Xcode 16 or newer. No third-party dependencies.
 
 ```sh
-open TnT.xcodeproj
+open DayDeck.xcodeproj
 ```
 
 Press ⌘R with an iPhone, a simulator, or **My Mac** selected. The same target
@@ -34,9 +33,9 @@ runs on macOS through Mac Catalyst.
 From the command line:
 
 ```sh
-xcodebuild -project TnT.xcodeproj -scheme TnT \
+xcodebuild -project DayDeck.xcodeproj -scheme DayDeck \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
-xcodebuild -project TnT.xcodeproj -scheme TnT \
+xcodebuild -project DayDeck.xcodeproj -scheme DayDeck \
   -destination 'platform=macOS,variant=Mac Catalyst' build
 ```
 
@@ -51,7 +50,7 @@ CSV, tags and groups — is tested without Xcode, a simulator or any app data:
 Tests/run.sh
 ```
 
-It compiles `TnT/Models.swift` and `TnT/Sync.swift` with `Tests/main.swift` and
+It compiles `DayDeck/Models.swift` and `DayDeck/Sync.swift` with `Tests/main.swift` and
 runs them. All fixtures are invented; nothing reads your own cards. To check
 that a real file still decodes, pass it in:
 
@@ -63,14 +62,14 @@ Tests/run.sh ~/Library/Application\ Support/cards.json
 
 | File | What lives there |
 | --- | --- |
-| `TnT/Models.swift` | Cards, stacks, categories, tags, groups, date rules. Foundation only — no UI, which is why it is testable on its own. |
-| `TnT/Sync.swift` | The document format, merging two copies, the shared file, backups, CSV. |
-| `TnT/TodoStore.swift` | The observable store: every change to the data goes through here. |
-| `TnT/ContentView.swift` | The list of stacks, filtering, the floating buttons. |
-| `TnT/CardRow.swift` | One card: its colours, swipes and context menu. |
-| `TnT/AddCardView.swift` | New Task sheet, the card editor, the date picker, the filter sheet. |
-| `TnT/ProjectsView.swift` | Settings → Projects, and the one-time conversion of title prefixes. |
-| `TnT/SettingsView.swift` | Categories, sync, CSV, backups. |
+| `DayDeck/Models.swift` | Cards, stacks, categories, tags, groups, date rules. Foundation only — no UI, which is why it is testable on its own. |
+| `DayDeck/Sync.swift` | The document format, merging two copies, the shared file, backups, CSV. |
+| `DayDeck/TodoStore.swift` | The observable store: every change to the data goes through here. |
+| `DayDeck/ContentView.swift` | The list of stacks, filtering, the floating buttons. |
+| `DayDeck/CardRow.swift` | One card: its colours, swipes and context menu. |
+| `DayDeck/AddCardView.swift` | New Task sheet, the card editor, the date picker, the filter sheet. |
+| `DayDeck/ProjectsView.swift` | Settings → Projects, and the one-time conversion of title prefixes. |
+| `DayDeck/SettingsView.swift` | Categories, sync, CSV, backups. |
 | `docs/PROMPT.md` | The full specification: enough to rebuild the app from nothing. |
 
 ## Where the data lives

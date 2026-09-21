@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A00000000000000000000004"
-               BuildableName = "TnT.app"
-               BlueprintName = "TnT"
-               ReferencedContainer = "container:TnT.xcodeproj">
+               BuildableName = "DayDeck.app"
+               BlueprintName = "DayDeck"
+               ReferencedContainer = "container:DayDeck.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A00000000000000000000004"
-            BuildableName = "TnT.app"
-            BlueprintName = "TnT"
-            ReferencedContainer = "container:TnT.xcodeproj">
+            BuildableName = "DayDeck.app"
+            BlueprintName = "DayDeck"
+            ReferencedContainer = "container:DayDeck.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A00000000000000000000004"
-            BuildableName = "TnT.app"
-            BlueprintName = "TnT"
-            ReferencedContainer = "container:TnT.xcodeproj">
+            BuildableName = "DayDeck.app"
+            BlueprintName = "DayDeck"
+            ReferencedContainer = "container:DayDeck.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

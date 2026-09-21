@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D00000000000000000000001 /* TnTApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000000000000000000001 /* TnTApp.swift */; };
+		D00000000000000000000001 /* DayDeckApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000000000000000000001 /* DayDeckApp.swift */; };
 		D00000000000000000000002 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000000000000000000002 /* Models.swift */; };
 		D00000000000000000000003 /* TodoStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000000000000000000003 /* TodoStore.swift */; };
 		D00000000000000000000004 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000000000000000000004 /* ContentView.swift */; };
@@ -22,8 +22,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A00000000000000000000005 /* TnT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TnT.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C00000000000000000000001 /* TnTApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TnTApp.swift; sourceTree = "<group>"; };
+		A00000000000000000000005 /* DayDeck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DayDeck.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C00000000000000000000001 /* DayDeckApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayDeckApp.swift; sourceTree = "<group>"; };
 		C00000000000000000000002 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		C00000000000000000000003 /* TodoStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoStore.swift; sourceTree = "<group>"; };
 		C00000000000000000000004 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -32,7 +32,7 @@
 		C00000000000000000000007 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C00000000000000000000008 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C00000000000000000000009 /* Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync.swift; sourceTree = "<group>"; };
-		C0000000000000000000000A /* TnT.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TnT.entitlements; sourceTree = "<group>"; };
+		C0000000000000000000000A /* DayDeck.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DayDeck.entitlements; sourceTree = "<group>"; };
 		C0000000000000000000000D /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		C0000000000000000000000C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		C0000000000000000000000B /* ProjectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsView.swift; sourceTree = "<group>"; };
@@ -52,7 +52,7 @@
 		A00000000000000000000002 = {
 			isa = PBXGroup;
 			children = (
-				B00000000000000000000006 /* TnT */,
+				B00000000000000000000006 /* DayDeck */,
 				A00000000000000000000003 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -60,15 +60,15 @@
 		A00000000000000000000003 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A00000000000000000000005 /* TnT.app */,
+				A00000000000000000000005 /* DayDeck.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B00000000000000000000006 /* TnT */ = {
+		B00000000000000000000006 /* DayDeck */ = {
 			isa = PBXGroup;
 			children = (
-				C00000000000000000000001 /* TnTApp.swift */,
+				C00000000000000000000001 /* DayDeckApp.swift */,
 				C00000000000000000000004 /* ContentView.swift */,
 				C00000000000000000000005 /* CardRow.swift */,
 				C00000000000000000000006 /* AddCardView.swift */,
@@ -76,21 +76,21 @@
 				C0000000000000000000000B /* ProjectsView.swift */,
 				C00000000000000000000002 /* Models.swift */,
 				C00000000000000000000009 /* Sync.swift */,
-				C0000000000000000000000A /* TnT.entitlements */,
+				C0000000000000000000000A /* DayDeck.entitlements */,
 				C00000000000000000000003 /* TodoStore.swift */,
 				C00000000000000000000007 /* Assets.xcassets */,
 				C0000000000000000000000C /* PrivacyInfo.xcprivacy */,
 				C0000000000000000000000D /* Localizable.xcstrings */,
 			);
-			path = TnT;
+			path = DayDeck;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A00000000000000000000004 /* TnT */ = {
+		A00000000000000000000004 /* DayDeck */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A00000000000000000000007 /* Build configuration list for PBXNativeTarget "TnT" */;
+			buildConfigurationList = A00000000000000000000007 /* Build configuration list for PBXNativeTarget "DayDeck" */;
 			buildPhases = (
 				B00000000000000000000003 /* Sources */,
 				B00000000000000000000004 /* Frameworks */,
@@ -101,9 +101,9 @@
 			);
 			dependencies = (
 			);
-			name = TnT;
-			productName = TnT;
-			productReference = A00000000000000000000005 /* TnT.app */;
+			name = DayDeck;
+			productName = DayDeck;
+			productReference = A00000000000000000000005 /* DayDeck.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -121,7 +121,7 @@
 					};
 				};
 			};
-			buildConfigurationList = A00000000000000000000006 /* Build configuration list for PBXProject "TnT" */;
+			buildConfigurationList = A00000000000000000000006 /* Build configuration list for PBXProject "DayDeck" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -140,7 +140,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A00000000000000000000004 /* TnT */,
+				A00000000000000000000004 /* DayDeck */,
 			);
 		};
 /* End PBXProject section */
@@ -190,7 +190,7 @@
 				D00000000000000000000006 /* AddCardView.swift in Sources */,
 				D00000000000000000000008 /* SettingsView.swift in Sources */,
 				D0000000000000000000000B /* ProjectsView.swift in Sources */,
-				D00000000000000000000001 /* TnTApp.swift in Sources */,
+				D00000000000000000000001 /* DayDeckApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -316,8 +316,8 @@
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = TnT/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = TnTom;
+				INFOPLIST_FILE = DayDeck/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DayDeck;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
@@ -351,8 +351,8 @@
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = TnT/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = TnTom;
+				INFOPLIST_FILE = DayDeck/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DayDeck;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
@@ -377,7 +377,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A00000000000000000000006 /* Build configuration list for PBXProject "TnT" */ = {
+		A00000000000000000000006 /* Build configuration list for PBXProject "DayDeck" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A00000000000000000000008 /* Debug */,
@@ -386,7 +386,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A00000000000000000000007 /* Build configuration list for PBXNativeTarget "TnT" */ = {
+		A00000000000000000000007 /* Build configuration list for PBXNativeTarget "DayDeck" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A00000000000000000000010 /* Debug */,

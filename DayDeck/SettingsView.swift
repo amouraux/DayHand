@@ -253,7 +253,7 @@ struct SettingsView: View {
                 isPresented: $isCreatingSyncFile,
                 document: SyncFileDocument(data: store.documentData()),
                 contentType: .json,
-                defaultFilename: "TnT Cards"
+                defaultFilename: "DayDeck Cards"
             ) { result in
                 adoptSyncFile(from: result, creating: true, replacing: false)
             }
@@ -282,7 +282,7 @@ struct SettingsView: View {
                 isPresented: $isExporting,
                 document: CSVFile(text: store.exportCSV()),
                 contentType: .commaSeparatedText,
-                defaultFilename: "TnT Cards"
+                defaultFilename: "DayDeck Cards"
             ) { _ in }
             .fileImporter(
                 isPresented: $isImporting,

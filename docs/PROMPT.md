@@ -1,6 +1,6 @@
-# Rebuild prompt — "TnTomorrow" (TnT for short)
+# Rebuild prompt — "DayDeck"
 
-Build an iPhone app in SwiftUI (iOS 17+, no third-party dependencies) called **TnTomorrow**
+Build an iPhone app in SwiftUI (iOS 17+, no third-party dependencies) called **DayDeck**
 (Today aNd Tomorrow): a to-do app where every task is a card in a single
 scrolling vertical stack.
 
@@ -54,8 +54,8 @@ back — otherwise manual placement and the date fight each other.
 
 ## Identity
 
-Named **TnTomorrow** in the App Store, shown as **TnTom** under the icon —
-a home-screen label has little room — and TnT for short in conversation.
+Named **DayDeck**: a deck of cards, dealt a day at a time. Short enough for a
+home-screen label, and it says what the app is.
 
 The app icon is three cards fanned out: a white one in front carrying a blue
 tick and two lines, a sunrise-orange one behind it with a sun, and a deep blue

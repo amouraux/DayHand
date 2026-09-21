@@ -1,4 +1,4 @@
-# Working on TnT
+# Working on DayDeck
 
 A to-do app for iPhone and Mac: one SwiftUI target, no third-party
 dependencies. `README.md` describes the app; `docs/PROMPT.md` is the full
@@ -12,9 +12,9 @@ behave.
 Tests/run.sh
 
 # Build for the phone and for the Mac. Both must pass before anything is done.
-xcodebuild -project TnT.xcodeproj -scheme TnT \
+xcodebuild -project DayDeck.xcodeproj -scheme DayDeck \
   -destination 'platform=iOS Simulator,name=iPhone 17 Pro' build
-xcodebuild -project TnT.xcodeproj -scheme TnT \
+xcodebuild -project DayDeck.xcodeproj -scheme DayDeck \
   -destination 'platform=macOS,variant=Mac Catalyst' build
 ```
 
@@ -23,7 +23,7 @@ On this Mac, Xcode is a beta: prefix commands with
 
 ## The rule that keeps the tests possible
 
-`TnT/Models.swift` and `TnT/Sync.swift` import **Foundation only**. No SwiftUI,
+`DayDeck/Models.swift` and `DayDeck/Sync.swift` import **Foundation only**. No SwiftUI,
 no UIKit. `Tests/run.sh` compiles exactly those two files with `Tests/main.swift`,
 which is why the model layer can be tested in a second without a simulator.
 
