@@ -213,7 +213,7 @@ extension StoreDocument {
         let calendar = Calendar.current
         let inAWeek = calendar.date(byAdding: .day, value: 7, to: calendar.startOfDay(for: now))
 
-        var done = card("Read how this works", .completed, category: home)
+        var done = card(String(localized: "Read how this works", comment: "Starter card, already completed"), .completed, category: home)
         done.bucketBeforeCompletion = .today
         // Stamped, not `now`: the document stores milliseconds, and a raw Date
         // carries more, so saving and loading would alter what was just written.
@@ -222,12 +222,12 @@ extension StoreDocument {
         return StoreDocument(
             categories: categories,
             cards: [
-                card("Tap a card to move it to another stack", .today, category: home),
-                card("Swipe a card left to push it forward", .today, category: work),
-                card("Swipe right to edit, or to set a date", .tomorrow, category: work),
-                card("Nothing rolls over: cards stay where you put them", .tomorrow, category: home),
-                card("book flights", .later, category: home, project: trip.id, due: inAWeek),
-                card("Type # in a new task to tag it, as above", .inbox, category: home),
+                card(String(localized: "Tap a card to move it to another stack", comment: "Starter card"), .today, category: home),
+                card(String(localized: "Swipe a card left to push it forward", comment: "Starter card"), .today, category: work),
+                card(String(localized: "Swipe right to edit, or to set a date", comment: "Starter card"), .tomorrow, category: work),
+                card(String(localized: "Nothing rolls over: cards stay where you put them", comment: "Starter card"), .tomorrow, category: home),
+                card(String(localized: "book flights", comment: "Starter card, tagged TRIP"), .later, category: home, project: trip.id, due: inAWeek),
+                card(String(localized: "Type # in a new task to tag it, as above", comment: "Starter card"), .inbox, category: home),
                 done
             ],
             projects: [trip]

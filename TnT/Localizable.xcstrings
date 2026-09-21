@@ -1,0 +1,517 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    " " : {
+
+    },
+    "%@ already exists" : {
+
+    },
+    "%@’s %lld cards move to %@, and %@ is removed." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@’s %2$lld cards move to %3$@, and %4$@ is removed."
+          }
+        }
+      }
+    },
+    "%lld" : {
+
+    },
+    "%lld cards" : {
+
+    },
+    "%lld cards in this project." : {
+
+    },
+    "%lld cards will be removed. This cannot be undone." : {
+
+    },
+    "%lld cards will lose this category. The cards themselves are kept." : {
+
+    },
+    "%lld open · %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld open · %2$lld"
+          }
+        }
+      }
+    },
+    "%lld possible projects found in your titles" : {
+
+    },
+    "A card given this project takes this category. Cards already in the project keep theirs. Moving a project to another category takes it out of its group; groups are arranged in the Filter sheet." : {
+
+    },
+    "A group for %@ and others like it, such as Holidays or Clients." : {
+
+    },
+    "A project groups cards that belong to the same piece of work — a trip, a client, a paper, a course. Type # in a new task to use one." : {
+
+    },
+    "A short one-word name for something you are working on." : {
+
+    },
+    "Add" : {
+
+    },
+    "Add Category" : {
+
+    },
+    "Add a project" : {
+
+    },
+    "Add card to inbox" : {
+
+    },
+    "Add project" : {
+
+    },
+    "Add to Existing Cards" : {
+
+    },
+    "All %@" : {
+
+    },
+    "All %lld" : {
+
+    },
+    "Archived" : {
+
+    },
+    "Archived projects keep their cards but are no longer suggested. Typing one’s name brings it back." : {
+
+    },
+    "Backups" : {
+
+    },
+    "Both devices read and write this one file. Changes are merged, so edits made on either side while offline are kept." : {
+
+    },
+    "Cancel" : {
+
+    },
+    "Cards" : {
+
+    },
+    "Cards in Later start from the day after tomorrow." : {
+
+    },
+    "Cards show the icon only. The label names the category here and for VoiceOver." : {
+
+    },
+    "Cards written as “TRIP book flights” can become “book flights” in project TRIP. You choose which words to convert." : {
+
+    },
+    "Categories" : {
+
+    },
+    "Category" : {
+
+    },
+    "Clears the group" : {
+
+    },
+    "Colour" : {
+
+    },
+    "Complete" : {
+
+    },
+    "Convert %lld" : {
+
+    },
+    "Convert Prefixes" : {
+
+    },
+    "Convert Title Prefixes…" : {
+
+    },
+    "Convert as" : {
+
+    },
+    "Courses" : {
+      "comment" : "Seeded category"
+    },
+    "Create Sync File…" : {
+
+    },
+    "Date" : {
+
+    },
+    "Default" : {
+
+    },
+    "Default category" : {
+
+    },
+    "Delete" : {
+
+    },
+    "Delete %@?" : {
+
+    },
+    "Delete All" : {
+
+    },
+    "Delete All Cards" : {
+
+    },
+    "Delete Project" : {
+
+    },
+    "Delete all cards?" : {
+
+    },
+    "Delete category?" : {
+
+    },
+    "Dismiss" : {
+
+    },
+    "Done" : {
+
+    },
+    "Due date" : {
+
+    },
+    "Each ticked word becomes a project and is removed from the start of those titles. A new project takes the category most of its cards have." : {
+
+    },
+    "Edit" : {
+
+    },
+    "Edit Category" : {
+
+    },
+    "Export Cards as CSV…" : {
+
+    },
+    "Filter" : {
+
+    },
+    "Group %@, %lld projects" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Group %1$@, %2$lld projects"
+          }
+        }
+      }
+    },
+    "Holidays" : {
+
+    },
+    "Home" : {
+      "comment" : "Seeded category"
+    },
+    "Icon" : {
+
+    },
+    "Import Cards from CSV…" : {
+
+    },
+    "Import from CSV" : {
+
+    },
+    "Importing can either add to what is here or replace it. Cards are matched by id; categories and projects by name." : {
+
+    },
+    "Its %lld cards will move to %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Its %1$lld cards will move to %2$@."
+          }
+        }
+      }
+    },
+    "Its cards are kept. They just no longer belong to a project." : {
+
+    },
+    "Keep %@" : {
+
+    },
+    "Label" : {
+
+    },
+    "Mark as Not Done" : {
+
+    },
+    "Mark as done" : {
+
+    },
+    "Mark as not done" : {
+
+    },
+    "Merge" : {
+
+    },
+    "Merge %@ into %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Merge %1$@ into %2$@"
+          }
+        }
+      }
+    },
+    "Merge Into…" : {
+
+    },
+    "Merge With This Device" : {
+
+    },
+    "Merge into %@" : {
+
+    },
+    "Merge into %@?" : {
+
+    },
+    "Merging keeps both sides. Replacing discards the %lld cards here and takes the file's." : {
+
+    },
+    "Move" : {
+
+    },
+    "Move %@ to Group" : {
+
+    },
+    "Move to %@" : {
+
+    },
+    "Name" : {
+
+    },
+    "New Category" : {
+
+    },
+    "New Group" : {
+
+    },
+    "New Group…" : {
+
+    },
+    "New Project" : {
+
+    },
+    "New Project…" : {
+
+    },
+    "New Task" : {
+
+    },
+    "New cards" : {
+
+    },
+    "New cards start with this category. You can still change it on the card." : {
+
+    },
+    "No Group" : {
+
+    },
+    "No backups yet. One is taken automatically each day the app is opened." : {
+
+    },
+    "No cards" : {
+
+    },
+    "No cards yet" : {
+
+    },
+    "No category" : {
+
+    },
+    "None" : {
+
+    },
+    "Nothing in %@" : {
+
+    },
+    "Nothing matches" : {
+
+    },
+    "Nothing rolls over: cards stay where you put them" : {
+      "comment" : "Starter card"
+    },
+    "OK" : {
+
+    },
+    "Other projects" : {
+
+    },
+    "Project" : {
+
+    },
+    "Project %@. Remove" : {
+
+    },
+    "Project removed" : {
+
+    },
+    "Projects" : {
+
+    },
+    "Put one file in iCloud Drive and point every device at it. iCloud syncs the file, so no paid developer account is needed." : {
+
+    },
+    "Read how this works" : {
+      "comment" : "Starter card, already completed"
+    },
+    "Removes every card on this device. Categories are kept. If a sync file is in use, the deletion reaches your other devices too." : {
+
+    },
+    "Rename" : {
+
+    },
+    "Rename Group" : {
+
+    },
+    "Rename Group…" : {
+
+    },
+    "Renames “%@” on every project in it. Using another group’s name joins the two." : {
+
+    },
+    "Renaming changes it on every card at once." : {
+
+    },
+    "Replace All Cards" : {
+
+    },
+    "Replace Cards on This Device" : {
+
+    },
+    "Replacing removes the %lld cards here first." : {
+
+    },
+    "Restore" : {
+
+    },
+    "Restore this backup?" : {
+
+    },
+    "Restored %lld cards from %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Restored %1$lld cards from %2$@."
+          }
+        }
+      }
+    },
+    "Save" : {
+
+    },
+    "Scroll to Today" : {
+
+    },
+    "Search projects" : {
+
+    },
+    "Selects the whole group" : {
+
+    },
+    "Set" : {
+
+    },
+    "Settings" : {
+
+    },
+    "Stack" : {
+
+    },
+    "Stop Using This File" : {
+
+    },
+    "Swipe a card left to push it forward" : {
+      "comment" : "Starter card"
+    },
+    "Swipe right to edit, or to set a date" : {
+      "comment" : "Starter card"
+    },
+    "Sync" : {
+
+    },
+    "Sync Now" : {
+
+    },
+    "Sync file" : {
+
+    },
+    "TRIP" : {
+
+    },
+    "Taken automatically once a day: the most recent, the day before, and one from about a week ago. Tap one to restore it." : {
+
+    },
+    "Tap + to drop a card into your inbox." : {
+
+    },
+    "Tap a card to move it to another stack" : {
+      "comment" : "Starter card"
+    },
+    "Task" : {
+
+    },
+    "The %lld cards here will be replaced by the %lld in this backup. Categories and projects come back too." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The %1$lld cards here will be replaced by the %2$lld in this backup. Categories and projects come back too."
+          }
+        }
+      }
+    },
+    "Their date arrived" : {
+
+    },
+    "Title" : {
+
+    },
+    "Type # in a new task to create a project, such as #TRIP." : {
+
+    },
+    "Type # in a new task to tag it, as above" : {
+      "comment" : "Starter card"
+    },
+    "Use Existing Sync File" : {
+
+    },
+    "Use Existing Sync File…" : {
+
+    },
+    "What needs doing?" : {
+
+    },
+    "What needs doing?  #project" : {
+
+    },
+    "Work" : {
+      "comment" : "Seeded category"
+    },
+    "book flights" : {
+      "comment" : "Starter card, tagged TRIP"
+    },
+    "e.g. Research" : {
+
+    },
+    "existing" : {
+
+    },
+    "from %@" : {
+
+    }
+  },
+  "version" : "1.0"
+}

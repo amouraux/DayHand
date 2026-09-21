@@ -125,20 +125,20 @@ struct CardCategory: Identifiable, Codable, Equatable, Hashable {
     /// arrive with something rather than an empty Settings page. The ids are
     /// fixed so a card written before categories were editable can still be
     /// matched to one.
-    static let defaults: [CardCategory] = [
+    static var defaults: [CardCategory] { [
         CardCategory(
             id: UUID(uuidString: "00000000-0000-0000-0000-00000000A001")!,
-            label: "Home", symbolName: "house", color: .teal
+            label: String(localized: "Home", comment: "Seeded category"), symbolName: "house", color: .teal
         ),
         CardCategory(
             id: UUID(uuidString: "00000000-0000-0000-0000-00000000A002")!,
-            label: "Work", symbolName: "briefcase", color: .indigo
+            label: String(localized: "Work", comment: "Seeded category"), symbolName: "briefcase", color: .indigo
         ),
         CardCategory(
             id: UUID(uuidString: "00000000-0000-0000-0000-00000000A003")!,
-            label: "Courses", symbolName: "graduationcap", color: .purple
+            label: String(localized: "Courses", comment: "Seeded category"), symbolName: "graduationcap", color: .purple
         )
-    ]
+    ] }
 
     init(id: UUID = UUID(), label: String, symbolName: String, color: CategoryColor, modifiedAt: Date = .stamp()) {
         self.id = id

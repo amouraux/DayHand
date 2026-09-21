@@ -160,7 +160,7 @@ struct SettingsView: View {
                                 pendingRestore = backup
                             } label: {
                                 LabeledContent {
-                                    Text("\(backup.cardCount) card\(backup.cardCount == 1 ? "" : "s")")
+                                    Text("\(backup.cardCount) cards")
                                         .foregroundStyle(.secondary)
                                 } label: {
                                     Label(
@@ -207,7 +207,7 @@ struct SettingsView: View {
                 Button("Replace All Cards", role: .destructive) { beginImport(replacing: true) }
                 Button("Cancel", role: .cancel) { }
             } message: {
-                Text("Replacing removes the \(store.cardCount) card\(store.cardCount == 1 ? "" : "s") here first.")
+                Text("Replacing removes the \(store.cardCount) cards here first.")
             }
             .confirmationDialog(
                 "Use Existing Sync File",
@@ -218,7 +218,7 @@ struct SettingsView: View {
                 Button("Replace Cards on This Device", role: .destructive) { beginSyncFile(replacing: true) }
                 Button("Cancel", role: .cancel) { }
             } message: {
-                Text("Merging keeps both sides. Replacing discards the \(store.cardCount) card\(store.cardCount == 1 ? "" : "s") here and takes the file's.")
+                Text("Merging keeps both sides. Replacing discards the \(store.cardCount) cards here and takes the file's.")
             }
             .alert(
                 "Restore this backup?",
@@ -235,11 +235,11 @@ struct SettingsView: View {
                     let when = Scheduler.relativeLabel(for: backup.takenAt)
                     let phrase = ["Today", "Yesterday"].contains(when) ? when.lowercased() : when
                     reportTitle = "Restore"
-                    importReport = "Restored \(count) card\(count == 1 ? "" : "s") from \(phrase)."
+                    importReport = String(localized: "Restored \(count) cards from \(phrase).")
                 }
                 Button("Cancel", role: .cancel) { }
             } message: { backup in
-                Text("The \(store.cardCount) card\(store.cardCount == 1 ? "" : "s") here will be replaced by the \(backup.cardCount) in this backup. Categories and projects come back too.")
+                Text("The \(store.cardCount) cards here will be replaced by the \(backup.cardCount) in this backup. Categories and projects come back too.")
             }
             .alert("Delete all cards?", isPresented: $isConfirmingDeleteAll) {
                 Button("Delete All", role: .destructive) {
@@ -247,7 +247,7 @@ struct SettingsView: View {
                 }
                 Button("Cancel", role: .cancel) { }
             } message: {
-                Text("\(store.cardCount) card\(store.cardCount == 1 ? "" : "s") will be removed. This cannot be undone.")
+                Text("\(store.cardCount) cards will be removed. This cannot be undone.")
             }
             .fileExporter(
                 isPresented: $isCreatingSyncFile,
@@ -331,7 +331,7 @@ struct SettingsView: View {
                 Text(
                     count == 0
                         ? "“\(category.label)” isn’t used by any card."
-                        : "\(count) card\(count == 1 ? "" : "s") will lose this category. The cards themselves are kept."
+                        : String(localized: "\(count) cards will lose this category. The cards themselves are kept.")
                 )
             }
         }

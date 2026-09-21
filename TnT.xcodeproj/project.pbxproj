@@ -18,6 +18,7 @@
 		D00000000000000000000009 /* Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000000000000000000009 /* Sync.swift */; };
 		D0000000000000000000000B /* ProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000B /* ProjectsView.swift */; };
 		D0000000000000000000000C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000C /* PrivacyInfo.xcprivacy */; };
+		D0000000000000000000000D /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000D /* Localizable.xcstrings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		C00000000000000000000008 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C00000000000000000000009 /* Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync.swift; sourceTree = "<group>"; };
 		C0000000000000000000000A /* TnT.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TnT.entitlements; sourceTree = "<group>"; };
+		C0000000000000000000000D /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		C0000000000000000000000C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		C0000000000000000000000B /* ProjectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -78,6 +80,7 @@
 				C00000000000000000000003 /* TodoStore.swift */,
 				C00000000000000000000007 /* Assets.xcassets */,
 				C0000000000000000000000C /* PrivacyInfo.xcprivacy */,
+				C0000000000000000000000D /* Localizable.xcstrings */,
 			);
 			path = TnT;
 			sourceTree = "<group>";
@@ -124,6 +127,12 @@
 			knownRegions = (
 				en,
 				Base,
+				fr,
+				nl,
+				de,
+				es,
+				it,
+				"pt-PT",
 			);
 			mainGroup = A00000000000000000000002;
 			productRefGroup = A00000000000000000000003 /* Products */;
@@ -142,6 +151,7 @@
 			files = (
 				D00000000000000000000007 /* Assets.xcassets in Resources */,
 				D0000000000000000000000C /* PrivacyInfo.xcprivacy in Resources */,
+				D0000000000000000000000D /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,6 +291,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_PREVIEWS = YES;
@@ -315,6 +326,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_PREVIEWS = YES;

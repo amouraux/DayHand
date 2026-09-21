@@ -186,7 +186,10 @@ struct CardRow: View {
     // MARK: - The card itself
 
     private var card: some View {
-        HStack(alignment: .top, spacing: 12) {
+        // Centred, not top-aligned: on a card whose title runs to two lines the
+        // checkbox and category icon belong beside the card, not beside its
+        // first line. On a one-line card the two are the same.
+        HStack(alignment: .center, spacing: 12) {
             Button(action: onToggle) {
                 Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
                     .font(.title3)
@@ -199,7 +202,7 @@ struct CardRow: View {
             // Baseline-aligned so the icon sits on the title's line rather than
             // being centred against it. The slot is occupied even with no
             // category, or the titles of uncategorised cards would not line up.
-            HStack(alignment: .firstTextBaseline, spacing: 10) {
+            HStack(alignment: .center, spacing: 10) {
                 categoryGlyph(category)
                     .frame(width: 20, alignment: .center)
 
@@ -387,14 +390,15 @@ struct SectionHeader: View {
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 10) {
-            // Drawn as a glyph rather than an Image so it sits on the title's
-            // baseline; an Image aligns by its own box and rides high. Smaller
-            // than the title, which is display-sized and would make the symbol
-            // the loudest thing on screen.
-            Text(Image(systemName: bucket.symbolName))
+            // Centred on the title rather than sat on its baseline: the symbol
+            // is much smaller than this display-sized text, and a shared
+            // baseline left it looking dropped. Kept smaller so the name still
+            // leads.
+            Image(systemName: bucket.symbolName)
                 .font(.title2.weight(.semibold))
                 .foregroundStyle(tint)
                 .accessibilityHidden(true)
+                .alignmentGuide(.firstTextBaseline) { d in d[VerticalAlignment.center] + 9 }
 
             Text(bucket.title)
                 .font(.largeTitle.bold())
