@@ -95,6 +95,7 @@
 				B00000000000000000000003 /* Sources */,
 				B00000000000000000000004 /* Frameworks */,
 				B00000000000000000000005 /* Resources */,
+				B0000000000000000000000E /* Stamp build number */,
 			);
 			buildRules = (
 			);
@@ -143,6 +144,25 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		B0000000000000000000000E /* Stamp build number */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
+			);
+			name = "Stamp build number";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Stamp the build number with the number of commits in this repository.\n#\n# App Store Connect refuses a build number it has already seen, and bumping one\n# by hand is remembered until the day it is not. The commit count only ever\n# grows, needs no edit to any file, and ties an uploaded build to an exact\n# commit: `git rev-list --count HEAD` on any revision tells you which.\n#\n# Only the built app is stamped, never the source, so this leaves no diff.\nplist=\"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n[ -f \"$plist\" ] || exit 0\n\ncount=$(cd \"${SRCROOT}\" && git rev-list --count HEAD 2>&1) || { echo \"warning: git failed: $count\"; exit 0; }\n[ -n \"$count\" ] || exit 0\n\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $count\" \"$plist\"\necho \"note: build number set to $count (commits in this repository)\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B00000000000000000000005 /* Resources */ = {
@@ -208,7 +228,7 @@
 				DEVELOPMENT_TEAM = ZL9BJ32RWX;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -265,7 +285,7 @@
 				DEVELOPMENT_TEAM = ZL9BJ32RWX;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
