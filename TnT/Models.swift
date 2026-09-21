@@ -121,20 +121,22 @@ struct CardCategory: Identifiable, Codable, Equatable, Hashable {
     ]
 
     /// Seeded on first run, and used when an old data file has no categories.
-    /// The ids are fixed so cards written before categories were editable can
-    /// still be matched to them by name.
+    /// Three that suit most people, renameable like any other: the point is to
+    /// arrive with something rather than an empty Settings page. The ids are
+    /// fixed so a card written before categories were editable can still be
+    /// matched to one.
     static let defaults: [CardCategory] = [
         CardCategory(
             id: UUID(uuidString: "00000000-0000-0000-0000-00000000A001")!,
-            label: "Research", symbolName: "flask", color: .indigo
+            label: "Home", symbolName: "house", color: .teal
         ),
         CardCategory(
             id: UUID(uuidString: "00000000-0000-0000-0000-00000000A002")!,
-            label: "Teaching", symbolName: "graduationcap", color: .purple
+            label: "Work", symbolName: "briefcase", color: .indigo
         ),
         CardCategory(
             id: UUID(uuidString: "00000000-0000-0000-0000-00000000A003")!,
-            label: "Personal", symbolName: "house", color: .teal
+            label: "Courses", symbolName: "graduationcap", color: .purple
         )
     ]
 
@@ -157,15 +159,14 @@ struct CardCategory: Identifiable, Codable, Equatable, Hashable {
         modifiedAt = try c.decodeIfPresent(Date.self, forKey: .modifiedAt) ?? .distantPast
     }
 
-    /// Maps the three fixed categories this app used to ship with onto the
-    /// seeded ones, so existing cards keep their category.
+    /// Maps the fixed categories this app once shipped with onto a seeded one
+    /// of the same name, so a card written back then keeps its category.
+    ///
+    /// Matched by label rather than by position: the seeded three have been
+    /// renamed since, and matching by position would have filed a card marked
+    /// "research" under whatever now sits first.
     static func legacyID(forRawValue raw: String) -> UUID? {
-        switch raw {
-        case "research": return defaults[0].id
-        case "teaching": return defaults[1].id
-        case "personal": return defaults[2].id
-        default:         return nil
-        }
+        defaults.first { $0.label.caseInsensitiveCompare(raw) == .orderedSame }?.id
     }
 }
 
@@ -478,6 +479,10 @@ struct TodoItem: Identifiable, Codable, Equatable {
     var createdAt: Date = .stamp()
     /// Last edit, used to reconcile two devices.
     var modifiedAt: Date = .stamp()
+    /// One of the cards a new install arrives with, still untouched. Cleared
+    /// the moment the user edits it, and what is left is swept away when real
+    /// cards arrive from another device.
+    var isSample: Bool = false
 
     var isCompleted: Bool { bucket == .completed }
 
@@ -512,6 +517,7 @@ struct TodoItem: Identifiable, Codable, Equatable {
         // Files written before syncing existed have no timestamp; treat them as
         // old so a genuinely edited copy on another device wins.
         modifiedAt = try c.decodeIfPresent(Date.self, forKey: .modifiedAt) ?? .distantPast
+        isSample = try c.decodeIfPresent(Bool.self, forKey: .isSample) ?? false
     }
 
     init(

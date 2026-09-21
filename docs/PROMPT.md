@@ -67,6 +67,23 @@ transparency and no rounded corners of its own: iOS applies its own mask, and
 artwork that arrives already rounded shows the page in the corners and a second
 edge inside the system's. One icon serves both appearances.
 
+## First run
+
+A new install opens with a handful of **sample cards** that explain the app by
+being it: two in Today, two in Tomorrow, one in Later carrying a tag and a
+date, one in Inbox, one already completed. Better than an empty screen and a
+manual.
+
+Mark them, and clear the mark the moment the user edits one. The samples still
+untouched are swept away the first time real cards arrive from another device,
+so a second device set up later never pushes tutorial cards into the shared
+file. Drop them without tombstones: they were never anywhere else.
+
+The seeded categories are **Home, Work and Courses** — three that suit most
+people, renameable like anything else. Match an old file's fixed category names
+by label, not by position, or renaming the seeded three would refile old cards
+under the wrong one.
+
 ## Screen
 
 One screen, no app title and no navigation bar. A vertically scrolling stack of
