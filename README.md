@@ -1,6 +1,6 @@
-# TnT
+# TnTomorrow
 
-A to-do app for iPhone and Mac, built in SwiftUI. Cards live in stacks you file
+TnT for short. A to-do app for iPhone and Mac, built in SwiftUI. Cards live in stacks you file
 them into — **Inbox, Today, Tomorrow, Later, Completed** — and nothing rolls
 over on its own.
 

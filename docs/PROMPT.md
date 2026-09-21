@@ -1,6 +1,6 @@
-# Rebuild prompt — "TnT"
+# Rebuild prompt — "TnTomorrow" (TnT for short)
 
-Build an iPhone app in SwiftUI (iOS 17+, no third-party dependencies) called **TnT**
+Build an iPhone app in SwiftUI (iOS 17+, no third-party dependencies) called **TnTomorrow**
 (Today aNd Tomorrow): a to-do app where every task is a card in a single
 scrolling vertical stack.
 
@@ -51,6 +51,18 @@ place (see Card appearance).
 A deliberate move beats a date. If the user moves a dated card into a stack its
 date contradicts, drop the date rather than letting the next launch drag the card
 back — otherwise manual placement and the date fight each other.
+
+## Identity
+
+Named **TnTomorrow**, TnT for short, which is what the App Store listing and
+the label under the icon say.
+
+The app icon is the same stack of cards the app is made of: four rounded cards
+in the stack colours, fanning up and to the right, with the front one carrying
+a checkbox and two lines. **No lettering** — an iOS icon almost never contains
+text, and at home-screen size a word turns to mush. A light and a dark variant,
+both 1024x1024 with no transparency, drawn edge to edge: the system applies its
+own rounded mask.
 
 ## Screen
 

@@ -4,9 +4,5 @@
 <dict>
 	<key>UIFileSharingEnabled</key>
 	<true/>
-	<!-- The app uses no encryption of its own, so App Store Connect need not
-	     ask about export compliance on every upload. -->
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
 </dict>
 </plist>
