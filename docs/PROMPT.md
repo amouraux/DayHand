@@ -127,6 +127,10 @@ Later, Completed.
 - Empty sections are hidden entirely.
 - When there are no cards at all, show an empty state inviting the user to tap +.
 - A round floating **+** button in the bottom-right corner.
+- The floating circles — filter, settings, jump-to-Today — are **48pt across**,
+  not smaller: 44pt is the minimum a finger can reliably hit, and a 42pt circle
+  that looks right in a screenshot is missed in use. Keep the bottom pair clear
+  of the home indicator, which takes touches from the strip along the edge.
 
 ## Scroll position
 

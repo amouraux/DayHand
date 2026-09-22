@@ -50,12 +50,15 @@ struct ContentView: View {
                     .padding(.top, 6)
             }
             .overlay(alignment: .bottomLeading) {
-                HStack(spacing: 10) {
+                // 12pt apart so a thumb aimed at one does not catch the
+                // other, and high enough to clear the home indicator, which
+                // swallows touches in the strip along the bottom edge.
+                HStack(spacing: 12) {
                     filterButton
                     settingsButton
                 }
                 .padding(.leading, 22)
-                .padding(.bottom, 34)
+                .padding(.bottom, 42)
             }
             .overlay(alignment: .bottomTrailing) { addButton }
             .onAppear {
@@ -244,7 +247,7 @@ struct ContentView: View {
                 }
             }
             .font(.body.weight(.semibold))
-            .frame(width: 42, height: 42)
+            .frame(width: 48, height: 48)
             .background(Circle().fill(Color(.secondarySystemGroupedBackground)))
             .overlay(
                 Circle().strokeBorder(
@@ -253,6 +256,7 @@ struct ContentView: View {
                 )
             )
             .shadow(color: .black.opacity(0.18), radius: 6, y: 3)
+            .contentShape(Circle())
         }
         .buttonStyle(.plain)
         .accessibilityLabel(
@@ -299,10 +303,11 @@ struct ContentView: View {
             Image(systemName: "gearshape.fill")
                 .font(.body.weight(.semibold))
                 .foregroundStyle(Color.primary.opacity(0.75))
-                .frame(width: 42, height: 42)
+                .frame(width: 48, height: 48)
                 .background(Circle().fill(Color(.secondarySystemGroupedBackground)))
                 .overlay(Circle().strokeBorder(Color.primary.opacity(0.10)))
                 .shadow(color: .black.opacity(0.18), radius: 6, y: 3)
+                .contentShape(Circle())
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Settings")
@@ -315,10 +320,11 @@ struct ContentView: View {
             Image(systemName: "sun.max.fill")
                 .font(.body.weight(.semibold))
                 .foregroundStyle(Bucket.today.tint)
-                .frame(width: 42, height: 42)
+                .frame(width: 48, height: 48)
                 .background(Circle().fill(Color(.secondarySystemGroupedBackground)))
                 .overlay(Circle().strokeBorder(Color.primary.opacity(0.10)))
                 .shadow(color: .black.opacity(0.18), radius: 6, y: 3)
+                .contentShape(Circle())
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Scroll to Today")
