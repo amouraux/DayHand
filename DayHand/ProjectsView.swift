@@ -390,7 +390,10 @@ struct ProjectConversionView: View {
         let assignments = candidates
             .filter { chosen.contains($0.id) }
             .map { TodoStore.ProjectAssignment(cardIDs: $0.cardIDs, projectName: target[$0.id] ?? $0.name) }
-        withAnimation { store.convertTitlePrefixes(assignments) }
+        // The count is discarded explicitly: as the closure's only expression
+        // it would otherwise become withAnimation's return value, which nothing
+        // reads — @discardableResult covers the function, not the wrapper.
+        withAnimation { _ = store.convertTitlePrefixes(assignments) }
         dismiss()
     }
 }
