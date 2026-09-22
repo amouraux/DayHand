@@ -18,8 +18,11 @@ xcodebuild -project DayHand.xcodeproj -scheme DayHand \
   -destination 'platform=macOS,variant=Mac Catalyst' build
 ```
 
-On this Mac, Xcode is a beta: prefix commands with
-`DEVELOPER_DIR=/Applications/Xcode-beta.app/Contents/Developer`.
+The selected toolchain is the **released** Xcode at `/Applications/Xcode.app`,
+so the commands above need no prefix. A beta may also be installed alongside it
+— never build an upload with that one: App Store Connect rejects anything built
+against a beta SDK, and the version number alone does not tell you (27.0 beta
+is build 27A5252f, the release is 27A266a).
 
 ## The rule that keeps the tests possible
 
@@ -83,6 +86,21 @@ Two things make it work, and both look redundant until they are removed:
   it after the step that writes that file. Without it the stamp is overwritten.
 - `ENABLE_USER_SCRIPT_SANDBOXING = NO`, because the sandbox hides `.git` and
   git then reports "not a git repository".
+
+## Uploading to App Store Connect
+
+Three things it refuses, each learned the hard way:
+
+- **A beta SDK.** Archive with the released Xcode, not the beta.
+- **A development signature.** Xcode archives with a development identity and
+  re-signs at export, but only if an **Apple Distribution** certificate exists
+  (Xcode → Settings → Accounts → Manage Certificates → + ). Distribute through
+  **App Store Connect → Upload**; "Release Testing" and "Debugging" produce
+  development-signed builds it will not take.
+- **A repeated build number.** Nothing to do: the stamp below handles it.
+
+An iPad build must also declare all four orientations, or the bundle is
+rejected for multitasking.
 
 ## Finishing a change
 
