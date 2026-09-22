@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D00000000000000000000001 /* DayDeckApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000000000000000000001 /* DayDeckApp.swift */; };
+		D00000000000000000000001 /* DayHandApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000000000000000000001 /* DayHandApp.swift */; };
 		D00000000000000000000002 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000000000000000000002 /* Models.swift */; };
 		D00000000000000000000003 /* TodoStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000000000000000000003 /* TodoStore.swift */; };
 		D00000000000000000000004 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000000000000000000004 /* ContentView.swift */; };
@@ -22,8 +22,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A00000000000000000000005 /* DayDeck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DayDeck.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C00000000000000000000001 /* DayDeckApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayDeckApp.swift; sourceTree = "<group>"; };
+		A00000000000000000000005 /* DayHand.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DayHand.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C00000000000000000000001 /* DayHandApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayHandApp.swift; sourceTree = "<group>"; };
 		C00000000000000000000002 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		C00000000000000000000003 /* TodoStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoStore.swift; sourceTree = "<group>"; };
 		C00000000000000000000004 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -32,10 +32,10 @@
 		C00000000000000000000007 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C00000000000000000000008 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C00000000000000000000009 /* Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync.swift; sourceTree = "<group>"; };
-		C0000000000000000000000A /* DayDeck.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DayDeck.entitlements; sourceTree = "<group>"; };
-		C0000000000000000000000D /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
-		C0000000000000000000000C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		C0000000000000000000000A /* DayHand.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DayHand.entitlements; sourceTree = "<group>"; };
 		C0000000000000000000000B /* ProjectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsView.swift; sourceTree = "<group>"; };
+		C0000000000000000000000C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		C0000000000000000000000D /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,7 +52,7 @@
 		A00000000000000000000002 = {
 			isa = PBXGroup;
 			children = (
-				B00000000000000000000006 /* DayDeck */,
+				B00000000000000000000006 /* DayHand */,
 				A00000000000000000000003 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -60,15 +60,15 @@
 		A00000000000000000000003 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A00000000000000000000005 /* DayDeck.app */,
+				A00000000000000000000005 /* DayHand.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B00000000000000000000006 /* DayDeck */ = {
+		B00000000000000000000006 /* DayHand */ = {
 			isa = PBXGroup;
 			children = (
-				C00000000000000000000001 /* DayDeckApp.swift */,
+				C00000000000000000000001 /* DayHandApp.swift */,
 				C00000000000000000000004 /* ContentView.swift */,
 				C00000000000000000000005 /* CardRow.swift */,
 				C00000000000000000000006 /* AddCardView.swift */,
@@ -76,21 +76,21 @@
 				C0000000000000000000000B /* ProjectsView.swift */,
 				C00000000000000000000002 /* Models.swift */,
 				C00000000000000000000009 /* Sync.swift */,
-				C0000000000000000000000A /* DayDeck.entitlements */,
+				C0000000000000000000000A /* DayHand.entitlements */,
 				C00000000000000000000003 /* TodoStore.swift */,
 				C00000000000000000000007 /* Assets.xcassets */,
 				C0000000000000000000000C /* PrivacyInfo.xcprivacy */,
 				C0000000000000000000000D /* Localizable.xcstrings */,
 			);
-			path = DayDeck;
+			path = DayHand;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A00000000000000000000004 /* DayDeck */ = {
+		A00000000000000000000004 /* DayHand */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A00000000000000000000007 /* Build configuration list for PBXNativeTarget "DayDeck" */;
+			buildConfigurationList = A00000000000000000000007 /* Build configuration list for PBXNativeTarget "DayHand" */;
 			buildPhases = (
 				B00000000000000000000003 /* Sources */,
 				B00000000000000000000004 /* Frameworks */,
@@ -101,9 +101,9 @@
 			);
 			dependencies = (
 			);
-			name = DayDeck;
-			productName = DayDeck;
-			productReference = A00000000000000000000005 /* DayDeck.app */;
+			name = DayHand;
+			productName = DayHand;
+			productReference = A00000000000000000000005 /* DayHand.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -121,7 +121,7 @@
 					};
 				};
 			};
-			buildConfigurationList = A00000000000000000000006 /* Build configuration list for PBXProject "DayDeck" */;
+			buildConfigurationList = A00000000000000000000006 /* Build configuration list for PBXProject "DayHand" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -140,10 +140,23 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A00000000000000000000004 /* DayDeck */,
+				A00000000000000000000004 /* DayHand */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B00000000000000000000005 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D00000000000000000000007 /* Assets.xcassets in Resources */,
+				D0000000000000000000000C /* PrivacyInfo.xcprivacy in Resources */,
+				D0000000000000000000000D /* Localizable.xcstrings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		B0000000000000000000000E /* Stamp build number */ = {
@@ -164,19 +177,6 @@
 		};
 /* End PBXShellScriptBuildPhase section */
 
-/* Begin PBXResourcesBuildPhase section */
-		B00000000000000000000005 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				D00000000000000000000007 /* Assets.xcassets in Resources */,
-				D0000000000000000000000C /* PrivacyInfo.xcprivacy in Resources */,
-				D0000000000000000000000D /* Localizable.xcstrings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		B00000000000000000000003 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -190,7 +190,7 @@
 				D00000000000000000000006 /* AddCardView.swift in Sources */,
 				D00000000000000000000008 /* SettingsView.swift in Sources */,
 				D0000000000000000000000B /* ProjectsView.swift in Sources */,
-				D00000000000000000000001 /* DayDeckApp.swift in Sources */,
+				D00000000000000000000001 /* DayHandApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -311,13 +311,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = ZL9BJ32RWX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = DayDeck/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = DayDeck;
+				INFOPLIST_FILE = DayHand/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DayHand;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
@@ -346,13 +346,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				SWIFT_EMIT_LOC_STRINGS = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = ZL9BJ32RWX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = DayDeck/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = DayDeck;
+				INFOPLIST_FILE = DayHand/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DayHand;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
@@ -377,7 +377,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A00000000000000000000006 /* Build configuration list for PBXProject "DayDeck" */ = {
+		A00000000000000000000006 /* Build configuration list for PBXProject "DayHand" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A00000000000000000000008 /* Debug */,
@@ -386,7 +386,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A00000000000000000000007 /* Build configuration list for PBXNativeTarget "DayDeck" */ = {
+		A00000000000000000000007 /* Build configuration list for PBXNativeTarget "DayHand" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A00000000000000000000010 /* Debug */,

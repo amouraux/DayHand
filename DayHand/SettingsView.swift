@@ -105,7 +105,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Language")
                 } footer: {
-                    Text("DayDeck follows your device's language. To read it in another one, pick a language for this app in the system settings.")
+                    Text("DayHand follows your device's language. To read it in another one, pick a language for this app in the system settings.")
                 }
 
                 Section {
@@ -270,7 +270,7 @@ struct SettingsView: View {
                 isPresented: $isCreatingSyncFile,
                 document: SyncFileDocument(data: store.documentData()),
                 contentType: .json,
-                defaultFilename: "DayDeck Cards"
+                defaultFilename: "DayHand Cards"
             ) { result in
                 adoptSyncFile(from: result, creating: true, replacing: false)
             }
@@ -299,7 +299,7 @@ struct SettingsView: View {
                 isPresented: $isExporting,
                 document: CSVFile(text: store.exportCSV()),
                 contentType: .commaSeparatedText,
-                defaultFilename: "DayDeck Cards"
+                defaultFilename: "DayHand Cards"
             ) { _ in }
             .fileImporter(
                 isPresented: $isImporting,

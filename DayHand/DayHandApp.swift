@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct DayDeckApp: App {
+struct DayHandApp: App {
     @StateObject private var store = TodoStore()
 
     var body: some Scene {

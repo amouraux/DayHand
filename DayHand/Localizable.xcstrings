@@ -2135,46 +2135,6 @@
         }
       }
     },
-    "DayDeck follows your device's language. To read it in another one, pick a language for this app in the system settings.": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DayDeck suit la langue de votre appareil. Pour le lire dans une autre, choisissez une langue pour cette app dans les réglages du système."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DayDeck volgt de taal van je apparaat. Wil je het in een andere taal lezen, kies dan een taal voor deze app in de systeeminstellingen."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DayDeck folgt der Sprache Ihres Geräts. Um es in einer anderen zu lesen, wählen Sie in den Systemeinstellungen eine Sprache für diese App."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DayDeck sigue el idioma de tu dispositivo. Para leerlo en otro, elige un idioma para esta app en los ajustes del sistema."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DayDeck segue la lingua del dispositivo. Per leggerlo in un'altra, scegli una lingua per questa app nelle impostazioni di sistema."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "O DayDeck segue o idioma do seu dispositivo. Para o ler noutro, escolha um idioma para esta app nas definições do sistema."
-          }
-        }
-      }
-    },
     "Default": {
       "localizations": {
         "de": {
@@ -7023,6 +6983,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "de %@"
+          }
+        }
+      }
+    },
+    "DayHand follows your device's language. To read it in another one, pick a language for this app in the system settings.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand suit la langue de votre appareil. Pour le lire dans une autre, choisissez une langue pour cette app dans les réglages du système."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand volgt de taal van je apparaat. Wil je het in een andere taal lezen, kies dan een taal voor deze app in de systeeminstellingen."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand folgt der Sprache Ihres Geräts. Um es in einer anderen zu lesen, wählen Sie in den Systemeinstellungen eine Sprache für diese App."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand sigue el idioma de tu dispositivo. Para leerlo en otro, elige un idioma para esta app en los ajustes del sistema."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand segue la lingua del dispositivo. Per leggerlo in un'altra, scegli una lingua per questa app nelle impostazioni di sistema."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O DayHand segue o idioma do seu dispositivo. Para o ler noutro, escolha um idioma para esta app nas definições do sistema."
           }
         }
       }

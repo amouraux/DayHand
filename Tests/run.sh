@@ -7,5 +7,5 @@ set -e
 root=$(cd "$(dirname "$0")/.." && pwd)
 out="$root/Tests/.build"
 mkdir -p "$out"
-swiftc -O "$root/DayDeck/Models.swift" "$root/DayDeck/Sync.swift" "$root/Tests/main.swift" -o "$out/tests"
+swiftc -O "$root/DayHand/Models.swift" "$root/DayHand/Sync.swift" "$root/Tests/main.swift" -o "$out/tests"
 "$out/tests" "$@"

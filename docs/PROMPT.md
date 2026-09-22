@@ -1,6 +1,6 @@
-# Rebuild prompt — "DayDeck"
+# Rebuild prompt — "DayHand"
 
-Build an iPhone app in SwiftUI (iOS 17+, no third-party dependencies) called **DayDeck**
+Build an iPhone app in SwiftUI (iOS 17+, no third-party dependencies) called **DayHand**
 (Today aNd Tomorrow): a to-do app where every task is a card in a single
 scrolling vertical stack.
 
@@ -54,7 +54,7 @@ back — otherwise manual placement and the date fight each other.
 
 ## Identity
 
-Named **DayDeck**: a deck of cards, dealt a day at a time. Short enough for a
+Named **DayHand**: a deck of cards, dealt a day at a time. Short enough for a
 home-screen label, and it says what the app is.
 
 The app icon is three cards fanned out: a white one in front carrying a blue
