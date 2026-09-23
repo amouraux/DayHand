@@ -28,6 +28,25 @@ struct SettingsView: View {
         NavigationStack {
             List {
                 Section {
+                    ForEach(ReviewWeek.allCases) { week in
+                        NavigationLink {
+                            ReviewView(week: week).environmentObject(store)
+                        } label: {
+                            LabeledContent {
+                                Text("\(finished(week))").monospacedDigit()
+                            } label: {
+                                Label(week.title, systemImage: week == .thisWeek
+                                      ? "checkmark.circle" : "clock.arrow.circlepath")
+                            }
+                        }
+                    }
+                } header: {
+                    Text("Review")
+                } footer: {
+                    Text("What you have finished, grouped by the day you finished it.")
+                }
+
+                Section {
                     ForEach(store.categories) { category in
                         Button {
                             editing = category
@@ -205,7 +224,7 @@ struct SettingsView: View {
                     Text("Removes every card on this device. Categories are kept. If a sync file is in use, the deletion reaches your other devices too.")
                 }
             }
-            .navigationTitle("Settings")
+            .navigationTitle("More")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -356,6 +375,12 @@ struct SettingsView: View {
 
     /// A sheet presented straight from a dialog's button can be swallowed while
     /// the dialog is still dismissing, so let the run loop turn over first.
+    /// How many cards were finished in a week, for the row beside its name.
+    private func finished(_ week: ReviewWeek) -> Int {
+        guard let interval = week.interval() else { return 0 }
+        return Review.count(completedIn: interval, cards: store.items)
+    }
+
     /// The language the app is actually being read in, named in that language:
     /// "Français", not "French", which is what the system settings will show.
     private var currentLanguage: String {

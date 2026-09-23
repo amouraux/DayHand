@@ -300,7 +300,7 @@ struct ContentView: View {
         Button {
             isShowingSettings = true
         } label: {
-            Image(systemName: "gearshape.fill")
+            Image(systemName: "ellipsis")
                 .font(.body.weight(.semibold))
                 .foregroundStyle(Color.primary.opacity(0.75))
                 .frame(width: 48, height: 48)
@@ -310,7 +310,7 @@ struct ContentView: View {
                 .contentShape(Circle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Settings")
+        .accessibilityLabel("More")
     }
 
     private func todayButton(_ proxy: ScrollViewProxy) -> some View {

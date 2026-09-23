@@ -219,6 +219,26 @@ identified by that alone SwiftUI reuses the old row without feeding it the new
 card — it keeps painting the previous stack's colour and a date it no longer has.
 Include the stack in each row's view identity.
 
+## Looking back
+
+The bottom-left button opens more than settings, so it is an **ellipsis, not a
+gear**, and the sheet is titled **More**. Its first section is **Review**: two
+rows, *This week* and *Last week*, each showing how many cards were finished
+and opening a list of them grouped by the day they were finished, newest day
+first, and newest card within a day.
+
+Two weeks only. The question worth answering is "what did I get done", not
+"let me browse an archive" — the Completed stack already holds everything.
+
+Weeks start on whichever day the reader's calendar starts on: Monday across
+most of Europe, Sunday in the US. Take the boundary seriously — a card ticked
+off at 23:59 on Sunday belongs to the week that was ending, not the one
+beginning. A card that was un-completed has no timestamp and never happened.
+
+Days with nothing on them are left out rather than drawn empty, and a week with
+nothing at all shows one line of text instead of a row of blank days. The rows
+are a record, not cards: no swipes, no checkbox to untick, no stack colour.
+
 ## Categories and Settings
 
 Categories are **defined by the user**, not fixed. A category is a **label**, an

@@ -537,6 +537,82 @@ struct TodoItem: Identifiable, Codable, Equatable {
     }
 }
 
+// MARK: - Looking back at what got done
+
+/// A week to look back over. Only two, deliberately: the question worth asking
+/// is "what did I get done", not "let me browse an archive" — the Completed
+/// stack already holds everything.
+enum ReviewWeek: String, CaseIterable, Identifiable {
+    case thisWeek
+    case lastWeek
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .thisWeek: return String(localized: "This week", comment: "Review period")
+        case .lastWeek: return String(localized: "Last week", comment: "Review period")
+        }
+    }
+
+    /// The days the week covers, starting on whichever day the reader's
+    /// calendar starts on — Monday in most of Europe, Sunday in the US.
+    func interval(now: Date = Date(), calendar: Calendar = .current) -> DateInterval? {
+        guard let current = calendar.dateInterval(of: .weekOfYear, for: now) else { return nil }
+        switch self {
+        case .thisWeek:
+            return current
+        case .lastWeek:
+            guard let earlier = calendar.date(byAdding: .day, value: -7, to: current.start) else { return nil }
+            return calendar.dateInterval(of: .weekOfYear, for: earlier)
+        }
+    }
+}
+
+/// Groups finished cards by the day they were finished.
+enum Review {
+    struct Day: Identifiable, Equatable {
+        /// Midnight on the day these were completed.
+        let date: Date
+        /// Most recently completed first.
+        let cards: [TodoItem]
+
+        var id: Date { date }
+    }
+
+    /// The days of a week that have something on them, newest first. Days with
+    /// nothing completed are left out rather than shown empty: a week of blank
+    /// rows says nothing that one line of text cannot.
+    static func days(
+        completedIn interval: DateInterval,
+        cards: [TodoItem],
+        calendar: Calendar = .current
+    ) -> [Day] {
+        var byDay: [Date: [TodoItem]] = [:]
+        for card in cards {
+            // A card that was un-completed has no timestamp and did not happen.
+            guard card.isCompleted, let done = card.completedAt else { continue }
+            // `contains` is half-open, so a card finished at the very start of
+            // next week belongs to next week, not this one.
+            guard interval.contains(done) else { continue }
+            byDay[calendar.startOfDay(for: done), default: []].append(card)
+        }
+
+        return byDay
+            .map { day, cards in
+                Day(date: day, cards: cards.sorted {
+                    ($0.completedAt ?? .distantPast) > ($1.completedAt ?? .distantPast)
+                })
+            }
+            .sorted { $0.date > $1.date }
+    }
+
+    static func count(completedIn interval: DateInterval, cards: [TodoItem], calendar: Calendar = .current) -> Int {
+        days(completedIn: interval, cards: cards, calendar: calendar)
+            .reduce(0) { $0 + $1.cards.count }
+    }
+}
+
 // MARK: - Dates
 
 /// Date helpers. Buckets are stored on the card, so dates never decide where a

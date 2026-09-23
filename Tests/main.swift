@@ -305,5 +305,67 @@ do {
     expect(plain.removingSampleCards() == plain, "a document with no samples is untouched")
 }
 
+
+// MARK: M — looking back at a week
+do {
+    // A calendar whose weeks start on Monday, as they do across Europe.
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(identifier: "Europe/Brussels")!
+    calendar.firstWeekday = 2
+
+    func at(_ text: String) -> Date {
+        let f = DateFormatter()
+        f.calendar = calendar; f.timeZone = calendar.timeZone
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.dateFormat = "yyyy-MM-dd HH:mm"
+        return f.date(from: text)!
+    }
+    // Wednesday 23 September 2026.
+    let now = at("2026-09-23 10:00")
+
+    let thisWeek = ReviewWeek.thisWeek.interval(now: now, calendar: calendar)!
+    let lastWeek = ReviewWeek.lastWeek.interval(now: now, calendar: calendar)!
+    expect(thisWeek.start == at("2026-09-21 00:00"), "this week starts on Monday")
+    expect(lastWeek.start == at("2026-09-14 00:00"), "last week is the seven days before it")
+    expect(lastWeek.end == thisWeek.start, "the two weeks meet without a gap or an overlap")
+
+    func done(_ title: String, _ when: String) -> TodoItem {
+        var card = TodoItem(title: title, bucket: .completed)
+        card.completedAt = at(when)
+        card.bucketBeforeCompletion = .today
+        return card
+    }
+    var openCard = TodoItem(title: "not done", bucket: .today)
+    openCard.completedAt = at("2026-09-22 09:00")   // a stale stamp on an open card
+
+    let cards = [
+        done("Monday morning", "2026-09-21 09:00"),
+        done("Monday evening", "2026-09-21 18:30"),
+        done("Wednesday", "2026-09-23 08:00"),
+        done("Sunday, just before the week turned", "2026-09-20 23:59"),
+        done("A fortnight ago", "2026-09-10 12:00"),
+        openCard,
+    ]
+
+    let week = Review.days(completedIn: thisWeek, cards: cards, calendar: calendar)
+    expect(week.map(\.cards.count) == [1, 2], "grouped by day, newest day first — got \(week.map(\.cards.count))")
+    expect(week.first?.cards.first?.title == "Wednesday", "today's card leads")
+    expect(week.last?.cards.map(\.title) == ["Monday evening", "Monday morning"],
+           "within a day, the most recent is first")
+    expect(Review.count(completedIn: thisWeek, cards: cards, calendar: calendar) == 3, "three finished this week")
+
+    let previous = Review.days(completedIn: lastWeek, cards: cards, calendar: calendar)
+    expect(previous.map { $0.cards.map(\.title) } == [["Sunday, just before the week turned"]],
+           "a card finished at 23:59 on Sunday belongs to the week that was ending")
+    expect(!week.contains { $0.cards.contains { $0.title == "not done" } },
+           "an open card with a stale timestamp is not counted as done")
+    expect(!week.contains { $0.cards.contains { $0.title == "A fortnight ago" } }, "older weeks are left out")
+
+    // A week with nothing in it is empty, not a row of blank days.
+    let quiet = DateInterval(start: at("2026-08-03 00:00"), end: at("2026-08-10 00:00"))
+    expect(Review.days(completedIn: quiet, cards: cards, calendar: calendar).isEmpty, "a quiet week has no days")
+    expect(Review.count(completedIn: quiet, cards: cards, calendar: calendar) == 0, "and counts nothing")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)
