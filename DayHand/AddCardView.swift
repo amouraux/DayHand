@@ -747,6 +747,7 @@ struct FilterSheet: View {
 
     private var categories: [CardCategory] { store.categories }
     private var openCounts: [UUID: Int] { store.openCardCounts }
+    private var categoryCounts: [UUID: Int] { store.openCategoryCounts }
     private var isEverything: Bool { categorySelection.isEmpty && projectSelection.isEmpty }
 
     /// Archived projects only appear while something of theirs is still open.
@@ -774,7 +775,7 @@ struct FilterSheet: View {
                         categorySelection.removeAll()
                         projectSelection.removeAll()
                     } label: {
-                        row(symbol: "square.grid.2x2", tint: .secondary, text: "Everything",
+                        row(symbol: "square.grid.2x2", tint: .secondary, text: Text("Everything"),
                             count: nil, selected: isEverything, bold: false)
                     }
                 }
@@ -860,6 +861,9 @@ struct FilterSheet: View {
                     .frame(width: 24)
                 Text("All \(category.label)").foregroundStyle(Color.primary)
                 Spacer()
+                Text("\(categoryCounts[category.id] ?? 0)")
+                    .monospacedDigit()
+                    .foregroundStyle(.secondary)
                 if categorySelection.contains(category.id) {
                     Image(systemName: "checkmark").foregroundStyle(Color.accentColor)
                 }
@@ -873,6 +877,7 @@ struct FilterSheet: View {
     private func groupRow(_ name: String, projects: [Project], categoryID: UUID?) -> some View {
         let ids = Set(projects.map(\.id))
         let allSelected = !ids.isEmpty && ids.isSubset(of: projectSelection)
+        let open = FilterCounts.total(of: projects, in: openCounts)
 
         return Button {
             if allSelected {
@@ -891,8 +896,12 @@ struct FilterSheet: View {
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Color.primary)
                 Spacer()
-                Text("All \(projects.count)")
+                // Cards, like every row under it. It used to be the number of
+                // projects, in the same slot and the same grey, so a group
+                // holding one finished project read as one card to be had.
+                Text("\(open)")
                     .font(.subheadline)
+                    .monospacedDigit()
                     .foregroundStyle(.secondary)
                 if allSelected {
                     Image(systemName: "checkmark").foregroundStyle(Color.accentColor)
@@ -908,6 +917,7 @@ struct FilterSheet: View {
             }
         }
         .accessibilityLabel("Group \(name), \(projects.count) projects")
+        .accessibilityValue("\(open)")
         .accessibilityHint(allSelected ? "Clears the group" : "Selects the whole group")
     }
 
@@ -915,7 +925,7 @@ struct FilterSheet: View {
         Button {
             toggle(project.id, in: $projectSelection)
         } label: {
-            row(symbol: "number", tint: tint, text: project.name,
+            row(symbol: "number", tint: tint, text: Text(project.name),
                 count: openCounts[project.id] ?? 0,
                 selected: projectSelection.contains(project.id), bold: true)
                 .padding(.leading, indented ? 20 : 0)
@@ -958,12 +968,12 @@ struct FilterSheet: View {
         }
     }
 
-    private func row(symbol: String, tint: Color, text: String, count: Int?, selected: Bool, bold: Bool) -> some View {
+    private func row(symbol: String, tint: Color, text: Text, count: Int?, selected: Bool, bold: Bool) -> some View {
         HStack(spacing: 12) {
             Image(systemName: symbol)
                 .foregroundStyle(tint)
                 .frame(width: 24)
-            Text(text)
+            text
                 .fontWeight(bold ? .semibold : .regular)
                 .foregroundStyle(bold ? tint : Color.primary)
             Spacer()

@@ -367,14 +367,10 @@ final class TodoStore: ObservableObject {
     }
 
     /// Cards not yet done, per project.
-    var openCardCounts: [UUID: Int] {
-        var result: [UUID: Int] = [:]
-        for card in items where !card.isCompleted {
-            guard let id = card.projectID else { continue }
-            result[id, default: 0] += 1
-        }
-        return result
-    }
+    var openCardCounts: [UUID: Int] { FilterCounts.byProject(items) }
+
+    /// The same, per category, so both kinds of filter row read alike.
+    var openCategoryCounts: [UUID: Int] { FilterCounts.byCategory(items) }
 
     func cardCount(using project: Project) -> Int {
         items.filter { $0.projectID == project.id }.count

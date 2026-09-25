@@ -361,6 +361,14 @@ Selecting nothing means everything. Selecting one or more shows only cards
 carrying one of them — an uncategorised card is *not* shown, since it belongs to
 none of the chosen categories.
 
+Every row carries the **same tally: cards still to do**, counted with the test
+the list itself applies — so a row offering one card always has one to show. It
+did not always: a group heading counted its *projects*, in the slot and the grey
+where every row beneath it counted cards, so a group holding one finished
+project read "All 1" and then filtered to nothing. Category rows showed no
+number at all. A row may still read 0 and turn up completed cards, which is the
+harmless direction — you are shown more than was promised, never less.
+
 The button reflects the state: the plain filter glyph when nothing is chosen,
 the category's own icon and colour when exactly one is, and the **count** when
 several are — no single icon can stand for several. Deleting a category removes

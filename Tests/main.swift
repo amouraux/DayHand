@@ -367,5 +367,66 @@ do {
     expect(Review.count(completedIn: quiet, cards: cards, calendar: calendar) == 0, "and counts nothing")
 }
 
+// MARK: N — what the filter rows promise
+do {
+    let research = UUID(), teaching = UUID()
+    let grant = Project(name: "FRIA", categoryID: research, group: "Grants")
+    let idle = Project(name: "GD-EQP", categoryID: research, group: "Grants")   // everything in it is done
+    let course = Project(name: "ABC1234", categoryID: teaching)
+
+    func card(_ title: String, _ bucket: Bucket, _ category: UUID?, _ project: Project?) -> TodoItem {
+        var item = TodoItem(title: title, bucket: bucket)
+        item.categoryID = category
+        item.projectID = project?.id
+        return item
+    }
+
+    let cards = [
+        card("write the case for support", .today, research, grant),
+        card("chase the letter", .later, research, grant),
+        card("order the rig", .completed, research, idle),
+        card("mark the exams", .completed, teaching, course),
+        card("book the room", .inbox, teaching, course),
+        card("nothing filed", .today, nil, nil),
+    ]
+
+    let byProject = FilterCounts.byProject(cards)
+    expect(byProject[grant.id] == 2, "a project counts the cards still to do")
+    expect(byProject[idle.id] == nil, "a project whose cards are all done counts none")
+    expect(byProject[course.id] == 1, "the finished exam is not waiting to be marked again")
+
+    let byCategory = FilterCounts.byCategory(cards)
+    expect(byCategory[research] == 2 && byCategory[teaching] == 1, "categories count the same way")
+
+    // The bug this replaces: the heading showed how many projects were in the
+    // group, so a group holding one finished project offered "All 1" and then
+    // filtered to nothing.
+    expect(FilterCounts.total(of: [idle], in: byProject) == 0, "a group of finished projects offers nothing")
+    expect(FilterCounts.total(of: [grant, idle], in: byProject) == 2, "a group is worth its projects' cards, not its projects")
+    expect(FilterCounts.total(of: [], in: byProject) == 0, "an empty group counts nothing")
+
+    // The promise itself: whatever a row shows, filtering by it finds at least
+    // that many cards to show, using the test the list actually applies.
+    func filtered(categories: Set<UUID>, projects: Set<UUID>) -> [TodoItem] {
+        cards.filter { card in
+            if let id = card.categoryID, categories.contains(id) { return true }
+            if let id = card.projectID, projects.contains(id) { return true }
+            return false
+        }
+    }
+    for project in [grant, idle, course] {
+        let shown = byProject[project.id] ?? 0
+        expect(filtered(categories: [], projects: [project.id]).count >= shown,
+               "\(project.name) promised \(shown) and must not show fewer")
+    }
+    for category in [research, teaching] {
+        let shown = byCategory[category] ?? 0
+        expect(filtered(categories: [category], projects: []).count >= shown,
+               "a category promising \(shown) must not show fewer")
+    }
+    expect(filtered(categories: [], projects: [grant.id, idle.id]).count
+           >= FilterCounts.total(of: [grant, idle], in: byProject), "nor may a group")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

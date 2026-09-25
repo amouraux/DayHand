@@ -310,6 +310,37 @@ enum ProjectGroups {
     }
 }
 
+/// The tallies beside the rows of the filter sheet.
+///
+/// Every row counts the same thing — cards still to do, matched with the same
+/// test the filter itself applies — so a row offering one card always has one
+/// to show. A group heading used to count its projects instead, in the slot
+/// where every row beneath it counted cards, and a group holding a single
+/// finished project read "All 1" and then filtered to nothing.
+enum FilterCounts {
+    static func byProject(_ cards: [TodoItem]) -> [UUID: Int] {
+        tally(cards) { $0.projectID }
+    }
+
+    static func byCategory(_ cards: [TodoItem]) -> [UUID: Int] {
+        tally(cards) { $0.categoryID }
+    }
+
+    /// A group is worth the sum of its projects' cards.
+    static func total(of projects: [Project], in counts: [UUID: Int]) -> Int {
+        projects.reduce(0) { $0 + (counts[$1.id] ?? 0) }
+    }
+
+    private static func tally(_ cards: [TodoItem], by key: (TodoItem) -> UUID?) -> [UUID: Int] {
+        var result: [UUID: Int] = [:]
+        for card in cards where !card.isCompleted {
+            guard let id = key(card) else { continue }
+            result[id, default: 0] += 1
+        }
+        return result
+    }
+}
+
 // MARK: - Typing a project
 
 /// The `#word` being typed in a title, found at the end of the text because
