@@ -365,6 +365,21 @@ everywhere in the interface; never "subproject" or "tag".
   and an empty one leaves the project's group alone, so an older file never
   takes a project out of its group.
 
+## Saying that the sync happened
+
+**Sync Now reports what it did.** It used to call the merge and show nothing,
+so pressing it looked identical whether it pulled in forty cards, found
+nothing new, or could not read the file at all — which, for a feature whose
+whole proposition is "trust this one file", is the worst place to be silent.
+A line under the button now says which, with the time it happened: "3 cards
+arrived", "Already up to date", or "Could not read the sync file". Finding
+nothing is a real answer and is reported like any other.
+
+Counted as a pure function on `StoreDocument` (`change(from:)`) rather than in
+the view, so it is tested: a card with a new id has *arrived*, the same id with
+different contents was *updated* — moving stack counts here, it is the same
+card — and an id that is gone was *removed*.
+
 ## Filtering
 
 A filter button beside the Settings button opens a sheet listing **All

@@ -499,5 +499,50 @@ do {
            "an empty project has nothing to finish")
 }
 
+// MARK: Q — what a sync actually did
+do {
+    let cat = UUID()
+    func card(_ title: String, _ bucket: Bucket = .today) -> TodoItem {
+        var item = TodoItem(title: title, bucket: bucket)
+        item.categoryID = cat
+        return item
+    }
+
+    let a = card("write the case"), b = card("chase the letter"), c = card("mark the exams")
+    let before = StoreDocument(cards: [a, b])
+
+    expect(before.change(from: before).isNothing, "a document that did not move reports nothing")
+
+    // One new card.
+    let arrived = StoreDocument(cards: [a, b, c])
+    expect(arrived.change(from: before) == StoreDocument.Change(arrived: 1, changed: 0, removed: 0),
+           "a card that was not there before has arrived")
+
+    // One card edited: same id, different content.
+    var edited = b; edited.title = "chase the letter again"
+    let changed = StoreDocument(cards: [a, edited])
+    expect(changed.change(from: before) == StoreDocument.Change(arrived: 0, changed: 1, removed: 0),
+           "the same card with new contents counts as updated, not as arrived")
+
+    // One card gone.
+    let gone = StoreDocument(cards: [a])
+    expect(gone.change(from: before) == StoreDocument.Change(arrived: 0, changed: 0, removed: 1),
+           "a card that is no longer there was removed")
+
+    // All three at once, which is what a real merge looks like.
+    let mixed = StoreDocument(cards: [edited, c])
+    expect(mixed.change(from: before) == StoreDocument.Change(arrived: 1, changed: 1, removed: 1),
+           "arrived, updated and removed are counted separately — got \(mixed.change(from: before))")
+
+    // Moving a card between stacks is an edit, not an arrival: same id.
+    var moved = a; moved.bucket = .later
+    expect(StoreDocument(cards: [moved, b]).change(from: before)
+           == StoreDocument.Change(arrived: 0, changed: 1, removed: 0),
+           "a card that changed stack is the same card")
+
+    expect(StoreDocument.Change().isNothing, "an empty change is nothing")
+    expect(!StoreDocument.Change(arrived: 1, changed: 0, removed: 0).isNothing, "one arrival is something")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

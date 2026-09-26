@@ -21,6 +21,16 @@ final class TodoStore: ObservableObject {
     /// Set when the filing pass raised cards out of LATER, so the app can say
     /// so. Cleared by the view once it has been read.
     @Published private(set) var autoFileNotice: AutoFileNotice?
+
+    /// The result of the last sync anyone asked for, for the line under the
+    /// button. Cleared when the sync file is given up.
+    @Published private(set) var lastSync: SyncOutcome?
+
+    struct SyncOutcome: Equatable {
+        let at: Date
+        let change: StoreDocument.Change
+        let couldNotRead: Bool
+    }
     private var pollTimer: Timer?
     private var lastSeenSyncDate: Date?
     /// The day the last filing pass ran for, so a window left open overnight can
@@ -702,13 +712,17 @@ final class TodoStore: ObservableObject {
     var cardCount: Int { items.count }
 
     func stopUsingSyncFile() {
+        lastSync = nil
         storage.stopUsingSyncFile()
         save()
     }
 
     /// Pull anything the other device wrote. Safe to call often.
+    /// Records what happened, so Settings can say it. A sync that finds nothing
+    /// is a real answer and gets recorded too — silence is what made the button
+    /// feel broken.
     func refreshFromSyncFile() {
-        pullRemoteChanges()
+        lastSync = pullRemoteChanges()
     }
 
     // MARK: Live updates
@@ -890,13 +904,21 @@ final class TodoStore: ObservableObject {
 
     fileprivate func pullRemoteChangesIfNeeded() { pullRemoteChanges() }
 
-    private func pullRemoteChanges() {
+    @discardableResult
+    private func pullRemoteChanges() -> SyncOutcome {
+        guard let remote = storage.read() else {
+            return SyncOutcome(at: Date(), change: .init(), couldNotRead: true)
+        }
         // Reading back our own write is the common case; bailing out when the
         // file already matches is what keeps this from looping.
-        guard let remote = storage.read(), remote != document else { return }
+        guard remote != document else {
+            return SyncOutcome(at: Date(), change: .init(), couldNotRead: false)
+        }
+        let before = document
         discardSamples(given: remote)
         apply(document.merged(with: remote))
         applyScheduledDates()
         save()
+        return SyncOutcome(at: Date(), change: document.change(from: before), couldNotRead: false)
     }
 }

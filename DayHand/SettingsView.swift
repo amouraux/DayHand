@@ -141,6 +141,27 @@ struct SettingsView: View {
                             Label("Sync Now", systemImage: "arrow.clockwise")
                         }
 
+                        // Pressing the button used to look the same whether it
+                        // merged forty cards, found nothing, or could not read
+                        // the file at all. It says which, now.
+                        if let sync = store.lastSync {
+                            LabeledContent {
+                                Text(sync.at, style: .relative)
+                                    .foregroundStyle(.secondary)
+                                    .monospacedDigit()
+                            } label: {
+                                Label {
+                                    Text(syncSummary(sync))
+                                } icon: {
+                                    Image(systemName: sync.couldNotRead
+                                          ? "exclamationmark.triangle" : "checkmark.circle")
+                                }
+                                .foregroundStyle(sync.couldNotRead ? Color.orange : .secondary)
+                            }
+                            .font(.subheadline)
+                            .transition(.opacity)
+                        }
+
                         Button(role: .destructive) {
                             store.stopUsingSyncFile()
                         } label: {
@@ -393,6 +414,19 @@ struct SettingsView: View {
     /// iOS gives every app that ships more than one language its own Language
     /// screen, so there is nothing to reimplement here — just a way to reach
     /// it. macOS keeps the same choice in Language & Region instead.
+    /// Says what happened, not that it succeeded.
+    private func syncSummary(_ sync: TodoStore.SyncOutcome) -> String {
+        if sync.couldNotRead { return String(localized: "Could not read the sync file") }
+        let c = sync.change
+        if c.isNothing { return String(localized: "Already up to date") }
+
+        var parts: [String] = []
+        if c.arrived > 0 { parts.append(String(localized: "\(c.arrived) cards arrived")) }
+        if c.changed > 0 { parts.append(String(localized: "\(c.changed) cards updated")) }
+        if c.removed > 0 { parts.append(String(localized: "\(c.removed) cards removed")) }
+        return parts.joined(separator: ", ")
+    }
+
     private func openLanguageSettings() {
         #if targetEnvironment(macCatalyst)
         let url = URL(string: "x-apple.systempreferences:com.apple.Localization-Settings.extension")

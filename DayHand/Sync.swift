@@ -68,6 +68,34 @@ struct StoreDocument: Codable, Equatable {
 
     static let empty = StoreDocument()
 
+    /// What a merge actually did, so "Sync Now" can say so rather than looking
+    /// identical whether it pulled in forty cards, found nothing, or failed.
+    /// Counted here rather than in the view, so it can be tested.
+    struct Change: Equatable {
+        var arrived = 0
+        var changed = 0
+        var removed = 0
+
+        var isNothing: Bool { arrived == 0 && changed == 0 && removed == 0 }
+    }
+
+    /// Cards only. Renaming a category is real, but "3 cards came in" is what
+    /// someone pressing a sync button is asking about.
+    func change(from previous: StoreDocument) -> Change {
+        let before = Dictionary(previous.cards.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        let after = Dictionary(cards.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        var change = Change()
+        for (id, card) in after {
+            if let old = before[id] {
+                if old != card { change.changed += 1 }
+            } else {
+                change.arrived += 1
+            }
+        }
+        change.removed = before.keys.filter { after[$0] == nil }.count
+        return change
+    }
+
     init(
         categories: [CardCategory] = [],
         cards: [TodoItem] = [],
