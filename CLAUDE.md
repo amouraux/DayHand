@@ -46,6 +46,17 @@ and, when one is configured, to the user's sync file in iCloud Drive.
   cards and sync file. Build it to check it compiles; test behaviour on the
   simulator, which has its own container.
 - Seeding the simulator with a copy of real data is fine; say so afterwards.
+- **Check a hand-written `cards.json` before loading it**: `Tests/run.sh
+  path/to/file.json` decodes it and says why if it will not. The app answers a
+  file it cannot read by silently replacing it with the starter document, which
+  looks exactly like the seed having no effect. Two traps: `deletedCards`,
+  `deletedCategories` and `deletedProjects` are **maps** of id to tombstone
+  date, not arrays; and timestamps take exactly three fractional digits
+  (`2026-09-26T09:15:00.123Z`), so Python's default microseconds throw.
+- The Mac window cannot be checked from here — the app shares the live file,
+  and screen capture needs a permission this process does not have. A **wide
+  iPad simulator is the proxy**: the sidebar layout keys off size class, not
+  `#if targetEnvironment(macCatalyst)`, so the iPad shows the Mac's layout.
 
 ## Sync, and why edits are stamped carefully
 

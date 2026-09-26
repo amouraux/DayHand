@@ -23,9 +23,50 @@ struct ContentView: View {
     /// Set once the list has been parked on TODAY, so it only happens on launch.
     @State private var didAnchorToToday = false
 
-    @Environment(\.scenePhase) private var scenePhase
+    /// The search bar, and what is typed in it. Both empty means not searching:
+    /// closing the bar clears the query, so the list is never quietly narrowed
+    /// by something that is no longer on screen.
+    @State private var isSearching = false
+    @State private var query = ""
+    @FocusState private var searchFocused: Bool
 
+    /// Whether the sidebar is open, so the filter button can always bring it
+    /// back. The detail column has no navigation bar to hang a toggle in.
+    @State private var columns: NavigationSplitViewVisibility = .all
+
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    /// A window wide enough to keep the filter beside the cards rather than on
+    /// top of them: the Mac always, an iPad unless it is sharing the screen.
+    /// Never a phone — a Max in landscape is horizontally regular too, and a
+    /// sidebar there would crowd the cards it exists to explain.
+    private var showsSidebar: Bool {
+        horizontalSizeClass == .regular && UIDevice.current.userInterfaceIdiom != .phone
+    }
+
+    @ViewBuilder
     var body: some View {
+        if showsSidebar {
+            // Choosing a project and seeing the cards change are the same
+            // moment, not two — the whole point of the filter is the list
+            // behind it, which a sheet covers up.
+            NavigationSplitView(columnVisibility: $columns) {
+                FilterList(
+                    categorySelection: $filterCategoryIDs.animation(.easeInOut(duration: 0.2)),
+                    projectSelection: $filterProjectIDs.animation(.easeInOut(duration: 0.2))
+                )
+                .navigationTitle("Filter")
+            } detail: {
+                stack
+            }
+            .navigationSplitViewStyle(.balanced)
+        } else {
+            stack
+        }
+    }
+
+    private var stack: some View {
         ScrollViewReader { proxy in
             // The background paints the whole screen, but the scroll view itself
             // stays inside the safe area so pinned headers park below the status
@@ -45,15 +86,21 @@ struct ContentView: View {
             // clear of the list's top edge and far from both other controls, so
             // neither is hit by accident.
             .overlay(alignment: .topTrailing) {
-                todayButton(proxy)
-                    .padding(.trailing, 16)
-                    .padding(.top, 6)
+                // It stands down for the search bar, which wants the width —
+                // and on a handful of results there is nothing to jump over.
+                if !isSearching {
+                    todayButton(proxy)
+                        .padding(.trailing, 16)
+                        .padding(.top, 6)
+                        .transition(.opacity)
+                }
             }
             .overlay(alignment: .bottomLeading) {
                 // 12pt apart so a thumb aimed at one does not catch the
                 // other, and high enough to clear the home indicator, which
                 // swallows touches in the strip along the bottom edge.
                 HStack(spacing: 12) {
+                    searchButton
                     filterButton
                     settingsButton
                 }
@@ -179,18 +226,30 @@ struct ContentView: View {
 
     // MARK: - Filtering
 
-    /// Cards for a stack, after the filter: any chosen category or project.
+    /// Cards for a stack, after the filter — any chosen category or project —
+    /// and then after the search. Both narrow; neither reorders.
     private func cards(in bucket: Bucket) -> [TodoItem] {
-        let all = store.items(in: bucket)
-        guard isFiltered else { return all }
-        return all.filter { card in
-            if let id = card.categoryID, filterCategoryIDs.contains(id) { return true }
-            if let id = card.projectID, filterProjectIDs.contains(id) { return true }
-            return false
+        var all = store.items(in: bucket)
+        if isFiltered {
+            all = all.filter { card in
+                if let id = card.categoryID, filterCategoryIDs.contains(id) { return true }
+                if let id = card.projectID, filterProjectIDs.contains(id) { return true }
+                return false
+            }
+        }
+        let terms = searchTerms
+        guard !terms.isEmpty else { return all }
+        return all.filter {
+            CardSearch.matches(title: $0.title, project: store.project(for: $0)?.name, terms: terms)
         }
     }
 
+    private var searchTerms: [String] { CardSearch.terms(in: query) }
+
     private var isFiltered: Bool { !filterCategoryIDs.isEmpty || !filterProjectIDs.isEmpty }
+
+    /// Narrowed by either means, for the empty state.
+    private var isNarrowed: Bool { isFiltered || !searchTerms.isEmpty }
 
     /// The chosen categories, in the order the user arranged them.
     private var activeFilters: [CardCategory] {
@@ -227,7 +286,11 @@ struct ContentView: View {
 
     private var filterButton: some View {
         Button {
-            isFiltering = true
+            if showsSidebar {
+                withAnimation { columns = columns == .detailOnly ? .all : .detailOnly }
+            } else {
+                isFiltering = true
+            }
         } label: {
             Group {
                 if !isFiltered {
@@ -264,6 +327,78 @@ struct ContentView: View {
                 ? "Filter: " + filterNames.joined(separator: ", ")
                 : "Filter by category or project"
         )
+    }
+
+    /// Opens the bar, or closes it and drops the query with it. ⌘F on the Mac,
+    /// where a search field is expected to be one keystroke away.
+    private var searchButton: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                isSearching.toggle()
+                if !isSearching { query = "" }
+            }
+            searchFocused = isSearching
+        } label: {
+            Image(systemName: isSearching ? "magnifyingglass.circle.fill" : "magnifyingglass")
+                .font(.body.weight(.semibold))
+                .foregroundStyle(searchTerms.isEmpty ? Color.primary.opacity(0.75) : Color.accentColor)
+                .frame(width: 48, height: 48)
+                .background(Circle().fill(Color(.secondarySystemGroupedBackground)))
+                .overlay(
+                    Circle().strokeBorder(
+                        searchTerms.isEmpty ? Color.primary.opacity(0.10) : Color.accentColor.opacity(0.85),
+                        lineWidth: searchTerms.isEmpty ? 1 : 2
+                    )
+                )
+                .shadow(color: .black.opacity(0.18), radius: 6, y: 3)
+                .contentShape(Circle())
+        }
+        .buttonStyle(.plain)
+        .keyboardShortcut("f", modifiers: .command)
+        .accessibilityLabel(isSearching ? "Close search" : "Search cards")
+    }
+
+    /// Above the stack rather than over it: the cards are the answer, and a bar
+    /// floating on top of them would cover the first one.
+    private var searchField: some View {
+        HStack(spacing: 10) {
+            HStack(spacing: 8) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundStyle(.secondary)
+                TextField("Search cards", text: $query)
+                    .textFieldStyle(.plain)
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.never)
+                    .submitLabel(.search)
+                    .focused($searchFocused)
+                if !query.isEmpty {
+                    Button {
+                        query = ""
+                        searchFocused = true
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("Clear search")
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 9)
+            .background(Capsule().fill(Color(.secondarySystemGroupedBackground)))
+            .overlay(Capsule().strokeBorder(Color.primary.opacity(0.10)))
+
+            Button("Cancel") {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    isSearching = false
+                    query = ""
+                }
+            }
+            .buttonStyle(.plain)
+            .foregroundStyle(Color.accentColor)
+        }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 8)
     }
 
     /// The colour of a single active filter, or the accent for several.
@@ -333,6 +468,16 @@ struct ContentView: View {
     // MARK: - Stack of cards
 
     private var cardStack: some View {
+        VStack(spacing: 0) {
+            if isSearching {
+                searchField
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+            scrollingCards
+        }
+    }
+
+    private var scrollingCards: some View {
         ScrollView {
             // Headers scroll with the content rather than pinning: on iOS 26+
             // the scroll view extends under the status bar, and a pinned header
@@ -396,13 +541,25 @@ struct ContentView: View {
                     systemImage: "tray",
                     description: Text("Tap + to drop a card into your inbox.")
                 )
-            } else if isFiltered,
+            } else if isNarrowed,
                       Bucket.allCases.allSatisfy({ cards(in: $0).isEmpty }) {
-                ContentUnavailableView(
-                    filterNames.count == 1 ? "Nothing in \(filterNames[0])" : "Nothing matches",
-                    systemImage: "line.3.horizontal.decrease",
-                    description: Text(filterNames.joined(separator: ", "))
-                )
+                if searchTerms.isEmpty {
+                    ContentUnavailableView(
+                        filterNames.count == 1 ? "Nothing in \(filterNames[0])" : "Nothing matches",
+                        systemImage: "line.3.horizontal.decrease",
+                        description: Text(filterNames.joined(separator: ", "))
+                    )
+                } else {
+                    // The query is the thing to correct, so it leads — even
+                    // when a filter is also on, which the description says.
+                    ContentUnavailableView(
+                        "No card matches \u{201C}\(query)\u{201D}",
+                        systemImage: "magnifyingglass",
+                        description: Text(isFiltered
+                                          ? "Searching only within \(filterNames.joined(separator: ", "))."
+                                          : "Try fewer words.")
+                    )
+                }
             }
         }
     }

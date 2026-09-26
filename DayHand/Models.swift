@@ -310,6 +310,31 @@ enum ProjectGroups {
     }
 }
 
+/// Finding a card by what it shows.
+///
+/// The text searched is the text on the card: its title, with the project name
+/// that is printed in front of it. Case and accents are ignored, so "creche"
+/// finds "crèche" and a French keyboard is never required to find a card typed
+/// on one. Several words all have to appear, in any order — "flight book"
+/// finds "book the flights" — because a query is a memory of a card, not its
+/// wording.
+enum CardSearch {
+    static func normalised(_ text: String) -> String {
+        text.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+    }
+
+    static func terms(in query: String) -> [String] {
+        normalised(query).split(whereSeparator: \.isWhitespace).map(String.init)
+    }
+
+    /// A blank query matches everything, so an empty search bar hides nothing.
+    static func matches(title: String, project: String?, terms: [String]) -> Bool {
+        guard !terms.isEmpty else { return true }
+        let haystack = normalised([project, title].compactMap { $0 }.joined(separator: " "))
+        return terms.allSatisfy { haystack.contains($0) }
+    }
+}
+
 /// The tallies beside the rows of the filter sheet.
 ///
 /// Every row counts the same thing — cards still to do, matched with the same

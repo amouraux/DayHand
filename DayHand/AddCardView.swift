@@ -716,20 +716,23 @@ struct CardActionsSheet: View {
 /// Narrow the list to any mix of categories and projects. A card shows if it
 /// matches any of them: "Teaching, and also STUDY2026".
 ///
-/// A sheet rather than a menu, because a menu closes after every tap and
-/// multi-select needs to stay open while several are picked. Projects sit under
-/// their category — and, within it, under their group when they have one —
-/// with their open-card count, and can be searched.
+/// Never a menu: a menu closes after every tap, and multi-select needs to stay
+/// open while several are picked. Projects sit under their category — and,
+/// within it, under their group when they have one — with their open-card
+/// count, and can be searched.
 ///
 /// This is also where projects are organised into groups: long-press a project
 /// (right-click on the Mac) to move it, or a group heading to rename it. Tapping
 /// keeps its one job, selecting, so the two never clash.
-struct FilterSheet: View {
+///
+/// The list itself, without a container: the phone presents it as a sheet, and
+/// a wide window keeps it in a sidebar, where choosing a project and seeing the
+/// cards change are the same moment rather than two.
+struct FilterList: View {
     @Binding var categorySelection: Set<UUID>
     @Binding var projectSelection: Set<UUID>
 
     @EnvironmentObject private var store: TodoStore
-    @Environment(\.dismiss) private var dismiss
     @State private var search = ""
 
     /// A project waiting for the name of a new group to go into.
@@ -768,73 +771,63 @@ struct FilterSheet: View {
     }
 
     var body: some View {
-        NavigationStack {
-            List {
-                Section {
-                    Button {
-                        categorySelection.removeAll()
-                        projectSelection.removeAll()
-                    } label: {
-                        row(symbol: "square.grid.2x2", tint: .secondary, text: Text("Everything"),
-                            count: nil, selected: isEverything, bold: false)
-                    }
+        List {
+            Section {
+                Button {
+                    categorySelection.removeAll()
+                    projectSelection.removeAll()
+                } label: {
+                    row(symbol: "square.grid.2x2", tint: .secondary, text: Text("Everything"),
+                        count: nil, selected: isEverything, bold: false)
                 }
+            }
 
-                if search.isEmpty {
-                    ForEach(categories) { category in
-                        Section(category.label) {
-                            categoryRow(category)
-                            projectRows(layout(for: category), categoryID: category.id,
-                                        tint: category.color.prefixTint)
-                        }
-                    }
-                    let loose = layout(for: nil)
-                    if !loose.groups.isEmpty || !loose.ungrouped.isEmpty {
-                        Section("Other projects") {
-                            projectRows(loose, categoryID: nil, tint: .primary)
-                        }
-                    }
-                } else {
-                    let key = Project.key(for: search)
-                    Section("Projects") {
-                        ForEach(visibleProjects.filter { $0.key.contains(key) }) { project in
-                            projectRow(project, tint: tint(for: project), indented: false)
-                        }
+            if search.isEmpty {
+                ForEach(categories) { category in
+                    Section(category.label) {
+                        categoryRow(category)
+                        projectRows(layout(for: category), categoryID: category.id,
+                                    tint: category.color.prefixTint)
                     }
                 }
-            }
-            .searchable(text: $search, prompt: "Search projects")
-            .navigationTitle("Filter")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") { dismiss() }
+                let loose = layout(for: nil)
+                if !loose.groups.isEmpty || !loose.ungrouped.isEmpty {
+                    Section("Other projects") {
+                        projectRows(loose, categoryID: nil, tint: .primary)
+                    }
                 }
-            }
-            .alert("New Group", isPresented: Binding(
-                get: { newGroupFor != nil }, set: { if !$0 { newGroupFor = nil } }
-            ), presenting: newGroupFor) { project in
-                TextField("Holidays", text: $nameField)
-                Button("Move") {
-                    withAnimation { store.setProjectGroup(project, to: nameField) }
+            } else {
+                let key = Project.key(for: search)
+                Section("Projects") {
+                    ForEach(visibleProjects.filter { $0.key.contains(key) }) { project in
+                        projectRow(project, tint: tint(for: project), indented: false)
+                    }
                 }
-                Button("Cancel", role: .cancel) { }
-            } message: { project in
-                Text("A group for \(project.name) and others like it, such as Holidays or Clients.")
-            }
-            .alert("Rename Group", isPresented: Binding(
-                get: { renaming != nil }, set: { if !$0 { renaming = nil } }
-            ), presenting: renaming) { group in
-                TextField("Name", text: $nameField)
-                Button("Rename") {
-                    withAnimation { store.renameGroup(group.name, in: group.categoryID, to: nameField) }
-                }
-                Button("Cancel", role: .cancel) { }
-            } message: { group in
-                Text("Renames \u{201C}\(group.name)\u{201D} on every project in it. Using another group\u{2019}s name joins the two.")
             }
         }
-        .presentationDetents([.medium, .large])
+        .searchable(text: $search, prompt: "Search projects")
+        .alert("New Group", isPresented: Binding(
+            get: { newGroupFor != nil }, set: { if !$0 { newGroupFor = nil } }
+        ), presenting: newGroupFor) { project in
+            TextField("Holidays", text: $nameField)
+            Button("Move") {
+                withAnimation { store.setProjectGroup(project, to: nameField) }
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: { project in
+            Text("A group for \(project.name) and others like it, such as Holidays or Clients.")
+        }
+        .alert("Rename Group", isPresented: Binding(
+            get: { renaming != nil }, set: { if !$0 { renaming = nil } }
+        ), presenting: renaming) { group in
+            TextField("Name", text: $nameField)
+            Button("Rename") {
+                withAnimation { store.renameGroup(group.name, in: group.categoryID, to: nameField) }
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: { group in
+            Text("Renames \u{201C}\(group.name)\u{201D} on every project in it. Using another group\u{2019}s name joins the two.")
+        }
     }
 
     /// Groups first, each under its heading, then the projects in no group.
@@ -994,5 +987,28 @@ struct FilterSheet: View {
         } else {
             selection.wrappedValue.insert(id)
         }
+    }
+}
+
+/// The same list, presented modally — what a phone gets, where there is no room
+/// to keep it beside the cards.
+struct FilterSheet: View {
+    @Binding var categorySelection: Set<UUID>
+    @Binding var projectSelection: Set<UUID>
+
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            FilterList(categorySelection: $categorySelection, projectSelection: $projectSelection)
+                .navigationTitle("Filter")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { dismiss() }
+                    }
+                }
+        }
+        .presentationDetents([.medium, .large])
     }
 }

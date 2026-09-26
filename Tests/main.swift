@@ -428,5 +428,31 @@ do {
            >= FilterCounts.total(of: [grant, idle], in: byProject), "nor may a group")
 }
 
+// MARK: O — finding a card by what it shows
+do {
+    func hit(_ query: String, _ title: String, _ project: String? = nil) -> Bool {
+        CardSearch.matches(title: title, project: project, terms: CardSearch.terms(in: query))
+    }
+
+    expect(hit("flight", "book flights"), "a word inside the title")
+    expect(hit("FLIGHT", "book flights"), "case is ignored")
+    expect(hit("creche", "réserver la crèche"), "accents are ignored, so a plain keyboard finds them")
+    expect(hit("crèche", "reserver la creche"), "and the other way round")
+    expect(hit("flight book", "book the flights"), "every word must appear, in any order")
+    expect(!hit("flight hotel", "book the flights"), "a word that appears nowhere fails the match")
+    expect(hit("  ", "anything"), "a blank query hides nothing")
+    expect(CardSearch.terms(in: "   ").isEmpty, "and reads as no terms at all")
+
+    // The project is printed in front of the title, so it is part of the card.
+    expect(hit("fria", "write the case for support", "FRIA"), "the project prefix is searched too")
+    expect(hit("fria support", "write the case for support", "FRIA"), "across the project and the title")
+    expect(!hit("fria", "write the case for support", "SPINEP"), "another project does not match")
+    expect(!hit("fria", "write the case for support"), "nor does a card with no project")
+
+    // Whole-string matching would make a two-word query useless: the words are
+    // separated by the project name or by other words.
+    expect(hit("book crèche", "book the crèche", "TRIP"), "words either side of other words")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

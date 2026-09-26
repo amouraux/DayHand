@@ -369,11 +369,44 @@ project read "All 1" and then filtered to nothing. Category rows showed no
 number at all. A row may still read 0 and turn up completed cards, which is the
 harmless direction — you are shown more than was promised, never less.
 
+On a **wide window — the Mac always, an iPad unless it is sharing the screen —
+the filter is not a sheet at all but a sidebar**, beside the cards rather than
+on top of them. Filtering is choosing a scope, and a sheet covers the very list
+it is changing: you pick, dismiss, look, and reopen if it was wrong. In a
+sidebar, clicking a project and seeing the cards change are the same moment,
+and the next project is one click away — which is what browsing a structure
+needs. It is the same list either way, so the two never drift apart. A phone
+keeps the sheet: there is no room to keep both, and a sidebar would crowd the
+cards it exists to explain. (A Mac Catalyst sheet cannot be resized, so making
+the sheet bigger would not have answered this.)
+
+The filter button stays on both. On a phone it opens the sheet; on a wide
+window it shows and hides the sidebar, because the card list has no navigation
+bar to hang a toggle in and a hidden sidebar must always be recoverable.
+
 The button reflects the state: the plain filter glyph when nothing is chosen,
 the category's own icon and colour when exactly one is, and the **count** when
 several are — no single icon can stand for several. Deleting a category removes
 it from the selection, so the list is never filtered by something that no longer
 exists.
+
+## Searching
+
+A magnifying glass beside the filter opens a bar above the stack, and ⌘F does
+the same on the Mac. Typing narrows every stack at once, in place: the cards
+stay in their sections, keep their colours and can still be swiped and ticked,
+because a separate list of results would be a second place where cards live.
+Closing the bar clears the query, so the list is never quietly narrowed by
+something no longer on screen, and the jump-to-Today circle stands down while
+the bar is open — it wants the width, and there is nothing to jump over in a
+handful of results.
+
+What is searched is what the card shows: its title, and the project name
+printed in front of it. Case and accents are ignored, so "creche" finds
+"crèche" without a French keyboard. Several words must all appear but in any
+order — "flight book" finds "book the flights" — because a query is a memory
+of a card, not its wording. Search and filter compose: a search runs inside
+whatever the filter has already chosen, and the empty state says so.
 
 ## Later and dates
 
