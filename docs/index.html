@@ -80,6 +80,9 @@
   .btn small { font-weight: 400; font-size: 12.5px; opacity: .8; letter-spacing: 0; }
   .btn-primary { background: var(--today); color: #fff; }
   .btn-secondary { background: var(--panel); color: var(--ink); border-color: var(--line); box-shadow: var(--shadow); }
+  /* Not a link: it says where the Mac build is, without pretending to be one. */
+  .btn-quiet { background: transparent; color: var(--ink-soft); border-color: var(--line); cursor: default; }
+  .btn-quiet:hover { transform: none; filter: none; }
 
   /* ---------- ideas ---------- */
   section.wrap { padding: 62px 16px; }
@@ -150,9 +153,11 @@
     <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">
       Join the beta<small>iPhone &amp; iPad · TestFlight</small>
     </a>
-    <a class="btn btn-secondary" href="https://github.com/amouraux/DayHand/releases/latest">
-      Download for Mac<small>Latest release · .dmg</small>
-    </a>
+    <!-- When scripts/release-mac.sh has produced a notarised .dmg and it is
+         attached to a GitHub release, swap this span for:
+         <a class="btn btn-secondary" href="https://github.com/amouraux/DayHand/releases/latest">
+           Download for Mac<small>Latest release · .dmg</small></a>  -->
+    <span class="btn btn-quiet">Mac build on the way<small>Runs today from source</small></span>
   </div>
 </header>
 
@@ -172,7 +177,7 @@
     </div>
     <div class="idea i-later">
       <h3>Tags for the work you keep returning to</h3>
-      <p>Type <code>#FRIA</code> and the card carries that project: a coloured
+      <p>Type <code>#TRIP</code> and the card carries that project: a coloured
          prefix, a category filled in for you, and a name you can change on
          every card at once.</p>
     </div>
@@ -219,9 +224,10 @@
     <div class="card">
       <h3>Mac</h3>
       <p class="req">macOS 14 or later</p>
-      <p>A signed disk image. Download it, drag DayHand to your Applications
-         folder, and open it.</p>
-      <a class="btn btn-secondary" href="https://github.com/amouraux/DayHand/releases/latest">Download the .dmg</a>
+      <p>The same app, one target, no separate Mac version. A signed disk
+         image is being prepared; until it lands you can build it yourself —
+         open the project in Xcode, choose <b>My Mac</b>, and press ⌘R.</p>
+      <a class="btn btn-secondary" href="https://github.com/amouraux/DayHand">Get the source</a>
     </div>
   </div>
 </section>
