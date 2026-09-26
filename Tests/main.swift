@@ -454,5 +454,50 @@ do {
     expect(hit("book crèche", "book the crèche", "TRIP"), "words either side of other words")
 }
 
+// MARK: P — putting a project away
+do {
+    let research = UUID()
+    let course = Project(name: "ABC1234", categoryID: research)
+    let other = Project(name: "FRIA", categoryID: research)
+
+    func card(_ title: String, _ bucket: Bucket, _ project: Project?) -> TodoItem {
+        var item = TodoItem(title: title, bucket: bucket)
+        item.projectID = project?.id
+        return item
+    }
+
+    let cards = [
+        card("mark the exams", .today, course),
+        card("upload the slides", .later, course),
+        card("last year's exams", .completed, course),
+        card("write the case", .today, other),
+        card("no project at all", .today, nil),
+    ]
+
+    let open = Archiving.openCards(of: course, in: cards)
+    expect(open.map(\.title) == ["mark the exams", "upload the slides"],
+           "what archiving would have to finish — got \(open.map(\.title))")
+    expect(!Archiving.isFinished(course, in: cards), "a project with work left is not finished")
+    expect(Archiving.openCards(of: other, in: cards).count == 1, "another project's cards are its own")
+
+    // A card already done, and one belonging to nothing, are never swept in.
+    expect(!open.contains { $0.title == "last year's exams" }, "a finished card needs no finishing")
+    expect(!open.contains { $0.title == "no project at all" }, "a card with no project is not in one")
+
+    let done = cards.map { c -> TodoItem in
+        guard c.projectID == course.id, !c.isCompleted else { return c }
+        var card = c
+        card.bucketBeforeCompletion = card.bucket
+        card.bucket = .completed
+        return card
+    }
+    expect(Archiving.isFinished(course, in: done), "once they are ticked off, it can be put away")
+    expect(!Archiving.isFinished(other, in: done), "and only that project is affected")
+
+    // Nothing in it at all counts as finished: a project typed and never used.
+    expect(Archiving.isFinished(Project(name: "EMPTY", categoryID: research), in: cards),
+           "an empty project has nothing to finish")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

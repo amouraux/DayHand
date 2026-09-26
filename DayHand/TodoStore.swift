@@ -482,6 +482,25 @@ final class TodoStore: ObservableObject {
         updateProject(project.id) { $0.isArchived = archived }
     }
 
+    /// What archiving would have to finish first.
+    func openCards(in project: Project) -> [TodoItem] {
+        Archiving.openCards(of: project, in: items)
+    }
+
+    /// Tick off everything still open in a project, as one edit, and put the
+    /// project away. A real edit on every card, so it is stamped and syncs.
+    func completeAllAndArchive(_ project: Project) {
+        let stamp = Date.stamp()
+        for index in items.indices
+        where items[index].projectID == project.id && !items[index].isCompleted {
+            items[index].bucketBeforeCompletion = items[index].bucket
+            items[index].bucket = .completed
+            items[index].completedAt = stamp
+            items[index].modifiedAt = stamp
+        }
+        setProjectArchived(project, true)
+    }
+
     /// Fold one project into another: its cards move across, and it goes.
     func mergeProject(_ source: Project, into target: Project) {
         guard source.id != target.id else { return }

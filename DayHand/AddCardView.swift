@@ -734,6 +734,9 @@ struct FilterList: View {
 
     @EnvironmentObject private var store: TodoStore
     @State private var search = ""
+    /// Off by default, and on every opening: an archived project is one that is
+    /// over, and the list is about what is still going on.
+    @State private var showArchived = false
 
     /// A project waiting for the name of a new group to go into.
     @State private var newGroupFor: Project?
@@ -753,12 +756,16 @@ struct FilterList: View {
     private var categoryCounts: [UUID: Int] { store.openCategoryCounts }
     private var isEverything: Bool { categorySelection.isEmpty && projectSelection.isEmpty }
 
-    /// Archived projects only appear while something of theirs is still open.
+    /// Archived projects are left out until they are asked for — except one
+    /// that is currently filtering the list, which must never vanish from
+    /// under the selection that named it.
     private var visibleProjects: [Project] {
         store.projects
-            .filter { !$0.isArchived || (openCounts[$0.id] ?? 0) > 0 || projectSelection.contains($0.id) }
+            .filter { !$0.isArchived || showArchived || projectSelection.contains($0.id) }
             .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
     }
+
+    private var hasArchived: Bool { store.projects.contains { $0.isArchived } }
 
     /// Projects whose category no longer exists are shown with the loose ones.
     private func scope(of project: Project) -> UUID? {
@@ -785,6 +792,18 @@ struct FilterList: View {
                 Text("Choosing one replaces the last. Touch and hold a row \u{2014} right-click on the Mac \u{2014} to add it instead.")
             }
 
+            // Above the categories, not below them: on a phone the search field
+            // is pinned to the bottom of the sheet, and a list short enough not
+            // to scroll would leave this row stranded underneath it. Only worth
+            // a row at all once there is something to include.
+            if hasArchived {
+                Section {
+                    Toggle(isOn: $showArchived.animation(.easeInOut(duration: 0.2))) {
+                        Label("Include archived projects", systemImage: "archivebox")
+                    }
+                }
+            }
+
             if search.isEmpty {
                 ForEach(categories) { category in
                     Section(category.label) {
@@ -807,6 +826,7 @@ struct FilterList: View {
                     }
                 }
             }
+
         }
         .searchable(text: $search, prompt: "Search projects")
         .alert("New Group", isPresented: Binding(
@@ -844,7 +864,8 @@ struct FilterList: View {
     }
 
     private func tint(for project: Project) -> Color {
-        project.categoryID.flatMap { id in categories.first { $0.id == id } }?.color.prefixTint ?? .primary
+        if project.isArchived { return .secondary }
+        return project.categoryID.flatMap { id in categories.first { $0.id == id } }?.color.prefixTint ?? .primary
     }
 
     private func categoryRow(_ category: CardCategory) -> some View {
@@ -919,7 +940,8 @@ struct FilterList: View {
         Button {
             withAnimation { pick(projects: [project.id]) }
         } label: {
-            row(symbol: "number", tint: tint, text: Text(project.name),
+            row(symbol: "number", tint: project.isArchived ? .secondary : tint,
+                text: Text(project.name),
                 count: openCounts[project.id] ?? 0,
                 selected: projectSelection.contains(project.id), bold: true)
                 .padding(.leading, indented ? 20 : 0)

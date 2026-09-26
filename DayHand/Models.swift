@@ -310,6 +310,24 @@ enum ProjectGroups {
     }
 }
 
+/// Putting a project away.
+///
+/// A project is archived when it is over — a course that has finished, a grant
+/// that was decided — so it stops cluttering the list of what you might type
+/// next. That only makes sense once nothing in it is still to do, which is why
+/// archiving offers to tick off whatever is left rather than quietly hiding
+/// work: cards that vanished while still open would be work lost.
+enum Archiving {
+    /// What archiving would have to finish first.
+    static func openCards(of project: Project, in cards: [TodoItem]) -> [TodoItem] {
+        cards.filter { $0.projectID == project.id && !$0.isCompleted }
+    }
+
+    static func isFinished(_ project: Project, in cards: [TodoItem]) -> Bool {
+        openCards(of: project, in: cards).isEmpty
+    }
+}
+
 /// Finding a card by what it shows.
 ///
 /// The text searched is the text on the card: its title, with the project name

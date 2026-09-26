@@ -337,6 +337,21 @@ everywhere in the interface; never "subproject" or "tag".
   Headings use primary, not secondary, text — dimmed rows read as disabled.
   Settings → Projects shows the same grouping read-only. Cards, New Task
   chips and the editor's project menu are untouched.
+- **Archiving a project** puts it away once it is over — a course that has
+  finished, a grant that was decided. Archived projects keep their cards but
+  drop out of the project list and are never suggested, so the list stays about
+  what is still going on. **Archiving is only offered once nothing in the
+  project is still to do**: asking to archive a project with open cards prompts
+  ("2 cards are still to do. They are marked completed.") and ticks them off as
+  one edit. Cards that vanished while still open would be work lost, which is
+  why it completes them rather than quietly hiding them. Unarchiving is a
+  single button, and typing an archived project's name brings it back too.
+  **"Include archived projects"** in the Filter shows them again, off by
+  default and on every opening; it sits above the categories, because on a
+  phone the search field is pinned to the bottom of the sheet and a short list
+  would leave a row below it stranded underneath. An archived project shown
+  that way is greyed, and one that is currently filtering the list is never
+  hidden from under its own selection.
 - **Two devices creating the same project offline** would both survive a merge.
   After every load and merge, fold same-name projects into the one with the
   lowest id, remap cards to it without stamping them, and tombstone the others

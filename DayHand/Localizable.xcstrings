@@ -297,6 +297,137 @@
         }
       }
     },
+    "%lld cards are still to do. They are marked completed." : {
+      "comment" : "Message of the archive prompt",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Karte ist noch offen. Sie wird als erledigt markiert."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Karten sind noch offen. Sie werden als erledigt markiert."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld card is still to do. It is marked completed."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld cards are still to do. They are marked completed."
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Queda %lld tarjeta por hacer. Se marcará como completada."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Quedan %lld tarjetas por hacer. Se marcarán como completadas."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld carte reste à faire. Elle sera marquée comme terminée."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld cartes restent à faire. Elles seront marquées comme terminées."
+                }
+              }
+            }
+          }
+        },
+        "it" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld carta è ancora da fare. Verrà contrassegnata come completata."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld carte sono ancora da fare. Verranno contrassegnate come completate."
+                }
+              }
+            }
+          }
+        },
+        "nl" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Er staat nog %lld kaart open. Die wordt als voltooid gemarkeerd."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Er staan nog %lld kaarten open. Die worden als voltooid gemarkeerd."
+                }
+              }
+            }
+          }
+        },
+        "pt-PT" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Falta %lld cartão. Será marcado como concluído."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Faltam %lld cartões. Serão marcados como concluídos."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld cards in this project." : {
       "localizations" : {
         "de" : {
@@ -893,6 +1024,47 @@
         }
       }
     },
+    "A project is archived once it is over, so anything still to do is marked completed first." : {
+      "comment" : "Project editor footer, when cards are still open",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Projekt wird archiviert, wenn es vorbei ist — alles noch Offene wird daher zuerst als erledigt markiert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un proyecto se archiva cuando ha terminado, así que lo que quede por hacer se marca primero como completado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un projet s’archive une fois terminé : ce qui reste à faire est donc d’abord marqué comme terminé."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un progetto si archivia quando è finito, quindi ciò che resta da fare viene prima contrassegnato come completato."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Een project wordt gearchiveerd als het voorbij is, dus wat nog openstaat wordt eerst als voltooid gemarkeerd."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um projeto é arquivado quando termina, por isso o que falta é primeiro marcado como concluído."
+          }
+        }
+      }
+    },
     "A short one-word name for something you are working on." : {
       "localizations" : {
         "de" : {
@@ -1254,6 +1426,88 @@
         }
       }
     },
+    "Archive %@?" : {
+      "comment" : "Title of the prompt shown when cards are still open",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ archivieren?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Archivar %@?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archiver %@ ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archiviare %@?"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ archiveren?"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arquivar %@?"
+          }
+        }
+      }
+    },
+    "Archive Project" : {
+      "comment" : "Button in the project editor",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Projekt archivieren"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivar el proyecto"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archiver le projet"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivia il progetto"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project archiveren"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arquivar o projeto"
+          }
+        }
+      }
+    },
     "Archived" : {
       "localizations" : {
         "de" : {
@@ -1294,42 +1548,84 @@
         }
       }
     },
-    "Archived projects keep their cards but are no longer suggested. Typing one’s name brings it back." : {
+    "Archived projects keep their cards, are no longer suggested, and are left out of the Filter until “Include archived projects” is on. Typing one’s name brings it back." : {
+      "comment" : "Footer of the Archived section in Settings → Projects",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Archivierte Projekte behalten ihre Karten, werden aber nicht mehr vorgeschlagen. Den Namen zu tippen holt sie zurück."
+            "value" : "Archivierte Projekte behalten ihre Karten, werden nicht mehr vorgeschlagen und im Filter ausgelassen, bis „Archivierte Projekte einschließen“ aktiv ist. Einen Namen zu tippen holt das Projekt zurück."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los proyectos archivados conservan sus tarjetas pero ya no se sugieren. Escribir su nombre los recupera."
+            "value" : "Los proyectos archivados conservan sus tarjetas, dejan de sugerirse y quedan fuera del Filtro hasta que se active «Incluir los proyectos archivados». Al escribir su nombre vuelven."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les projets archivés gardent leurs cartes mais ne sont plus proposés. Taper leur nom les réactive."
+            "value" : "Les projets archivés gardent leurs cartes, ne sont plus suggérés et restent hors du Filtre tant que « Inclure les projets archivés » est désactivé. Taper un nom le fait revenir."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "I progetti archiviati mantengono le loro carte ma non vengono più suggeriti. Digitarne il nome li riporta."
+            "value" : "I progetti archiviati conservano le loro carte, non vengono più suggeriti e restano fuori dal Filtro finché «Includi i progetti archiviati» non è attivo. Digitarne il nome li riporta."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gearchiveerde projecten behouden hun kaarten maar worden niet meer voorgesteld. Typ de naam om er weer een te gebruiken."
+            "value" : "Gearchiveerde projecten behouden hun kaarten, worden niet meer voorgesteld en blijven buiten het filter tot ‘Gearchiveerde projecten tonen’ aanstaat. De naam typen haalt ze terug."
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Os projetos arquivados mantêm os seus cartões mas deixam de ser sugeridos. Escrever o nome traz um de volta."
+            "value" : "Os projetos arquivados mantêm os cartões, deixam de ser sugeridos e ficam fora do Filtro até ativar «Incluir os projetos arquivados». Escrever o nome traz-los de volta."
+          }
+        }
+      }
+    },
+    "Archived. Its cards are still there, and it is left out of the project list until “Include archived projects” is on. Typing its name brings it back." : {
+      "comment" : "Project editor footer, once archived",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archiviert. Die Karten bleiben erhalten, und das Projekt wird aus der Liste gelassen, bis „Archivierte Projekte einschließen“ aktiv ist. Den Namen zu tippen holt es zurück."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivado. Sus tarjetas siguen ahí y queda fuera de la lista hasta que se active «Incluir los proyectos archivados». Al escribir su nombre vuelve."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivé. Ses cartes sont toujours là, et il reste hors de la liste tant que « Inclure les projets archivés » est désactivé. Taper son nom le fait revenir."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archiviato. Le sue carte ci sono ancora e resta fuori dall’elenco finché «Includi i progetti archiviati» non è attivo. Digitarne il nome lo riporta."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gearchiveerd. De kaarten blijven bestaan en het project blijft uit de lijst tot ‘Gearchiveerde projecten tonen’ aanstaat. De naam typen haalt het terug."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arquivado. Os cartões continuam lá e fica fora da lista até ativar «Incluir os projetos arquivados». Escrever o nome traz-lo de volta."
           }
         }
       }
@@ -1974,6 +2270,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Concluir"
+          }
+        }
+      }
+    },
+    "Complete and Archive" : {
+      "comment" : "The confirming button on that prompt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abschließen und archivieren"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Completar y archivar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminer et archiver"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Completa e archivia"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afronden en archiveren"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concluir e arquivar"
           }
         }
       }
@@ -3549,6 +3886,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Entrada"
+          }
+        }
+      }
+    },
+    "Include archived projects" : {
+      "comment" : "Toggle at the end of the filter list",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivierte Projekte einschließen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incluir los proyectos archivados"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inclure les projets archivés"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Includi i progetti archiviati"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gearchiveerde projecten tonen"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incluir os projetos arquivados"
           }
         }
       }
@@ -5208,6 +5586,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nada em %@"
+          }
+        }
+      }
+    },
+    "Nothing left to do, so this project can be put away." : {
+      "comment" : "Project editor footer",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nichts mehr zu tun — dieses Projekt kann weggelegt werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No queda nada por hacer, así que este proyecto puede guardarse."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il ne reste rien à faire : ce projet peut être rangé."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non resta nulla da fare, quindi questo progetto può essere riposto."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Er is niets meer te doen, dus dit project kan worden opgeborgen."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não falta nada, por isso este projeto pode ser guardado."
           }
         }
       }
@@ -7489,6 +7908,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Escreva # numa nova tarefa para a etiquetar, como acima"
+          }
+        }
+      }
+    },
+    "Unarchive Project" : {
+      "comment" : "Button in the project editor, once archived",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Projekt aus dem Archiv holen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desarchivar el proyecto"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Désarchiver le projet"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Togli il progetto dall’archivio"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project uit archief halen"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desarquivar o projeto"
           }
         }
       }

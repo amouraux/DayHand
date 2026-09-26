@@ -72,7 +72,7 @@ struct ProjectsView: View {
                 } header: {
                     Text("Archived")
                 } footer: {
-                    Text("Archived projects keep their cards but are no longer suggested. Typing one\u{2019}s name brings it back.")
+                    Text("Archived projects keep their cards, are no longer suggested, and are left out of the Filter until \u{201C}Include archived projects\u{201D} is on. Typing one\u{2019}s name brings it back.")
                 }
             }
 
@@ -156,6 +156,8 @@ private struct ProjectEditor: View {
     @State private var collision: Project?
     @State private var mergeTarget: Project?
     @State private var isConfirmingDelete = false
+    /// Set when Archive was asked for while cards are still open.
+    @State private var isConfirmingArchive = false
 
     private var project: Project? { store.project(id: projectID) }
 
@@ -170,6 +172,22 @@ private struct ProjectEditor: View {
         }
         .navigationTitle(project?.name ?? "")
         .navigationBarTitleDisplayMode(.inline)
+        .confirmationDialog(
+            "Archive \(project?.name ?? "")?",
+            isPresented: $isConfirmingArchive,
+            titleVisibility: .visible
+        ) {
+            if let project {
+                Button("Complete and Archive") {
+                    store.completeAllAndArchive(project)
+                }
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            // Says what will happen to the cards, since that is the part the
+            // user did not ask for.
+            Text("\(project.map { store.openCards(in: $0).count } ?? 0) cards are still to do. They are marked completed.")
+        }
     }
 
     private func form(_ project: Project) -> some View {
@@ -200,14 +218,38 @@ private struct ProjectEditor: View {
                     Label("Category", systemImage: "tag")
                 }
 
-                Toggle(isOn: Binding(
-                    get: { project.isArchived },
-                    set: { store.setProjectArchived(project, $0) }
-                )) {
-                    Label("Archived", systemImage: "archivebox")
-                }
             } footer: {
                 Text("A card given this project takes this category. Cards already in the project keep theirs. Moving a project to another category takes it out of its group; groups are arranged in the Filter sheet.")
+            }
+
+            // An action, not a setting: archiving has something to finish
+            // first, so it asks rather than flicking back.
+            Section {
+                if project.isArchived {
+                    Button {
+                        store.setProjectArchived(project, false)
+                    } label: {
+                        Label("Unarchive Project", systemImage: "tray.and.arrow.up")
+                    }
+                } else {
+                    Button {
+                        if store.openCards(in: project).isEmpty {
+                            store.setProjectArchived(project, true)
+                        } else {
+                            isConfirmingArchive = true
+                        }
+                    } label: {
+                        Label("Archive Project", systemImage: "archivebox")
+                    }
+                }
+            } footer: {
+                if project.isArchived {
+                    Text("Archived. Its cards are still there, and it is left out of the project list until \u{201C}Include archived projects\u{201D} is on. Typing its name brings it back.")
+                } else if store.openCards(in: project).isEmpty {
+                    Text("Nothing left to do, so this project can be put away.")
+                } else {
+                    Text("A project is archived once it is over, so anything still to do is marked completed first.")
+                }
             }
 
             Section {
