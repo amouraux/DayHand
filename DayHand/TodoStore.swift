@@ -463,11 +463,6 @@ final class TodoStore: ObservableObject {
 
     // MARK: Groups
 
-    /// The groups in a category, and the projects in each.
-    func groupLayout(in categoryID: UUID?) -> ProjectGroups.Layout {
-        ProjectGroups.layout(of: projects.filter { $0.categoryID == categoryID })
-    }
-
     func groupNames(in categoryID: UUID?) -> [String] {
         ProjectGroups.names(in: categoryID, projects: projects)
     }
@@ -915,8 +910,6 @@ final class TodoStore: ObservableObject {
             save()
         }
     }
-
-    fileprivate func pullRemoteChangesIfNeeded() { pullRemoteChanges() }
 
     @discardableResult
     private func pullRemoteChanges() -> SyncOutcome {

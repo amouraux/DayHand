@@ -6,6 +6,48 @@ import SwiftUI
 /// the editor that menu opens, and the one-time conversion of title prefixes
 /// written before projects existed.
 
+/// The group choices for one project: the groups already in its category, a
+/// new one, or none.
+///
+/// Shown twice — from the filter's long-press menu and from the editor's Group
+/// row — which is two copies of the same list of buttons, and they drifted
+/// apart within an hour of the second one being written. Naming the new group
+/// is the only difference, so it is the only thing passed in.
+struct ProjectGroupMenu: View {
+    let project: Project
+    /// Called when the user wants a group that does not exist yet; each caller
+    /// asks for the name in whatever way suits where it is presented.
+    let onNewGroup: () -> Void
+
+    @EnvironmentObject private var store: TodoStore
+
+    var body: some View {
+        let groups = store.groupNames(in: project.categoryID)
+        ForEach(groups, id: \.self) { name in
+            Button {
+                withAnimation { store.setProjectGroup(project, to: name) }
+            } label: {
+                if Project.groupKey(for: name) == project.group.map(Project.groupKey) {
+                    Label(name, systemImage: "checkmark")
+                } else {
+                    Text(name)
+                }
+            }
+        }
+        if !groups.isEmpty { Divider() }
+        Button(action: onNewGroup) {
+            Label("New Group…", systemImage: "folder.badge.plus")
+        }
+        if project.group != nil {
+            Button {
+                withAnimation { store.setProjectGroup(project, to: nil) }
+            } label: {
+                Label("No Group", systemImage: "folder.badge.minus")
+            }
+        }
+    }
+}
+
 /// One project: its name, its category, archived or not, and the ways to fold
 /// it into another or remove it.
 ///
@@ -97,30 +139,9 @@ struct ProjectEditor: View {
                 }
 
                 Menu {
-                    ForEach(store.groupNames(in: project.categoryID), id: \.self) { name in
-                        Button {
-                            withAnimation { store.setProjectGroup(project, to: name) }
-                        } label: {
-                            if Project.groupKey(for: name) == project.group.map(Project.groupKey) {
-                                Label(name, systemImage: "checkmark")
-                            } else {
-                                Text(name)
-                            }
-                        }
-                    }
-                    if !store.groupNames(in: project.categoryID).isEmpty { Divider() }
-                    Button {
+                    ProjectGroupMenu(project: project) {
                         groupField = ""
                         isNamingGroup = true
-                    } label: {
-                        Label("New Group…", systemImage: "folder.badge.plus")
-                    }
-                    if project.group != nil {
-                        Button {
-                            withAnimation { store.setProjectGroup(project, to: nil) }
-                        } label: {
-                            Label("No Group", systemImage: "folder.badge.minus")
-                        }
                     }
                 } label: {
                     LabeledContent {

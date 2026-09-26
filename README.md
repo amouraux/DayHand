@@ -83,8 +83,10 @@ Tests/run.sh ~/Library/Application\ Support/cards.json
 | `DayHand/TodoStore.swift` | The observable store: every change to the data goes through here. |
 | `DayHand/ContentView.swift` | The list of stacks, filtering, the floating buttons. |
 | `DayHand/CardRow.swift` | One card: its colours, swipes and context menu. |
-| `DayHand/AddCardView.swift` | New Task sheet, the card editor, the date picker, the filter sheet. |
-| `DayHand/ProjectsView.swift` | Settings → Projects, and the one-time conversion of title prefixes. |
+| `DayHand/AddCardView.swift` | New Task sheet, the card editor, the date picker. |
+| `DayHand/FilterView.swift` | The filter: categories, groups and projects, as a sheet or a sidebar. |
+| `DayHand/ProjectEditor.swift` | One project — rename, category, group, archive, merge, delete — and the one-time conversion of title prefixes. |
+| `DayHand/ReviewView.swift` | What you finished in a week, grouped by day. |
 | `DayHand/SettingsView.swift` | Categories, sync, CSV, backups. |
 | `docs/PROMPT.md` | The full specification: enough to rebuild the app from nothing. |
 
