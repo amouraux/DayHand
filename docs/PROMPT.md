@@ -380,9 +380,29 @@ keeps the sheet: there is no room to keep both, and a sidebar would crowd the
 cards it exists to explain. (A Mac Catalyst sheet cannot be resized, so making
 the sheet bigger would not have answered this.)
 
-The filter button stays on both. On a phone it opens the sheet; on a wide
-window it shows and hides the sidebar, because the card list has no navigation
-bar to hang a toggle in and a hidden sidebar must always be recoverable.
+**The sidebar starts closed, on every launch.** The cards are what the app is
+for, and a permanent column of machinery beside them is the clutter this app
+does without. It opens when it is asked for.
+
+**One control opens it, not two.** The system's own sidebar toggle is removed
+(`.toolbar(removing: .sidebarToggle)`): it sat at the far right of the sidebar
+header, and floated over the first card when the sidebar was closed. The
+filter button does the job instead — the same button on every platform, opening
+the sheet on a phone and the sidebar on a wide window, and the only one of the
+two that can show *what* is being filtered: the category's icon and colour, or
+a count. A generic sidebar glyph cannot. It leads the bottom-left row, against
+the edge the sidebar comes from.
+
+**Choosing one row replaces the last.** Filtering is normally a question about
+one project, and a list that accumulates selections answers a question nobody
+asked. Choosing what is already the whole selection clears it, so the row that
+narrowed the list is the row that puts it back. Several at once stays possible
+through touch and hold — right-click on the Mac — which offers "Add to
+Selection" on every row, and "Remove from Selection" once it is in. A footer
+under **Everything** says so, where the eye already is rather than at the
+bottom of a list nobody scrolls to. Not ⇧-click: `Gesture.modifiers(_:)` is
+macOS-only and does not exist in a Catalyst app, and reading modifier flags
+would mean a UIKit recogniser under every row.
 
 The button reflects the state: the plain filter glyph when nothing is chosen,
 the category's own icon and colour when exactly one is, and the **count** when

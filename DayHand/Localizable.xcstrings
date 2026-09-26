@@ -1173,6 +1173,47 @@
         }
       }
     },
+    "Add to Selection" : {
+      "comment" : "Long-press / right-click menu on a filter row",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zur Auswahl hinzufügen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir a la selección"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter à la sélection"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aggiungi alla selezione"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aan selectie toevoegen"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicionar à seleção"
+          }
+        }
+      }
+    },
     "All %@" : {
       "localizations" : {
         "de" : {
@@ -1734,6 +1775,47 @@
         }
       }
     },
+    "Choosing one replaces the last. Touch and hold a row — right-click on the Mac — to add it instead." : {
+      "comment" : "Footer under Everything, explaining how to select several",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine Zeile zu wählen ersetzt die vorige. Eine Zeile gedrückt halten — auf dem Mac rechtsklicken —, um sie stattdessen hinzuzufügen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elegir una fila sustituye a la anterior. Mantén pulsada una fila —clic derecho en el Mac— para añadirla en su lugar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisir une ligne remplace la précédente. Touchez une ligne et maintenez — clic droit sur le Mac — pour l’ajouter à la place."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scegliere una riga sostituisce la precedente. Tocca e tieni premuta una riga — clic destro sul Mac — per aggiungerla invece."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eén kiezen vervangt de vorige. Houd een rij ingedrukt — rechtsklik op de Mac — om die er juist bij te nemen."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escolher uma linha substitui a anterior. Toque sem soltar numa linha — clique com o botão direito no Mac — para a adicionar."
+          }
+        }
+      }
+    },
     "Clear search" : {
       "comment" : "Accessibility label for the x in the search field",
       "localizations" : {
@@ -1771,46 +1853,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Limpar a pesquisa"
-          }
-        }
-      }
-    },
-    "Clears the group" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hebt die Gruppe auf"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Borra el grupo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Désélectionne le groupe"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deseleziona il gruppo"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wist de groep"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Limpa o grupo"
           }
         }
       }
@@ -5572,6 +5614,47 @@
         }
       }
     },
+    "Remove from Selection" : {
+      "comment" : "The same menu, once the row is in the selection",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aus der Auswahl entfernen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quitar de la selección"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retirer de la sélection"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rimuovi dalla selezione"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uit selectie verwijderen"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remover da seleção"
+          }
+        }
+      }
+    },
     "Removes every card on this device. Categories are kept. If a sync file is in use, the deletion reaches your other devices too." : {
       "localizations" : {
         "de" : {
@@ -6384,46 +6467,6 @@
         }
       }
     },
-    "Selects the whole group" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wählt die ganze Gruppe"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Selecciona todo el grupo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sélectionne tout le groupe"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seleziona tutto il gruppo"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Selecteert de hele groep"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seleciona o grupo inteiro"
-          }
-        }
-      }
-    },
     "Set" : {
       "localizations" : {
         "de" : {
@@ -6512,6 +6555,88 @@
     "Show Only %@" : {
       "comment" : "A label that shows the name of a project and an image of a line.",
       "isCommentAutoGenerated" : true
+    },
+    "Shows every card again" : {
+      "comment" : "Accessibility hint on a group heading already chosen",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeigt wieder alle Karten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vuelve a mostrar todas las tarjetas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiche de nouveau toutes les cartes"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra di nuovo tutte le carte"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toont weer alle kaarten"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra novamente todos os cartões"
+          }
+        }
+      }
+    },
+    "Shows only this group" : {
+      "comment" : "Accessibility hint on a group heading",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeigt nur diese Gruppe"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muestra solo este grupo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiche uniquement ce groupe"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra solo questo gruppo"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toont alleen deze groep"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra apenas este grupo"
+          }
+        }
+      }
     },
     "Stack" : {
       "localizations" : {

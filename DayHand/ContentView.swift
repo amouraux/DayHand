@@ -32,7 +32,12 @@ struct ContentView: View {
 
     /// Whether the sidebar is open, so the filter button can always bring it
     /// back. The detail column has no navigation bar to hang a toggle in.
-    @State private var columns: NavigationSplitViewVisibility = .all
+    ///
+    /// Closed to begin with, and on every launch: the cards are what the app is
+    /// for, and a permanent column of machinery beside them is exactly the
+    /// clutter this app does without. The filter button opens it when it is
+    /// wanted.
+    @State private var columns: NavigationSplitViewVisibility = .detailOnly
 
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -57,6 +62,11 @@ struct ContentView: View {
                     projectSelection: $filterProjectIDs.animation(.easeInOut(duration: 0.2))
                 )
                 .navigationTitle("Filter")
+                // The system's own toggle sits at the far right of the sidebar
+                // header, and floats over the first card when the sidebar is
+                // closed. The filter button already opens and closes it, from
+                // the corner this app keeps its controls in.
+                .toolbar(removing: .sidebarToggle)
             } detail: {
                 stack
             }
@@ -99,9 +109,12 @@ struct ContentView: View {
                 // 12pt apart so a thumb aimed at one does not catch the
                 // other, and high enough to clear the home indicator, which
                 // swallows touches in the strip along the bottom edge.
+                // Filter leads: on a wide window it is the sidebar's switch,
+                // and a switch belongs against the edge the sidebar comes from.
+                // The two narrowing tools then sit together, with More last.
                 HStack(spacing: 12) {
-                    searchButton
                     filterButton
+                    searchButton
                     settingsButton
                 }
                 .padding(.leading, 22)

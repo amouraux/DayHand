@@ -774,12 +774,15 @@ struct FilterList: View {
         List {
             Section {
                 Button {
-                    categorySelection.removeAll()
-                    projectSelection.removeAll()
+                    withAnimation { pick() }
                 } label: {
                     row(symbol: "square.grid.2x2", tint: .secondary, text: Text("Everything"),
                         count: nil, selected: isEverything, bold: false)
                 }
+            } footer: {
+                // Where the eye already is, rather than a tip at the bottom
+                // that nobody scrolls to.
+                Text("Choosing one replaces the last. Touch and hold a row \u{2014} right-click on the Mac \u{2014} to add it instead.")
             }
 
             if search.isEmpty {
@@ -846,7 +849,7 @@ struct FilterList: View {
 
     private func categoryRow(_ category: CardCategory) -> some View {
         Button {
-            toggle(category.id, in: $categorySelection)
+            withAnimation { pick(categories: [category.id]) }
         } label: {
             HStack(spacing: 12) {
                 Image(systemName: category.symbolName)
@@ -862,6 +865,7 @@ struct FilterList: View {
                 }
             }
         }
+        .contextMenu { addToSelection(categories: [category.id]) }
     }
 
     /// A group heading. Tapping selects the whole group — or clears it, when all
@@ -873,11 +877,7 @@ struct FilterList: View {
         let open = FilterCounts.total(of: projects, in: openCounts)
 
         return Button {
-            if allSelected {
-                projectSelection.subtract(ids)
-            } else {
-                projectSelection.formUnion(ids)
-            }
+            withAnimation { pick(projects: ids) }
         } label: {
             HStack(spacing: 12) {
                 Image(systemName: "folder")
@@ -902,6 +902,7 @@ struct FilterList: View {
             }
         }
         .contextMenu {
+            addToSelection(projects: ids)
             Button {
                 nameField = name
                 renaming = GroupRef(categoryID: categoryID, name: name)
@@ -911,19 +912,22 @@ struct FilterList: View {
         }
         .accessibilityLabel("Group \(name), \(projects.count) projects")
         .accessibilityValue("\(open)")
-        .accessibilityHint(allSelected ? "Clears the group" : "Selects the whole group")
+        .accessibilityHint(allSelected ? "Shows every card again" : "Shows only this group")
     }
 
     private func projectRow(_ project: Project, tint: Color, indented: Bool) -> some View {
         Button {
-            toggle(project.id, in: $projectSelection)
+            withAnimation { pick(projects: [project.id]) }
         } label: {
             row(symbol: "number", tint: tint, text: Text(project.name),
                 count: openCounts[project.id] ?? 0,
                 selected: projectSelection.contains(project.id), bold: true)
                 .padding(.leading, indented ? 20 : 0)
         }
-        .contextMenu { moveMenu(project) }
+        .contextMenu {
+            addToSelection(projects: [project.id])
+            moveMenu(project)
+        }
     }
 
     /// Move to Group: the category's existing groups, a new one, or none —
@@ -981,11 +985,55 @@ struct FilterList: View {
         }
     }
 
-    private func toggle(_ id: UUID, in selection: Binding<Set<UUID>>) {
-        if selection.wrappedValue.contains(id) {
-            selection.wrappedValue.remove(id)
+    /// One at a time. Choosing a row replaces whatever was chosen before, which
+    /// is what browsing wants: click a project, look, click the next. Choosing
+    /// what is already the whole selection clears it, so the row that narrowed
+    /// the list is the row that puts it back.
+    private func pick(categories: Set<UUID> = [], projects: Set<UUID> = []) {
+        if categorySelection == categories && projectSelection == projects {
+            categorySelection = []
+            projectSelection = []
         } else {
-            selection.wrappedValue.insert(id)
+            categorySelection = categories
+            projectSelection = projects
+        }
+    }
+
+    /// Several at once, from ⇧-click or the touch-and-hold menu. Already in the
+    /// selection means take it out, so the same gesture undoes itself.
+    private func add(categories: Set<UUID> = [], projects: Set<UUID> = []) {
+        let held = categories.isSubset(of: categorySelection)
+            && projects.isSubset(of: projectSelection)
+        if held && !(categories.isEmpty && projects.isEmpty) {
+            categorySelection.subtract(categories)
+            projectSelection.subtract(projects)
+        } else {
+            categorySelection.formUnion(categories)
+            projectSelection.formUnion(projects)
+        }
+    }
+
+    private func isHeld(categories: Set<UUID> = [], projects: Set<UUID> = []) -> Bool {
+        !(categories.isEmpty && projects.isEmpty)
+            && categories.isSubset(of: categorySelection)
+            && projects.isSubset(of: projectSelection)
+    }
+
+    /// Long-press on a phone, right-click on the Mac: the one route to a second
+    /// selection, so every row carries it and it reads the same everywhere.
+    /// Not ⇧-click — `Gesture.modifiers(_:)` is macOS-only and does not exist
+    /// in a Catalyst app, and reading modifier flags would mean dropping to a
+    /// UIKit recogniser under every row.
+    @ViewBuilder
+    private func addToSelection(categories: Set<UUID> = [], projects: Set<UUID> = []) -> some View {
+        Button {
+            withAnimation { add(categories: categories, projects: projects) }
+        } label: {
+            if isHeld(categories: categories, projects: projects) {
+                Label("Remove from Selection", systemImage: "minus.circle")
+            } else {
+                Label("Add to Selection", systemImage: "plus.circle")
+            }
         }
     }
 }
