@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DayHand</title>
-<meta name="description" content="A to-do app for iPhone, iPad and Mac. Cards live in stacks you file them into, and nothing rolls over on its own.">
+<meta name="description" content="A to-do app for iPhone, iPad and Mac with no overdue state. Cards live in stacks you file them into, and a job that takes four days can sit in Today for four days.">
 <link rel="icon" href="icon.png">
 <meta property="og:title" content="DayHand">
-<meta property="og:description" content="A to-do app that stays where you put it.">
+<meta property="og:description" content="Nothing is ever overdue.">
 <meta property="og:image" content="icon.png">
 <style>
   :root {
@@ -20,6 +20,7 @@
     --tomorrow:  #e8871e;
     --later:     #1da34f;
     --night:     #2f3486;
+    --review:    #8a4bd0;
     --shadow:    0 1px 2px rgba(18,19,26,.05), 0 8px 24px rgba(18,19,26,.07);
   }
   @media (prefers-color-scheme: dark) {
@@ -33,6 +34,7 @@
       --tomorrow: #f5b25c;
       --later:    #5fd48a;
       --night:    #9099ee;
+      --review:   #c18cf0;
       --shadow:   0 1px 2px rgba(0,0,0,.4), 0 8px 28px rgba(0,0,0,.45);
     }
   }
@@ -103,6 +105,10 @@
   .i-tomorrow { --accent: var(--tomorrow); }
   .i-later    { --accent: var(--later); }
   .i-night    { --accent: var(--night); }
+  .i-review   { --accent: var(--review); }
+  /* Full width: it is the answer to "then how do I know I am getting
+     anywhere?", which deserves more than a quarter of the grid. */
+  @media (min-width: 720px) { .wide-idea { grid-column: 1 / -1; } }
 
   /* ---------- screenshots ---------- */
   .shots { display: grid; gap: 34px; grid-template-columns: 1fr; align-items: end; }
@@ -143,10 +149,11 @@
 <header class="wrap">
   <img class="icon" src="icon.png" alt="DayHand">
   <h1>DayHand</h1>
-  <p class="tagline">A to-do list that stays where you put it.</p>
+  <p class="tagline">Nothing is ever overdue.</p>
   <p class="sub">
-    Cards live in stacks you file them into — Inbox, Today, Tomorrow, Later —
-    and nothing rolls over on its own.
+    Cards live in stacks you file them into — Inbox, Today, Tomorrow, Later.
+    A four-day job can sit in Today for four days, and the app will never once
+    mention it.
   </p>
 
   <div class="cta">
@@ -165,9 +172,11 @@
   <h2>What is different about it</h2>
   <div class="ideas">
     <div class="idea i-today">
-      <h3>Nothing rolls over</h3>
-      <p>An undated card stays where you put it. A card in Tomorrow is still in
-         Tomorrow next week. Time passing never moves it — only you do.</p>
+      <h3>Made for work that takes more than a day</h3>
+      <p>Most real jobs are not one sitting. A card can stay in Today for as
+         long as the job takes: it never turns red, and it never asks to be
+         rescheduled. Today is the pile you are working from, not a deadline.
+         Time passing moves nothing — only you do.</p>
     </div>
     <div class="idea i-tomorrow">
       <h3>A date files a card, once it arrives</h3>
@@ -186,6 +195,13 @@
       <p>Two devices sync through one file you pick in your own iCloud Drive.
          No account, no server, nothing to sign up for. English, French, Dutch,
          German, Spanish, Italian and Portuguese.</p>
+    </div>
+    <div class="idea i-review wide-idea">
+      <h3>A week, seen from the other end</h3>
+      <p>Any to-do app can show you what you owe. DayHand also shows what you
+         got done — this week and last, grouped by the day you finished it. It
+         is the counterweight to a list that never nags: progress measured as
+         what you finished, rather than as what is late.</p>
     </div>
   </div>
 </section>
