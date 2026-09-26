@@ -1,22 +1,25 @@
 # Rebuild prompt — "DayHand"
 
-Build an iPhone app in SwiftUI (iOS 17+, no third-party dependencies) called **DayHand**
-(Today aNd Tomorrow): a to-do app where every task is a card in a single
-scrolling vertical stack.
+Build a SwiftUI app (iOS 17+, one target for iPhone, iPad and Mac, no
+third-party dependencies) called **DayHand**: a to-do app where every task is a
+card in a single scrolling vertical stack.
 
 ## Core model — read this first, it drives everything
 
-A card has four independent properties. Nothing is derived from anything else:
+A card has five independent properties. Nothing is derived from anything else:
 
 1. **Stack** (required) — one of `INBOX`, `TODAY`, `TOMORROW`, `LATER`, `COMPLETED`.
-2. **Category** (optional) — one the user defined in Settings.
-3. **Due date** (optional) — a specific day.
-4. **Title** (required).
+2. **Category** (optional) — one the user defined.
+3. **Project** (optional) — one the user defined.
+4. **Due date** (optional) — a specific day.
+5. **Title** (required).
 
 **An undated card's stack is stored, never computed.** A card placed in Tomorrow
 with no date is still in Tomorrow next week and next year. Nothing rolls over as
 time passes; only the user moves it. For undated cards, Today / Tomorrow / Later
-are named lists you file things into, not calendar queries.
+are named lists you file things into, not calendar queries. This is the whole
+point of the app: a job that takes four days can sit in Today for four days, and
+nothing ever marks it late.
 
 **A date, however, files the card.** Dating a card today puts it in Today; dating
 it tomorrow puts it in Tomorrow. A date further out leaves the card where it is
@@ -70,32 +73,42 @@ edge inside the system's. One icon serves both appearances.
 ## First run
 
 A new install opens with a handful of **sample cards** that explain the app by
-being it: two in Today, two in Tomorrow, one in Later carrying a tag and a
-date, one in Inbox, one already completed. Better than an empty screen and a
-manual.
+being it: two in Today, two in Tomorrow, one in Later carrying a project and a
+date, one in Inbox, one already completed.
 
 Mark them, and clear the mark the moment the user edits one. The samples still
 untouched are swept away the first time real cards arrive from another device,
 so a second device set up later never pushes tutorial cards into the shared
 file. Drop them without tombstones: they were never anywhere else.
 
-The seeded categories are **Home, Work and Courses** — three that suit most
-people, renameable like anything else. Match an old file's fixed category names
-by label, not by position, or renaming the seeded three would refile old cards
-under the wrong one.
+The seeded categories are **Home** (house, teal), **Work** (briefcase, indigo)
+and **Courses** (graduationcap, purple) — three that suit most people,
+renameable like anything else. Give them **fixed ids** so a card written before
+categories were editable still resolves, and match an old file's fixed category
+names by label rather than by position, or renaming the seeded three would refile
+old cards under the wrong one.
+
+**Everything seeded is stamped `.distantPast`** — the categories and the sample
+project — not with the clock of the machine it was installed on. Those fixed ids
+collide with every other install's copy of themselves, so a merge always has to
+choose between two versions of the same three categories. Stamped "now", a
+brand-new device arrives holding what looks like the most recent edit of all
+three and renames them back to the defaults on every other device. A default is
+not an edit and must lose to one.
 
 ## Languages
 
 English, French, Dutch, German, Spanish, Italian and Portuguese, through a
 String Catalog.
 
-Settings carries a **Language** row showing the language the app is being read
+**More** carries a **Language** row showing the language the app is being read
 in, which opens the system's own per-app language screen. Nothing is
 reimplemented: iOS gives any app shipping more than one localization its own
 Language screen, and macOS keeps the same choice in Language & Region. An
 in-app override would mean restarting the app to take effect, and would
-disagree with what the system believes. No right-to-left language: the swipe gestures are written in
-terms of left and right, and mirroring them is work this has not done.
+disagree with what the system believes. No right-to-left language: the swipe
+gestures are written in terms of left and right, and mirroring them is work this
+has not done.
 
 Three things are easy to miss:
 
@@ -107,7 +120,7 @@ Three things are easy to miss:
 - **Seeded data is translated once, at first run** — the categories and the
   sample cards. It is data from then on: changing the device language later
   leaves what is already there alone, because renaming someone's categories
-  behind their back would be worse than a mixed-language Settings page.
+  behind their back would be worse than a mixed-language page.
 
 ## Screen
 
@@ -121,16 +134,20 @@ Later, Completed.
   so its symbol takes the secondary colour), then the name and a small dimmed
   count. The symbol is a glyph, not an image view, so it sits on the title's
   baseline, and it is smaller than the display-sized title so the name still
-  leads. They scroll with the content
-  rather than pinning; a pinned header parks under the status bar and collides
-  with the clock.
+  leads. They scroll with the content rather than pinning; a pinned header parks
+  under the status bar and collides with the clock.
 - Empty sections are hidden entirely.
 - When there are no cards at all, show an empty state inviting the user to tap +.
 - A round floating **+** button in the bottom-right corner.
-- The floating circles — filter, settings, jump-to-Today — are **48pt across**,
-  not smaller: 44pt is the minimum a finger can reliably hit, and a 42pt circle
-  that looks right in a screenshot is missed in use. Keep the bottom pair clear
-  of the home indicator, which takes touches from the strip along the edge.
+- The floating circles are **48pt across**, not smaller: 44pt is the minimum a
+  finger can reliably hit, and a 42pt circle that looks right in a screenshot is
+  missed in use. Keep the bottom row clear of the home indicator, which takes
+  touches from the strip along the edge.
+
+The bottom-left row holds, in order, **filter**, **search** and **More**. Filter
+leads: on a wide window it is the sidebar's switch, and a switch belongs against
+the edge the sidebar comes from. The two narrowing tools then sit together, with
+More last.
 
 ## Scroll position
 
@@ -142,22 +159,23 @@ below it so the jump never silently does nothing.
 A small round button in the **top-right** corner scrolls back to that same Today
 position, animated. Give these floating buttons a **solid background and a
 shadow**, not a thin material: over a pale list background a material-filled
-circle nearly disappears. It sits alone: the Filter and Settings buttons go in the
-**bottom-left** corner, mirroring the + button, so nothing crowds the top of the
-list and nothing sits close enough to Today to be hit by mistake.
+circle nearly disappears. It sits alone, mirroring the + button, so nothing
+crowds the top of the list and nothing sits close enough to Today to be hit by
+mistake. It stands down while the search bar is open: the bar wants the width,
+and there is nothing to jump over in a handful of results.
 
 ## Adding cards
 
 Tapping + opens a half-height sheet titled **New Task**, with a text field and
-Add / Cancel. Add is disabled while
-the field is empty.
+Add / Cancel. Add is disabled while the field is empty.
 
 The sheet also offers a **stack** (defaulting to Inbox; Completed is not
-offered), a **category** and a **due date**, all optional. The date
-starts **empty**; the category starts on the **default set in Settings** (or empty
-if there is none) — the date behind a toggle, using the *compact* date picker
-so the sheet stays half-height rather than filling the screen — typing a title and tapping Add must stay the fast path,
-with nothing else to dismiss or clear.
+offered), a **category**, a **project** and a **due date**, all optional. The
+date starts **empty**; the category starts on the **default set in More** (or
+empty if there is none) — the date behind a toggle, using the *compact* date
+picker so the sheet stays half-height rather than filling the screen. Typing a
+title and tapping Add must stay the fast path, with nothing else to dismiss or
+clear.
 
 The title field wraps onto a second line as you type, which means Return is
 delivered to it as a line break and never as a submit. Return must add the card.
@@ -184,9 +202,11 @@ The footer says where the card is actually going.
 
 ## Tapping a card
 
-Raises a short dialog listing only the **stacks the card is not already in**.
-One tap moves it. Nothing else is offered — filing is the common case and it
-should cost two taps total, with no menu to read.
+Raises a short dialog listing the **stacks the card is not already in**, then
+**Edit…**, then Cancel. One tap moves it, so filing stays the fast path with no
+menu to read; the editor is on the end because once someone has learned that
+tapping a card opens a menu, that menu is where they look for everything else
+the card can do.
 
 ## Swipe gestures
 
@@ -198,8 +218,8 @@ once the drag is more horizontal than vertical.
   moves on to Tomorrow instead. This works from every stack, so a completed card
   swiped left comes back to life in Today.
 - **Swipe right** — opens the **editor**: the card's name in an editable field,
-  plus Stack, Category, Due date, Complete and Delete. Everything a card has,
-  in one place.
+  plus Stack, Category, Project, Due date, Complete and Delete. Everything a
+  card has, in one place.
 
 Feel: reveal a coloured panel behind the card that grows as you drag, ~96pt
 commit threshold, resistance past that, capped travel, and a haptic tick the
@@ -219,295 +239,66 @@ identified by that alone SwiftUI reuses the old row without feeding it the new
 card — it keeps painting the previous stack's colour and a date it no longer has.
 Include the stack in each row's view identity.
 
-## Looking back
+## Card appearance
 
-The bottom-left button opens more than settings, so it is an **ellipsis, not a
-gear**, and the sheet is titled **More**. Its first section is **Review**: two
-rows, *This week* and *Last week*, each showing how many cards were finished
-and opening a list of them grouped by the day they were finished, newest day
-first, and newest card within a day.
+Each card has **one flat background colour, taken from its stack**. Keep it
+low-opacity over the system card colour so text stays readable in light and dark
+mode.
 
-Two weeks only. The question worth answering is "what did I get done", not
-"let me browse an archive" — the Completed stack already holds everything.
+Stack colours: Inbox gray, Today blue, Tomorrow orange, Later green, washed
+over the card at a strength chosen **per stack**, not one strength for all: the
+same wash separates a card from the grey page by very different amounts
+depending on the hue, and at a single value the orange and green cards nearly
+disappear while the blue stands clear. Completed carries **no wash at all** —
+the strikethrough, filled checkmark and dimming already say "done", and every
+remaining colour is spoken for. Red is reserved exclusively for overdue.
 
-Weeks start on whichever day the reader's calendar starts on: Monday across
-most of Europe, Sunday in the US. Take the boundary seriously — a card ticked
-off at 23:59 on Sunday belongs to the week that was ending, not the one
-beginning. A card that was un-completed has no timestamp and never happened.
+Each card shows:
 
-Days with nothing on them are left out rather than drawn empty, and a week with
-nothing at all shows one line of text instead of a row of blank days. The rows
-are a record, not cards: no swipes, no checkbox to untick, no stack colour.
+- A checkbox on the left that toggles completion.
+- The category as **its coloured icon alone — no text label** — placed just
+  after the checkbox and *before* the title, on the title's line. The slot is
+  reserved even when the card has no category, so the icons form a column and
+  every title starts at the same x. Draw the symbol as `Text(Image:)` rather
+  than a plain `Image`, or it aligns by its own box and sits visibly above the
+  text baseline. Same on both platforms.
+- The title, led by the project in the card's category colour ("**TRIP** book
+  flights") as one run of text, so a long title wraps naturally and the card is
+  no taller. Yellow is darkened to ochre in light mode. Struck through and
+  dimmed when completed. There is no way to remove a project from the card face
+  — that is the editor's job.
+- Its date as a relative label ("Today", "Tomorrow", "Tue, 1 Sep"). If the date
+  has passed, show it in red and outline the card in red — but **leave the card
+  where it is**; overdue is flagged, never moved.
+- For completed cards with no date, a caption naming the stack it came from.
 
-## Categories and Settings
+On a multi-line card the checkbox and category icon centre vertically rather
+than sitting on the first line.
 
-Categories are **defined by the user**, not fixed. A category is a **label**, an
-**icon**, and a **colour**. Cards display only the icon; the label names the
-category in Settings, in the picker, and to VoiceOver.
+## Sort order
 
-A gear button in the top-left corner opens Settings, where the user can add,
-edit, reorder and delete categories. Deleting one strips it from every card that
-used it — the cards themselves are kept — and the confirmation should say how
-many cards are affected.
+**Within INBOX, TODAY, TOMORROW and LATER**, in this priority:
 
-Offer a palette of category colours **disjoint from the stack colours** (so not
-gray, blue, orange or green) and from red: indigo, purple, teal, pink, brown and
-yellow work. A category icon has to stay legible sitting on a stack-coloured
-card. Offer a grid of SF Symbols to pick the icon from.
+1. Cards dated today — and overdue cards — first
+2. Then cards dated tomorrow
+3. Then everything else (undated cards and cards dated further out, together)
 
-One category may be marked the **default for new cards**, chosen in a "New cards"
-section of Settings and badged in the category list. It is a pre-selection, not a
-constraint: the compose sheet shows it as an ordinary picker value the user can
-change, including back to None. Store the default **on the document with its own
-timestamp**, not as a flag on each category — otherwise two devices can each set
-a different one and both end up marked. Deleting the default category clears it,
-and a merge that removes the category must not leave the default dangling.
+Alphabetical within each tier by the **displayed text** (project + title),
+case-insensitive and number-aware (so "item 2" precedes "item 10"). Sorting by
+what is shown keeps a project's cards together.
 
-Seed three categories on first run — Research (flask), Teaching (graduationcap),
-Personal (house) — so the app isn't empty, and give them fixed ids so cards
-written before categories were editable still resolve.
+**Within COMPLETED**, ignore that rule entirely: sort by completion time, most
+recently completed on top.
 
-## Projects
+## The COMPLETED archive
 
-Cards often begin with the name of the thing they belong to — a trip, a client,
-a paper, a course. Make that a first-class **project**: one optional project per
-card, typed as `#NAME`, shown as a coloured prefix. Call it a project
-everywhere in the interface; never "subproject" or "tag".
+Show only the 20 most recent. Below them a **More… (N)** button, where N is how
+many remain hidden; each tap reveals 20 more. Once everything is visible the
+button becomes **Show Less**, collapsing back to 20. With 20 or fewer completed
+cards, no button appears.
 
-- **A project is its own record** (id, name, optional category, archived flag,
-  `modifiedAt`), referenced by id from the card — never text inside the title.
-  That is what makes renaming one edit instead of a rewrite of every title, and
-  it syncs with the same `modifiedAt` + tombstone rules as categories.
-- **Names match without regard to case, accents or a leading `#`**, and are
-  shown as first written. A name is one word (spaces removed), so a space can
-  finish it.
-- **A project fills in its category.** Choosing `#ABC1234` sets Teaching; the
-  card can still be moved to another category.
-- **Entry (New Task).** Typing `#` plus letters shows matching projects as chips
-  under the field (prefix matches first, then contains; most recently *created*
-  in first — not last edited, because converting or merging touches every card).
-  Tap a chip, or type a space to take the word literally (existing if it
-  matches, otherwise new). An unknown word offers "Create #…". Before anything
-  is typed, the five most recent projects are already shown as chips, so the
-  common case is one tap. On the iPhone keyboard `#` is two layer-switches away,
-  so put a `#` button inside the title row — a keyboard-toolbar button did not
-  appear in this sheet. The chosen project sits as a pill before the title; tap
-  it to remove it. A new project is only created when the card is added, so a
-  cancelled sheet leaves nothing behind. Top-align the row: an empty vertical
-  text field reports its placeholder's baseline lower than typed text.
-- **On the card** the project leads the title in the card's category colour
-  ("**ABC1234** slides"), as one run of text, so the card is no taller. Yellow
-  is darkened to ochre in light mode. There is no way to remove a project from
-  the card face — that is the editor's job.
-- **Sort** within a tier by the displayed text (project + title), which keeps a
-  project's cards together exactly as they were when the code lived in titles.
-- **Editor** gets a Project row: a menu of projects (plus None and New Project…).
-- **Filter** selects any mix of categories and projects; a card shows if it
-  matches any. Projects are listed under their category with open-card counts,
-  and are searchable. On the Mac, right-click a card for "Show Only <project>";
-  while any filter is on, that item becomes "Show All" on every card.
-- **Settings → Projects**: grouped by category, with open · total counts.
-  Rename (one edit, every card; renaming onto an existing name asks to merge),
-  change category, archive (kept, not suggested; typing its name revives it),
-  merge into another, delete (cards keep their titles, lose the project).
-- **Converting old titles** is a one-time, reviewed step, never automatic:
-  list first words used as prefixes, with their card counts and sample titles.
-  Code-like words (no lowercase letters, or letters with digits: NF, ABC1234)
-  start ticked; ordinary words used on several cards (Payer, Email) start
-  unticked. Flag near-duplicates (STUDY vs STUDY2026) with a "Merge into" choice.
-  Strip the word and any following `-`/`:` from the title; never convert a
-  one-word title. A new project takes the category most of its cards have.
-- **Groups (clusters) of projects**, such as Holidays vs Clients within a
-  category. A group is a *kind* of project, never a state of one: when it is
-  worked on is what the stacks say, so examples must not read as timing.
-  A group is a plain optional label on the project (`group`), not a record
-  of its own: a category's groups are the distinct labels its projects carry,
-  so a group exists while something is in it, nothing lingers, and syncing
-  needs no new machinery (the label travels with the project's `modifiedAt`).
-  Labels may be several words; they match without regard to case or accents,
-  and the first spelling in use names the group. Groups belong to a category:
-  moving a project to another category clears its group. **Organise them in
-  the Filter sheet**, where tapping keeps its one job (select): long-press a
-  project (right-click on the Mac) for a flat menu headed "Move <project> to
-  Group" listing the category's groups, New Group… and No Group; long-press a
-  group heading for Rename Group… (renaming onto another group's name joins
-  them). Group headings sit inside the category section with the grouped
-  projects indented beneath them, followed by ungrouped projects; tapping a
-  heading selects all its projects (or clears them when all are selected).
-  Headings use primary, not secondary, text — dimmed rows read as disabled.
-  Settings → Projects shows the same grouping read-only. Cards, New Task
-  chips and the editor's project menu are untouched.
-- **Archiving a project** puts it away once it is over — a course that has
-  finished, a grant that was decided. Archived projects keep their cards but
-  drop out of the project list and are never suggested, so the list stays about
-  what is still going on. **Archiving is only offered once nothing in the
-  project is still to do**: asking to archive a project with open cards prompts
-  ("2 cards are still to do. They are marked completed.") and ticks them off as
-  one edit. Cards that vanished while still open would be work lost, which is
-  why it completes them rather than quietly hiding them. Unarchiving is a
-  single button, and typing an archived project's name brings it back too.
-  **"Include archived projects"** in the Filter shows them again, off by
-  default and on every opening; it sits above the categories, because on a
-  phone the search field is pinned to the bottom of the sheet and a short list
-  would leave a row below it stranded underneath. An archived project shown
-  that way is greyed, and one that is currently filtering the list is never
-  hidden from under its own selection.
-- **Two devices creating the same project offline** would both survive a merge.
-  After every load and merge, fold same-name projects into the one with the
-  lowest id, remap cards to it without stamping them, and tombstone the others
-  at their own `modifiedAt` — so every device independently makes the same
-  choice and writes the same tombstone.
-- **CSV** gains `project` and `group` columns, written *last* so header-less old files
-  still read by position. On import, a `project`/`course`/`hashtag` column, or a
-  title starting with `#CODE `, sets the project (created if new). `tag` still
-  means category, as before. A `group` (or `cluster`) column puts the row's
-  project in that group — the first row naming a group for a project wins —
-  and an empty one leaves the project's group alone, so an older file never
-  takes a project out of its group.
-
-## A fresh install never outranks a real edit
-
-Everything the app seeds — the three default categories, the sample project —
-is stamped **`.distantPast`**, not with the clock of the machine it was
-installed on. The seeded categories carry fixed ids so that old cards can still
-be matched to them, which means they collide with every other install's copy
-and a merge always has to pick one. Stamped "now", a brand-new device would
-arrive holding the most recent edit of all three and quietly rename them back
-to the defaults on every other device. A default is not an edit; it must lose
-to one. Ordinary last-edit-wins between two real edits is unchanged.
-
-## Projects are organised in one place
-
-Projects used to be half in the Filter (grouping) and half in Settings →
-Projects (rename, category, archive, merge, delete), with no rule to say which
-was where. **They are all in the Filter now.** Long-press a project — right-click
-on the Mac — for **Edit Project…**, which opens the same editor as before, next
-to Move to Group and Add to Selection. The separate Projects screen is gone
-rather than demoted: archived projects are already reachable through "Include
-archived projects", and **Convert Title Prefixes…** is one-time housekeeping, so
-it keeps a row in More and only appears while there is something to convert.
-
-Reaching it is a **visible ⓘ on every project row**, not a long press: the row
-filters by the project, the ⓘ opens it, the way a Wi-Fi network is joined by
-its row and configured by its ⓘ. A hidden gesture was acceptable while Settings
-→ Projects still existed; once that screen was gone it was the only way in, and
-on the phone it simply looked as though renaming and grouping had been removed.
-The editor gained a **Group** row at the same time, so everything about a
-project is in one sheet rather than split between the sheet and a menu.
-
-The filter sheet now opens at the **large** detent. The list is categories,
-groups and every project, and `.searchable` floats its field at the bottom of
-the sheet, where at the medium detent it sat on top of the last rows — the ⓘ
-among them.
-
-**Changing a project's category moves its cards with it.** The project is what
-says where the work belongs, and cards used to keep whatever category they had,
-which scattered a project across categories with no way to see it or put it
-right. A card already in the destination is left untouched, so nothing is
-stamped for a change that did not happen — the rest are a real edit and sync
-like one.
-
-## Editing a card without a right-click
-
-Clicking or tapping a card opens the stack menu, and that menu now ends with
-**Edit…** before Cancel. The editor was otherwise behind a right swipe on the
-phone and a right-click on the Mac, which is not where anyone looks once they
-have learned that clicking a card does something. The stacks stay first, so the
-common move is still one press with nothing in the way; the right-click menu
-keeps its own Edit for people who found it.
-
-## Saying that the sync happened
-
-**Sync Now reports what it did.** It used to call the merge and show nothing,
-so pressing it looked identical whether it pulled in forty cards, found
-nothing new, or could not read the file at all — which, for a feature whose
-whole proposition is "trust this one file", is the worst place to be silent.
-A line under the button now says which, with the time it happened: "3 cards
-arrived", "Already up to date", or "Could not read the sync file". Finding
-nothing is a real answer and is reported like any other.
-
-Counted as a pure function on `StoreDocument` (`change(from:)`) rather than in
-the view, so it is tested: a card with a new id has *arrived*, the same id with
-different contents was *updated* — moving stack counts here, it is the same
-card — and an id that is gone was *removed*.
-
-## Filtering
-
-A filter button beside the Settings button opens a sheet listing **All
-Categories** plus each category, and **any number can be selected at once**. Use
-a sheet rather than a menu: a menu closes after every tap, which makes
-multi-select painful. The list narrows as choices are made, behind the sheet.
-
-Selecting nothing means everything. Selecting one or more shows only cards
-carrying one of them — an uncategorised card is *not* shown, since it belongs to
-none of the chosen categories.
-
-Every row carries the **same tally: cards still to do**, counted with the test
-the list itself applies — so a row offering one card always has one to show. It
-did not always: a group heading counted its *projects*, in the slot and the grey
-where every row beneath it counted cards, so a group holding one finished
-project read "All 1" and then filtered to nothing. Category rows showed no
-number at all. A row may still read 0 and turn up completed cards, which is the
-harmless direction — you are shown more than was promised, never less.
-
-On a **wide window — the Mac always, an iPad unless it is sharing the screen —
-the filter is not a sheet at all but a sidebar**, beside the cards rather than
-on top of them. Filtering is choosing a scope, and a sheet covers the very list
-it is changing: you pick, dismiss, look, and reopen if it was wrong. In a
-sidebar, clicking a project and seeing the cards change are the same moment,
-and the next project is one click away — which is what browsing a structure
-needs. It is the same list either way, so the two never drift apart. A phone
-keeps the sheet: there is no room to keep both, and a sidebar would crowd the
-cards it exists to explain. (A Mac Catalyst sheet cannot be resized, so making
-the sheet bigger would not have answered this.)
-
-**The sidebar starts closed, on every launch.** The cards are what the app is
-for, and a permanent column of machinery beside them is the clutter this app
-does without. It opens when it is asked for.
-
-**One control opens it, not two.** The system's own sidebar toggle is removed
-(`.toolbar(removing: .sidebarToggle)`): it sat at the far right of the sidebar
-header, and floated over the first card when the sidebar was closed. The
-filter button does the job instead — the same button on every platform, opening
-the sheet on a phone and the sidebar on a wide window, and the only one of the
-two that can show *what* is being filtered: the category's icon and colour, or
-a count. A generic sidebar glyph cannot. It leads the bottom-left row, against
-the edge the sidebar comes from.
-
-**Choosing one row replaces the last.** Filtering is normally a question about
-one project, and a list that accumulates selections answers a question nobody
-asked. Choosing what is already the whole selection clears it, so the row that
-narrowed the list is the row that puts it back. Several at once stays possible
-through touch and hold — right-click on the Mac — which offers "Add to
-Selection" on every row, and "Remove from Selection" once it is in. A footer
-under **Everything** says so, where the eye already is rather than at the
-bottom of a list nobody scrolls to. Not ⇧-click: `Gesture.modifiers(_:)` is
-macOS-only and does not exist in a Catalyst app, and reading modifier flags
-would mean a UIKit recogniser under every row.
-
-The button reflects the state: the plain filter glyph when nothing is chosen,
-the category's own icon and colour when exactly one is, and the **count** when
-several are — no single icon can stand for several. Deleting a category removes
-it from the selection, so the list is never filtered by something that no longer
-exists.
-
-## Searching
-
-A magnifying glass beside the filter opens a bar above the stack, and ⌘F does
-the same on the Mac. Typing narrows every stack at once, in place: the cards
-stay in their sections, keep their colours and can still be swiped and ticked,
-because a separate list of results would be a second place where cards live.
-Closing the bar clears the query, so the list is never quietly narrowed by
-something no longer on screen, and the jump-to-Today circle stands down while
-the bar is open — it wants the width, and there is nothing to jump over in a
-handful of results.
-
-What is searched is what the card shows: its title, and the project name
-printed in front of it. Case and accents are ignored, so "creche" finds
-"crèche" without a French keyboard. Several words must all appear but in any
-order — "flight book" finds "book the flights" — because a query is a memory
-of a card, not its wording. Search and filter compose: a search runs inside
-whatever the filter has already chosen, and the empty state says so.
+The cap applies to what is left *after* filtering and searching, so narrowing
+the list never hides a match behind it.
 
 ## Later and dates
 
@@ -531,63 +322,256 @@ few seconds so it cannot sit on the Today button, and a tap dismisses it at once
 Only cards raised out of Later are worth reporting — every other move the filing
 pass makes is what the user already expects.
 
-## Sort order
+## Looking back
 
-**Within INBOX, TODAY, TOMORROW and LATER**, in this priority:
+The bottom-left corner opens more than settings, so it is an **ellipsis, not a
+gear**, and the sheet is titled **More**. Its first section is **Review**: two
+rows, *This week* and *Last week*, each showing how many cards were finished
+and opening a list of them grouped by the day they were finished, newest day
+first, and newest card within a day.
 
-1. Cards dated today — and overdue cards — first
-2. Then cards dated tomorrow
-3. Then everything else (undated cards and cards dated further out, together)
+This is the counterweight to a list that never nags. An app that cannot tell you
+anything is late needs somewhere that says what you got done, or it reads as an
+app that does not notice.
 
-Alphabetical by title within each of those three tiers, case-insensitive and
-number-aware (so "item 2" precedes "item 10").
+Two weeks only. The question worth answering is "what did I get done", not
+"let me browse an archive" — the Completed stack already holds everything.
 
-**Within COMPLETED**, ignore that rule entirely: sort by completion time, most
-recently completed on top.
+Weeks start on whichever day the reader's calendar starts on: Monday across
+most of Europe, Sunday in the US. Take the boundary seriously — a card ticked
+off at 23:59 on Sunday belongs to the week that was ending, not the one
+beginning. A card that was un-completed has no timestamp and never happened.
 
-## The COMPLETED archive
+Days with nothing on them are left out rather than drawn empty, and a week with
+nothing at all shows one line of text instead of a row of blank days. The rows
+are a record, not cards: no swipes, no checkbox to untick, no stack colour.
 
-Show only the 20 most recent. Below them a **More… (N)** button, where N is how
-many remain hidden; each tap reveals 20 more. Once everything is visible the
-button becomes **Show Less**, collapsing back to 20. With 20 or fewer completed
-cards, no button appears.
+## Categories
 
-## Card appearance
+Categories are **defined by the user**, not fixed. A category is a **label**, an
+**icon**, and a **colour**. Cards display only the icon; the label names the
+category in More, in the picker, and to VoiceOver.
 
-Each card has **one flat background colour, taken from its stack**. Keep it
-low-opacity over the system card colour so text stays readable in light and dark
-mode.
+More lets the user add, edit, reorder and delete categories. Deleting one strips
+it from every card that used it — the cards themselves are kept — and the
+confirmation says how many cards are affected.
 
-Stack colours: Inbox gray, Today blue, Tomorrow orange, Later green, washed
-over the card at a strength chosen **per stack**, not one strength for all: the
-same wash separates a card from the grey page by very different amounts
-depending on the hue, and at a single value the orange and green cards nearly
-disappeared while the blue stood clear. Completed
-carries **no wash at all** — the strikethrough, filled checkmark and dimming
-already say "done", and every remaining colour is spoken for. Red is reserved
-exclusively for overdue.
+Offer a palette of category colours **disjoint from the stack colours** (so not
+gray, blue, orange or green) and from red: indigo, purple, teal, pink, brown and
+yellow work. A category icon has to stay legible sitting on a stack-coloured
+card. Offer a grid of SF Symbols to pick the icon from.
 
-Each card shows:
+One category may be marked the **default for new cards**, chosen in a "New cards"
+section and badged in the category list. It is a pre-selection, not a
+constraint: the compose sheet shows it as an ordinary picker value the user can
+change, including back to None. Store the default **on the document with its own
+timestamp**, not as a flag on each category — otherwise two devices can each set
+a different one and both end up marked. Deleting the default category clears it,
+and a merge that removes the category must not leave the default dangling.
 
-- A checkbox on the left that toggles completion.
-- The title, struck through and dimmed when completed.
-- The category as **its coloured icon alone — no text label** — placed just
-  after the checkbox and *before* the title, on the title's line. The slot is
-  reserved even when the card has no category, so the icons form a column and
-  every title starts at the same x. Draw the symbol as `Text(Image:)` rather
-  than a plain `Image`, or it aligns by its own box and sits visibly above the
-  text baseline. Same on both platforms.
-- Its date as a relative label ("Today", "Tomorrow", "Tue, 1 Sep"). If the date
-  has passed, show it in red and outline the card in red — but **leave the card
-  where it is**; overdue is flagged, never moved.
-- For completed cards with no date, a caption naming the stack it came from.
+## Projects
+
+Cards often begin with the name of the thing they belong to — a trip, a client,
+a paper, a course. That is a first-class **project**: one optional project per
+card, typed as `#NAME`, shown as a coloured prefix. Call it a project
+everywhere in the interface; never "subproject" or "tag".
+
+- **A project is its own record** (id, name, optional category, optional group,
+  archived flag, `modifiedAt`), referenced by id from the card — never text
+  inside the title. That is what makes renaming one edit instead of a rewrite of
+  every title, and it syncs with the same `modifiedAt` + tombstone rules as
+  categories.
+- **Names match without regard to case, accents or a leading `#`**, and are
+  shown as first written. A name is one word (spaces removed), so a space can
+  finish it.
+- **A project fills in its category** on cards given it afterwards.
+- **Entry (New Task).** Typing `#` plus letters shows matching projects as chips
+  under the field (prefix matches first, then contains; most recently *created*
+  first — not last edited, because converting or merging touches every card).
+  Tap a chip, or type a space to take the word literally (existing if it
+  matches, otherwise new). An unknown word offers "Create #…". Before anything
+  is typed, the five most recent projects are already shown as chips, so the
+  common case is one tap. On the iPhone keyboard `#` is two layer-switches away,
+  so put a `#` button inside the title row — a keyboard-toolbar button does not
+  appear in this sheet. The chosen project sits as a pill before the title; tap
+  it to remove it. A new project is only created when the card is added, so a
+  cancelled sheet leaves nothing behind. Top-align the row: an empty vertical
+  text field reports its placeholder's baseline lower than typed text.
+- **Archived projects** are never suggested and drop out of the project list,
+  so the list stays about what is still going on.
+
+### Organising them — all in the Filter
+
+There is no separate Projects screen. Everything about a project is reached from
+the Filter, which is the one place projects are listed at all.
+
+Every project row carries a **visible ⓘ**: the row filters by the project, the ⓘ
+opens it — the way a Wi-Fi network is joined by its row and configured by its ⓘ.
+A hidden gesture is not acceptable as the only way in.
+
+The **project editor** holds everything: rename (one edit, every card; renaming
+onto an existing name asks to merge), category, group, archive/unarchive, merge
+into another, and delete (cards keep their titles, lose the project). It shows
+how many cards are in the project.
+
+**Changing a project's category moves its cards with it.** The project is what
+says where the work belongs; cards keeping whatever category they happened to
+have would scatter a project across categories with no way to see it or put it
+right. A card already in the destination is left untouched, so nothing is
+stamped for a change that did not happen — the rest are a real edit and sync as
+one.
+
+**Archiving is only offered once nothing in the project is still to do.** Asking
+to archive a project with open cards prompts ("2 cards are still to do. They are
+marked completed.") and ticks them off as one edit. Cards that vanished while
+still open would be work lost, which is why it completes them rather than
+quietly hiding them. Typing an archived project's name brings it back, as does
+the Unarchive button.
+
+Long-press a project (right-click on the Mac) for the same **Edit Project…**
+plus the quick **Move to Group** menu and **Add to Selection**; it is an
+accelerator, never the only route. The group menu — the groups already in the
+category, a new one, or none — is one shared view used by both the long-press
+menu and the editor's Group row, so the two cannot drift apart.
+
+### Groups of projects
+
+Groups such as Holidays or Clients within a category. A group is a *kind* of
+project, never a state of one: when it is worked on is what the stacks say, so
+examples must not read as timing.
+
+A group is a plain optional label on the project (`group`), not a record of its
+own: a category's groups are the distinct labels its projects carry, so a group
+exists while something is in it, nothing lingers, and syncing needs no new
+machinery (the label travels with the project's `modifiedAt`). Labels may be
+several words; they match without regard to case or accents, and the first
+spelling in use names the group. Groups belong to a category: moving a project
+to another category clears its group.
+
+Group headings sit inside the category section with the grouped projects
+indented beneath them, followed by ungrouped projects. Tapping a heading selects
+the group. Long-press a heading for Rename Group… (renaming onto another group's
+name joins them). Headings use primary, not secondary, text — dimmed rows read
+as disabled. Cards, New Task chips and the editor's project menu are untouched
+by grouping.
+
+### Converting old titles
+
+A one-time, reviewed step, never automatic, reached from **More** and shown only
+while there is something to convert: list first words used as prefixes, with
+their card counts and sample titles. Code-like words (no lowercase letters, or
+letters with digits: NF, ABC1234) start ticked; ordinary words used on several
+cards (Payer, Email) start unticked. Flag near-duplicates (STUDY vs STUDY2026)
+with a "Merge into" choice. Strip the word and any following `-`/`:` from the
+title; never convert a one-word title. A new project takes the category most of
+its cards have.
+
+### Two devices creating the same project offline
+
+Both would survive a merge. After every load and merge, fold same-name projects
+into the one with the lowest id, remap cards to it without stamping them, and
+tombstone the others at their own `modifiedAt` — so every device independently
+makes the same choice and writes the same tombstone.
+
+## Filtering
+
+The filter narrows the list to any mix of categories and projects: a card shows
+if it matches any of them. Selecting nothing means everything. An uncategorised
+card is *not* shown when a category is chosen, since it belongs to none of them.
+
+It lists **Everything**, then each category with its projects beneath it,
+grouped, indented and searchable.
+
+**On a wide window — the Mac always, an iPad unless it is sharing the screen —
+it is not a sheet at all but a sidebar**, beside the cards rather than on top of
+them. Filtering is choosing a scope, and a sheet covers the very list it is
+changing: you pick, dismiss, look, and reopen if it was wrong. In a sidebar,
+clicking a project and seeing the cards change are the same moment, and the next
+project is one click away — which is what browsing a structure needs. It is the
+same list either way, written once, so the two cannot drift apart. A phone keeps
+the sheet: there is no room to keep both, and a sidebar would crowd the cards it
+exists to explain. (A Mac Catalyst sheet cannot be resized, so an enlarged sheet
+would not answer this.)
+
+Drive the choice off the **size class**, not `#if targetEnvironment(macCatalyst)`
+— that way a wide iPad simulator shows the Mac's layout and can stand in for a
+Mac window. Exclude phones by idiom: a Max in landscape is horizontally regular
+too.
+
+**The sidebar starts closed, on every launch.** The cards are what the app is
+for, and a permanent column of machinery beside them is the clutter this app
+does without.
+
+**One control opens it, not two.** Remove the system's own sidebar toggle
+(`.toolbar(removing: .sidebarToggle)`): it sits at the far right of the sidebar
+header and floats over the first card when the sidebar is closed. The filter
+button does the job on every platform — sheet on a phone, sidebar on a wide
+window — and it is the only one of the two that can show *what* is being
+filtered.
+
+On a phone the sheet opens at the **large** detent. The list is categories,
+groups and every project, and `.searchable` floats its field at the bottom of
+the sheet, where at the medium detent it sits on top of the last rows.
+
+**Choosing one row replaces the last.** Filtering is normally a question about
+one project, and a list that accumulates selections answers a question nobody
+asked. Choosing what is already the whole selection clears it, so the row that
+narrowed the list is the row that puts it back. Several at once stays possible
+through touch and hold — right-click on the Mac — which offers "Add to
+Selection" on every row, and "Remove from Selection" once it is in. A footer
+under **Everything** says so, where the eye already is rather than at the bottom
+of a list nobody scrolls to. Not ⇧-click: `Gesture.modifiers(_:)` is macOS-only
+and does not exist in a Catalyst app, and reading modifier flags would mean a
+UIKit recogniser under every row.
+
+**Every row carries the same tally: cards still to do**, counted with the test
+the list itself applies — so a row offering one card always has one to show.
+That includes group headings, which count the cards in their projects and not
+the projects themselves. A row may read 0 and turn up completed cards, which is
+the harmless direction: you are shown more than was promised, never less.
+
+**"Include archived projects"** brings archived ones back into the list, off by
+default and on every opening. It sits above the categories, because the search
+field is pinned to the bottom of the sheet and a short list would leave a row
+below it stranded underneath. An archived project shown that way is greyed, and
+one that is currently filtering the list is never hidden from under its own
+selection.
+
+The filter button reflects the state: the plain filter glyph when nothing is
+chosen, the category's own icon and colour when exactly one is, and the **count**
+when several are — no single icon can stand for several. Deleting a category
+removes it from the selection, so the list is never filtered by something that
+no longer exists. On the Mac, right-click a card for "Show Only <project>";
+while any filter is on, that item becomes "Show All" on every card.
+
+## Searching
+
+A magnifying glass beside the filter opens a bar above the stack, and ⌘F does
+the same on the Mac. Typing narrows every stack at once, in place: the cards
+stay in their sections, keep their colours and can still be swiped and ticked,
+because a separate list of results would be a second place where cards live.
+Closing the bar clears the query, so the list is never quietly narrowed by
+something no longer on screen.
+
+What is searched is what the card shows: its title, and the project name
+printed in front of it. Case and accents are ignored, so "creche" finds
+"crèche" without a French keyboard. Several words must all appear but in any
+order — "flight book" finds "book the flights" — because a query is a memory
+of a card, not its wording. Search and filter compose: a search runs inside
+whatever the filter has already chosen, and the empty state says so.
+
+## More
+
+The sheet behind the ellipsis, in order: **Review** (above), **Categories**,
+**Convert Title Prefixes…** when there is something to convert, **New cards**
+(the default category), **Language**, **Sync**, **CSV**, and **Backups**.
 
 ## Persistence and sync
 
-One JSON document holding categories, cards, and tombstones. Written to **iCloud
-Drive's ubiquity container** when it is available so a companion Mac app shares
-the same data, and to Application Support otherwise — a user not signed into
-iCloud must still get a working app.
+One JSON document holding categories, cards, projects, tombstones and the
+default-category choice. Written to **iCloud Drive's ubiquity container** when it
+is available so a companion Mac app shares the same data, and to Application
+Support otherwise — a user not signed into iCloud must still get a working app.
 
 Note that a **free Apple developer account cannot sign the iCloud entitlement** —
 Xcode refuses with "Personal development teams do not support the iCloud
@@ -614,9 +598,11 @@ Three things this needs to actually work on iOS:
 - **Keep the picker's allowed types broad.** A file copied or renamed between
   devices may not be reported as JSON, and a greyed-out file cannot be picked at
   all. Setting `UIFileSharingEnabled` and `LSSupportsOpeningDocumentsInPlace`
-  also gives the user an "On My iPhone" folder to fall back on. Adopting a file offers the same choice: **merge with this device**, or **replace
-the cards on this device** with the file's. Merge must be the default shape —
-overwriting silently would wipe one side the moment a second device is set up.
+  also gives the user an "On My iPhone" folder to fall back on.
+
+Adopting a file offers a choice: **merge with this device**, or **replace the
+cards on this device** with the file's. Merge is the default shape — overwriting
+silently would wipe one side the moment a second device is set up.
 
 The two are not symmetric, and getting this wrong is destructive. Deleting cards
 normally leaves **tombstones** so the deletion propagates. Replacing on adopt
@@ -625,9 +611,17 @@ would push straight back into the file being adopted and erase the very cards
 just taken from it. Drop them and their tombstones instead. Refuse to replace
 from a file holding no cards.
 
-Settings also offers **Delete All Cards**, behind a confirmation naming the
-count. That one *does* tombstone, so it reaches the other device. Categories
-survive it.
+**Delete All Cards** sits behind a confirmation naming the count. That one *does*
+tombstone, so it reaches the other device. Categories survive it.
+
+**Sync Now says what it did.** A line under the button reports what changed and
+when: "3 cards arrived", "Already up to date", or "Could not read the sync file".
+For a feature whose whole proposition is "trust this one file", silence is the
+worst possible answer, and finding nothing is a real answer reported like any
+other. Count it as a pure function on the document (`change(from:)`) rather than
+in the view, so it can be tested: a card with a new id has *arrived*, the same id
+with different contents was *updated* — moving stack counts, it is the same card
+— and an id that is gone was *removed*.
 
 **Update live rather than only on foreground.** While the app is on screen, keep
 an `NSFilePresenter` on the shared file — it fires as soon as another device (or
@@ -657,12 +651,12 @@ blocks, sometimes for seconds. Start on the local copy, adopt the cloud one when
 it resolves, merge the two, and keep watching for writes from the other device
 with an `NSMetadataQuery`. Read and write through `NSFileCoordinator`.
 
-**Merging must not need to know which device is "newer".** Give every card and
-category a `modifiedAt`, and resolve each one independently — latest edit wins.
-Record deletions as **tombstones** (id → time deleted): without them, deleting a
-card on one device and merging with another that still has it silently brings it
-back. A deletion beats an edit only if it happened after that edit, so an edit
-made later can deliberately resurrect a card.
+**Merging must not need to know which device is "newer".** Give every card,
+category and project a `modifiedAt`, and resolve each one independently — latest
+edit wins. Record deletions as **tombstones** (id → time deleted): without them,
+deleting a card on one device and merging with another that still has it silently
+brings it back. A deletion beats an edit only if it happened after that edit, so
+an edit made later can deliberately resurrect a card.
 
 Two traps, both of which cause silent data loss:
 
@@ -679,27 +673,37 @@ Decode defensively throughout: missing keys and unknown enum values degrade
 gracefully (an unknown category becomes none) rather than throwing away the
 file, and an untimestamped card reads as `.distantPast` so any real edit wins.
 
-## macOS
+## macOS and iPad
 
-The same target runs on the Mac via **Mac Catalyst** — set `SUPPORTS_MACCATALYST = YES`
-and `TARGETED_DEVICE_FAMILY = "1,2,6"`. No code changes are needed: the model,
-store and sync layers are Foundation-only, and the views' UIKit-flavoured
-pieces (`Color(.systemGroupedBackground)`, `presentationDetents`,
+The same target runs on the Mac via **Mac Catalyst** — set
+`SUPPORTS_MACCATALYST = YES` and `TARGETED_DEVICE_FAMILY = "1,2,6"`. The model,
+store and sync layers are Foundation-only, and the views' UIKit-flavoured pieces
+(`Color(.systemGroupedBackground)`, `presentationDetents`,
 `UIImpactFeedbackGenerator`, the compact date picker) all exist under Catalyst.
 
-Two things to know:
+**The Mac build is sandboxed.** App Store Connect refuses a macOS upload that is
+not, so TestFlight for Mac needs `com.apple.security.app-sandbox`, wired in
+through `CODE_SIGN_ENTITLEMENTS[sdk=macosx*]` so it reaches Catalyst only — iOS
+is sandboxed by the system and must not carry these keys. The user-picked sync
+file also needs `files.user-selected.read-write` and
+`files.bookmarks.app-scope`; the latter is what lets a security-scoped bookmark
+resolve on a later launch rather than failing silently.
 
-- **The two apps only share data through iCloud.** Unsandboxed, the Mac build
-  writes to `~/Library/Application Support/cards.json` while the phone writes to
-  its own container. They converge only once both carry the iCloud entitlement,
-  which needs a paid developer account.
-- The layout was designed for a phone. In a wide Mac window the cards stretch
-  the full width; cap the list's width if that reads badly.
-- Because it is one target, behaviour changes land on both platforms at once —
-  there is no second codebase to keep in step. But the swipes become
-  **click-and-drag** on a Mac: a two-finger trackpad swipe scrolls instead. So
-  the Mac also offers **Edit on a right-click** (a context menu), with the swipe
-  left in place for anyone who wants it.
+The sandbox moves where the Mac's data lives: `NSHomeDirectory()` becomes the
+container, so both the local document and the `UserDefaults` holding the
+sync-file bookmark move with it. A Mac that was running an unsandboxed build
+opens the sandboxed one with no cards and no sync file. Nothing is lost — the
+old file stays where it was, and choosing the sync file again restores
+everything — but say so before anyone installs it.
+
+Because it is one target, behaviour changes land on both platforms at once.
+Two differences that matter:
+
+- The swipes become **click-and-drag** on a Mac: a two-finger trackpad swipe
+  scrolls instead. So the Mac also offers **Edit on a right-click**, with the
+  swipe left in place for anyone who wants it.
+- Wide windows get the filter **sidebar** described above, which also fills the
+  width that would otherwise leave cards stretched across a wide Mac window.
 
 A fully native AppKit-backed Mac target is possible instead — share Models,
 Sync and TodoStore, rewrite the views — but the swipe gestures, half-height
@@ -707,10 +711,12 @@ sheets and floating buttons do not translate, so the layout would change.
 
 ## CSV import and export
 
-Settings offers **Export Cards as CSV…** and **Import Cards from CSV…** through
+More offers **Export Cards as CSV…** and **Import Cards from CSV…** through
 the system save and open panels.
 
-Columns: `id, title, stack, category, due, completed, created`.
+Columns, in this order: `id, title, stack, category, due, completed, created,
+project, group`. The last two are written **last** so header-less older exports
+still read by position.
 
 **Parse the due column leniently.** Only the app's own export uses `yyyy-MM-dd`;
 open that file in a spreadsheet and the column comes back in the user's locale,
@@ -718,10 +724,17 @@ and hand-written files use whatever the author typed. Accept the common shapes �
 `yyyy/MM/dd`, `dd/MM/yyyy`, `dd-MM-yyyy`, `dd.MM.yyyy`, `d MMM yyyy`, a full ISO
 timestamp — plus the device's own short and medium date styles, and normalise to
 the start of the day. A due date that silently fails to parse looks exactly like
-a card that never had one. The category is
-written as its *label*, and matched back case-insensitively on import; an
-unknown name leaves the card uncategorised rather than inventing a category.
-Dates are `yyyy-MM-dd`, timestamps ISO 8601.
+a card that never had one.
+
+The category is written as its *label*, and matched back case-insensitively on
+import; an unknown name leaves the card uncategorised rather than inventing a
+category. Dates are `yyyy-MM-dd`, timestamps ISO 8601.
+
+On import, a `project`/`course`/`hashtag` column, or a title starting with
+`#CODE `, sets the project (created if new). `tag` means category. A `group` (or
+`cluster`) column puts the row's project in that group — the first row naming a
+group for a project wins — and an empty one leaves the project's group alone, so
+an older file never takes a project out of its group.
 
 Import offers two modes, chosen before the file picker opens: **add to what is
 here**, or **replace all cards**. Either way it matches **by id** — a card
@@ -752,8 +765,8 @@ otherwise it just shadows the dailies and the third point in time is wasted.
 Opening the app repeatedly in one day must not churn the chain, and a long gap
 with the app unopened should still rotate exactly once.
 
-Settings lists them with their age and card count; tapping one restores it
-behind a confirmation.
+More lists them with their age and card count; tapping one restores it behind a
+confirmation.
 
 Restoring is a rescue, so it has to win: stamp the restored cards as edited now
 and clear their tombstones, or the very delete being undone will simply reapply
