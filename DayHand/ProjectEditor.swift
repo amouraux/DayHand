@@ -24,6 +24,9 @@ struct ProjectEditor: View {
     @State private var isConfirmingDelete = false
     /// Set when Archive was asked for while cards are still open.
     @State private var isConfirmingArchive = false
+    /// Set while a new group is being named.
+    @State private var isNamingGroup = false
+    @State private var groupField = ""
 
     private var project: Project? { store.project(id: projectID) }
 
@@ -38,6 +41,15 @@ struct ProjectEditor: View {
         }
         .navigationTitle(project?.name ?? "")
         .navigationBarTitleDisplayMode(.inline)
+        .alert("New Group", isPresented: $isNamingGroup) {
+            TextField("Holidays", text: $groupField)
+            Button("Move") {
+                if let project { withAnimation { store.setProjectGroup(project, to: groupField) } }
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("A group for \(project?.name ?? "") and others like it, such as Holidays or Clients.")
+        }
         .confirmationDialog(
             "Archive \(project?.name ?? "")?",
             isPresented: $isConfirmingArchive,
@@ -82,6 +94,47 @@ struct ProjectEditor: View {
                     }
                 } label: {
                     Label("Category", systemImage: "tag")
+                }
+
+                Menu {
+                    ForEach(store.groupNames(in: project.categoryID), id: \.self) { name in
+                        Button {
+                            withAnimation { store.setProjectGroup(project, to: name) }
+                        } label: {
+                            if Project.groupKey(for: name) == project.group.map(Project.groupKey) {
+                                Label(name, systemImage: "checkmark")
+                            } else {
+                                Text(name)
+                            }
+                        }
+                    }
+                    if !store.groupNames(in: project.categoryID).isEmpty { Divider() }
+                    Button {
+                        groupField = ""
+                        isNamingGroup = true
+                    } label: {
+                        Label("New Group…", systemImage: "folder.badge.plus")
+                    }
+                    if project.group != nil {
+                        Button {
+                            withAnimation { store.setProjectGroup(project, to: nil) }
+                        } label: {
+                            Label("No Group", systemImage: "folder.badge.minus")
+                        }
+                    }
+                } label: {
+                    LabeledContent {
+                        HStack(spacing: 6) {
+                            Text(project.group ?? String(localized: "None"))
+                            // The Picker above draws its own; a Menu does not,
+                            // and without it this row reads as a dead label.
+                            Image(systemName: "chevron.up.chevron.down")
+                                .font(.footnote.weight(.semibold))
+                        }
+                        .foregroundStyle(.secondary)
+                    } label: {
+                        Label("Group", systemImage: "folder")
+                    }
                 }
 
             } footer: {

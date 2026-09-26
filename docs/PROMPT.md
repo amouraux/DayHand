@@ -387,6 +387,19 @@ rather than demoted: archived projects are already reachable through "Include
 archived projects", and **Convert Title Prefixes…** is one-time housekeeping, so
 it keeps a row in More and only appears while there is something to convert.
 
+Reaching it is a **visible ⓘ on every project row**, not a long press: the row
+filters by the project, the ⓘ opens it, the way a Wi-Fi network is joined by
+its row and configured by its ⓘ. A hidden gesture was acceptable while Settings
+→ Projects still existed; once that screen was gone it was the only way in, and
+on the phone it simply looked as though renaming and grouping had been removed.
+The editor gained a **Group** row at the same time, so everything about a
+project is in one sheet rather than split between the sheet and a menu.
+
+The filter sheet now opens at the **large** detent. The list is categories,
+groups and every project, and `.searchable` floats its field at the bottom of
+the sheet, where at the medium detent it sat on top of the last rows — the ⓘ
+among them.
+
 **Changing a project's category moves its cards with it.** The project is what
 says where the work belongs, and cards used to keep whatever category they had,
 which scattered a project across categories with no way to see it or put it

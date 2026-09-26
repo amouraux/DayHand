@@ -793,7 +793,7 @@ struct FilterList: View {
             } footer: {
                 // Where the eye already is, rather than a tip at the bottom
                 // that nobody scrolls to.
-                Text("Choosing one replaces the last. Touch and hold a row \u{2014} right-click on the Mac \u{2014} to add it instead.")
+                Text("Choosing one replaces the last; touch and hold a row \u{2014} right-click on the Mac \u{2014} to add it instead. Tap \u{24D8} to rename a project, group it, or put it away.")
             }
 
             // Above the categories, not below them: on a phone the search field
@@ -835,7 +835,15 @@ struct FilterList: View {
         .searchable(text: $search, prompt: "Search projects")
         .sheet(item: $editingProject) { project in
             NavigationStack {
-                ProjectEditor(projectID: project.id).environmentObject(store)
+                ProjectEditor(projectID: project.id)
+                    .environmentObject(store)
+                    // A sheet on the Mac cannot be swiped away, so it needs a
+                    // way out that is not the keyboard.
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("Done") { editingProject = nil }
+                        }
+                    }
             }
         }
         .alert("New Group", isPresented: Binding(
@@ -946,14 +954,31 @@ struct FilterList: View {
     }
 
     private func projectRow(_ project: Project, tint: Color, indented: Bool) -> some View {
-        Button {
-            withAnimation { pick(projects: [project.id]) }
-        } label: {
-            row(symbol: "number", tint: project.isArchived ? .secondary : tint,
-                text: Text(project.name),
-                count: openCounts[project.id] ?? 0,
-                selected: projectSelection.contains(project.id), bold: true)
-                .padding(.leading, indented ? 20 : 0)
+        HStack(spacing: 10) {
+            Button {
+                withAnimation { pick(projects: [project.id]) }
+            } label: {
+                row(symbol: "number", tint: project.isArchived ? .secondary : tint,
+                    text: Text(project.name),
+                    count: openCounts[project.id] ?? 0,
+                    selected: projectSelection.contains(project.id), bold: true)
+                    .padding(.leading, indented ? 20 : 0)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+
+            // The row filters by the project; this opens it — the way a Wi-Fi
+            // network is joined by its row and configured by its ⓘ. Renaming
+            // and grouping used to need a long press, which is no way to reach
+            // the only place they live.
+            Button {
+                editingProject = project
+            } label: {
+                Image(systemName: "info.circle")
+                    .foregroundStyle(Color.accentColor)
+            }
+            .buttonStyle(.borderless)
+            .accessibilityLabel("Edit \(project.name)")
         }
         .contextMenu {
             addToSelection(projects: [project.id])
@@ -1081,6 +1106,10 @@ struct FilterSheet: View {
     @Binding var projectSelection: Set<UUID>
 
     @Environment(\.dismiss) private var dismiss
+    /// Opens tall. The list is categories, groups and every project, and the
+    /// search field floats at the bottom of the sheet — at the medium detent it
+    /// sits on top of the last rows, which is where a project's ⓘ lives.
+    @State private var detent: PresentationDetent = .large
 
     var body: some View {
         NavigationStack {
@@ -1093,6 +1122,6 @@ struct FilterSheet: View {
                     }
                 }
         }
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.medium, .large], selection: $detent)
     }
 }
