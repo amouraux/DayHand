@@ -189,12 +189,22 @@ struct ContentView: View {
                 titleVisibility: .visible,
                 presenting: stackPickItem
             ) { card in
-                // Stacks only, and only the ones it is not already in, so
-                // choosing one is a single tap with nothing else in the way.
+                // The stacks it is not already in come first, so the common
+                // move stays a single tap with nothing in the way.
                 ForEach(Bucket.quickMoveTargets.filter { $0 != card.bucket }) { target in
                     Button(target.title) {
                         withAnimation { store.move(card, to: target) }
                     }
+                }
+                // Then the editor, so it is reachable from a plain click. On
+                // the Mac it was behind a right-click, which is not where
+                // anyone looks after learning that clicking a card does
+                // something.
+                Button("Edit…") {
+                    stackPickItem = nil
+                    // One hop: a sheet presented from the dialog's own action
+                    // is swallowed while that dialog is still dismissing.
+                    DispatchQueue.main.async { editItem = card }
                 }
                 Button("Cancel", role: .cancel) { }
             }

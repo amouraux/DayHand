@@ -365,6 +365,15 @@ everywhere in the interface; never "subproject" or "tag".
   and an empty one leaves the project's group alone, so an older file never
   takes a project out of its group.
 
+## Editing a card without a right-click
+
+Clicking or tapping a card opens the stack menu, and that menu now ends with
+**Edit…** before Cancel. The editor was otherwise behind a right swipe on the
+phone and a right-click on the Mac, which is not where anyone looks once they
+have learned that clicking a card does something. The stacks stay first, so the
+common move is still one press with nothing in the way; the right-click menu
+keeps its own Edit for people who found it.
+
 ## Saying that the sync happened
 
 **Sync Now reports what it did.** It used to call the merge and show nothing,
