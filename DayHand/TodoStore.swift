@@ -440,11 +440,25 @@ final class TodoStore: ObservableObject {
     /// Moving a project to another category takes it out of its group: groups
     /// belong to a category, and a grant must not turn up as "Grants" under
     /// Teaching.
-    func setProjectCategory(_ project: Project, to categoryID: UUID?) {
+    /// Moving a project to another category takes its cards with it. A real
+    /// edit on each one, so it is stamped and syncs — unlike a derived change,
+    /// which must never bump `modifiedAt`.
+    @discardableResult
+    func setProjectCategory(_ project: Project, to categoryID: UUID?) -> Int {
+        let moving = ProjectCategory.cardsToRefile(project, to: categoryID, in: items)
+        if !moving.isEmpty {
+            let stamp = Date.stamp()
+            let ids = Set(moving.map(\.id))
+            for index in items.indices where ids.contains(items[index].id) {
+                items[index].categoryID = categoryID
+                items[index].modifiedAt = stamp
+            }
+        }
         updateProject(project.id) { edited in
             if edited.categoryID != categoryID { edited.group = nil }
             edited.categoryID = categoryID
         }
+        return moving.count
     }
 
     // MARK: Groups

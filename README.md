@@ -33,7 +33,7 @@ since that is the one move you did not ask for.
 **Tags for subprojects.** A card can carry one project — a course code, a study
 — typed as `#ABC1234`. It shows as a coloured prefix on the card, fills in the
 card's category, and can be renamed or merged in one edit. Tags can be gathered
-into groups such as Grants and Ongoing.
+into groups such as Grants and Ongoing, all from the Filter.
 
 ## Building it
 

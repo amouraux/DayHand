@@ -365,6 +365,24 @@ everywhere in the interface; never "subproject" or "tag".
   and an empty one leaves the project's group alone, so an older file never
   takes a project out of its group.
 
+## Projects are organised in one place
+
+Projects used to be half in the Filter (grouping) and half in Settings →
+Projects (rename, category, archive, merge, delete), with no rule to say which
+was where. **They are all in the Filter now.** Long-press a project — right-click
+on the Mac — for **Edit Project…**, which opens the same editor as before, next
+to Move to Group and Add to Selection. The separate Projects screen is gone
+rather than demoted: archived projects are already reachable through "Include
+archived projects", and **Convert Title Prefixes…** is one-time housekeeping, so
+it keeps a row in More and only appears while there is something to convert.
+
+**Changing a project's category moves its cards with it.** The project is what
+says where the work belongs, and cards used to keep whatever category they had,
+which scattered a project across categories with no way to see it or put it
+right. A card already in the destination is left untouched, so nothing is
+stamped for a change that did not happen — the rest are a real edit and sync
+like one.
+
 ## Editing a card without a right-click
 
 Clicking or tapping a card opens the stack menu, and that menu now ends with

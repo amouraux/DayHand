@@ -544,5 +544,51 @@ do {
     expect(!StoreDocument.Change(arrived: 1, changed: 0, removed: 0).isNothing, "one arrival is something")
 }
 
+// MARK: R — a project takes its cards with it
+do {
+    let research = UUID(), teaching = UUID()
+    let course = Project(name: "ABC1234", categoryID: teaching)
+    let other = Project(name: "FRIA", categoryID: research)
+
+    func card(_ title: String, _ project: Project?, _ category: UUID?) -> TodoItem {
+        var item = TodoItem(title: title, bucket: .today)
+        item.projectID = project?.id
+        item.categoryID = category
+        return item
+    }
+
+    let cards = [
+        card("mark the exams", course, teaching),          // follows the project
+        card("book the room", course, research),           // filed elsewhere
+        card("no category at all", course, nil),
+        card("write the case", other, research),           // another project
+        card("loose card", nil, teaching),                 // no project
+    ]
+
+    // Everything in the project moves, wherever it was — except a card that is
+    // already in the destination, which needs no edit and must not be stamped
+    // for a change that did not happen.
+    let moving = ProjectCategory.cardsToRefile(course, to: research, in: cards)
+    expect(moving.map(\.title).sorted() == ["mark the exams", "no category at all"].sorted(),
+           "every card in the project moves — got \(moving.map(\.title))")
+    expect(!moving.contains { $0.title == "book the room" },
+           "a card already in the destination is not touched")
+    expect(!moving.contains { $0.title == "write the case" }, "another project's cards stay put")
+    expect(!moving.contains { $0.title == "loose card" }, "a card with no project is not in one")
+
+    // A card already in the destination needs no edit, so it is not stamped.
+    let already = ProjectCategory.cardsToRefile(course, to: teaching, in: cards)
+    expect(already.map(\.title).sorted() == ["book the room", "no category at all"].sorted(),
+           "a card already in the destination is left alone — got \(already.map(\.title))")
+
+    // Moving to no category at all is a move like any other.
+    let cleared = ProjectCategory.cardsToRefile(course, to: nil, in: cards)
+    expect(cleared.map(\.title).sorted() == ["book the room", "mark the exams"].sorted(),
+           "clearing the category moves the ones that had one")
+
+    expect(ProjectCategory.cardsToRefile(Project(name: "EMPTY", categoryID: nil), to: research, in: cards).isEmpty,
+           "a project with no cards moves nothing")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

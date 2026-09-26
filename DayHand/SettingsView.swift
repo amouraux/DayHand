@@ -75,10 +75,28 @@ struct SettingsView: View {
                     Text("Cards show the icon only. The label names the category here and for VoiceOver.")
                 }
 
+                // Projects are organised in the Filter, not here: one place to
+                // rename, group, archive and merge them. What is left is the
+                // one-time conversion, which is housekeeping rather than
+                // organisation, and only appears while there is work for it.
                 Section {
-                    NavigationLink {
-                        ProjectsView().environmentObject(store)
-                    } label: {
+                    let found = ProjectConversion.candidates(cards: store.items, existing: store.projects)
+                    if !found.isEmpty {
+                        NavigationLink {
+                            ProjectConversionView(candidates: found).environmentObject(store)
+                        } label: {
+                            Label {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Convert Title Prefixes…")
+                                    Text("\(found.count) possible projects found in your titles")
+                                        .font(.footnote)
+                                        .foregroundStyle(.secondary)
+                                }
+                            } icon: {
+                                Image(systemName: "wand.and.stars")
+                            }
+                        }
+                    } else {
                         LabeledContent {
                             Text("\(store.projects.filter { !$0.isArchived }.count)")
                                 .monospacedDigit()
@@ -87,7 +105,7 @@ struct SettingsView: View {
                         }
                     }
                 } footer: {
-                    Text("A project groups cards that belong to the same piece of work \u{2014} a trip, a client, a paper, a course. Type # in a new task to use one.")
+                    Text("A project groups cards that belong to the same piece of work \u{2014} a trip, a client, a paper, a course. Type # in a new task to use one. Rename, group and archive them in the Filter: touch and hold a project, or right-click it on the Mac.")
                 }
 
                 Section {

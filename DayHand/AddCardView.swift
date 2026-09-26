@@ -743,6 +743,10 @@ struct FilterList: View {
     /// A group waiting for its new name.
     @State private var renaming: GroupRef?
     @State private var nameField = ""
+    /// The project whose full editor is open — renaming, category, archiving,
+    /// merging and deleting all live there, reached from this list rather than
+    /// from a second screen somewhere else.
+    @State private var editingProject: Project?
 
     /// A group is identified by its category and its label.
     struct GroupRef: Identifiable {
@@ -829,6 +833,11 @@ struct FilterList: View {
 
         }
         .searchable(text: $search, prompt: "Search projects")
+        .sheet(item: $editingProject) { project in
+            NavigationStack {
+                ProjectEditor(projectID: project.id).environmentObject(store)
+            }
+        }
         .alert("New Group", isPresented: Binding(
             get: { newGroupFor != nil }, set: { if !$0 { newGroupFor = nil } }
         ), presenting: newGroupFor) { project in
@@ -958,6 +967,11 @@ struct FilterList: View {
     @ViewBuilder
     private func moveMenu(_ project: Project) -> some View {
         let groups = store.groupNames(in: project.categoryID)
+        Button {
+            editingProject = project
+        } label: {
+            Label("Edit Project…", systemImage: "square.and.pencil")
+        }
         Section("Move \(project.name) to Group") {
             ForEach(groups, id: \.self) { name in
                 Button {

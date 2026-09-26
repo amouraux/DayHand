@@ -1,151 +1,17 @@
 import SwiftUI
 
-/// Settings → Projects: every project, grouped under its category, with the
-/// tools to keep them tidy — rename, merge, archive, delete — and the one-time
-/// conversion of title prefixes written before projects existed.
-struct ProjectsView: View {
-    @EnvironmentObject private var store: TodoStore
 
-    @State private var isAdding = false
-    @State private var newName = ""
-
-    private var candidates: [ProjectConversion.Candidate] {
-        ProjectConversion.candidates(cards: store.items, existing: store.projects)
-    }
-
-    private func projects(in category: CardCategory?, archived: Bool) -> [Project] {
-        store.projects
-            .filter { $0.isArchived == archived }
-            .filter { project in
-                guard let id = project.categoryID,
-                      store.categories.contains(where: { $0.id == id }) else { return category == nil }
-                return id == category?.id
-            }
-            .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
-    }
-
-    var body: some View {
-        List {
-            let found = candidates
-            if !found.isEmpty {
-                Section {
-                    NavigationLink {
-                        ProjectConversionView(candidates: found).environmentObject(store)
-                    } label: {
-                        Label {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Convert Title Prefixes…")
-                                Text("\(found.count) possible projects found in your titles")
-                                    .font(.footnote)
-                                    .foregroundStyle(.secondary)
-                            }
-                        } icon: {
-                            Image(systemName: "wand.and.stars")
-                        }
-                    }
-                } footer: {
-                    Text("Cards written as \u{201C}TRIP book flights\u{201D} can become \u{201C}book flights\u{201D} in project TRIP. You choose which words to convert.")
-                }
-            }
-
-            ForEach(store.categories) { category in
-                let items = projects(in: category, archived: false)
-                if !items.isEmpty {
-                    Section(category.label) {
-                        groupedRows(items)
-                    }
-                }
-            }
-
-            let loose = projects(in: nil, archived: false)
-            if !loose.isEmpty {
-                Section("No category") {
-                    groupedRows(loose)
-                }
-            }
-
-            let archived = store.projects.filter(\.isArchived)
-                .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
-            if !archived.isEmpty {
-                Section {
-                    ForEach(archived) { row($0) }
-                } header: {
-                    Text("Archived")
-                } footer: {
-                    Text("Archived projects keep their cards, are no longer suggested, and are left out of the Filter until \u{201C}Include archived projects\u{201D} is on. Typing one\u{2019}s name brings it back.")
-                }
-            }
-
-            if store.projects.isEmpty && found.isEmpty {
-                Section {
-                    Text("Type # in a new task to create a project, such as #TRIP.")
-                        .foregroundStyle(.secondary)
-                }
-            }
-        }
-        .navigationTitle("Projects")
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button {
-                    newName = ""
-                    isAdding = true
-                } label: {
-                    Image(systemName: "plus")
-                }
-                .accessibilityLabel("Add project")
-            }
-        }
-        .alert("New Project", isPresented: $isAdding) {
-            TextField("TRIP", text: $newName)
-                .textInputAutocapitalization(.characters)
-                .autocorrectionDisabled()
-            Button("Add") { store.ensureProject(named: newName, categoryID: nil) }
-            Button("Cancel", role: .cancel) { }
-        } message: {
-            Text("A short one-word name for something you are working on.")
-        }
-    }
-
-    /// The same grouping as the Filter sheet, shown here but organised there.
-    @ViewBuilder
-    private func groupedRows(_ items: [Project]) -> some View {
-        let layout = ProjectGroups.layout(of: items)
-        ForEach(layout.groups, id: \.name) { group in
-            Label(group.name, systemImage: "folder")
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.secondary)
-            ForEach(group.projects) { row($0).padding(.leading, 20) }
-        }
-        ForEach(layout.ungrouped) { row($0) }
-    }
-
-    private func row(_ project: Project) -> some View {
-        let open = store.openCardCounts[project.id] ?? 0
-        let total = store.cardCount(using: project)
-        let tint = project.categoryID
-            .flatMap { id in store.categories.first { $0.id == id } }?
-            .color.prefixTint ?? .primary
-
-        return NavigationLink {
-            ProjectEditor(projectID: project.id).environmentObject(store)
-        } label: {
-            HStack {
-                Text(project.name)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(project.isArchived ? Color.secondary : tint)
-                Spacer()
-                Text(total == 0 ? "No cards" : "\(open) open · \(total)")
-                    .font(.subheadline)
-                    .monospacedDigit()
-                    .foregroundStyle(.secondary)
-            }
-        }
-    }
-}
+/// Projects are organised in the Filter — long-press one, or right-click it on
+/// the Mac — so there is no second screen listing them. What is left here is
+/// the editor that menu opens, and the one-time conversion of title prefixes
+/// written before projects existed.
 
 /// One project: its name, its category, archived or not, and the ways to fold
 /// it into another or remove it.
-private struct ProjectEditor: View {
+///
+/// Reached by long-pressing a project in the Filter — right-clicking it on the
+/// Mac — which is the one place projects are organised.
+struct ProjectEditor: View {
     let projectID: UUID
 
     @EnvironmentObject private var store: TodoStore
@@ -219,7 +85,7 @@ private struct ProjectEditor: View {
                 }
 
             } footer: {
-                Text("A card given this project takes this category. Cards already in the project keep theirs. Moving a project to another category takes it out of its group; groups are arranged in the Filter sheet.")
+                Text("Every card in this project moves with it, and new ones start here too. Moving a project to another category also takes it out of its group.")
             }
 
             // An action, not a setting: archiving has something to finish

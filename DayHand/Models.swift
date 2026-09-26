@@ -310,6 +310,20 @@ enum ProjectGroups {
     }
 }
 
+/// Moving a project between categories.
+///
+/// The project is the thing that says where this work belongs, so changing its
+/// category re-files every card in it. Cards already in the project used to
+/// keep whatever category they had, which left a project's cards scattered
+/// across categories with no way to see it or put it right.
+enum ProjectCategory {
+    /// The cards that would move, so the count can be reported and the work
+    /// skipped when there is none.
+    static func cardsToRefile(_ project: Project, to categoryID: UUID?, in cards: [TodoItem]) -> [TodoItem] {
+        cards.filter { $0.projectID == project.id && $0.categoryID != categoryID }
+    }
+}
+
 /// Putting a project away.
 ///
 /// A project is archived when it is over — a course that has finished, a grant
