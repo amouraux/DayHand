@@ -67,6 +67,13 @@ deletions. Two consequences:
   folding duplicate projects, is computed identically on every device. Stamping
   it would let an idle device outrank a real edit made elsewhere. A tie keeps
   the local copy, and the pass runs again after every merge.
+- **Anything seeded is stamped `.distantPast`.** The three default categories
+  carry fixed ids, so they collide with every other install's copy of
+  themselves and a merge must choose between them. Stamped with the install's
+  clock, a brand-new device arrives claiming the freshest edit and renames
+  "Research" back to "Home" everywhere — which is exactly what happened to the
+  real file on 26 September 2026. A default is not an edit and must lose to
+  one. The same goes for the seeded TRIP project.
 - **A change to the file format must decode older files.** Every `init(from:)`
   is hand-written with `decodeIfPresent`, because a synthesised decoder demands
   every key and would throw away the user's cards. New CSV columns go last, so

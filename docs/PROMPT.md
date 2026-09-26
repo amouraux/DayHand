@@ -365,6 +365,17 @@ everywhere in the interface; never "subproject" or "tag".
   and an empty one leaves the project's group alone, so an older file never
   takes a project out of its group.
 
+## A fresh install never outranks a real edit
+
+Everything the app seeds — the three default categories, the sample project —
+is stamped **`.distantPast`**, not with the clock of the machine it was
+installed on. The seeded categories carry fixed ids so that old cards can still
+be matched to them, which means they collide with every other install's copy
+and a merge always has to pick one. Stamped "now", a brand-new device would
+arrive holding the most recent edit of all three and quietly rename them back
+to the defaults on every other device. A default is not an edit; it must lose
+to one. Ordinary last-edit-wins between two real edits is unchanged.
+
 ## Projects are organised in one place
 
 Projects used to be half in the Filter (grouping) and half in Settings →

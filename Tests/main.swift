@@ -590,5 +590,44 @@ do {
            "a project with no cards moves nothing")
 }
 
+// MARK: S — a fresh install must not outrank a real edit
+do {
+    // The seeded three share their ids with every other install's, so any
+    // merge has to choose between two versions of the same category. This is
+    // the case that reset a real user's renames back to the defaults.
+    expect(CardCategory.defaults.allSatisfy { $0.modifiedAt == .distantPast },
+           "seeded categories are stamped distantPast, not with the install's clock")
+    expect(StoreDocument.starter().projects.allSatisfy { $0.modifiedAt == .distantPast },
+           "and so is the seeded project")
+
+    // Someone renamed the three, weeks ago.
+    let renamedAt = Date(timeIntervalSince1970: 1_000_000)
+    var renamed = CardCategory.defaults
+    let names = ["Research", "Teaching", "Personal"]
+    for i in renamed.indices {
+        renamed[i].label = names[i]
+        renamed[i].modifiedAt = renamedAt
+    }
+    var theirs = StoreDocument(categories: renamed)
+    theirs.cards = [TodoItem(title: "write the case", bucket: .today)]
+
+    // A brand-new install, seeded today, meets that file.
+    let fresh = StoreDocument.starter()
+
+    for (merged, side) in [(theirs.merged(with: fresh), "existing device merging the newcomer"),
+                           (fresh.merged(with: theirs), "newcomer merging the existing file")] {
+        let labels = merged.categories.sorted { $0.id.uuidString < $1.id.uuidString }.map(\.label)
+        expect(labels == names, "the renames survive — \(side) got \(labels)")
+    }
+
+    // And a real edit still beats another real edit, by date as before.
+    var later = renamed
+    later[0].label = "Grants"
+    later[0].modifiedAt = renamedAt.addingTimeInterval(60)
+    let newest = StoreDocument(categories: renamed).merged(with: StoreDocument(categories: later))
+    expect(newest.categories.first { $0.id == renamed[0].id }?.label == "Grants",
+           "distantPast has not broken ordinary last-edit-wins")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

@@ -127,18 +127,28 @@ struct CardCategory: Identifiable, Codable, Equatable, Hashable {
     /// arrive with something rather than an empty Settings page. The ids are
     /// fixed so a card written before categories were editable can still be
     /// matched to one.
+    ///
+    /// **Stamped `.distantPast`, and that is the whole point.** These ids are
+    /// guaranteed to collide with every other install's, so a merge always has
+    /// to choose between two versions of the same three categories. Stamped
+    /// with the time of the install, a brand-new device would arrive claiming
+    /// the freshest edit and rename "Research" back to "Home" on every other
+    /// device — a default is not an edit, and must lose to one.
     static var defaults: [CardCategory] { [
         CardCategory(
             id: UUID(uuidString: "00000000-0000-0000-0000-00000000A001")!,
-            label: String(localized: "Home", comment: "Seeded category"), symbolName: "house", color: .teal
+            label: String(localized: "Home", comment: "Seeded category"), symbolName: "house", color: .teal,
+            modifiedAt: .distantPast
         ),
         CardCategory(
             id: UUID(uuidString: "00000000-0000-0000-0000-00000000A002")!,
-            label: String(localized: "Work", comment: "Seeded category"), symbolName: "briefcase", color: .indigo
+            label: String(localized: "Work", comment: "Seeded category"), symbolName: "briefcase", color: .indigo,
+            modifiedAt: .distantPast
         ),
         CardCategory(
             id: UUID(uuidString: "00000000-0000-0000-0000-00000000A003")!,
-            label: String(localized: "Courses", comment: "Seeded category"), symbolName: "graduationcap", color: .purple
+            label: String(localized: "Courses", comment: "Seeded category"), symbolName: "graduationcap", color: .purple,
+            modifiedAt: .distantPast
         )
     ] }
 

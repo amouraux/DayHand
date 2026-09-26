@@ -228,7 +228,10 @@ extension StoreDocument {
     static func starter(now: Date = Date()) -> StoreDocument {
         let categories = CardCategory.defaults
         let home = categories[0].id, work = categories[1].id
-        let trip = Project(name: String(localized: "TRIP", comment: "Seeded project on the sample card"), categoryID: home)
+        // Seeded, so `.distantPast` for the same reason as the categories: a
+        // fresh install must never outrank a real edit made on another device.
+        let trip = Project(name: String(localized: "TRIP", comment: "Seeded project on the sample card"),
+                           categoryID: home, modifiedAt: .distantPast)
 
         func card(_ title: String, _ bucket: Bucket, category: UUID? = nil,
                   project: UUID? = nil, due: Date? = nil) -> TodoItem {
