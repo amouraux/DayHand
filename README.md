@@ -4,6 +4,16 @@ A to-do app for iPhone and Mac, built in SwiftUI. Cards live in stacks you file
 them into — **Inbox, Today, Tomorrow, Later, Completed** — and nothing rolls
 over on its own.
 
+## Install it
+
+- **iPhone and iPad** — [join the TestFlight beta](https://testflight.apple.com/join/37FbdQp6), iOS 17 or later.
+- **Mac** — [download the latest `.dmg`](https://github.com/amouraux/DayHand/releases/latest), macOS 14 or later.
+
+Both, with screenshots, are on the site: **<https://amouraux.github.io/DayHand/>**
+(served from `docs/`). The Mac disk image is built by `scripts/release-mac.sh`,
+which signs and notarises it — see the comment at the top of that script for
+the two one-time steps.
+
 ## The idea
 
 **An undated card stays where you put it.** A card in Tomorrow is still in

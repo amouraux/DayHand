@@ -113,6 +113,22 @@ Three things it refuses, each learned the hard way:
 An iPad build must also declare all four orientations, or the bundle is
 rejected for multitasking.
 
+## The site
+
+`docs/` is the GitHub Pages site — `index.html`, the app icon, and screenshots
+under `docs/screenshots/`. Pages serves it from the `main` branch, `/docs`
+folder, at <https://amouraux.github.io/DayHand/>.
+
+- **Screenshots come from a simulator seeded with dummy data**, never from real
+  cards: `xcrun simctl io <device> screenshot --type=png docs/screenshots/x.png`
+  works even when the simulator has stopped accepting taps. Wait for animations
+  to finish — a sidebar caught mid-slide looks like a layout bug.
+- `docs/screenshots/mac.png` can only be taken on a real Mac, so the page drops
+  any screenshot that 404s (`onerror` on the `img`) rather than showing a hole.
+- `header`, `section` and `footer` all carry `class="wrap"`, so vertical
+  padding has to be written as `section.wrap { ... }`: a bare `section` selector
+  loses to `.wrap` and is silently discarded.
+
 ## Finishing a change
 
 Run the tests, build both platforms, then commit with a message that explains
