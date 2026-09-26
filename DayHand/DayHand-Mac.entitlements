@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Mac Catalyst only. App Store Connect refuses a macOS build that is not
+	     sandboxed, so TestFlight for Mac needs this; iOS is sandboxed already
+	     and never sees this file. -->
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+
+	<!-- The sync file is one the user picks themselves, typically in iCloud
+	     Drive. Choosing it grants access; the bookmark keeps that access
+	     across launches, which is why DocumentStorage creates and resolves it
+	     .withSecurityScope on Catalyst. -->
+	<key>com.apple.security.files.user-selected.read-write</key>
+	<true/>
+	<key>com.apple.security.files.bookmarks.app-scope</key>
+	<true/>
+</dict>
+</plist>

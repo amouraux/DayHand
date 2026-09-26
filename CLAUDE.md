@@ -98,6 +98,29 @@ Two things make it work, and both look redundant until they are removed:
 - `ENABLE_USER_SCRIPT_SANDBOXING = NO`, because the sandbox hides `.git` and
   git then reports "not a git repository".
 
+## The Mac build is sandboxed; the iPhone build's settings are not touched
+
+App Store Connect refuses a macOS upload that is not sandboxed, so TestFlight
+for Mac needs `com.apple.security.app-sandbox`. It is set in
+`DayHand/DayHand-Mac.entitlements`, wired in through
+`CODE_SIGN_ENTITLEMENTS[sdk=macosx*]` so it applies to Mac Catalyst only — iOS
+is sandboxed by the system and must not carry these keys. Check after touching
+signing: `codesign -d --entitlements - --xml <app> | plutil -p -`.
+
+The sync file is user-picked, so the sandbox also needs
+`files.user-selected.read-write` and `files.bookmarks.app-scope`; the latter is
+what makes `DocumentStorage`'s `.withSecurityScope` bookmark resolve on a later
+launch rather than failing silently.
+
+**The sandbox moves where the Mac app's data lives.** `NSHomeDirectory()`
+becomes the container, so `~/Library/Application Support/cards.json` becomes
+`~/Library/Containers/com.andremouraux.tnt/Data/Library/Application Support/cards.json`,
+and `UserDefaults` — which holds the sync-file bookmark — moves with it. A Mac
+that was running an unsandboxed build therefore opens the sandboxed one with no
+cards and no sync file. Nothing is lost: the old file stays where it was, and
+choosing the sync file again in Settings brings everything back. Say so before
+anyone installs it.
+
 ## Uploading to App Store Connect
 
 Three things it refuses, each learned the hard way:

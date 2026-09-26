@@ -7,9 +7,13 @@ over on its own.
 ## Install it
 
 - **iPhone and iPad** — [join the TestFlight beta](https://testflight.apple.com/join/37FbdQp6), iOS 17 or later.
-- **Mac** — macOS 14 or later. A signed `.dmg` is not published yet; build it
-  with `scripts/release-mac.sh`, or open the project in Xcode, choose **My
-  Mac** and press ⌘R.
+- **Mac** — macOS 14 or later, through the same TestFlight once a Mac build is
+  uploaded (testers need TestFlight from the Mac App Store). Until then, open
+  the project in Xcode, choose **My Mac** and press ⌘R.
+
+A public `.dmg` is a separate, later channel: `scripts/release-mac.sh` builds a
+signed and notarised one, but it needs a **Developer ID Application**
+certificate, which TestFlight does not.
 
 Both, with screenshots, are on the site: **<https://amouraux.github.io/DayHand/>**
 (served from `docs/`). The Mac disk image is built by `scripts/release-mac.sh`,
