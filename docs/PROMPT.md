@@ -203,10 +203,13 @@ The footer says where the card is actually going.
 ## Tapping a card
 
 Raises a short dialog listing the **stacks the card is not already in**, then
-**Edit…**, then Cancel. One tap moves it, so filing stays the fast path with no
-menu to read; the editor is on the end because once someone has learned that
-tapping a card opens a menu, that menu is where they look for everything else
-the card can do.
+**Edit…**, then **Show Only <project>** — or **Show All** while a filter is on,
+on every card, since a category filter shows cards carrying no project — then
+Cancel. One tap moves it, so filing stays the fast path with no menu to read;
+the rest is there because once someone has learned that tapping a card opens a
+menu, that menu is where they look for everything else the card can do. The
+extra rows cost nothing to ignore, and a card with no project while nothing is
+filtered adds none of them.
 
 ## Swipe gestures
 
@@ -700,8 +703,15 @@ Because it is one target, behaviour changes land on both platforms at once.
 Two differences that matter:
 
 - The swipes become **click-and-drag** on a Mac: a two-finger trackpad swipe
-  scrolls instead. So the Mac also offers **Edit on a right-click**, with the
-  swipe left in place for anyone who wants it.
+  scrolls instead, so the swipe left stays for anyone who wants it. The Mac
+  also has a **right-click menu** on a card, mirroring what a click already
+  offers — Edit and Show Only both appear in both, deliberately: a context menu
+  that will narrow the list by a card but not open it reads as broken, and
+  Finder puts Open in both places for the same reason.
+- **The window shows no title.** It is not a document, so there is nothing to
+  name, and the app is already named in the menu bar and the Dock
+  (`titlebar?.titleVisibility = .hidden`). The titlebar itself stays: the
+  traffic lights live there, and it is the window's drag region.
 - Wide windows get the filter **sidebar** described above, which also fills the
   width that would otherwise leave cards stretched across a wide Mac window.
 

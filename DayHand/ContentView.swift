@@ -206,6 +206,17 @@ struct ContentView: View {
                     // is swallowed while that dialog is still dismissing.
                     DispatchQueue.main.async { editItem = card }
                 }
+                // Narrowing to what is in front of you was a right-click, so it
+                // did not exist on a phone at all — where the only route to a
+                // project was to open the filter and find a name already
+                // printed on the card. While a filter is on the useful move is
+                // back out of it, on every card, since a category filter shows
+                // cards carrying no project.
+                if isFiltered {
+                    Button("Show All") { showAll() }
+                } else if let project = store.project(for: card) {
+                    Button("Show Only \(project.name)") { showOnly(project) }
+                }
                 Button("Cancel", role: .cancel) { }
             }
             .onChange(of: scenePhase) { _, phase in

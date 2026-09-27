@@ -239,8 +239,10 @@ struct CardRow: View {
         .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .onTapGesture(perform: onTap)
         #if targetEnvironment(macCatalyst)
-        // Dragging a card sideways is unnatural with a mouse, so the Mac gets
-        // the editor on a right-click instead. The swipe still works.
+        // The Mac's right-click menu mirrors what a click already offers. Edit
+        // is in both deliberately: this menu also filters, and a context menu
+        // that will narrow the list by a card but not open it reads as broken.
+        // Finder puts Open in both places for the same reason.
         .contextMenu {
             Button { onEdit() } label: { Label("Edit…", systemImage: "square.and.pencil") }
             // While any filter is on, the useful move is back out of it, so
