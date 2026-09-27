@@ -743,6 +743,8 @@ do {
 
     var overdue = TodoItem(title: "renew the passports", bucket: .later)
     overdue.deadline = day(-2)
+    var today = TodoItem(title: "ring the surveyor", bucket: .inbox)
+    today.deadline = now
     var soon = TodoItem(title: "book the hall", bucket: .inbox)
     soon.deadline = day(1)
     var distant = TodoItem(title: "plan the trip", bucket: .later)
@@ -755,11 +757,13 @@ do {
     var done = TodoItem(title: "collect the keys", bucket: .completed)
     done.deadline = day(-5)
 
-    let cards = [overdue, soon, distant, reminded, answered, done]
+    let cards = [overdue, today, soon, distant, reminded, answered, done]
 
     expect(Attention.needed(overdue, now: now), "an overdue deadline asks for attention")
-    expect(Attention.needed(soon, now: now), "so does one that is nearly here")
-    expect(!Attention.needed(distant, now: now), "a distant deadline does not")
+    expect(Attention.needed(today, now: now), "so does one that has arrived")
+    expect(!Attention.needed(soon, now: now),
+           "one still to come does not — yellow is a warning, not a thing to deal with now")
+    expect(!Attention.needed(distant, now: now), "and a distant deadline certainly does not")
     expect(Attention.needed(reminded, now: now),
            "a reminder waiting on an answer counts even with no deadline — the two claims are different")
     expect(!Attention.needed(answered, now: now), "an answered reminder is settled")
@@ -767,12 +771,12 @@ do {
 
     expect(Attention.count(in: cards, now: now) == 3, "so the badge reads three")
 
-    // The button and the coloured edge must agree, or the badge counts cards
-    // the user cannot see any mark on.
+    // The button and the red edge must agree, or the badge counts cards the
+    // user cannot see the mark on.
     for card in cards where !card.isCompleted && card.remindAt == nil {
         expect(Attention.needed(card, now: now)
-               == (DeadlineUrgency.of(card.deadline, now: now) != .none),
-               "the filter takes exactly the cards the list draws an edge on")
+               == DeadlineUrgency.of(card.deadline, now: now).isRed,
+               "the filter takes exactly the cards the list draws a red edge on")
     }
 }
 

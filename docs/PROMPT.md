@@ -334,15 +334,18 @@ Two ways in, doing different jobs, and they answer different questions.
 The **bell in the button row** opens the review and answers reminders one at a
 time. It appears only while a reminder is waiting.
 
-The **badged flag beside the jump-to-Today button** is wider on purpose: it
-narrows the card list to everything asking for attention — every card the list
-is already drawing a coloured edge on, plus every card a reminder is waiting on.
-A close deadline and an unanswered question are two different claims on the
-user, but from where they are sitting both mean the same thing, so one button
-gathers both rather than two competing for the same corner. What it gathers is
-mostly deadlines, which is why it is a flag and not a second bell. The cards
-appear in their own stacks, where they can be ticked off or swiped like
-anything else.
+The **badged flag beside the jump-to-Today button** narrows the card list to
+everything asking for attention — every **red** card, plus every card a
+reminder is waiting on. A deadline that has arrived and an unanswered question
+are two different claims on the user, but from where they are sitting both mean
+the same thing, so one button gathers both rather than two competing for the
+same corner. What it gathers is mostly deadlines, which is why it is a flag and
+not a second bell. The cards appear in their own stacks, where they can be
+ticked off or swiped like anything else.
+
+**Yellow is deliberately left out.** A card three days off is being shown, not
+asked about, and a list of things to deal with now loses its meaning the moment
+it also contains things to deal with later.
 
 Both appear only while there is something to count; a count of nothing is not
 worth a permanent control.

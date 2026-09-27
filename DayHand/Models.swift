@@ -684,6 +684,10 @@ enum DeadlineUrgency: Equatable {
     /// does not become the normal state of the list.
     static let approachingWithin = 3
 
+    /// Red: here or past. Yellow is a warning, this is the thing itself, and
+    /// it is what the attention filter gathers.
+    var isRed: Bool { self == .due || self == .overdue }
+
     static func of(_ deadline: Date?, now: Date = Date(),
                    calendar: Calendar = .current) -> DeadlineUrgency {
         guard let deadline else { return .none }
@@ -699,19 +703,23 @@ enum DeadlineUrgency: Equatable {
     }
 }
 
-/// The cards asking for attention: the ones the list is already colouring, and
-/// the ones a reminder is waiting on.
+/// The cards asking for attention: the red ones, and the ones a reminder is
+/// waiting on.
 ///
-/// Two different claims on the user — a deadline that is close, and a question
-/// that has been asked and not answered — but from where they are sitting both
-/// mean the same thing, so one button gathers both rather than two competing
-/// for the same corner.
+/// Two different claims on the user — a deadline that has arrived, and a
+/// question that has been asked and not answered — but from where they are
+/// sitting both mean the same thing, so one button gathers both rather than
+/// two competing for the same corner.
+///
+/// Yellow is deliberately left out. A card three days off is being shown, not
+/// asked about, and a list of things to deal with now loses its meaning the
+/// moment it also contains things to deal with later.
 enum Attention {
     static func needed(_ card: TodoItem, now: Date = Date(),
                        calendar: Calendar = .current) -> Bool {
         guard !card.isCompleted else { return false }
         if Reminders.isOutstanding(card, now: now) { return true }
-        return DeadlineUrgency.of(card.deadline, now: now, calendar: calendar) != .none
+        return DeadlineUrgency.of(card.deadline, now: now, calendar: calendar).isRed
     }
 
     static func count(in cards: [TodoItem], now: Date = Date()) -> Int {

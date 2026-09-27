@@ -6380,47 +6380,6 @@
         }
       }
     },
-    "No deadline is close, and every reminder has been answered." : {
-      "comment" : "Empty state detail for the attention filter",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keine Frist steht bevor, und jede Erinnerung ist beantwortet."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ninguna fecha límite está cerca y todos los recordatorios están respondidos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucune échéance n’approche, et chaque rappel a reçu une réponse."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nessuna scadenza è vicina e ogni promemoria ha una risposta."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Geen deadline is dichtbij en elke herinnering is beantwoord."
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nenhum prazo está próximo e todos os lembretes foram respondidos."
-          }
-        }
-      }
-    },
     "No Group" : {
       "localizations" : {
         "de" : {
@@ -6577,6 +6536,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nada em %@"
+          }
+        }
+      }
+    },
+    "Nothing is due today, and every reminder has been answered." : {
+      "comment" : "Empty state detail for the attention filter",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute ist nichts fällig, und jede Erinnerung ist beantwortet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoy no vence nada y todos los recordatorios están respondidos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rien n’est dû aujourd’hui, et chaque rappel a reçu une réponse."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oggi non scade nulla e ogni promemoria ha una risposta."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vandaag is er niets te doen en elke herinnering is beantwoord."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada vence hoje e todos os lembretes foram respondidos."
           }
         }
       }

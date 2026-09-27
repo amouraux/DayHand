@@ -707,7 +707,7 @@ struct ContentView: View {
                     ContentUnavailableView(
                         "Nothing to address",
                         systemImage: "flag",
-                        description: Text("No deadline is close, and every reminder has been answered.")
+                        description: Text("Nothing is due today, and every reminder has been answered.")
                     )
                 } else if searchTerms.isEmpty {
                     ContentUnavailableView(
