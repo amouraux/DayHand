@@ -138,24 +138,13 @@ struct ProjectEditor: View {
                     Label("Category", systemImage: "tag")
                 }
 
-                Menu {
-                    ProjectGroupMenu(project: project) {
-                        groupField = ""
-                        isNamingGroup = true
-                    }
+                groupPicker(project)
+
+                Button {
+                    groupField = ""
+                    isNamingGroup = true
                 } label: {
-                    LabeledContent {
-                        HStack(spacing: 6) {
-                            Text(project.group ?? String(localized: "None"))
-                            // The Picker above draws its own; a Menu does not,
-                            // and without it this row reads as a dead label.
-                            Image(systemName: "chevron.up.chevron.down")
-                                .font(.footnote.weight(.semibold))
-                        }
-                        .foregroundStyle(.secondary)
-                    } label: {
-                        Label("Group", systemImage: "folder")
-                    }
+                    Label("New Group…", systemImage: "folder.badge.plus")
                 }
 
             } footer: {
@@ -256,6 +245,27 @@ struct ProjectEditor: View {
             Button("Cancel", role: .cancel) { }
         } message: {
             Text("Its cards are kept. They just no longer belong to a project.")
+        }
+    }
+
+    /// A Picker, like Category beside it, rather than a Menu with a hand-drawn
+    /// value: a Menu's label is the parent's to draw, and a pop-up button on
+    /// the Mac does not draw it the same way. A Picker states its own
+    /// selection on every platform. Lifted out of the Form because the section
+    /// had grown past what the type-checker would take.
+    private func groupPicker(_ project: Project) -> some View {
+        let names = store.groupNames(in: project.categoryID)
+
+        return Picker(selection: Binding<String?>(
+            get: { project.group },
+            set: { chosen in withAnimation { store.setProjectGroup(project, to: chosen) } }
+        )) {
+            Text("None").tag(String?.none)
+            ForEach(names, id: \.self) { name in
+                Text(name).tag(String?.some(name))
+            }
+        } label: {
+            Label("Group", systemImage: "folder")
         }
     }
 

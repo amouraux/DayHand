@@ -159,6 +159,20 @@ folder, at <https://amouraux.github.io/DayHand/>.
   padding has to be written as `section.wrap { ... }`: a bare `section` selector
   loses to `.wrap` and is silently discarded.
 
+## xcodebuild can say SUCCEEDED without relinking
+
+Twice now an edit has been "verified" against a binary that predated it: the
+build reports **BUILD SUCCEEDED**, `simctl install` reports success, and the app
+on screen is the one from half an hour ago. When a change does not appear and
+the code plainly says it should, check the product before debugging the code:
+
+```sh
+stat -f '%Sm' ~/Library/Developer/Xcode/DerivedData/DayHand-*/Build/Products/Debug-iphonesimulator/DayHand.app/DayHand
+```
+
+If that timestamp is older than the edit, `touch` the file and build again.
+Believing the screenshot over the timestamp costs far more than the check does.
+
 ## Finishing a change
 
 Run the tests, build both platforms, then commit with a message that explains
