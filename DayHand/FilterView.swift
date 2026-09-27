@@ -74,13 +74,16 @@ struct FilterList: View {
                 Button {
                     withAnimation { pick() }
                 } label: {
-                    row(symbol: "square.grid.2x2", tint: .secondary, text: Text("Everything"),
-                        count: nil, selected: isEverything, bold: false)
+                    HStack(spacing: 10) {
+                        Color.clear.frame(width: 22, height: 1)
+                        row(symbol: "square.grid.2x2", tint: .secondary, text: Text("Everything"),
+                            count: nil, selected: isEverything, bold: false)
+                    }
                 }
             } footer: {
                 // Where the eye already is, rather than a tip at the bottom
                 // that nobody scrolls to.
-                Text("Choosing one replaces the last; touch and hold a row \u{2014} right-click on the Mac \u{2014} to add it instead. Tap \u{24D8} to rename a project, group it, or put it away.")
+                Text("Clicking a row picks that one; use the circle beside it to pick several. Tap \u{24D8} to rename a project, group it, or put it away.")
             }
 
             // Above the categories, not below them: on a phone the search field
@@ -173,13 +176,20 @@ struct FilterList: View {
     }
 
     private func categoryRow(_ category: CardCategory) -> some View {
-        Button {
-            withAnimation { pick(categories: [category.id]) }
-        } label: {
-            row(symbol: category.symbolName, tint: category.tint,
-                text: Text("All \(category.label)"),
-                count: categoryCounts[category.id] ?? 0,
-                selected: categorySelection.contains(category.id), bold: false)
+        HStack(spacing: 10) {
+            selectionBox(isOn: categorySelection.contains(category.id)) {
+                add(categories: [category.id])
+            }
+            Button {
+                withAnimation { pick(categories: [category.id]) }
+            } label: {
+                row(symbol: category.symbolName, tint: category.tint,
+                    text: Text("All \(category.label)"),
+                    count: categoryCounts[category.id] ?? 0,
+                    selected: false, bold: false)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
         }
         .contextMenu { addToSelection(categories: [category.id]) }
     }
@@ -192,9 +202,11 @@ struct FilterList: View {
         let allSelected = !ids.isEmpty && ids.isSubset(of: projectSelection)
         let open = FilterCounts.total(of: projects, in: openCounts)
 
-        return Button {
-            withAnimation { pick(projects: ids) }
-        } label: {
+        return HStack(spacing: 10) {
+            selectionBox(isOn: allSelected) { add(projects: ids) }
+            Button {
+                withAnimation { pick(projects: ids) }
+            } label: {
             HStack(spacing: 12) {
                 Image(systemName: "folder")
                     .foregroundStyle(.secondary)
@@ -212,10 +224,10 @@ struct FilterList: View {
                     .font(.subheadline)
                     .monospacedDigit()
                     .foregroundStyle(.secondary)
-                if allSelected {
-                    Image(systemName: "checkmark").foregroundStyle(Color.accentColor)
-                }
             }
+            .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
         }
         .contextMenu {
             addToSelection(projects: ids)
@@ -233,14 +245,17 @@ struct FilterList: View {
 
     private func projectRow(_ project: Project, tint: Color, indented: Bool) -> some View {
         HStack(spacing: 10) {
+            selectionBox(isOn: projectSelection.contains(project.id)) {
+                add(projects: [project.id])
+            }
             Button {
                 withAnimation { pick(projects: [project.id]) }
             } label: {
                 row(symbol: "number", tint: project.isArchived ? .secondary : tint,
                     text: Text(project.name),
                     count: openCounts[project.id] ?? 0,
-                    selected: projectSelection.contains(project.id), bold: true)
-                    .padding(.leading, indented ? 20 : 0)
+                    selected: false, bold: true)
+                    .padding(.leading, indented ? 16 : 0)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -280,6 +295,25 @@ struct FilterList: View {
                 newGroupFor = project
             }
         }
+    }
+
+    /// Clicking a row picks that one and drops the rest; clicking this takes a
+    /// row in or out of what is already picked. Several at once therefore needs
+    /// no modifier key — ⇧-click cannot be read in a Catalyst app without a
+    /// UIKit recogniser under every row — and it works the same on a phone,
+    /// where a modifier does not exist at all.
+    private func selectionBox(isOn: Bool, toggle: @escaping () -> Void) -> some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.15)) { toggle() }
+        } label: {
+            Image(systemName: isOn ? "checkmark.circle.fill" : "circle")
+                .font(.body)
+                .foregroundStyle(isOn ? Color.accentColor : Color.secondary.opacity(0.45))
+                .frame(width: 22)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.borderless)
+        .accessibilityLabel(isOn ? "Remove from Selection" : "Add to Selection")
     }
 
     private func row(symbol: String, tint: Color, text: Text, count: Int?, selected: Bool, bold: Bool) -> some View {

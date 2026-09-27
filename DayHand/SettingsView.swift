@@ -41,9 +41,9 @@ struct SettingsView: View {
                         }
                     }
                 } header: {
-                    Text("Review")
+                    Text("Completed")
                 } footer: {
-                    Text("What you have finished, grouped by the day you finished it.")
+                    Text("What you have accomplished, grouped by the day you did it.")
                 }
 
                 Section {
@@ -72,7 +72,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Categories")
                 } footer: {
-                    Text("Cards show the icon only. The label names the category here and for VoiceOver.")
+                    Text("Cards and projects are grouped by categories. Create your own \u{2014} cards show the icon alone, so the label names it here and for VoiceOver.")
                 }
 
                 // Projects are organised in the Filter, not here: one place to
@@ -87,7 +87,7 @@ struct SettingsView: View {
                         } label: {
                             Label {
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text("Convert Title Prefixes…")
+                                    Text("Convert Title Prefixes into #Projects…")
                                     Text("\(found.count) possible projects found in your titles")
                                         .font(.footnote)
                                         .foregroundStyle(.secondary)
@@ -105,7 +105,7 @@ struct SettingsView: View {
                         }
                     }
                 } footer: {
-                    Text("A project groups cards that belong to the same piece of work \u{2014} a trip, a client, a paper, a course. Type # in a new task to use one. Rename, group and archive them in the Filter: touch and hold a project, or right-click it on the Mac.")
+                    Text("A #project groups cards that belong to the same piece of work \u{2014} a trip, a paper, a course, an assignment. Type # in a new task to use one. Rename, group and archive them in the Filter: tap \u{24D8} beside a project.")
                 }
 
                 Section {
@@ -203,7 +203,7 @@ struct SettingsView: View {
                 } footer: {
                     Text(store.syncFileName == nil
                          ? "Put one file in iCloud Drive and point every device at it. iCloud syncs the file, so no paid developer account is needed."
-                         : "Both devices read and write this one file. Changes are merged, so edits made on either side while offline are kept.")
+                         : "Every device reads and writes this one file. Changes are merged, so edits made on any of them while offline are kept.")
                 }
 
                 Section {

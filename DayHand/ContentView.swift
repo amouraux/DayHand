@@ -467,7 +467,10 @@ struct ContentView: View {
 
     private var settingsButton: some View {
         Button {
-            isShowingSettings = true
+            // A switch, not a one-way door: pressing it again puts the sheet
+            // away. On the Mac the sheet is modal and may swallow the press,
+            // in which case this simply never runs.
+            isShowingSettings.toggle()
         } label: {
             Image(systemName: "ellipsis")
                 .font(.body.weight(.semibold))

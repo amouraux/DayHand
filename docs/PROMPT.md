@@ -527,16 +527,23 @@ On a phone the sheet opens at the **large** detent. The list is categories,
 groups and every project, and `.searchable` floats its field at the bottom of
 the sheet, where at the medium detent it sits on top of the last rows.
 
-**Choosing one row replaces the last.** Filtering is normally a question about
-one project, and a list that accumulates selections answers a question nobody
-asked. Choosing what is already the whole selection clears it, so the row that
-narrowed the list is the row that puts it back. Several at once stays possible
-through touch and hold — right-click on the Mac — which offers "Add to
-Selection" on every row, and "Remove from Selection" once it is in. A footer
-under **Everything** says so, where the eye already is rather than at the bottom
-of a list nobody scrolls to. Not ⇧-click: `Gesture.modifiers(_:)` is macOS-only
-and does not exist in a Catalyst app, and reading modifier flags would mean a
-UIKit recogniser under every row.
+**Clicking a row picks that one and drops the rest.** Filtering is normally a
+question about one project, and a list that accumulates selections answers a
+question nobody asked. Clicking what is already the whole selection clears it,
+so the row that narrowed the list is the row that puts it back.
+
+**Several at once is a circle at the head of every row** — category, group and
+project alike — which takes that row in or out of what is already picked. It is
+visible, so nothing has to be discovered; it needs no modifier key, which
+matters because **⇧-click cannot be read in a Catalyst app**
+(`Gesture.modifiers(_:)` is macOS-only and does not compile, and modifier flags
+would mean a UIKit recogniser under every row); and it works the same on a
+phone, where a modifier does not exist at all. A group's circle fills itself
+once every project in it is picked. **Everything** has no circle — it clears
+rather than joins — and keeps its tick on the right. A footer under it explains
+both gestures, where the eye already is rather than at the bottom of a list
+nobody scrolls to. The long-press menu keeps "Add to Selection" as an
+accelerator.
 
 **Every row carries the same tally: cards still to do**, counted with the test
 the list itself applies — so a row offering one card always has one to show.
