@@ -238,6 +238,15 @@ once the drag is more horizontal than vertical.
   plus Stack, Category, Project, Due date, Complete and Delete. Everything a
   card has, in one place.
 
+  Typing `#NAME` in that name field works as it does in New Task — the word is
+  taken as the project and leaves the title, on the space that finishes it or
+  on the way out. Otherwise the one gesture people learn while adding a card
+  would do nothing while editing one. And when the first word of a title reads
+  like a code, by the same test the bulk conversion uses, the editor offers
+  **Make “NF” a project** in one tap: the word becomes the project and leaves
+  the title. It is the single-card version of Convert Title Prefixes, for a
+  card written before its project existed.
+
 Feel: reveal a coloured panel behind the card that grows as you drag, ~96pt
 commit threshold, resistance past that, capped travel, and a haptic tick the
 moment the gesture arms. The move panel wears the **destination stack's own
@@ -472,8 +481,9 @@ to another category clears its group.
 
 Group headings sit inside the category section with the grouped projects
 indented beneath them, followed by ungrouped projects. Tapping a heading selects
-the group. Long-press a heading for Rename Group… (renaming onto another group's
-name joins them). Headings use primary, not secondary, text — dimmed rows read
+the group, and it carries the same **ⓘ** the projects under it do, opening the
+rename directly: renaming is all a group has, so a sheet with one row in it
+would be worse than the alert. Renaming onto another group's name joins them. Headings use primary, not secondary, text — dimmed rows read
 as disabled. Cards, New Task chips and the editor's project menu are untouched
 by grouping.
 
