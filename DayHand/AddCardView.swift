@@ -563,6 +563,20 @@ struct CardActionsSheet: View {
                     Section {
                         projectRow(item)
 
+                        if let split = firstWordProject(item) {
+                            Button {
+                                if let project = store.ensureProject(named: split.word,
+                                                                     categoryID: item.categoryID) {
+                                    title = split.rest
+                                    store.rename(item, to: split.rest)
+                                    withAnimation { store.setProject(item, to: project.id) }
+                                }
+                            } label: {
+                                Label("Make \u{201C}\(split.word)\u{201D} a project",
+                                      systemImage: "wand.and.stars")
+                            }
+                        }
+
                         Picker(selection: stackBinding(item)) {
                             ForEach(Bucket.quickMoveTargets) { target in
                                 Label(target.title, systemImage: target.symbolName).tag(target)
@@ -634,6 +648,13 @@ struct CardActionsSheet: View {
                     }
                 }
                 .onAppear { title = item.title }
+                // A space after the word finishes it here too, so the project
+                // is taken while typing rather than only on the way out.
+                .onChange(of: title) { _, _ in
+                    if ProjectToken.find(in: title)?.isFinished == true {
+                        _ = takeTypedProject(item)
+                    }
+                }
                 // Typing then dismissing by swipe must not lose the edit.
                 .onDisappear { commitTitle(item) }
                 .alert("New Project", isPresented: $isNamingProject) {
@@ -654,7 +675,33 @@ struct CardActionsSheet: View {
         .presentationDetents([.medium, .large])
     }
 
+    /// Typing `#NAME` in the card's own name takes the project, exactly as it
+    /// does in New Task: the word leaves the title rather than staying in it.
+    /// A space finishes it while typing; otherwise it is taken on the way out.
+    private func takeTypedProject(_ item: TodoItem) -> Bool {
+        guard let token = ProjectToken.find(in: title) else { return false }
+        let name = Project.clean(token.query)
+        guard !name.isEmpty,
+              let project = store.ensureProject(named: name, categoryID: item.categoryID)
+        else { return false }
+
+        title = token.remainder
+        store.rename(item, to: token.remainder)
+        withAnimation { store.setProject(item, to: project.id) }
+        return true
+    }
+
+    /// The first word, when it reads like a code, is almost always the project
+    /// the card belongs to — the same judgement the bulk conversion makes.
+    private func firstWordProject(_ item: TodoItem) -> (word: String, rest: String)? {
+        guard item.projectID == nil,
+              let split = ProjectConversion.split(title),
+              ProjectConversion.looksLikeCode(split.word) else { return nil }
+        return split
+    }
+
     private func commitTitle(_ item: TodoItem) {
+        if takeTypedProject(item) { return }
         store.rename(item, to: title)
     }
 

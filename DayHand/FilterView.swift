@@ -83,7 +83,7 @@ struct FilterList: View {
             } footer: {
                 // Where the eye already is, rather than a tip at the bottom
                 // that nobody scrolls to.
-                Text("Clicking a row picks that one; use the circle beside it to pick several. Tap \u{24D8} to rename a project, group it, or put it away.")
+                Text("Clicking a row picks that one; use the checkbox beside it to pick several. Tap \u{24D8} to rename a project or a group, or to put a project away.")
             }
 
             // Above the categories, not below them: on a phone the search field
@@ -228,6 +228,19 @@ struct FilterList: View {
             .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+
+            // The same affordance the projects under it carry. Renaming is all
+            // a group has — it owns no other settings — so this opens straight
+            // into it rather than into a sheet with one row.
+            Button {
+                nameField = name
+                renaming = GroupRef(categoryID: categoryID, name: name)
+            } label: {
+                Image(systemName: "info.circle")
+                    .foregroundStyle(Color.accentColor)
+            }
+            .buttonStyle(.borderless)
+            .accessibilityLabel("Rename Group…")
         }
         .contextMenu {
             addToSelection(projects: ids)

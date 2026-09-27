@@ -2597,43 +2597,43 @@
         }
       }
     },
-    "Clicking a row picks that one; use the circle beside it to pick several. Tap ⓘ to rename a project, group it, or put it away." : {
+    "Clicking a row picks that one; use the checkbox beside it to pick several. Tap ⓘ to rename a project or a group, or to put a project away." : {
       "comment" : "Footer under Everything in the Filter",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Klick auf eine Zeile wählt diese eine; mit dem Kreis daneben lassen sich mehrere wählen. Auf ⓘ tippen, um ein Projekt umzubenennen, zu gruppieren oder wegzulegen."
+            "value" : "Ein Klick auf eine Zeile wählt diese eine; mit dem Kästchen daneben lassen sich mehrere wählen. Auf ⓘ tippen, um ein Projekt oder eine Gruppe umzubenennen oder ein Projekt wegzulegen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al hacer clic en una fila se elige solo esa; usa el círculo que hay al lado para elegir varias. Toca ⓘ para renombrar un proyecto, agruparlo o guardarlo."
+            "value" : "Al hacer clic en una fila se elige solo esa; usa la casilla que hay al lado para elegir varias. Toca ⓘ para renombrar un proyecto o un grupo, o para guardar un proyecto."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cliquer sur une ligne n’en choisit qu’une ; le cercle à côté permet d’en choisir plusieurs. Touchez ⓘ pour renommer un projet, le grouper ou le ranger."
+            "value" : "Cliquer sur une ligne n’en choisit qu’une ; la case à côté permet d’en choisir plusieurs. Touchez ⓘ pour renommer un projet ou un groupe, ou pour ranger un projet."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fare clic su una riga ne sceglie una sola; usa il cerchio accanto per sceglierne più di una. Tocca ⓘ per rinominare un progetto, raggrupparlo o riporlo."
+            "value" : "Fare clic su una riga ne sceglie una sola; usa la casella accanto per sceglierne più di una. Tocca ⓘ per rinominare un progetto o un gruppo, o per riporre un progetto."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Op een rij klikken kiest alleen die ene; gebruik het rondje ernaast om er meerdere te kiezen. Tik op ⓘ om een project te hernoemen, te groeperen of op te bergen."
+            "value" : "Op een rij klikken kiest alleen die ene; gebruik het vakje ernaast om er meerdere te kiezen. Tik op ⓘ om een project of een groep te hernoemen, of om een project op te bergen."
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Clicar numa linha escolhe apenas essa; use o círculo ao lado para escolher várias. Toque em ⓘ para renomear um projeto, agrupá-lo ou guardá-lo."
+            "value" : "Clicar numa linha escolhe apenas essa; use a caixa ao lado para escolher várias. Toque em ⓘ para renomear um projeto ou um grupo, ou para guardar um projeto."
           }
         }
       }
@@ -4957,6 +4957,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mais tarde"
+          }
+        }
+      }
+    },
+    "Make “%@” a project" : {
+      "comment" : "Offer in the card editor when the first word reads like a code",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„%@“ zu einem Projekt machen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Convertir «%@» en un proyecto"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faire de « %@ » un projet"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trasforma «%@» in un progetto"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "‘%@’ een project maken"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tornar «%@» um projeto"
           }
         }
       }
