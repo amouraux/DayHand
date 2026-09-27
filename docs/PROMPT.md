@@ -202,13 +202,21 @@ The footer says where the card is actually going.
 
 ## Tapping a card
 
-A `confirmationDialog`, which takes only a title string per button: SF Symbols
-passed as a `Label` are silently dropped, and there is no way to tint a button
-beyond `role`. Colouring these rows to match the stacks would mean replacing it
-with a custom sheet and rebuilding the sizing, the tap-outside dismissal and the
-Cancel row that come free with the system one.
+**On a phone** this is a `confirmationDialog`, which is the right shape for a
+thumb and already dismisses on a tap outside. It takes only a title string per
+button: SF Symbols passed as a `Label` are silently dropped, and there is no way
+to tint a button beyond `role`.
 
-It raises a short dialog listing the **stacks the card is not already in**, then
+**Anywhere a pointer is used** — Mac and iPad — it is a **popover anchored to
+the card that was clicked**, drawn as rows so the stacks can wear their own
+colours: each destination carries its symbol and the same wash the cards in that
+stack carry, so where a card is going is recognised rather than read. A click
+outside puts it away, which a pointer expects and a modal dialog cannot offer.
+Bind the popover per row rather than to the list, or it opens over the middle of
+the screen instead of beside the card. There is no Cancel row: clicking away is
+the cancel.
+
+Either way it lists the **stacks the card is not already in**, then
 **Edit…**, then **Show Only <project>** — or **Show All** while a filter is on,
 on every card, since a category filter shows cards carrying no project — then
 Cancel. One tap moves it, so filing stays the fast path with no menu to read;

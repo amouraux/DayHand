@@ -43,12 +43,20 @@ struct ContentView: View {
     @State private var columns: NavigationSplitViewVisibility = .detailOnly
 
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     /// A window wide enough to keep the filter beside the cards rather than on
     /// top of them: the Mac always, an iPad unless it is sharing the screen.
     /// Never a phone — a Max in landscape is horizontally regular too, and a
     /// sidebar there would crowd the cards it exists to explain.
+    /// A pointer can click outside a menu to be rid of it, and expects to. The
+    /// phone keeps the system's action sheet, which already does that and is
+    /// the right shape for a thumb.
+    private var usesPopoverMenus: Bool {
+        UIDevice.current.userInterfaceIdiom != .phone
+    }
+
     private var showsSidebar: Bool {
         horizontalSizeClass == .regular && UIDevice.current.userInterfaceIdiom != .phone
     }
@@ -188,7 +196,7 @@ struct ContentView: View {
             .confirmationDialog(
                 stackPickItem?.title ?? "",
                 isPresented: Binding(
-                    get: { stackPickItem != nil },
+                    get: { !usesPopoverMenus && stackPickItem != nil },
                     set: { if !$0 { stackPickItem = nil } }
                 ),
                 titleVisibility: .visible,
@@ -578,6 +586,15 @@ struct ContentView: View {
                                 // card — so it keeps painting the previous
                                 // stack's colour and a date it no longer has.
                                 .id("\(card.id)-\(card.bucket.rawValue)")
+                                // Bound per row so it opens on the card that
+                                // was clicked rather than over the middle of
+                                // the list; only ever one can be true.
+                                .popover(isPresented: Binding(
+                                    get: { usesPopoverMenus && stackPickItem?.id == card.id },
+                                    set: { if !$0 { stackPickItem = nil } }
+                                )) {
+                                    cardMenu(card)
+                                }
                             }
 
                             if bucket == .completed {
@@ -622,6 +639,79 @@ struct ContentView: View {
                 }
             }
         }
+    }
+
+    // MARK: - The menu a click on a card opens
+
+    /// The same choices the phone's action sheet offers, drawn as rows so the
+    /// stacks can wear their own colours — the wash from the cards themselves,
+    /// so a destination is recognised rather than read.
+    @ViewBuilder
+    private func cardMenu(_ card: TodoItem) -> some View {
+        let project = store.project(for: card)
+
+        VStack(alignment: .leading, spacing: 4) {
+            Text(card.title)
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .lineLimit(2)
+                .padding(.horizontal, 12)
+                .padding(.top, 12)
+                .padding(.bottom, 2)
+
+            ForEach(Bucket.quickMoveTargets.filter { $0 != card.bucket }) { target in
+                menuRow(Text(target.title), symbol: target.symbolName, tint: target.tint,
+                        wash: target.lightWash) {
+                    stackPickItem = nil
+                    withAnimation { store.move(card, to: target) }
+                }
+            }
+
+            Divider().padding(.vertical, 4)
+
+            menuRow(Text("Edit…"), symbol: "square.and.pencil", tint: .accentColor, wash: 0) {
+                stackPickItem = nil
+                DispatchQueue.main.async { editItem = card }
+            }
+            if isFiltered {
+                menuRow(Text("Show All"), symbol: "line.3.horizontal.decrease.circle.fill",
+                        tint: .accentColor, wash: 0) {
+                    stackPickItem = nil
+                    showAll()
+                }
+            } else if let project {
+                menuRow(Text("Show Only \(project.name)"), symbol: "line.3.horizontal.decrease.circle",
+                        tint: .accentColor, wash: 0) {
+                    stackPickItem = nil
+                    showOnly(project)
+                }
+            }
+        }
+        .padding(.bottom, 10)
+        .frame(width: 260)
+        .presentationCompactAdaptation(.popover)
+    }
+
+    private func menuRow(_ title: Text, symbol: String, tint: Color,
+                         wash: Double, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                Image(systemName: symbol)
+                    .foregroundStyle(tint == .clear ? Color.secondary : tint)
+                    .frame(width: 22)
+                title.foregroundStyle(Color.primary)
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 9)
+            .background(
+                RoundedRectangle(cornerRadius: 9, style: .continuous)
+                    .fill(tint.opacity(colorScheme == .dark ? wash * 0.6 : wash))
+            )
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 8)
     }
 
     // MARK: - COMPLETED paging
