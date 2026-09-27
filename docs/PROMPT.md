@@ -583,9 +583,17 @@ whatever the filter has already chosen, and the empty state says so.
 
 ## More
 
-The sheet behind the ellipsis, in order: **Review** (above), **Categories**,
-**Convert Title Prefixes…** when there is something to convert, **New cards**
-(the default category), **Language**, **Sync**, **CSV**, and **Backups**.
+The sheet behind the ellipsis, in order: **Completed** (the weekly review
+above), **Categories**, **Convert Title Prefixes into #Projects…** when there is
+something to convert, **New cards** (the default category), **Language**,
+**Sync**, **CSV**, and **Backups**.
+
+The button is a switch: pressing it again puts the sheet away. On the Mac a
+sheet is modal and may take the press itself, in which case it is dismissed the
+usual way instead.
+
+Wording throughout says **every device**, never "both" — a sync file can be
+pointed at by as many as the user likes.
 
 ## Persistence and sync
 

@@ -1298,6 +1298,47 @@
         }
       }
     },
+    "A #project groups cards that belong to the same piece of work — a trip, a paper, a course, an assignment. Type # in a new task to use one. Rename, group and archive them in the Filter: tap ⓘ beside a project." : {
+      "comment" : "Footer of the Projects section",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein #Projekt fasst Karten zusammen, die zur selben Arbeit gehören — eine Reise, ein Aufsatz, ein Kurs, eine Aufgabe. In einer neuen Aufgabe # tippen, um eines zu verwenden. Umbenennen, gruppieren und archivieren im Filter: auf ⓘ neben einem Projekt tippen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un #proyecto agrupa tarjetas que pertenecen al mismo trabajo: un viaje, un artículo, un curso, un encargo. Escribe # en una tarea nueva para usar uno. Renombra, agrupa y archiva en el Filtro: toca ⓘ junto a un proyecto."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un #projet regroupe les cartes qui relèvent du même travail — un voyage, un article, un cours, un devoir. Tapez # dans une nouvelle tâche pour en utiliser un. Renommez, groupez et archivez dans le Filtre : touchez ⓘ à côté d’un projet."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un #progetto raggruppa le carte che appartengono allo stesso lavoro — un viaggio, un articolo, un corso, un compito. Digita # in una nuova attività per usarne uno. Rinomina, raggruppa e archivia nel Filtro: tocca ⓘ accanto a un progetto."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Een #project groepeert kaarten die bij hetzelfde werk horen — een reis, een artikel, een cursus, een opdracht. Typ # in een nieuwe taak om er een te gebruiken. Hernoemen, groeperen en archiveren doe je in het filter: tik op ⓘ naast een project."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um #projeto agrupa cartões que pertencem ao mesmo trabalho — uma viagem, um artigo, um curso, um trabalho. Escreva # numa nova tarefa para usar um. Renomeie, agrupe e arquive no Filtro: toque em ⓘ ao lado de um projeto."
+          }
+        }
+      }
+    },
     "A card given this project takes this category. Cards already in the project keep theirs. Moving a project to another category takes it out of its group; groups are arranged in the Filter sheet." : {
       "extractionState" : "stale",
       "localizations" : {
@@ -1420,7 +1461,6 @@
         }
       }
     },
-    "A project groups cards that belong to the same piece of work — a trip, a client, a paper, a course. Type # in a new task to use one. Rename, group and archive them in the Filter: touch and hold a project, or right-click it on the Mac." : {},
     "A project is archived once it is over, so anything still to do is marked completed first." : {
       "comment" : "Project editor footer, when cards are still open",
       "localizations" : {
@@ -2152,46 +2192,6 @@
         }
       }
     },
-    "Both devices read and write this one file. Changes are merged, so edits made on either side while offline are kept." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Beide Geräte lesen und schreiben diese eine Datei. Änderungen werden zusammengeführt, sodass Offline-Bearbeitungen auf beiden Seiten erhalten bleiben."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ambos dispositivos leen y escriben este mismo archivo. Los cambios se combinan, así que las ediciones hechas sin conexión en cualquiera de los dos se conservan."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les deux appareils lisent et écrivent ce même fichier. Les modifications sont fusionnées : celles faites hors ligne d’un côté comme de l’autre sont conservées."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entrambi i dispositivi leggono e scrivono questo stesso file. Le modifiche vengono unite, quindi le modifiche fatte offline da una parte o dall’altra si conservano."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Beide apparaten lezen en schrijven dit ene bestand. Wijzigingen worden samengevoegd, dus offline bewerkingen aan beide kanten blijven behouden."
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ambos os dispositivos leem e escrevem este mesmo ficheiro. As alterações são combinadas, pelo que as edições feitas offline de qualquer lado são mantidas."
-          }
-        }
-      }
-    },
     "Cancel" : {
       "localizations" : {
         "de" : {
@@ -2272,6 +2272,47 @@
         }
       }
     },
+    "Cards and projects are grouped by categories. Create your own — cards show the icon alone, so the label names it here and for VoiceOver." : {
+      "comment" : "Footer of the Categories section",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Karten und Projekte werden nach Kategorien gruppiert. Legen Sie eigene an — auf Karten erscheint nur das Symbol, die Bezeichnung benennt es hier und für VoiceOver."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las tarjetas y los proyectos se agrupan por categorías. Crea las tuyas: en las tarjetas solo aparece el icono, así que la etiqueta lo nombra aquí y para VoiceOver."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les cartes et les projets sont groupés par catégories. Créez les vôtres — sur les cartes, seule l’icône apparaît, le libellé la nomme ici et pour VoiceOver."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le carte e i progetti sono raggruppati per categorie. Crea le tue — sulle carte compare solo l’icona, quindi l’etichetta la nomina qui e per VoiceOver."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaarten en projecten worden per categorie gegroepeerd. Maak je eigen categorieën — op kaarten staat alleen het symbool, dus het label benoemt het hier en voor VoiceOver."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os cartões e os projetos são agrupados por categorias. Crie as suas — nos cartões aparece apenas o ícone, por isso a etiqueta nomeia-o aqui e para o VoiceOver."
+          }
+        }
+      }
+    },
     "Cards in Later start from the day after tomorrow." : {
       "localizations" : {
         "de" : {
@@ -2308,46 +2349,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Em Mais tarde, os cartões começam depois de amanhã."
-          }
-        }
-      }
-    },
-    "Cards show the icon only. The label names the category here and for VoiceOver." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Karten zeigen nur das Symbol. Der Name gilt hier und für VoiceOver."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Las tarjetas solo muestran el icono. El nombre sirve aquí y para VoiceOver."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les cartes n’affichent que l’icône. Le nom sert ici et pour VoiceOver."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le carte mostrano solo l’icona. Il nome vale qui e per VoiceOver."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kaarten tonen alleen het symbool. De naam geldt hier en voor VoiceOver."
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Os cartões mostram apenas o ícone. O nome serve aqui e para o VoiceOver."
           }
         }
       }
@@ -2960,42 +2961,43 @@
         }
       }
     },
-    "Convert Title Prefixes…" : {
+    "Convert Title Prefixes into #Projects…" : {
+      "comment" : "One-time conversion, in More",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Titel-Präfixe umwandeln…"
+            "value" : "Titelpräfixe in #Projekte umwandeln…"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Convertir prefijos de títulos…"
+            "value" : "Convertir prefijos de título en #Proyectos…"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Convertir les préfixes des titres…"
+            "value" : "Convertir les préfixes de titre en #Projets…"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Converti i prefissi dei titoli…"
+            "value" : "Converti i prefissi dei titoli in #Progetti…"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Titelvoorvoegsels converteren…"
+            "value" : "Titelprefixen omzetten naar #Projecten…"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Converter prefixos dos títulos…"
+            "value" : "Converter prefixos de título em #Projetos…"
           }
         }
       }
@@ -3894,6 +3896,47 @@
     "Every card in this project moves with it, and new ones start here too. Moving a project to another category also takes it out of its group." : {
       "comment" : "A description of how a project's cards are affected when it is moved.",
       "isCommentAutoGenerated" : true
+    },
+    "Every device reads and writes this one file. Changes are merged, so edits made on any of them while offline are kept." : {
+      "comment" : "Sync footer once a file is chosen",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jedes Gerät liest und schreibt diese eine Datei. Änderungen werden zusammengeführt, sodass offline gemachte Bearbeitungen erhalten bleiben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos los dispositivos leen y escriben este mismo archivo. Los cambios se combinan, así que se conservan las ediciones hechas sin conexión en cualquiera de ellos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chaque appareil lit et écrit ce même fichier. Les modifications sont fusionnées : celles faites hors ligne sur l’un d’eux sont conservées."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ogni dispositivo legge e scrive questo stesso file. Le modifiche vengono unite, quindi quelle fatte offline su uno qualsiasi di essi vengono conservate."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elk apparaat leest en schrijft ditzelfde bestand. Wijzigingen worden samengevoegd, dus bewerkingen die offline op een van de apparaten zijn gemaakt blijven behouden."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos os dispositivos leem e escrevem este mesmo ficheiro. As alterações são combinadas, por isso as edições feitas offline em qualquer um deles são mantidas."
+          }
+        }
+      }
     },
     "Everything" : {
       "comment" : "Filter sheet: clears the filter",
@@ -7261,46 +7304,6 @@
         }
       }
     },
-    "Review" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rückblick"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Balance"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bilan"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Resoconto"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Overzicht"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Balanço"
-          }
-        }
-      }
-    },
     "Save" : {
       "localizations" : {
         "de" : {
@@ -8731,42 +8734,43 @@
         }
       }
     },
-    "What you have finished, grouped by the day you finished it." : {
+    "What you have accomplished, grouped by the day you did it." : {
+      "comment" : "Footer of the Completed section in More",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Was Sie erledigt haben, nach Tagen."
+            "value" : "Was Sie geschafft haben, nach dem Tag gruppiert, an dem Sie es getan haben."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo que has completado, día por día."
+            "value" : "Lo que has logrado, agrupado por el día en que lo hiciste."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce que vous avez terminé, jour par jour."
+            "value" : "Ce que vous avez accompli, groupé par le jour où vous l’avez fait."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ciò che hai completato, giorno per giorno."
+            "value" : "Ciò che hai portato a termine, raggruppato per il giorno in cui l’hai fatto."
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wat je hebt afgerond, per dag."
+            "value" : "Wat je hebt bereikt, gegroepeerd per dag waarop je het deed."
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O que concluiu, dia a dia."
+            "value" : "O que conseguiu fazer, agrupado pelo dia em que o fez."
           }
         }
       }
