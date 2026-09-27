@@ -57,6 +57,12 @@ struct AddCardView: View {
     @State private var title = ""
     @State private var categoryID: UUID?
     @State private var project: ProjectChoice = .none
+    /// The project taken from a `#word` that is still being typed, and the
+    /// category the card carried before it was taken. Both are given back if
+    /// the word stops naming that project, so a half-typed name cannot leave
+    /// the card somewhere the user never chose.
+    @State private var adoptedID: UUID?
+    @State private var categoryBeforeAdopting: UUID?
     /// What follows a `#` still being typed, or nil when none is.
     @State private var projectQuery: String?
 
@@ -296,18 +302,44 @@ struct AddCardView: View {
 
         guard let token = ProjectToken.find(in: entered) else {
             projectQuery = nil
+            releaseAdopted()
             return
         }
         if token.isFinished {
             // A space ends the word, which is taken exactly as typed: an
             // existing project if the name matches, otherwise a new one.
             // Completing a partial name is what the chips are for.
+            adoptedID = nil
             take(literal: token.query)
             title = token.remainder.isEmpty ? "" : token.remainder + " "
             projectQuery = nil
         } else {
             projectQuery = token.query
+            adopt(matching: token.query)
         }
+    }
+
+    /// Waiting for a space before taking the project means the sheet spends the
+    /// whole time showing a category the card is not going to get — which reads
+    /// as the tag having done nothing. Take it the moment the letters name a
+    /// project, and keep the word in the title so it can still be typed on.
+    private func adopt(matching query: String) {
+        let name = Project.clean(query)
+        let match = name.isEmpty ? nil : projects.first { $0.key == Project.key(for: name) }
+        guard let match else { return releaseAdopted() }
+        guard adoptedID != match.id else { return }
+
+        if adoptedID == nil { categoryBeforeAdopting = categoryID }
+        adoptedID = match.id
+        choose(.existing(match))
+    }
+
+    /// Typing on past a name that matched, or deleting the `#`, gives it back.
+    private func releaseAdopted() {
+        guard adoptedID != nil else { return }
+        adoptedID = nil
+        categoryID = categoryBeforeAdopting
+        withAnimation(.easeOut(duration: 0.15)) { project = .none }
     }
 
     /// A chip was tapped: take its project and drop the `#word` it completed.
@@ -316,6 +348,7 @@ struct AddCardView: View {
             title = token.remainder.isEmpty ? "" : token.remainder + " "
         }
         projectQuery = nil
+        adoptedID = nil
         choose(choice)
         focused = true
     }

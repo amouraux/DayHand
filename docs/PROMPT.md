@@ -202,7 +202,13 @@ The footer says where the card is actually going.
 
 ## Tapping a card
 
-Raises a short dialog listing the **stacks the card is not already in**, then
+A `confirmationDialog`, which takes only a title string per button: SF Symbols
+passed as a `Label` are silently dropped, and there is no way to tint a button
+beyond `role`. Colouring these rows to match the stacks would mean replacing it
+with a custom sheet and rebuilding the sizing, the tap-outside dismissal and the
+Cancel row that come free with the system one.
+
+It raises a short dialog listing the **stacks the card is not already in**, then
 **Edit…**, then **Show Only <project>** — or **Show All** while a filter is on,
 on every card, since a category filter shows cards carrying no project — then
 Cancel. One tap moves it, so filing stays the fast path with no menu to read;
@@ -391,8 +397,13 @@ everywhere in the interface; never "subproject" or "tag".
 - **Entry (New Task).** Typing `#` plus letters shows matching projects as chips
   under the field (prefix matches first, then contains; most recently *created*
   first — not last edited, because converting or merging touches every card).
-  Tap a chip, or type a space to take the word literally (existing if it
-  matches, otherwise new). An unknown word offers "Create #…". Before anything
+  **The project is taken the moment the typed word names an existing one** —
+  the pill appears and the category follows, without waiting for a space.
+  Waiting means the sheet spends the whole time showing a category the card is
+  not going to get, which reads as the tag having done nothing. Typing on past
+  a name that matched, or deleting the `#`, gives back both the project and the
+  category the card had before. Tap a chip, or type a space, to take the word
+  literally (existing if it matches, otherwise new). An unknown word offers "Create #…". Before anything
   is typed, the five most recent projects are already shown as chips, so the
   common case is one tap. On the iPhone keyboard `#` is two layer-switches away,
   so put a `#` button inside the title row — a keyboard-toolbar button does not
