@@ -61,11 +61,9 @@ struct AddCardView: View {
     /// category the card carried before it was taken. Both are given back if
     /// the word stops naming that project, so a half-typed name cannot leave
     /// the card somewhere the user never chose.
-    @State private var adoptedID: UUID?
-    @State private var categoryBeforeAdopting: UUID?
-    /// What follows a `#` still being typed, or nil when none is.
-    @State private var projectQuery: String?
-
+    /// What the card's category was before a project set it, so that removing
+    /// the project puts it back.
+    @State private var categoryBeforeProject: UUID?
     init(
         categories: [CardCategory],
         projects: [Project] = [],
@@ -106,42 +104,17 @@ struct AddCardView: View {
         NavigationStack {
             Form {
                 Section {
-                    // Top-aligned, not baseline-aligned: an empty vertical text
-                    // field reports its placeholder's baseline lower than typed
-                    // text, so baseline alignment made the pill jump as soon as
-                    // typing began.
-                    HStack(alignment: .top, spacing: 8) {
-                        if let name = project.name {
-                            projectPill(name)
-                        }
-                        TextField(
-                            project.name == nil ? "What needs doing?  #project" : "What needs doing?",
-                            text: $title, axis: .vertical
-                        )
-                        .lineLimit(1...5)
-                        .focused($focused)
-                        .submitLabel(.done)
-                        .onSubmit(add)
-                        .onChange(of: title) { _, entered in titleChanged(entered) }
-
-                        // On the iPhone keyboard `#` is two layer-switches away,
-                        // which would undo the time a project saves. One tap here
-                        // starts one — and lists every project, not just recent ones.
-                        if project == .none && projectQuery == nil {
-                            Button { insertHash() } label: {
-                                Image(systemName: "number")
-                                    .font(.body.weight(.semibold))
-                                    .foregroundStyle(Color.accentColor)
-                                    .frame(width: 32, height: 22)
-                            }
-                            .buttonStyle(.borderless)
-                            .accessibilityLabel("Add a project")
-                        }
-                    }
-
-                    if !chips.isEmpty || createChipName != nil {
-                        chipRow
-                    }
+                    ProjectTitleField(
+                        title: $title,
+                        project: $project,
+                        projects: projects,
+                        lastUsed: projectLastUsed,
+                        categories: categories,
+                        categoryID: categoryID,
+                        focused: $focused,
+                        onSubmit: add,
+                        onProjectChosen: projectChosen
+                    )
                 }
 
                 Section {
@@ -214,157 +187,22 @@ struct AddCardView: View {
 
     // MARK: - Projects while typing
 
-    /// Matching projects while a `#word` is being typed; otherwise, until a
-    /// project is chosen, the most recent ones, so the common case needs no
-    /// typing at all.
-    private var chips: [Project] {
-        if let projectQuery {
-            return ProjectSuggestions.rank(projects, query: projectQuery, lastUsed: projectLastUsed)
-        }
-        guard project == .none else { return [] }
-        return ProjectSuggestions.rank(projects, query: "", lastUsed: projectLastUsed, limit: 5)
-    }
-
-    /// Offered when what is being typed is not a project yet.
-    private var createChipName: String? {
-        guard let projectQuery else { return nil }
-        let name = Project.clean(projectQuery)
-        guard !name.isEmpty else { return nil }
-        let key = Project.key(for: name)
-        return projects.contains { $0.key == key } ? nil : name
-    }
-
-    private var chipRow: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                ForEach(chips) { candidate in
-                    Button { pick(.existing(candidate)) } label: {
-                        chipLabel(candidate.name, tint: tint(for: candidate), filled: true)
-                    }
-                    .buttonStyle(.plain)
-                }
-                if let name = createChipName {
-                    Button { pick(.new(name)) } label: {
-                        chipLabel("Create #\(name)", tint: .secondary, filled: false)
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-            .padding(.vertical, 2)
-        }
-    }
-
-    private func chipLabel(_ text: String, tint: Color, filled: Bool) -> some View {
-        Text(text)
-            .font(.subheadline.weight(.medium))
-            .foregroundStyle(filled ? tint : Color.secondary)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 5)
-            .background(Capsule().fill(filled ? tint.opacity(0.14) : Color.clear))
-            .overlay(Capsule().strokeBorder(filled ? tint.opacity(0.35) : Color.secondary.opacity(0.4)))
-    }
-
-    /// The chosen project, in front of the title. Tapping it takes it off again.
-    private func projectPill(_ name: String) -> some View {
-        Button {
-            withAnimation(.easeOut(duration: 0.15)) { project = .none }
-        } label: {
-            HStack(spacing: 4) {
-                Text(name).font(.body.weight(.semibold))
-                Image(systemName: "xmark").font(.caption2.weight(.bold)).opacity(0.6)
-            }
-            .foregroundStyle(pillTint)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 1)
-            .background(Capsule().fill(pillTint.opacity(0.14)))
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel("Project \(name). Remove")
-    }
-
     private func tint(for project: Project) -> Color {
         project.categoryID
             .flatMap { id in categories.first { $0.id == id } }?
             .color.prefixTint ?? .accentColor
     }
 
-    private var pillTint: Color {
-        if case .existing(let project) = project { return tint(for: project) }
-        return categoryID.flatMap { id in categories.first { $0.id == id } }?.color.prefixTint ?? .accentColor
-    }
-
-    private func titleChanged(_ entered: String) {
-        if let typed = titleReturn(in: entered) {
-            title = typed.cleaned
-            if typed.isSubmit { add() }
+    /// A project brings its category with it; the picker can still change that
+    /// for this one card, and giving the project back gives the category back.
+    private func projectChosen(_ choice: ProjectChoice) {
+        if choice == .none {
+            categoryID = categoryBeforeProject ?? categoryID
+            categoryBeforeProject = nil
             return
         }
-
-        guard let token = ProjectToken.find(in: entered) else {
-            projectQuery = nil
-            releaseAdopted()
-            return
-        }
-        if token.isFinished {
-            // A space ends the word, which is taken exactly as typed: an
-            // existing project if the name matches, otherwise a new one.
-            // Completing a partial name is what the chips are for.
-            adoptedID = nil
-            take(literal: token.query)
-            title = token.remainder.isEmpty ? "" : token.remainder + " "
-            projectQuery = nil
-        } else {
-            projectQuery = token.query
-            adopt(matching: token.query)
-        }
-    }
-
-    /// Waiting for a space before taking the project means the sheet spends the
-    /// whole time showing a category the card is not going to get — which reads
-    /// as the tag having done nothing. Take it the moment the letters name a
-    /// project, and keep the word in the title so it can still be typed on.
-    private func adopt(matching query: String) {
-        let name = Project.clean(query)
-        let match = name.isEmpty ? nil : projects.first { $0.key == Project.key(for: name) }
-        guard let match else { return releaseAdopted() }
-        guard adoptedID != match.id else { return }
-
-        if adoptedID == nil { categoryBeforeAdopting = categoryID }
-        adoptedID = match.id
-        choose(.existing(match))
-    }
-
-    /// Typing on past a name that matched, or deleting the `#`, gives it back.
-    private func releaseAdopted() {
-        guard adoptedID != nil else { return }
-        adoptedID = nil
-        categoryID = categoryBeforeAdopting
-        withAnimation(.easeOut(duration: 0.15)) { project = .none }
-    }
-
-    /// A chip was tapped: take its project and drop the `#word` it completed.
-    private func pick(_ choice: ProjectChoice) {
-        if let token = ProjectToken.find(in: title) {
-            title = token.remainder.isEmpty ? "" : token.remainder + " "
-        }
-        projectQuery = nil
-        adoptedID = nil
-        choose(choice)
-        focused = true
-    }
-
-    /// A typed name as a choice: the project it names, or a new one.
-    private func resolve(literal raw: String) -> ProjectChoice? {
-        let name = Project.clean(raw)
-        guard !name.isEmpty else { return nil }
-        if let match = projects.first(where: { $0.key == Project.key(for: name) }) {
-            return .existing(match)
-        }
-        return .new(name)
-    }
-
-    private func take(literal raw: String) {
-        if let choice = resolve(literal: raw) { choose(choice) }
+        if categoryBeforeProject == nil { categoryBeforeProject = categoryID }
+        if let category = category(for: choice) { categoryID = category }
     }
 
     /// The category a choice brings with it, if any.
@@ -372,21 +210,6 @@ struct AddCardView: View {
         guard case .existing(let chosen) = choice, let category = chosen.categoryID,
               categories.contains(where: { $0.id == category }) else { return nil }
         return category
-    }
-
-    /// Choosing a project brings its category with it; the category picker can
-    /// still change that for this one card.
-    private func choose(_ choice: ProjectChoice) {
-        withAnimation(.easeOut(duration: 0.15)) { project = choice }
-        if let category = category(for: choice) { categoryID = category }
-    }
-
-    private func insertHash() {
-        if title.isEmpty || title.last?.isWhitespace == true {
-            title += "#"
-        } else {
-            title += " #"
-        }
     }
 
     /// A date of today or tomorrow implies its stack, so move the picker to
@@ -435,13 +258,238 @@ struct AddCardView: View {
         // Resolved into locals rather than written to state and read back.
         var choice = project
         var category = categoryID
-        if let token = ProjectToken.find(in: title), let typed = resolve(literal: token.query) {
+        if let token = ProjectToken.find(in: title),
+           let typed = ProjectTitleField.choice(for: token.query, in: projects) {
             choice = typed
             category = self.category(for: typed) ?? category
         }
         didAdd = true
         onAdd(titleWithoutToken, bucket, category, choice, hasDueDate ? dueDate : nil)
         dismiss()
+    }
+}
+
+/// The title field and everything about choosing a project from it: the `#`
+/// button, the suggestion chips, the pill, and the reading of a half-typed
+/// `#word`.
+///
+/// One view, used when adding a card and when editing one. The gesture people
+/// learn while writing a card has to work when they come back to it, and two
+/// copies of this would have drifted apart the first time either was touched.
+/// The parent decides what a chosen project *means* — New Task moves its own
+/// category picker, the editor writes it to the card — so all this reports is
+/// which project is now on the card.
+struct ProjectTitleField: View {
+    @Binding var title: String
+    @Binding var project: ProjectChoice
+    let projects: [Project]
+    let lastUsed: [UUID: Date]
+    let categories: [CardCategory]
+    /// The category the card carries, for tinting the pill before a project
+    /// has been chosen.
+    let categoryID: UUID?
+    var placeholder: LocalizedStringKey = "What needs doing?  #project"
+    @FocusState.Binding var focused: Bool
+    /// Return true to swallow the submit; New Task adds the card on Return.
+    var onSubmit: () -> Void = {}
+    /// The project changed — taken from a typed word, a chip, or given back.
+    var onProjectChosen: (ProjectChoice) -> Void = { _ in }
+
+    /// What follows a `#` while it is still being typed, or nil.
+    @State private var query: String?
+    /// The project taken from a word that is still being typed, so that typing
+    /// on past a name that matched can give it back.
+    @State private var adoptedID: UUID?
+
+    var body: some View {
+        // Top-aligned, not baseline-aligned: an empty vertical text field
+        // reports its placeholder's baseline lower than typed text, so baseline
+        // alignment made the pill jump as soon as typing began.
+        HStack(alignment: .top, spacing: 8) {
+            if let name = project.name {
+                pill(name)
+            }
+            TextField(project.name == nil ? placeholder : "What needs doing?",
+                      text: $title, axis: .vertical)
+                .lineLimit(1...5)
+                .focused($focused)
+                .submitLabel(.done)
+                .onSubmit(onSubmit)
+                .onChange(of: title) { _, entered in handle(entered) }
+
+            // On the iPhone keyboard `#` is two layer-switches away — three on
+            // a layout that puts £ there — which would undo the time a project
+            // saves. One tap here starts one, and lists every project rather
+            // than only the recent ones.
+            if project == .none && query == nil {
+                Button { insertHash() } label: {
+                    Image(systemName: "number")
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(Color.accentColor)
+                        .frame(width: 32, height: 22)
+                }
+                .buttonStyle(.borderless)
+                .accessibilityLabel("Add a project")
+            }
+        }
+
+        if !chips.isEmpty || createName != nil {
+            chipRow
+        }
+    }
+
+    // MARK: - Chips
+
+    private var chips: [Project] {
+        if let query {
+            return ProjectSuggestions.rank(projects, query: query, lastUsed: lastUsed)
+        }
+        guard project == .none else { return [] }
+        return ProjectSuggestions.rank(projects, query: "", lastUsed: lastUsed, limit: 5)
+    }
+
+    private var createName: String? {
+        guard let query else { return nil }
+        let name = Project.clean(query)
+        guard !name.isEmpty else { return nil }
+        return projects.contains { $0.key == Project.key(for: name) } ? nil : name
+    }
+
+    private var chipRow: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(chips) { candidate in
+                    Button { pick(.existing(candidate)) } label: {
+                        chipLabel(candidate.name, tint: tint(for: candidate), filled: true)
+                    }
+                    .buttonStyle(.plain)
+                }
+                if let name = createName {
+                    Button { pick(.new(name)) } label: {
+                        chipLabel("Create #\(name)", tint: .secondary, filled: false)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.vertical, 2)
+        }
+    }
+
+    private func chipLabel(_ text: String, tint: Color, filled: Bool) -> some View {
+        Text(text)
+            .font(.subheadline.weight(.medium))
+            .foregroundStyle(filled ? tint : Color.secondary)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(Capsule().fill(filled ? tint.opacity(0.14) : Color.clear))
+            .overlay(Capsule().strokeBorder(filled ? tint.opacity(0.35) : Color.secondary.opacity(0.4)))
+    }
+
+    private func pill(_ name: String) -> some View {
+        Button {
+            withAnimation(.easeOut(duration: 0.15)) { choose(.none) }
+        } label: {
+            HStack(spacing: 4) {
+                Text(name).font(.body.weight(.semibold))
+                Image(systemName: "xmark").font(.caption2.weight(.bold)).opacity(0.6)
+            }
+            .foregroundStyle(pillTint)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 1)
+            .background(Capsule().fill(pillTint.opacity(0.14)))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Project \(name). Remove")
+    }
+
+    private func tint(for project: Project) -> Color {
+        project.categoryID
+            .flatMap { id in categories.first { $0.id == id } }?
+            .color.prefixTint ?? .accentColor
+    }
+
+    private var pillTint: Color {
+        if case .existing(let chosen) = project { return tint(for: chosen) }
+        return categoryID.flatMap { id in categories.first { $0.id == id } }?.color.prefixTint ?? .accentColor
+    }
+
+    // MARK: - Reading the word being typed
+
+    private func handle(_ entered: String) {
+        guard let token = ProjectToken.find(in: entered) else {
+            query = nil
+            release()
+            return
+        }
+        if token.isFinished {
+            // A space ends the word, which is taken exactly as typed: an
+            // existing project if the name matches, otherwise a new one.
+            adoptedID = nil
+            if let choice = resolve(token.query) { choose(choice) }
+            title = token.remainder.isEmpty ? "" : token.remainder + " "
+            query = nil
+        } else {
+            query = token.query
+            adopt(token.query)
+        }
+    }
+
+    /// Taking the project the moment the letters name one, rather than waiting
+    /// for a space: until then the sheet shows a category the card is not going
+    /// to get, which reads as the tag having done nothing.
+    private func adopt(_ typed: String) {
+        let name = Project.clean(typed)
+        let match = name.isEmpty ? nil : projects.first { $0.key == Project.key(for: name) }
+        guard let match else { return release() }
+        guard adoptedID != match.id else { return }
+        adoptedID = match.id
+        choose(.existing(match))
+    }
+
+    private func release() {
+        guard adoptedID != nil else { return }
+        adoptedID = nil
+        withAnimation(.easeOut(duration: 0.15)) { choose(.none) }
+    }
+
+    /// The choice a typed word names: the project it matches, or a new one.
+    /// Static because a sheet also has to resolve a word that was never
+    /// finished with a space, on the way out.
+    static func choice(for raw: String, in projects: [Project]) -> ProjectChoice? {
+        let name = Project.clean(raw)
+        guard !name.isEmpty else { return nil }
+        if let match = projects.first(where: { $0.key == Project.key(for: name) }) {
+            return .existing(match)
+        }
+        return .new(name)
+    }
+
+    private func resolve(_ raw: String) -> ProjectChoice? {
+        Self.choice(for: raw, in: projects)
+    }
+
+    /// A tapped chip: take its project and drop the `#word` it completed.
+    private func pick(_ choice: ProjectChoice) {
+        if let token = ProjectToken.find(in: title) {
+            title = token.remainder.isEmpty ? "" : token.remainder + " "
+        }
+        query = nil
+        adoptedID = nil
+        choose(choice)
+        focused = true
+    }
+
+    private func choose(_ choice: ProjectChoice) {
+        withAnimation(.easeOut(duration: 0.15)) { project = choice }
+        onProjectChosen(choice)
+    }
+
+    private func insertHash() {
+        if title.isEmpty || title.last?.isWhitespace == true {
+            title += "#"
+        } else {
+            title += " #"
+        }
     }
 }
 
@@ -533,6 +581,9 @@ struct CardActionsSheet: View {
 
     @State private var title = ""
     @FocusState private var titleFocused: Bool
+    /// What the field shows as the card's project. Written straight through to
+    /// the card, and read back from it when the sheet opens.
+    @State private var editorProject: ProjectChoice = .none
     @State private var isNamingProject = false
     @State private var newProjectName = ""
 
@@ -543,21 +594,34 @@ struct CardActionsSheet: View {
             if let item {
                 Form {
                     Section {
-                        TextField("Title", text: $title, axis: .vertical)
-                            .lineLimit(1...4)
-                            .focused($titleFocused)
-                            .submitLabel(.done)
-                            .onSubmit { commitTitle(item) }
-                            .onChange(of: title) { _, entered in
-                                guard let typed = titleReturn(in: entered) else { return }
-                                title = typed.cleaned
-                                // Renaming saves as you go, so Return here only
-                                // needs to commit and put the keyboard away.
-                                if typed.isSubmit {
-                                    commitTitle(item)
-                                    titleFocused = false
-                                }
+                        // The same field New Task uses, so `#` works here too:
+                        // the button, the chips, the pill and the reading of a
+                        // half-typed word are one view, not a lookalike.
+                        ProjectTitleField(
+                            title: $title,
+                            project: $editorProject,
+                            projects: store.projects,
+                            lastUsed: store.projectLastUsed,
+                            categories: store.categories,
+                            categoryID: item.categoryID,
+                            placeholder: "Title",
+                            focused: $titleFocused,
+                            onSubmit: {
+                                commitTitle(item)
+                                titleFocused = false
+                            },
+                            onProjectChosen: { choice in applyProject(choice, to: item) }
+                        )
+                        .onChange(of: title) { _, entered in
+                            guard let typed = titleReturn(in: entered) else { return }
+                            title = typed.cleaned
+                            // Renaming saves as you go, so Return here only
+                            // needs to commit and put the keyboard away.
+                            if typed.isSubmit {
+                                commitTitle(item)
+                                titleFocused = false
                             }
+                        }
                     }
 
                     Section {
@@ -647,13 +711,11 @@ struct CardActionsSheet: View {
                         }
                     }
                 }
-                .onAppear { title = item.title }
-                // A space after the word finishes it here too, so the project
-                // is taken while typing rather than only on the way out.
-                .onChange(of: title) { _, _ in
-                    if ProjectToken.find(in: title)?.isFinished == true {
-                        _ = takeTypedProject(item)
-                    }
+                .onAppear {
+                    title = item.title
+                    // The field shows what the card already carries, so the
+                    // pill is there before anything is typed.
+                    editorProject = store.project(for: item).map(ProjectChoice.existing) ?? .none
                 }
                 // Typing then dismissing by swipe must not lose the edit.
                 .onDisappear { commitTitle(item) }
@@ -675,19 +737,17 @@ struct CardActionsSheet: View {
         .presentationDetents([.medium, .large])
     }
 
-    /// Typing `#NAME` in the card's own name takes the project, exactly as it
-    /// does in New Task: the word leaves the title rather than staying in it.
-    /// A space finishes it while typing; otherwise it is taken on the way out.
+    /// A `#word` left unfinished when the sheet closes still counts, exactly as
+    /// it does in New Task.
     private func takeTypedProject(_ item: TodoItem) -> Bool {
-        guard let token = ProjectToken.find(in: title) else { return false }
-        let name = Project.clean(token.query)
-        guard !name.isEmpty,
-              let project = store.ensureProject(named: name, categoryID: item.categoryID)
+        guard let token = ProjectToken.find(in: title),
+              let choice = ProjectTitleField.choice(for: token.query, in: store.projects)
         else { return false }
 
         title = token.remainder
         store.rename(item, to: token.remainder)
-        withAnimation { store.setProject(item, to: project.id) }
+        editorProject = choice
+        applyProject(choice, to: item)
         return true
     }
 
@@ -698,6 +758,22 @@ struct CardActionsSheet: View {
               let split = ProjectConversion.split(title),
               ProjectConversion.looksLikeCode(split.word) else { return nil }
         return split
+    }
+
+    /// A project chosen in the field goes straight onto the card, which also
+    /// moves the card's category — the project is what says where the work
+    /// belongs. A new name is created only once it is actually chosen.
+    private func applyProject(_ choice: ProjectChoice, to item: TodoItem) {
+        switch choice {
+        case .none:
+            withAnimation { store.setProject(item, to: nil) }
+        case .existing(let project):
+            withAnimation { store.setProject(item, to: project.id) }
+        case .new(let name):
+            if let created = store.ensureProject(named: name, categoryID: item.categoryID) {
+                withAnimation { store.setProject(item, to: created.id) }
+            }
+        }
     }
 
     private func commitTitle(_ item: TodoItem) {

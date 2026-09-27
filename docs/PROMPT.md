@@ -238,10 +238,17 @@ once the drag is more horizontal than vertical.
   plus Stack, Category, Project, Due date, Complete and Delete. Everything a
   card has, in one place.
 
-  Typing `#NAME` in that name field works as it does in New Task — the word is
-  taken as the project and leaves the title, on the space that finishes it or
-  on the way out. Otherwise the one gesture people learn while adding a card
-  would do nothing while editing one. And when the first word of a title reads
+  The name field **is the one New Task uses**, not a lookalike: the same `#`
+  button, the same suggestion chips, the same pill, the same reading of a
+  half-typed word. One view with two parents, because the gesture people learn
+  while writing a card has to work when they come back to it, and two copies
+  would have drifted apart the first time either was touched. The parent
+  decides what a chosen project *means* — New Task moves its own category
+  picker, the editor writes it to the card — so all the field reports is which
+  project is now on it. Removing the project in New Task gives back the
+  category the card had before; in the editor it does not, because there the
+  category is a thing the user may have set deliberately and it is already
+  saved. And when the first word of a title reads
   like a code, by the same test the bulk conversion uses, the editor offers
   **Make “NF” a project** in one tap: the word becomes the project and leaves
   the title. It is the single-card version of Convert Title Prefixes, for a
