@@ -329,6 +329,19 @@ button that usually does nothing, and its appearing is itself the news.
 Opening the notification goes straight there, since the notification was a
 question and that is where it is answered.
 
+Two ways in, doing different jobs. The **bell in the button row** opens the
+review and answers reminders one at a time. A **badged bell beside the
+jump-to-Today button** narrows the card list to the cards a reminder is waiting
+on, in their own stacks, where they can be ticked off or swiped like anything
+else. Both appear only while something is waiting; a count of nothing is not
+worth a permanent control.
+
+**The app icon carries the same count.** It is the only thing that says
+something is waiting without the app being opened, which is exactly what an
+unanswered reminder needs. Each scheduled notification carries the badge the
+icon should show once it has fired — those already waiting, plus itself and
+everything before it — and the app corrects the number the moment it is opened.
+
 Each waiting reminder offers four answers and one non-answer:
 
 - **Move to Today** / **Move to Tomorrow** — moves the card and is done with

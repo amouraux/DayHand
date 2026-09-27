@@ -51,23 +51,35 @@ final class ReminderScheduler: NSObject, UNUserNotificationCenterDelegate {
     /// Rewriting the lot is deliberate. The set is a handful of notifications,
     /// and patching them one at a time is how a reminder ends up firing for a
     /// card finished last week.
-    func sync(to cards: [TodoItem]) {
-        let wanted = cards.compactMap { card -> (TodoItem, Date)? in
-            guard let at = card.remindAt else { return nil }
-            return (card, at)
-        }
+    /// - Parameters:
+    ///   - cards: the reminders still to come, which become pending notifications.
+    ///   - waiting: how many have already fired and not been answered, which is
+    ///     what the icon badge counts.
+    func sync(to cards: [TodoItem], waiting: Int) {
+        // Sorted, because each notification carries the badge the icon should
+        // show once it has fired: the ones already waiting plus itself and
+        // everything before it. The app corrects the count the moment it is
+        // opened; this keeps the icon honest while it is closed.
+        let wanted = cards
+            .compactMap { card -> (TodoItem, Date)? in
+                guard let at = card.remindAt else { return nil }
+                return (card, at)
+            }
+            .sorted { $0.1 < $1.1 }
 
+        setBadge(waiting)
         centre.removeAllPendingNotificationRequests()
         guard !wanted.isEmpty else { return }
 
         requestPermissionIfNeeded { [weak self] granted in
             guard granted, let self else { return }
-            for (card, at) in wanted {
+            for (index, (card, at)) in wanted.enumerated() {
                 let content = UNMutableNotificationContent()
                 content.title = card.title
                 content.body = String(localized: "Move it, or keep it where it is.",
                                       comment: "Notification body for a reminder")
                 content.sound = .default
+                content.badge = NSNumber(value: waiting + index + 1)
                 // Carries the card so opening the notification can go straight
                 // to the review rather than to the top of the list.
                 content.userInfo = ["card": card.id.uuidString]
@@ -82,6 +94,13 @@ final class ReminderScheduler: NSObject, UNUserNotificationCenterDelegate {
                 self.centre.add(request)
             }
         }
+    }
+
+    /// The one number on the icon: reminders that have fired and not been
+    /// answered. Nothing else is worth a badge — a card sitting in Today is
+    /// not a thing the app is waiting on an answer for.
+    func setBadge(_ count: Int) {
+        centre.setBadgeCount(count)
     }
 
     private func requestPermissionIfNeeded(_ done: @escaping (Bool) -> Void) {

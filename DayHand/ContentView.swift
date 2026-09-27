@@ -11,6 +11,9 @@ struct ContentView: View {
     @State private var isAdding = false
     @State private var isShowingSettings = false
     @State private var isShowingReminders = false
+    /// Narrows the list to the cards a reminder is waiting on, so they can be
+    /// dealt with among their own stacks rather than in a sheet.
+    @State private var remindedOnly = false
     /// When the More popover last closed, so the click that dismissed it is not
     /// also read as a click asking for it back.
     @State private var settingsDismissedAt: Date?
@@ -111,10 +114,17 @@ struct ContentView: View {
                 // It stands down for the search bar, which wants the width —
                 // and on a handful of results there is nothing to jump over.
                 if !isSearching {
-                    todayButton(proxy)
-                        .padding(.trailing, 16)
-                        .padding(.top, 6)
-                        .transition(.opacity)
+                    HStack(spacing: 12) {
+                        // Only while something is waiting: a count of nothing
+                        // is not worth a permanent control.
+                        if waitingCount > 0 || remindedOnly {
+                            remindedFilterButton
+                        }
+                        todayButton(proxy)
+                    }
+                    .padding(.trailing, 16)
+                    .padding(.top, 6)
+                    .transition(.opacity)
                 }
             }
             .overlay(alignment: .bottomLeading) {
@@ -259,6 +269,9 @@ struct ContentView: View {
                 // Whatever the other device wrote while we were away.
                 withAnimation { store.refreshFromSyncFile() }
                 store.refreshIfDayChanged()
+                // Reminders fire while the app is away, so the badge and the
+                // pending set are both stale by the time it comes back.
+                store.rescheduleNotifications()
             }
             .onChange(of: store.categories) { _, categories in
                 // A category the user deleted must not keep filtering the list.
@@ -283,6 +296,9 @@ struct ContentView: View {
     /// and then after the search. Both narrow; neither reorders.
     private func cards(in bucket: Bucket) -> [TodoItem] {
         var all = store.items(in: bucket)
+        if remindedOnly {
+            all = all.filter { Reminders.isOutstanding($0) }
+        }
         if isFiltered {
             all = all.filter { card in
                 if let id = card.categoryID, filterCategoryIDs.contains(id) { return true }
@@ -301,8 +317,10 @@ struct ContentView: View {
 
     private var isFiltered: Bool { !filterCategoryIDs.isEmpty || !filterProjectIDs.isEmpty }
 
+    private var waitingCount: Int { store.outstandingReminders.count }
+
     /// Narrowed by either means, for the empty state.
-    private var isNarrowed: Bool { isFiltered || !searchTerms.isEmpty }
+    private var isNarrowed: Bool { isFiltered || remindedOnly || !searchTerms.isEmpty }
 
     /// The chosen categories, in the order the user arranged them.
     private var activeFilters: [CardCategory] {
@@ -484,6 +502,46 @@ struct ContentView: View {
         }
     }
 
+    /// Shows the cards a reminder is waiting on, in their own stacks. The bell
+    /// below answers reminders one at a time; this one puts them back among
+    /// the cards, where they can be ticked off or swiped like anything else.
+    private var remindedFilterButton: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                remindedOnly.toggle()
+                if remindedOnly {
+                    // A narrowing replaces the last, as choosing a project does.
+                    filterCategoryIDs = []
+                    filterProjectIDs = []
+                }
+            }
+        } label: {
+            Image(systemName: "bell.fill")
+                .font(.body.weight(.semibold))
+                .foregroundStyle(remindedOnly ? Color.white : Color.red)
+                .frame(width: 48, height: 48)
+                .background(Circle().fill(remindedOnly ? Color.red
+                                          : Color(.secondarySystemGroupedBackground)))
+                .overlay(Circle().strokeBorder(Color.red.opacity(0.85), lineWidth: 2))
+                .overlay(alignment: .topTrailing) {
+                    if waitingCount > 0 && !remindedOnly {
+                        Text("\(waitingCount)")
+                            .font(.caption2.weight(.bold))
+                            .monospacedDigit()
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 1)
+                            .background(Capsule().fill(Color.red))
+                            .offset(x: 4, y: -2)
+                    }
+                }
+                .shadow(color: .black.opacity(0.18), radius: 6, y: 3)
+                .contentShape(Circle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(remindedOnly ? "Show all cards" : "Show cards with reminders")
+    }
+
     private var remindersButton: some View {
         Button { isShowingReminders = true } label: {
             Image(systemName: "bell.badge.fill")
@@ -641,7 +699,13 @@ struct ContentView: View {
                 )
             } else if isNarrowed,
                       Bucket.allCases.allSatisfy({ cards(in: $0).isEmpty }) {
-                if searchTerms.isEmpty {
+                if remindedOnly && searchTerms.isEmpty && !isFiltered {
+                    ContentUnavailableView(
+                        "No reminders waiting",
+                        systemImage: "bell",
+                        description: Text("Every reminder has been answered.")
+                    )
+                } else if searchTerms.isEmpty {
                     ContentUnavailableView(
                         filterNames.count == 1 ? "Nothing in \(filterNames[0])" : "Nothing matches",
                         systemImage: "line.3.horizontal.decrease",
