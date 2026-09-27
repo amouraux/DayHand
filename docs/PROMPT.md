@@ -588,9 +588,13 @@ above), **Categories**, **Convert Title Prefixes into #Projects…** when there 
 something to convert, **New cards** (the default category), **Language**,
 **Sync**, **CSV**, and **Backups**.
 
-The button is a switch: pressing it again puts the sheet away. On the Mac a
-sheet is modal and may take the press itself, in which case it is dismissed the
-usual way instead.
+**On the Mac it is a popover, not a sheet**, anchored to the button. A sheet is
+modal: nothing behind it can be clicked, so neither clicking outside nor
+clicking the button again can put it away, and More is a menu rather than a task
+to be finished. A popover light-dismisses on a click outside, and the button
+becomes a switch. That click also lands on the button, so a short guard after a
+dismissal stops the same click reopening what it just closed. A phone keeps the
+sheet, where a popover would fill the screen regardless.
 
 Wording throughout says **every device**, never "both" — a sync file can be
 pointed at by as many as the user likes.

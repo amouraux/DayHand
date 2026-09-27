@@ -10,6 +10,9 @@ struct ContentView: View {
     @State private var editItem: TodoItem?
     @State private var isAdding = false
     @State private var isShowingSettings = false
+    /// When the More popover last closed, so the click that dismissed it is not
+    /// also read as a click asking for it back.
+    @State private var settingsDismissedAt: Date?
     /// Both empty shows every card; otherwise a card shows if it carries any of
     /// the chosen categories or projects.
     @State private var filterCategoryIDs: Set<UUID> = []
@@ -174,9 +177,11 @@ struct ContentView: View {
                 )
                 .environmentObject(store)
             }
+            #if !targetEnvironment(macCatalyst)
             .sheet(isPresented: $isShowingSettings) {
                 SettingsView().environmentObject(store)
             }
+            #endif
             .sheet(item: $editItem) { item in
                 CardActionsSheet(itemID: item.id).environmentObject(store)
             }
@@ -467,9 +472,14 @@ struct ContentView: View {
 
     private var settingsButton: some View {
         Button {
-            // A switch, not a one-way door: pressing it again puts the sheet
-            // away. On the Mac the sheet is modal and may swallow the press,
-            // in which case this simply never runs.
+            // Clicking the button while the popover is open light-dismisses it
+            // first, and without this the same click would open it straight
+            // back up — the button would look dead. A sheet cannot be closed
+            // this way at all: it is modal, and the press never arrives.
+            if let at = settingsDismissedAt, Date().timeIntervalSince(at) < 0.35 {
+                settingsDismissedAt = nil
+                return
+            }
             isShowingSettings.toggle()
         } label: {
             Image(systemName: "ellipsis")
@@ -483,6 +493,19 @@ struct ContentView: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel("More")
+        // A popover on the Mac, not a sheet: a sheet is modal, so neither
+        // clicking outside it nor clicking this button again can put it away,
+        // and More is a menu rather than a task to be finished.
+        #if targetEnvironment(macCatalyst)
+        .popover(isPresented: $isShowingSettings, arrowEdge: .top) {
+            SettingsView()
+                .environmentObject(store)
+                .frame(minWidth: 420, idealWidth: 460, minHeight: 540, idealHeight: 640)
+        }
+        .onChange(of: isShowingSettings) { _, open in
+            if !open { settingsDismissedAt = Date() }
+        }
+        #endif
     }
 
     private func todayButton(_ proxy: ScrollViewProxy) -> some View {
