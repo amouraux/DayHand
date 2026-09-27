@@ -11,9 +11,9 @@ struct ContentView: View {
     @State private var isAdding = false
     @State private var isShowingSettings = false
     @State private var isShowingReminders = false
-    /// Narrows the list to the cards a reminder is waiting on, so they can be
-    /// dealt with among their own stacks rather than in a sheet.
-    @State private var remindedOnly = false
+    /// Narrows the list to the cards asking for attention, so they can be dealt
+    /// with among their own stacks rather than in a sheet.
+    @State private var attentionOnly = false
     /// When the More popover last closed, so the click that dismissed it is not
     /// also read as a click asking for it back.
     @State private var settingsDismissedAt: Date?
@@ -117,8 +117,8 @@ struct ContentView: View {
                     HStack(spacing: 12) {
                         // Only while something is waiting: a count of nothing
                         // is not worth a permanent control.
-                        if waitingCount > 0 || remindedOnly {
-                            remindedFilterButton
+                        if waitingCount > 0 || attentionOnly {
+                            attentionFilterButton
                         }
                         todayButton(proxy)
                     }
@@ -296,8 +296,8 @@ struct ContentView: View {
     /// and then after the search. Both narrow; neither reorders.
     private func cards(in bucket: Bucket) -> [TodoItem] {
         var all = store.items(in: bucket)
-        if remindedOnly {
-            all = all.filter { Reminders.isOutstanding($0) }
+        if attentionOnly {
+            all = all.filter { Attention.needed($0) }
         }
         if isFiltered {
             all = all.filter { card in
@@ -317,10 +317,11 @@ struct ContentView: View {
 
     private var isFiltered: Bool { !filterCategoryIDs.isEmpty || !filterProjectIDs.isEmpty }
 
-    private var waitingCount: Int { store.outstandingReminders.count }
+    /// Everything with a coloured edge, plus anything a reminder is waiting on.
+    private var waitingCount: Int { Attention.count(in: store.items) }
 
     /// Narrowed by either means, for the empty state.
-    private var isNarrowed: Bool { isFiltered || remindedOnly || !searchTerms.isEmpty }
+    private var isNarrowed: Bool { isFiltered || attentionOnly || !searchTerms.isEmpty }
 
     /// The chosen categories, in the order the user arranged them.
     private var activeFilters: [CardCategory] {
@@ -502,29 +503,32 @@ struct ContentView: View {
         }
     }
 
-    /// Shows the cards a reminder is waiting on, in their own stacks. The bell
-    /// below answers reminders one at a time; this one puts them back among
+    /// Shows the cards asking for attention — a close deadline, or a reminder
+    /// waiting on an answer — in their own stacks. The bell in the button row
+    /// answers reminders one at a time; this one puts the whole lot back among
     /// the cards, where they can be ticked off or swiped like anything else.
-    private var remindedFilterButton: some View {
+    private var attentionFilterButton: some View {
         Button {
             withAnimation(.easeInOut(duration: 0.2)) {
-                remindedOnly.toggle()
-                if remindedOnly {
+                attentionOnly.toggle()
+                if attentionOnly {
                     // A narrowing replaces the last, as choosing a project does.
                     filterCategoryIDs = []
                     filterProjectIDs = []
                 }
             }
         } label: {
-            Image(systemName: "bell.fill")
+            // A flag, not a bell: what it gathers is mostly deadlines, and the
+            // bell in the button row already means "a reminder is waiting".
+            Image(systemName: "flag.fill")
                 .font(.body.weight(.semibold))
-                .foregroundStyle(remindedOnly ? Color.white : Color.red)
+                .foregroundStyle(attentionOnly ? Color.white : Color.red)
                 .frame(width: 48, height: 48)
-                .background(Circle().fill(remindedOnly ? Color.red
+                .background(Circle().fill(attentionOnly ? Color.red
                                           : Color(.secondarySystemGroupedBackground)))
                 .overlay(Circle().strokeBorder(Color.red.opacity(0.85), lineWidth: 2))
                 .overlay(alignment: .topTrailing) {
-                    if waitingCount > 0 && !remindedOnly {
+                    if waitingCount > 0 && !attentionOnly {
                         Text("\(waitingCount)")
                             .font(.caption2.weight(.bold))
                             .monospacedDigit()
@@ -539,7 +543,7 @@ struct ContentView: View {
                 .contentShape(Circle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(remindedOnly ? "Show all cards" : "Show cards with reminders")
+        .accessibilityLabel(attentionOnly ? "Show all cards" : "Show cards to address")
     }
 
     private var remindersButton: some View {
@@ -699,11 +703,11 @@ struct ContentView: View {
                 )
             } else if isNarrowed,
                       Bucket.allCases.allSatisfy({ cards(in: $0).isEmpty }) {
-                if remindedOnly && searchTerms.isEmpty && !isFiltered {
+                if attentionOnly && searchTerms.isEmpty && !isFiltered {
                     ContentUnavailableView(
-                        "No reminders waiting",
-                        systemImage: "bell",
-                        description: Text("Every reminder has been answered.")
+                        "Nothing to address",
+                        systemImage: "flag",
+                        description: Text("No deadline is close, and every reminder has been answered.")
                     )
                 } else if searchTerms.isEmpty {
                     ContentUnavailableView(

@@ -329,17 +329,28 @@ button that usually does nothing, and its appearing is itself the news.
 Opening the notification goes straight there, since the notification was a
 question and that is where it is answered.
 
-Two ways in, doing different jobs. The **bell in the button row** opens the
-review and answers reminders one at a time. A **badged bell beside the
-jump-to-Today button** narrows the card list to the cards a reminder is waiting
-on, in their own stacks, where they can be ticked off or swiped like anything
-else. Both appear only while something is waiting; a count of nothing is not
+Two ways in, doing different jobs, and they answer different questions.
+
+The **bell in the button row** opens the review and answers reminders one at a
+time. It appears only while a reminder is waiting.
+
+The **badged flag beside the jump-to-Today button** is wider on purpose: it
+narrows the card list to everything asking for attention — every card the list
+is already drawing a coloured edge on, plus every card a reminder is waiting on.
+A close deadline and an unanswered question are two different claims on the
+user, but from where they are sitting both mean the same thing, so one button
+gathers both rather than two competing for the same corner. What it gathers is
+mostly deadlines, which is why it is a flag and not a second bell. The cards
+appear in their own stacks, where they can be ticked off or swiped like
+anything else.
+
+Both appear only while there is something to count; a count of nothing is not
 worth a permanent control.
 
-**The app icon carries the same count.** It is the only thing that says
-something is waiting without the app being opened, which is exactly what an
-unanswered reminder needs. Each scheduled notification carries the badge the
-icon should show once it has fired — those already waiting, plus itself and
+**The app icon counts only the unanswered reminders**, not the flag's wider
+tally. That count is the only thing that says something is waiting without the
+app being opened, which is exactly what an unanswered reminder needs. Each
+scheduled notification carries the badge the icon should show once it has fired — those already waiting, plus itself and
 everything before it — and the app corrects the number the moment it is opened.
 
 Each waiting reminder offers four answers and one non-answer:

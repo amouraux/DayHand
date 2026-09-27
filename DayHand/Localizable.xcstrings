@@ -4023,47 +4023,6 @@
         }
       }
     },
-    "Every reminder has been answered." : {
-      "comment" : "Empty state when the reminder filter finds nothing",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Jede Erinnerung ist beantwortet."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Todos los recordatorios están respondidos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tous les rappels ont reçu une réponse."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A ogni promemoria è stata data una risposta."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elke herinnering is beantwoord."
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Todos os lembretes foram respondidos."
-          }
-        }
-      }
-    },
     "Everything" : {
       "comment" : "Filter sheet: clears the filter",
       "localizations" : {
@@ -6421,6 +6380,47 @@
         }
       }
     },
+    "No deadline is close, and every reminder has been answered." : {
+      "comment" : "Empty state detail for the attention filter",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Frist steht bevor, und jede Erinnerung ist beantwortet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ninguna fecha límite está cerca y todos los recordatorios están respondidos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune échéance n’approche, et chaque rappel a reçu une réponse."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nessuna scadenza è vicina e ogni promemoria ha una risposta."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geen deadline is dichtbij en elke herinnering is beantwoord."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhum prazo está próximo e todos os lembretes foram respondidos."
+          }
+        }
+      }
+    },
     "No Group" : {
       "localizations" : {
         "de" : {
@@ -6457,47 +6457,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sem grupo"
-          }
-        }
-      }
-    },
-    "No reminders waiting" : {
-      "comment" : "Empty state when the reminder filter finds nothing",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keine wartenden Erinnerungen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No hay recordatorios pendientes"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucun rappel en attente"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nessun promemoria in attesa"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Geen wachtende herinneringen"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nenhum lembrete a aguardar"
           }
         }
       }
@@ -6740,6 +6699,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nada transita: os cartões ficam onde os puser"
+          }
+        }
+      }
+    },
+    "Nothing to address" : {
+      "comment" : "Empty state when the attention filter finds nothing",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nichts zu erledigen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada que atender"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rien à traiter"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niente da affrontare"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niets te doen"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada a tratar"
           }
         }
       }
@@ -8209,43 +8209,43 @@
         }
       }
     },
-    "Show cards with reminders" : {
-      "comment" : "Accessibility label for the badged bell beside Today",
+    "Show cards to address" : {
+      "comment" : "Accessibility label for the attention filter button",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Karten mit Erinnerungen zeigen"
+            "value" : "Karten zum Erledigen anzeigen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar las tarjetas con recordatorios"
+            "value" : "Mostrar tarjetas por atender"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afficher les cartes avec rappel"
+            "value" : "Afficher les cartes à traiter"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostra le carte con promemoria"
+            "value" : "Mostra le carte da affrontare"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kaarten met herinneringen tonen"
+            "value" : "Kaarten om aan te pakken tonen"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar os cartões com lembretes"
+            "value" : "Mostrar cartões a tratar"
           }
         }
       }

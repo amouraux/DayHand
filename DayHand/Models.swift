@@ -699,6 +699,26 @@ enum DeadlineUrgency: Equatable {
     }
 }
 
+/// The cards asking for attention: the ones the list is already colouring, and
+/// the ones a reminder is waiting on.
+///
+/// Two different claims on the user — a deadline that is close, and a question
+/// that has been asked and not answered — but from where they are sitting both
+/// mean the same thing, so one button gathers both rather than two competing
+/// for the same corner.
+enum Attention {
+    static func needed(_ card: TodoItem, now: Date = Date(),
+                       calendar: Calendar = .current) -> Bool {
+        guard !card.isCompleted else { return false }
+        if Reminders.isOutstanding(card, now: now) { return true }
+        return DeadlineUrgency.of(card.deadline, now: now, calendar: calendar) != .none
+    }
+
+    static func count(in cards: [TodoItem], now: Date = Date()) -> Int {
+        cards.filter { needed($0, now: now) }.count
+    }
+}
+
 /// Which reminders are waiting to be answered.
 ///
 /// A reminder leaves this list for one reason only: the user said what to do

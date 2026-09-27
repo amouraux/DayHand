@@ -735,5 +735,46 @@ do {
            "the deadline key is preferred over the legacy one")
 }
 
+// MARK: W — one button gathers everything asking for attention
+do {
+    let cal = Calendar.current
+    let now = Date()
+    func day(_ n: Int) -> Date { cal.date(byAdding: .day, value: n, to: now)! }
+
+    var overdue = TodoItem(title: "renew the passports", bucket: .later)
+    overdue.deadline = day(-2)
+    var soon = TodoItem(title: "book the hall", bucket: .inbox)
+    soon.deadline = day(1)
+    var distant = TodoItem(title: "plan the trip", bucket: .later)
+    distant.deadline = day(30)
+    var reminded = TodoItem(title: "chase the letter", bucket: .later)
+    reminded.remindAt = day(-1)          // fired, unanswered, no deadline at all
+    var answered = TodoItem(title: "pay the bill", bucket: .today)
+    answered.remindAt = day(-1)
+    answered.reminderAnsweredAt = now
+    var done = TodoItem(title: "collect the keys", bucket: .completed)
+    done.deadline = day(-5)
+
+    let cards = [overdue, soon, distant, reminded, answered, done]
+
+    expect(Attention.needed(overdue, now: now), "an overdue deadline asks for attention")
+    expect(Attention.needed(soon, now: now), "so does one that is nearly here")
+    expect(!Attention.needed(distant, now: now), "a distant deadline does not")
+    expect(Attention.needed(reminded, now: now),
+           "a reminder waiting on an answer counts even with no deadline — the two claims are different")
+    expect(!Attention.needed(answered, now: now), "an answered reminder is settled")
+    expect(!Attention.needed(done, now: now), "and a finished card asks for nothing, however late it was")
+
+    expect(Attention.count(in: cards, now: now) == 3, "so the badge reads three")
+
+    // The button and the coloured edge must agree, or the badge counts cards
+    // the user cannot see any mark on.
+    for card in cards where !card.isCompleted && card.remindAt == nil {
+        expect(Attention.needed(card, now: now)
+               == (DeadlineUrgency.of(card.deadline, now: now) != .none),
+               "the filter takes exactly the cards the list draws an edge on")
+    }
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)
