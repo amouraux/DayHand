@@ -10,6 +10,7 @@ struct ContentView: View {
     @State private var editItem: TodoItem?
     @State private var isAdding = false
     @State private var isShowingSettings = false
+    @State private var isShowingReminders = false
     /// When the More popover last closed, so the click that dismissed it is not
     /// also read as a click asking for it back.
     @State private var settingsDismissedAt: Date?
@@ -127,6 +128,12 @@ struct ContentView: View {
                     filterButton
                     searchButton
                     settingsButton
+                    // Only while something is waiting. A permanent bell would
+                    // be a button that usually does nothing; this one appearing
+                    // is itself the news.
+                    if !store.outstandingReminders.isEmpty {
+                        remindersButton
+                    }
                 }
                 .padding(.leading, 22)
                 .padding(.bottom, 42)
@@ -148,7 +155,7 @@ struct ContentView: View {
                     projects: store.projects,
                     projectLastUsed: store.projectLastUsed,
                     defaultCategoryID: store.defaultCategoryID
-                ) { title, bucket, categoryID, projectChoice, dueDate in
+                ) { title, bucket, categoryID, projectChoice, deadline, remindAt in
                     // A new project is only created now, when the card is, so
                     // a cancelled sheet leaves nothing behind. It takes the
                     // category chosen for this first card.
@@ -168,14 +175,15 @@ struct ContentView: View {
                             bucket: bucket,
                             categoryID: .some(categoryID),
                             projectID: projectID,
-                            dueDate: dueDate
+                            deadline: deadline,
+                            remindAt: remindAt
                         )
                     }
                 }
             }
             .sheet(item: $dateItem) { item in
                 DatePickerSheet(item: item) { date in
-                    store.setDate(item, to: date)
+                    store.setDeadline(item, to: date)
                 }
             }
             .sheet(isPresented: $isFiltering) {
@@ -186,6 +194,15 @@ struct ContentView: View {
                 .environmentObject(store)
             }
             #if !targetEnvironment(macCatalyst)
+            .sheet(isPresented: $isShowingReminders) {
+                ReminderReviewView().environmentObject(store)
+            }
+            // Opening a notification goes to the review, not to the top of the
+            // list: the notification was a question, and this is where it is
+            // answered.
+            .onReceive(NotificationCenter.default.publisher(for: .reminderOpened)) { _ in
+                isShowingReminders = true
+            }
             .sheet(isPresented: $isShowingSettings) {
                 SettingsView().environmentObject(store)
             }
@@ -241,7 +258,7 @@ struct ContentView: View {
                 store.beginLiveSync()
                 // Whatever the other device wrote while we were away.
                 withAnimation { store.refreshFromSyncFile() }
-                withAnimation { _ = store.applyScheduledDates() }
+                store.refreshIfDayChanged()
             }
             .onChange(of: store.categories) { _, categories in
                 // A category the user deleted must not keep filtering the list.
@@ -257,17 +274,6 @@ struct ContentView: View {
                     withAnimation { filterProjectIDs.formIntersection(alive) }
                 }
             }
-            .overlay(alignment: .top) {
-                if let notice = store.autoFileNotice {
-                    AutoFileBanner(notice: notice) {
-                        withAnimation(.easeOut(duration: 0.2)) { store.dismissAutoFileNotice() }
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
-                    .transition(.move(edge: .top).combined(with: .opacity))
-                }
-            }
-            .animation(.spring(response: 0.35, dampingFraction: 0.85), value: store.autoFileNotice)
         }
     }
 
@@ -476,6 +482,21 @@ struct ContentView: View {
         } else {
             proxy.scrollTo(target, anchor: .top)
         }
+    }
+
+    private var remindersButton: some View {
+        Button { isShowingReminders = true } label: {
+            Image(systemName: "bell.badge.fill")
+                .font(.body.weight(.semibold))
+                .foregroundStyle(Color.red)
+                .frame(width: 48, height: 48)
+                .background(Circle().fill(Color(.secondarySystemGroupedBackground)))
+                .overlay(Circle().strokeBorder(Color.red.opacity(0.85), lineWidth: 2))
+                .shadow(color: .black.opacity(0.18), radius: 6, y: 3)
+                .contentShape(Circle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Reminders waiting")
     }
 
     private var settingsButton: some View {

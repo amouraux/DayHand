@@ -236,7 +236,7 @@ extension StoreDocument {
         func card(_ title: String, _ bucket: Bucket, category: UUID? = nil,
                   project: UUID? = nil, due: Date? = nil) -> TodoItem {
             var card = TodoItem(title: title, bucket: bucket, categoryID: category,
-                                projectID: project, dueDate: due)
+                                projectID: project, deadline: due)
             card.isSample = true
             return card
         }
@@ -678,7 +678,11 @@ final class DocumentStorage {
 enum CardCSV {
     /// `project` and `group` come last so that files written before they existed
     /// still read correctly by position when they have no header row.
-    static let header = ["id", "title", "stack", "category", "due", "completed", "created", "project", "group"]
+    /// `deadline` kept the old `due` column's place so a header-less export
+    /// still reads by position; `remind` and `reminds` go last, as every new
+    /// column does.
+    static let header = ["id", "title", "stack", "category", "deadline", "completed", "created",
+                         "project", "group", "remind", "reminds"]
 
     private static let dayFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -760,11 +764,13 @@ enum CardCSV {
                 card.title,
                 card.bucket.rawValue,
                 card.categoryID.flatMap { labels[$0] } ?? "",
-                card.dueDate.map { dayFormatter.string(from: $0) } ?? "",
+                card.deadline.map { dayFormatter.string(from: $0) } ?? "",
                 card.completedAt.map { stampFormatter.string(from: $0) } ?? "",
                 stampFormatter.string(from: card.createdAt),
                 card.projectID.flatMap { names[$0] } ?? "",
-                card.projectID.flatMap { groups[$0] } ?? ""
+                card.projectID.flatMap { groups[$0] } ?? "",
+                card.remindAt.map { stampFormatter.string(from: $0) } ?? "",
+                card.remindAt == nil ? "" : (card.remindsEnabled ? "yes" : "no")
             ].map(escape).joined(separator: ","))
         }
         return rows.joined(separator: "\n") + "\n"
@@ -849,7 +855,12 @@ enum CardCSV {
             }
             card.bucket = Bucket(rawValue: field("stack").lowercased()) ?? .inbox
             card.categoryID = byLabel[field("category").lowercased()]
-            card.dueDate = parseDay(field("due"))
+            card.deadline = parseDay(field("deadline"))
+            card.remindAt = stampFormatter.date(from: field("remind")) ?? parseDay(field("remind"))
+            if !field("reminds").isEmpty {
+                card.remindsEnabled = ["1", "true", "yes", "y"].contains(
+                    field("reminds").lowercased().trimmingCharacters(in: .whitespaces))
+            }
             card.completedAt = stampFormatter.date(from: field("completed"))
             if let created = stampFormatter.date(from: field("created")) { card.createdAt = created }
 
@@ -876,7 +887,9 @@ enum CardCSV {
         "project":   ["project", "hashtag", "subproject", "course"],
         "group":     ["group", "cluster", "project group", "tag group"],
         "category":  ["category", "label", "tag"],
-        "due":       ["due", "due date", "duedate", "date", "scheduled"],
+        "deadline":  ["deadline", "due", "due date", "duedate", "date", "scheduled"],
+        "remind":    ["remind", "reminder", "remind me", "remind at"],
+        "reminds":   ["reminds", "reminders", "remind enabled", "reminding"],
         "completed": ["completed", "completed at", "completedat", "done", "done at"],
         "created":   ["created", "created at", "createdat", "added"]
     ]

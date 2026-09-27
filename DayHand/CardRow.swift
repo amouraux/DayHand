@@ -135,7 +135,11 @@ struct CardRow: View {
     @State private var isHorizontal = false
     @State private var didCommit = false
 
-    private var overdue: Bool { Scheduler.isOverdue(item) }
+    /// How close the deadline is. The only thing a deadline does to a card is
+    /// colour its edge and order it — it never moves it.
+    private var urgency: DeadlineUrgency {
+        item.isCompleted ? .none : DeadlineUrgency.of(item.deadline)
+    }
     private var progress: CGFloat { min(1, abs(dragX) / Self.commitDistance) }
     private var armed: Bool { abs(dragX) >= Self.commitDistance }
 
@@ -214,10 +218,19 @@ struct CardRow: View {
                         .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
-                    if let due = item.dueDate {
-                        Label(Scheduler.relativeLabel(for: due), systemImage: "calendar")
+                    if let deadline = item.deadline {
+                        HStack(spacing: 8) {
+                            Label(Scheduler.relativeLabel(for: deadline), systemImage: "flag")
+                                .foregroundStyle(urgency.tint ?? Color.secondary)
+                            if item.remindAt != nil && item.remindsEnabled && !item.isCompleted {
+                                Image(systemName: "bell").foregroundStyle(.secondary)
+                            }
+                        }
+                        .font(.caption)
+                    } else if let at = item.remindAt, item.remindsEnabled, !item.isCompleted {
+                        Label(Scheduler.relativeLabel(for: at), systemImage: "bell")
                             .font(.caption)
-                            .foregroundStyle(overdue ? Color.red : Color.secondary)
+                            .foregroundStyle(.secondary)
                     } else if item.isCompleted, let origin = item.bucketBeforeCompletion {
                         Label("from \(origin.title)", systemImage: origin.symbolName)
                             .font(.caption)
@@ -231,9 +244,14 @@ struct CardRow: View {
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(stackBackground)
+        // The deadline's whole voice: yellow while it is coming, red once it is
+        // here or past. Thicker than a hairline so it reads as a state of the
+        // card rather than an edge that happens to be coloured.
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .strokeBorder(overdue ? Color.red.opacity(0.35) : Color.clear)
+                .strokeBorder(urgency.tint?.opacity(urgency == .approaching ? 0.55 : 0.8)
+                              ?? Color.clear,
+                              lineWidth: urgency == .none ? 0 : 2)
         )
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
@@ -412,67 +430,5 @@ struct SectionHeader: View {
         .padding(.bottom, 8)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(.systemGroupedBackground))
-    }
-}
-
-/// Says what the app did on its own: cards that were sitting in LATER whose
-/// date came round have been filed into TODAY or TOMORROW.
-///
-/// It is a banner rather than an alert because the move is already done and
-/// correct — there is nothing to decide, only something to notice. It clears
-/// itself after a few seconds so it cannot sit on top of the Today button, and
-/// a tap dismisses it at once.
-struct AutoFileBanner: View {
-    let notice: AutoFileNotice
-    let onDismiss: () -> Void
-
-    private static let lifetime: Duration = .seconds(6)
-
-    var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            Image(systemName: "calendar.badge.clock")
-                .font(.title3)
-                .foregroundStyle(Color.accentColor)
-
-            VStack(alignment: .leading, spacing: 3) {
-                Text("Their date arrived")
-                    .font(.subheadline.weight(.semibold))
-                Text(notice.message)
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .multilineTextAlignment(.leading)
-            }
-
-            Spacer(minLength: 0)
-
-            Image(systemName: "xmark")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.tertiary)
-        }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color(.secondarySystemGroupedBackground))
-                .shadow(color: .black.opacity(0.18), radius: 12, y: 4)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .strokeBorder(Color.primary.opacity(0.08))
-        )
-        .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .onTapGesture(perform: onDismiss)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("Their date arrived. " + notice.message)
-        .accessibilityAddTraits(.isButton)
-        .accessibilityHint("Dismiss")
-        // Keyed on the notice, so a second one restarts the clock rather than
-        // inheriting what is left of the first one's.
-        .task(id: notice.id) {
-            try? await Task.sleep(for: Self.lifetime)
-            guard !Task.isCancelled else { return }
-            onDismiss()
-        }
     }
 }

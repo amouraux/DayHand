@@ -14,46 +14,25 @@ A card has five independent properties. Nothing is derived from anything else:
 4. **Due date** (optional) — a specific day.
 5. **Title** (required).
 
-**An undated card's stack is stored, never computed.** A card placed in Tomorrow
-with no date is still in Tomorrow next week and next year. Nothing rolls over as
-time passes; only the user moves it. For undated cards, Today / Tomorrow / Later
-are named lists you file things into, not calendar queries. This is the whole
-point of the app: a job that takes four days can sit in Today for four days, and
-nothing ever marks it late.
+**A card's stack is stored, never computed.** A card placed in Tomorrow is
+still in Tomorrow next week and next year. Nothing rolls over as time passes;
+only the user moves it. Today / Tomorrow / Later are named lists you file
+things into, not calendar queries. This is the whole point of the app: a job
+that takes four days can sit in Today for four days, and nothing ever marks it
+late.
 
-**A date, however, files the card.** Dating a card today puts it in Today; dating
-it tomorrow puts it in Tomorrow. A date further out leaves the card where it is
-and only affects its position within that stack.
+**Neither date moves a card. Ever.** That is the rule the rest of this section
+exists to protect, and the two fields are deliberately separate questions:
 
-Because days turn, this filing must be re-applied every time the app loads and
-every time it returns to the foreground — a card dated tomorrow sits in Tomorrow,
-and when that day arrives its date now reads "today", so it belongs in Today.
-Apply it at load time, before the first render: mutating the list from `onAppear`
-leaves rows painting their previous stack's colour after they have moved section.
+- **Deadline** (a day) — when the work is due. It orders the card inside its
+  stack and colours the card's edge as the day approaches. It does not move it.
+- **Remind me** (a day and a time) — when to be interrupted about it. A
+  different question, asked separately, because "due Friday" and "poke me
+  Wednesday evening" are not the same thing.
 
-Filing must never stamp a card as edited. It is derived, not edited: every
-device computes the same stack from the same date and the same calendar day, so
-it needs no syncing at all. Stamping it would let a device that merely sat there
-overnight outrank a real edit made on another device just before midnight and
-not yet synced, and every device runs this pass at the same moment. A tie on the
-edit timestamp keeps the local copy, and the pass re-runs after every merge, so
-devices converge on the same stack without the change ever being transmitted.
-
-It must also survive a session that outlives the day it began in — a window left
-open overnight would otherwise still be showing yesterday's stacks in the
-morning. Watch for the day turning three ways, all landing on the same idempotent
-check (re-file only if the calendar day differs from the one last filed for):
-the system's day-changed notification, the significant-time-change notification
-(which also covers timezone and DST shifts), and a slow repeating timer as the
-backstop for a machine that was asleep when midnight passed.
-
-An overdue date files a card into Today: a card that is late belongs with today's
-work, not stranded in the stack it was written into. Overdue is *also* flagged in
-place (see Card appearance).
-
-A deliberate move beats a date. If the user moves a dated card into a stack its
-date contradicts, drop the date rather than letting the next launch drag the card
-back — otherwise manual placement and the date fight each other.
+Moving a card by hand keeps both. There is nothing for a stack and a date to
+disagree about any more, so there is no rule dropping one to satisfy the other,
+and a card in Later may be due tomorrow and stay in Later.
 
 ## Identity
 
@@ -300,9 +279,15 @@ Each card shows:
   no taller. Yellow is darkened to ochre in light mode. Struck through and
   dimmed when completed. There is no way to remove a project from the card face
   — that is the editor's job.
-- Its date as a relative label ("Today", "Tomorrow", "Tue, 1 Sep"). If the date
-  has passed, show it in red and outline the card in red — but **leave the card
-  where it is**; overdue is flagged, never moved.
+- Its **deadline** as a relative label ("Today", "Tomorrow", "Tue, 1 Sep"), and
+  a bell beside it when a reminder is armed. A card with only a reminder shows
+  that instead.
+- **A coloured edge for how close the deadline is**: yellow while it is coming —
+  within three days, long enough to act on and short enough that a wall of
+  yellow does not become the normal state of the list — and red once it is here
+  or past. Red stays reserved for exactly that. The edge is the deadline's
+  whole voice: it never moves the card, so how the card looks is the only thing
+  it can say.
 - For completed cards with no date, a caption naming the stack it came from.
 
 On a multi-line card the checkbox and category icon centre vertically rather
@@ -310,13 +295,11 @@ than sitting on the first line.
 
 ## Sort order
 
-**Within INBOX, TODAY, TOMORROW and LATER**, in this priority:
+**Within INBOX, TODAY, TOMORROW and LATER**: cards carrying a deadline come
+first, soonest at the top; the rest follow. A deadline orders a card — that and
+the colour of its edge are the only things it does.
 
-1. Cards dated today — and overdue cards — first
-2. Then cards dated tomorrow
-3. Then everything else (undated cards and cards dated further out, together)
-
-Alphabetical within each tier by the **displayed text** (project + title),
+Alphabetical within each group by the **displayed text** (project + title),
 case-insensitive and number-aware (so "item 2" precedes "item 10"). Sorting by
 what is shown keeps a project's cards together.
 
@@ -333,27 +316,42 @@ cards, no button appears.
 The cap applies to what is left *after* filtering and searching, so narrowing
 the list never hides a match behind it.
 
-## Later and dates
+## Reminders
 
-Later means "explicitly not soon", so a card *put* in Later may not be *given* a
-date that is today, tomorrow, or in the past. Prevent it at the picker: for a
-card in Later the date picker starts at the day after tomorrow, so the
-contradictory dates are never offered. Say why in a caption under the calendar.
+A reminder is armed on a card with a day and a time, and fires a local
+notification. **Dismissing that notification changes nothing.** Swiping a
+notification away is how a notification is got rid of, not how a decision is
+made, so the reminder is still waiting afterwards.
 
-What a Later card may do is mature. A card dated next Friday and left in Later is
-fine until Friday comes round — and on that day it is filed like any other card,
-into Today or Tomorrow. Dating a card in Later is making an appointment, and when
-the appointment arrives the card has stopped being "later"; nothing is gained by
-stopping to ask.
+Where it waits is the **reminder review**, reached from a bell that appears in
+the button row only while something is on it — a permanent bell would be a
+button that usually does nothing, and its appearing is itself the news.
+Opening the notification goes straight there, since the notification was a
+question and that is where it is answered.
 
-Because that is the one move the user did not ask for and would not otherwise
-notice, say what happened. A transient banner at the top of the list, not an
-alert: the move is already made and correct, so there is nothing to decide, only
-something to notice. Name the card if there is one ("Renew passport" moved to
-Tomorrow), otherwise count them and their destinations. It clears itself after a
-few seconds so it cannot sit on the Today button, and a tap dismisses it at once.
-Only cards raised out of Later are worth reporting — every other move the filing
-pass makes is what the user already expects.
+Each waiting reminder offers four answers and one non-answer:
+
+- **Move to Today** / **Move to Tomorrow** — moves the card and is done with
+  the reminder.
+- **Snooze until tomorrow** — asks again at the same time the next day. The
+  card does not move. A card has no recurrence of its own, and what is being
+  deferred is "not now".
+- **Clear the reminder** — done with it. The **deadline is a separate field and
+  is left exactly as it was**.
+- **Leave it here for now** — not an answer, and says so. Without it, closing
+  the sheet looks like a way of losing the card.
+
+**Whether reminders fire at all is a field on the card**, on by default, so one
+can be silenced without losing the time it was set for. Completing or deleting
+a card cancels its reminders.
+
+Pending notifications are rewritten wholesale from the cards after every change
+that could affect them, rather than patched one at a time — the set is a
+handful, and a schedule that has drifted from the cards is how a reminder ends
+up firing for a card finished last week. Permission is asked the first time a
+reminder is actually set, not at launch: a permission sheet in front of an
+empty list is a question about nothing. If it is refused, reminders still
+appear in the review; only the notification is lost.
 
 ## Looking back
 
@@ -708,6 +706,16 @@ Resolve the iCloud container **off the main thread**; `url(forUbiquityContainerI
 blocks, sometimes for seconds. Start on the local copy, adopt the cloud one when
 it resolves, merge the two, and keep watching for writes from the other device
 with an `NSMetadataQuery`. Read and write through `NSFileCoordinator`.
+
+**An older version must not be able to start filing cards again.** A version
+that moved cards by their date read a `dueDate` key. That key is read once, as
+a migration — the day is what the user meant, the moving was the app's idea —
+and **never written back**. A flag would not have helped: an old build ignores
+keys it does not know. It cannot file a date it cannot see. The cost is that
+such a version shows no dates at all, which is the right way round: cards sit
+still and look bare, rather than moving on their own.
+
+Migrating creates no reminders, and moves nothing.
 
 **Merging must not need to know which device is "newer".** Give every card,
 category and project a `modifiedAt`, and resolve each one independently — latest

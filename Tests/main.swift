@@ -159,7 +159,8 @@ do {
     let p = Project(name: "ABC1234", categoryID: cat.id)
     var card = TodoItem(title: "slides, part 2", categoryID: cat.id); card.projectID = p.id
     let text = CardCSV.export(cards: [card], categories: [cat], projects: [p])
-    expect(text.hasPrefix("id,title,stack,category,due,completed,created,project,group\n"), "project, then group, written last")
+    expect(text.hasPrefix("id,title,stack,category,deadline,completed,created,project,group,remind,reminds\n"),
+           "the deadline keeps the old date column's place; new ones go last")
     let back = CardCSV.parse(text, categories: [cat])
     expect(back.cards.first?.title == "slides, part 2", "title round-trips")
     expect(back.projectNames[card.id] == "ABC1234", "project round-trips by name")
@@ -229,10 +230,12 @@ do {
     let c3 = TodoItem(title: "no project", categoryID: cat.id)
     let text = CardCSV.export(cards: [c1, c2, c3], categories: [cat], projects: [grant, loose])
     let lines = text.split(separator: "\n").map(String.init)
-    expect(lines[0].hasSuffix(",project,group"), "group column written last, after project — got \(lines[0])")
-    expect(lines[1].hasSuffix(",BETA,Grants"), "a grouped project's cards carry its group")
-    expect(lines[2].hasSuffix(",DELTA,"), "no group: empty column")
-    expect(lines[3].hasSuffix(",,"), "no project: both empty")
+    // Every new column goes last, so an older export still reads by position.
+    expect(lines[0].hasSuffix(",project,group,remind,reminds"),
+           "the newest columns are the last ones — got \(lines[0])")
+    expect(lines[1].contains(",BETA,Grants,"), "a grouped project's cards carry its group")
+    expect(lines[2].contains(",DELTA,,"), "no group: empty column")
+    expect(lines[3].hasSuffix(",,,,"), "no project, no group, no reminder: empty to the end")
 
     let back = CardCSV.parse(text, categories: [cat])
     expect(back.projectGroups == [Project.key(for: "BETA"): "Grants"], "round-trip: the group comes back, empty ones do not")
@@ -262,18 +265,10 @@ do {
     expect(starter.cards.contains { $0.isCompleted }, "and one is done, so Completed is not a mystery")
     expect(starter.categories.map(\.label) == ["Home", "Work", "Courses"], "the seeded categories suit anyone — got \(starter.categories.map(\.label))")
 
-    // A Later card may not be dated sooner than the day after tomorrow.
-    for card in starter.cards where card.bucket == .later {
-        if let due = card.dueDate {
-            expect(Scheduler.dayOffset(for: due) >= 2, "a starter card in Later is dated far enough out")
-        }
-    }
-    // The filing pass must leave the starter alone: nothing jumps stack on launch.
-    for card in starter.cards where !card.isCompleted {
-        if let due = card.dueDate, let implied = Scheduler.autoStack(for: due) {
-            expect(implied == card.bucket, "\(card.title) would be re-filed the moment it appeared")
-        }
-    }
+    // A starter card may carry a deadline; none of them may arrive with a
+    // reminder already armed, which would go off at someone who has not yet
+    // written a card.
+    expect(starter.cards.allSatisfy { $0.remindAt == nil }, "a new install reminds you of nothing")
     expect(roundTrip(starter) == starter, "the starter document saves and loads unchanged")
 }
 
@@ -627,6 +622,117 @@ do {
     let newest = StoreDocument(categories: renamed).merged(with: StoreDocument(categories: later))
     expect(newest.categories.first { $0.id == renamed[0].id }?.label == "Grants",
            "distantPast has not broken ordinary last-edit-wins")
+}
+
+// MARK: T — deadlines say when, and move nothing
+do {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(identifier: "Europe/Brussels")!
+    func at(_ s: String) -> Date {
+        let f = DateFormatter()
+        f.calendar = calendar; f.timeZone = calendar.timeZone
+        f.dateFormat = "yyyy-MM-dd HH:mm"
+        return f.date(from: s)!
+    }
+    let now = at("2026-10-01 09:00")
+
+    expect(DeadlineUrgency.of(nil, now: now, calendar: calendar) == DeadlineUrgency.none,
+           "no deadline, no colour")
+    expect(DeadlineUrgency.of(at("2026-09-30 00:00"), now: now, calendar: calendar) == .overdue,
+           "yesterday is overdue")
+    expect(DeadlineUrgency.of(at("2026-10-01 23:00"), now: now, calendar: calendar) == .due,
+           "today is due, whatever the clock says")
+    expect(DeadlineUrgency.of(at("2026-10-02 00:00"), now: now, calendar: calendar) == .approaching,
+           "tomorrow is approaching")
+    expect(DeadlineUrgency.of(at("2026-10-04 00:00"), now: now, calendar: calendar) == .approaching,
+           "and so is the last day inside the window")
+    expect(DeadlineUrgency.of(at("2026-10-05 00:00"), now: now, calendar: calendar) == DeadlineUrgency.none,
+           "a day past the window is not yet worth colouring")
+
+    // The point of the whole change: a deadline in the past does not imply a
+    // stack, so a four-day job can sit in Today for four days.
+    var card = TodoItem(title: "write the case", bucket: .later,
+                        deadline: at("2026-09-28 00:00"))
+    _ = card
+    expect(card.bucket == .later, "an overdue deadline leaves the card where it was put")
+    card.bucket = .today
+    expect(card.deadline == at("2026-09-28 00:00"), "moving a card keeps its deadline")
+}
+
+// MARK: U — a reminder waits to be answered
+do {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(identifier: "Europe/Brussels")!
+    func at(_ s: String) -> Date {
+        let f = DateFormatter()
+        f.calendar = calendar; f.timeZone = calendar.timeZone
+        f.dateFormat = "yyyy-MM-dd HH:mm"
+        return f.date(from: s)!
+    }
+    let now = at("2026-10-01 09:00")
+    let fired = at("2026-10-01 08:00")
+
+    let card = TodoItem(title: "chase the letter", bucket: .later, remindAt: fired)
+    expect(Reminders.isOutstanding(card, now: now), "a reminder that has gone off is waiting")
+
+    var later = card; later.remindAt = at("2026-10-02 08:00")
+    expect(!Reminders.isOutstanding(later, now: now), "one still to come is not")
+
+    var off = card; off.remindsEnabled = false
+    expect(!Reminders.isOutstanding(off, now: now), "a card whose reminders are off says nothing")
+
+    var done = card; done.bucket = .completed
+    expect(!Reminders.isOutstanding(done, now: now), "finishing the work answers the reminder")
+
+    // Dismissing the notification is not an answer; only these are.
+    var moved = card
+    ReminderAnswer.move(.today).apply(to: &moved, now: now, calendar: calendar)
+    expect(moved.bucket == .today && moved.remindAt == nil, "Move to Today moves it and is done")
+    expect(!Reminders.isOutstanding(moved, now: now), "and it leaves the list")
+
+    var snoozed = card
+    ReminderAnswer.snooze.apply(to: &snoozed, now: now, calendar: calendar)
+    expect(snoozed.bucket == .later, "snoozing moves nothing")
+    expect(snoozed.remindAt == at("2026-10-02 08:00"), "it asks again at the same time tomorrow")
+    expect(!Reminders.isOutstanding(snoozed, now: now), "and is quiet until then")
+    expect(Reminders.isOutstanding(snoozed, now: at("2026-10-02 09:00")),
+           "then it is waiting again — the answer given was to the last one")
+
+    var cleared = card
+    cleared.deadline = at("2026-10-09 00:00")
+    ReminderAnswer.clear.apply(to: &cleared, now: now, calendar: calendar)
+    expect(cleared.remindAt == nil, "clearing removes the reminder")
+    expect(cleared.deadline == at("2026-10-09 00:00"), "and leaves the deadline alone")
+    expect(cleared.bucket == .later, "and moves nothing")
+
+    // Only the future is scheduled, and only for cards still to do.
+    let cards = [card, later, off, done, moved]
+    expect(Reminders.scheduled(in: cards, now: now).map(\.title) == ["chase the letter"],
+           "one notification pending, for the one reminder still to come")
+    expect(Reminders.outstanding(in: cards, now: now).count == 1, "and one waiting to be answered")
+}
+
+// MARK: V — an old file's date becomes a deadline, and moves nothing
+do {
+    let id = UUID().uuidString
+    let old = #"{"id":"\#(id)","title":"renew the passports","bucket":"later","dueDate":"2026-09-20T00:00:00.000Z"}"#
+    let card = try! dec.decode(TodoItem.self, from: Data(old.utf8))
+    expect(card.deadline != nil, "a date written by a version that filed cards is read as a deadline")
+    expect(card.bucket == .later, "and the card stays exactly where that version left it")
+    expect(card.remindAt == nil, "migrating arms no reminders")
+    expect(card.remindsEnabled, "and reminders are on by default, so one set later will fire")
+
+    // The old key is never written back: a version that files cards cannot
+    // file a date it cannot see.
+    let written = String(data: try! enc.encode(card), encoding: .utf8)!
+    expect(written.contains("deadline"), "the deadline is written under its own name")
+    expect(!written.contains("dueDate"), "and the old key is gone, which is what disarms old versions")
+
+    // A newer file wins over the legacy key when both somehow appear.
+    let both = #"{"id":"\#(id)","title":"x","deadline":"2026-10-02T00:00:00.000Z","dueDate":"2026-01-01T00:00:00.000Z"}"#
+    let mixed = try! dec.decode(TodoItem.self, from: Data(both.utf8))
+    expect(mixed.deadline.map { $0 > Date(timeIntervalSince1970: 1_767_000_000) } == true,
+           "the deadline key is preferred over the legacy one")
 }
 
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")

@@ -6,7 +6,7 @@ import SwiftUI
 /// data.
 ///
 /// An undated card sits in exactly the bucket it was put in. A dated one is
-/// filed by its date once that date arrives — see `applyScheduledDates` — and
+/// ordered by its deadline but never moved by it, and
 /// until then the date only reorders it within its bucket.
 @MainActor
 final class TodoStore: ObservableObject {
@@ -20,7 +20,6 @@ final class TodoStore: ObservableObject {
     private var defaultCategoryChangedAt: Date = .distantPast
     /// Set when the filing pass raised cards out of LATER, so the app can say
     /// so. Cleared by the view once it has been read.
-    @Published private(set) var autoFileNotice: AutoFileNotice?
 
     /// The result of the last sync anyone asked for, for the line under the
     /// button. Cleared when the sync file is given up.
@@ -51,7 +50,7 @@ final class TodoStore: ObservableObject {
         // File dated cards before the first render. Doing this from onAppear
         // instead mutates the list mid-layout, and rows keep painting their old
         // stack colour even though they have already moved section.
-        applyScheduledDates()
+        rescheduleNotifications()
         // Once a day, before anything can go wrong in this session.
         storage.rotateBackupsIfNeeded(current: document)
         startSyncing()
@@ -83,9 +82,15 @@ final class TodoStore: ObservableObject {
         }
 
         return matching.sorted { lhs, rhs in
-            let left = Scheduler.tier(for: lhs, now: now)
-            let right = Scheduler.tier(for: rhs, now: now)
-            if left != right { return left < right }
+            // A deadline orders a card; it never moves one. Cards carrying
+            // one come first, soonest at the top; the undated keep the order
+            // they always had.
+            switch (Scheduler.sortKey(for: lhs), Scheduler.sortKey(for: rhs)) {
+            case let (l?, r?) where l != r: return l < r
+            case (.some, .none): return true
+            case (.none, .some): return false
+            default: break
+            }
             return sortText(lhs).localizedStandardCompare(sortText(rhs)) == .orderedAscending
         }
     }
@@ -102,34 +107,29 @@ final class TodoStore: ObservableObject {
         bucket: Bucket = .inbox,
         categoryID: UUID?? = nil,
         projectID: UUID? = nil,
-        dueDate: Date? = nil
+        deadline: Date? = nil,
+        remindAt: Date? = nil
     ) {
         addCard(
             title: title,
             bucket: bucket,
             categoryID: categoryID ?? defaultCategoryID,
             projectID: projectID,
-            dueDate: dueDate
+            deadline: deadline,
+            remindAt: remindAt
         )
     }
 
-    private func addCard(title: String, bucket: Bucket, categoryID: UUID?, projectID: UUID?, dueDate: Date?) {
+    private func addCard(title: String, bucket: Bucket, categoryID: UUID?, projectID: UUID?,
+                         deadline: Date?, remindAt: Date?) {
         let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
 
         var card = TodoItem(title: trimmed, bucket: bucket, categoryID: categoryID, projectID: projectID)
-
-        if let dueDate {
-            let day = Scheduler.calendar.startOfDay(for: dueDate)
-            card.dueDate = day
-
-            // Same rule as moving a card: an explicitly chosen stack wins, and a
-            // date that contradicts it is dropped — otherwise the launch filing
-            // pass would move the card the moment it was created.
-            if let implied = Scheduler.autoStack(for: day), implied != bucket {
-                card.dueDate = nil
-            }
-        }
+        // Kept exactly as chosen. A deadline no longer decides which stack a
+        // card belongs in, so there is nothing for it to contradict.
+        card.deadline = deadline.map { Scheduler.calendar.startOfDay(for: $0) }
+        card.remindAt = remindAt
 
         items.append(card)
         save()
@@ -147,79 +147,44 @@ final class TodoStore: ObservableObject {
             card.bucket = bucket
             card.bucketBeforeCompletion = nil
             card.completedAt = nil
-
-            // A date that has arrived files a card automatically, so leaving one
-            // on a card the user has just moved somewhere else would only drag
-            // it straight back. A deliberate move wins, and the date goes.
-            if let due = card.dueDate,
-               let implied = Scheduler.autoStack(for: due),
-               implied != bucket {
-                card.dueDate = nil
-            }
+            // Both dates survive the move. Nothing files a card any more, so a
+            // deadline and a stack cannot contradict each other — a four-day
+            // job sits in Today for four days and is still due on the fourth.
         }
     }
 
-    /// Attach a date to a card. A date of today or tomorrow files the card into
-    /// the matching stack; anything further out leaves the card where it is and
-    /// only affects its position within that stack.
-    func setDate(_ item: TodoItem, to date: Date) {
+    /// When the work is due. It orders the card inside its stack and colours
+    /// its edge as the day approaches; it never moves it.
+    func setDeadline(_ item: TodoItem, to date: Date) {
+        update(item) { $0.deadline = Scheduler.calendar.startOfDay(for: date) }
+    }
+
+    /// When to be reminded. Setting a time re-arms the reminder: an answer
+    /// given to the previous one does not carry over to this.
+    func setReminder(_ item: TodoItem, at date: Date?) {
         update(item) { card in
-            let day = Scheduler.calendar.startOfDay(for: date)
-            card.dueDate = day
-
-            if let stack = Scheduler.autoStack(for: day) {
-                card.bucket = stack
-                card.bucketBeforeCompletion = nil
-                card.completedAt = nil
-            }
+            card.remindAt = date
+            card.reminderAnsweredAt = nil
         }
+        rescheduleNotifications()
     }
 
-    /// Re-file dated cards into the stack their date implies.
-    ///
-    /// Run on launch, whenever the app comes forward, and when the day turns
-    /// under a window that has been left open, because the day turns while
-    /// nobody is looking: a card dated tomorrow sits in TOMORROW, and once that
-    /// day arrives its date reads "today", so it belongs in TODAY.
-    ///
-    /// LATER is included. A card put in LATER and dated for a particular day is
-    /// making an appointment, and when that day comes round the card stops
-    /// being "later" — it is filed like any other. Because that is the one move
-    /// the user did not ask for and would not otherwise see, those cards are
-    /// reported back in `autoFileNotice` so the app can say what it did.
-    @discardableResult
-    func applyScheduledDates(now: Date = Date()) -> [AutoFiledCard] {
-        var moved = 0
-        var raised: [AutoFiledCard] = []
-
-        for index in items.indices {
-            let card = items[index]
-            guard !card.isCompleted, let due = card.dueDate else { continue }
-            guard let stack = Scheduler.autoStack(for: due, now: now), stack != card.bucket else { continue }
-            // Deliberately no `modifiedAt` bump. Filing is derived, not edited:
-            // every device computes the same stack from the same date and the
-            // same calendar day, so this needs no syncing — and stamping it
-            // would let a device that merely sat there overnight outrank a real
-            // edit made on another device just before midnight and not yet
-            // synced. A tie on `modifiedAt` keeps the local copy, and the pass
-            // runs again after every merge, so the two devices converge on the
-            // same stack either way.
-            items[index].bucket = stack
-            moved += 1
-            if card.bucket == .later {
-                raised.append(AutoFiledCard(title: card.title, destination: stack))
-            }
-        }
-
-        if moved > 0 { save() }
-        if !raised.isEmpty { autoFileNotice = AutoFileNotice(cards: raised) }
-        lastFiledDay = Scheduler.startOfToday(now)
-        return raised
+    func setRemindsEnabled(_ item: TodoItem, _ enabled: Bool) {
+        update(item) { $0.remindsEnabled = enabled }
+        rescheduleNotifications()
     }
 
-    func dismissAutoFileNotice() {
-        autoFileNotice = nil
+    /// Answer an outstanding reminder — the only thing that takes one off the
+    /// list. A notification swiped away is how a notification is got rid of,
+    /// not how a decision is made, and doing nothing is not an answer either:
+    /// the reminder simply stays.
+    func answerReminder(_ item: TodoItem, _ answer: ReminderAnswer) {
+        update(item) { card in answer.apply(to: &card, now: .stamp()) }
+        rescheduleNotifications()
     }
+
+    var outstandingReminders: [TodoItem] { Reminders.outstanding(in: items) }
+
 
     // MARK: - The day turning underneath an open window
 
@@ -245,13 +210,13 @@ final class TodoStore: ObservableObject {
             NotificationCenter.default.addObserver(
                 forName: name, object: nil, queue: .main
             ) { [weak self] _ in
-                Task { @MainActor in self?.refileIfDayChanged() }
+                Task { @MainActor in self?.refreshIfDayChanged() }
             }
         }
 
         dayTimer?.invalidate()
         dayTimer = Timer.scheduledTimer(withTimeInterval: Self.dayCheckInterval, repeats: true) { [weak self] _ in
-            Task { @MainActor in self?.refileIfDayChanged() }
+            Task { @MainActor in self?.refreshIfDayChanged() }
         }
     }
 
@@ -259,14 +224,17 @@ final class TodoStore: ObservableObject {
     /// the check itself is a date comparison.
     private static let dayCheckInterval: TimeInterval = 15 * 60
 
-    /// Re-file only when the calendar day has actually moved on.
-    func refileIfDayChanged(now: Date = Date()) {
+    /// The day turning changes what the labels say and what colour an edge is
+    /// — "Tomorrow" becomes "Today", an approaching deadline becomes due — so
+    /// the list is nudged to redraw. Nothing moves; that is the point.
+    func refreshIfDayChanged(now: Date = Date()) {
         guard Scheduler.startOfToday(now) != lastFiledDay else { return }
-        withAnimation { _ = applyScheduledDates(now: now) }
+        lastFiledDay = Scheduler.startOfToday(now)
+        withAnimation { objectWillChange.send() }
     }
 
-    func clearDate(_ item: TodoItem) {
-        update(item) { card in card.dueDate = nil }
+    func clearDeadline(_ item: TodoItem) {
+        update(item) { $0.deadline = nil }
     }
 
     /// Label a card, or pass `nil` to clear it. Never changes its stack.
@@ -340,6 +308,19 @@ final class TodoStore: ObservableObject {
     /// How many cards currently carry a category, for the delete confirmation.
     func cardCount(using category: CardCategory) -> Int {
         items.filter { $0.categoryID == category.id }.count
+    }
+
+    // MARK: - Reminders
+
+    /// Make the pending notifications match the cards: one per armed reminder
+    /// in the future, none for anything completed, deleted, disabled or past.
+    ///
+    /// Called after every change that could affect them rather than trying to
+    /// patch individual notifications — the set is small, and a schedule that
+    /// has drifted from the cards is the kind of bug nobody notices until a
+    /// reminder fires for a card that was finished last week.
+    func rescheduleNotifications() {
+        ReminderScheduler.shared.sync(to: Reminders.scheduled(in: items))
     }
 
     // MARK: - Projects
@@ -601,6 +582,9 @@ final class TodoStore: ObservableObject {
             card.bucket = .completed
             card.completedAt = .stamp()
         }
+        // Finishing the work cancels the reminder about it, and takes it off
+        // the review if it was already waiting there.
+        rescheduleNotifications()
     }
 
     /// Send a completed card back where it came from.
@@ -622,6 +606,7 @@ final class TodoStore: ObservableObject {
         items.removeAll { $0.id == item.id }
         deletedCards[item.id.uuidString] = .stamp()
         save()
+        rescheduleNotifications()
     }
 
     private func update(_ item: TodoItem, _ change: (inout TodoItem) -> Void) {
@@ -657,7 +642,7 @@ final class TodoStore: ObservableObject {
             } else {
                 apply(document.merged(with: existing))
             }
-            applyScheduledDates()
+            rescheduleNotifications()
         }
         // Nothing readable there — a brand new file. Whatever is here seeds it.
 
@@ -705,7 +690,7 @@ final class TodoStore: ObservableObject {
                 return project
             }
         }
-        applyScheduledDates()
+        rescheduleNotifications()
         save()
         return restored.count
     }
@@ -830,7 +815,7 @@ final class TodoStore: ObservableObject {
         }
 
         if summary.added + summary.updated + summary.removed > 0 || regrouped {
-            applyScheduledDates()
+            rescheduleNotifications()
             save()
         }
         return summary
@@ -904,7 +889,7 @@ final class TodoStore: ObservableObject {
             if let remote {
                 discardSamples(given: remote)
                 apply(document.merged(with: remote))
-                applyScheduledDates()
+                rescheduleNotifications()
             }
             // Push whatever we have, so a first run seeds the cloud copy.
             save()
@@ -924,7 +909,7 @@ final class TodoStore: ObservableObject {
         let before = document
         discardSamples(given: remote)
         apply(document.merged(with: remote))
-        applyScheduledDates()
+        rescheduleNotifications()
         save()
         return SyncOutcome(at: Date(), change: document.change(from: before), couldNotRead: false)
     }

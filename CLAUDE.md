@@ -58,6 +58,24 @@ and, when one is configured, to the user's sync file in iCloud Drive.
   iPad simulator is the proxy**: the sidebar layout keys off size class, not
   `#if targetEnvironment(macCatalyst)`, so the iPad shows the Mac's layout.
 
+## Dates never move cards
+
+Two optional fields, deliberately separate: **`deadline`** (a day, when the
+work is due) and **`remindAt`** (a day and a time, when to be interrupted).
+Neither moves a card, and moving a card keeps both. There is no filing pass,
+no auto-stack rule and no Later date floor — those existed only to serve
+automatic filing, and their absence is the feature.
+
+`dueDate` is read once as a migration and **never written back**. That is the
+only thing stopping a version that still files cards from doing it again: it
+would ignore any flag it did not recognise, but it cannot file a date it cannot
+see.
+
+A reminder leaves the review for one reason: the user answered it. Dismissing
+the notification is explicitly not an answer — see
+`UNUserNotificationCenterDelegate` in `ReminderScheduler.swift`, which posts
+only on the default action.
+
 ## Sync, and why edits are stamped carefully
 
 Two devices merge one JSON file per card by `modifiedAt`, with tombstones for

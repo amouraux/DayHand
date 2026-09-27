@@ -571,8 +571,22 @@ struct TodoItem: Identifiable, Codable, Equatable {
     /// Optional project — a trip, a client, a paper — one per card. Holds the
     /// id of a `Project`, so renaming the project renames it on every card.
     var projectID: UUID?
-    /// Optional, and independent of `bucket`: a card in LATER can be dated today.
-    var dueDate: Date?
+    /// When the work is due. Optional, and independent of `bucket` in every
+    /// direction: it never moves the card, and moving the card never clears it.
+    /// A job that takes four days has a deadline on the fourth and sits in
+    /// Today for all four.
+    var deadline: Date?
+    /// When to be reminded, to the minute — a different question from when the
+    /// work is due, and asked separately.
+    var remindAt: Date?
+    /// Whether that reminder actually fires. An editable field on the card, on
+    /// by default, so a reminder can be silenced without losing the time it
+    /// was set for.
+    var remindsEnabled: Bool = true
+    /// When the reminder was answered in the review. A notification that was
+    /// merely swiped away is not an answer — only choosing what to do with the
+    /// card is — so this is the one thing that takes a reminder off the list.
+    var reminderAnsweredAt: Date?
     /// Where the card came from, so un-completing puts it back.
     var bucketBeforeCompletion: Bucket?
     var completedAt: Date?
@@ -586,8 +600,9 @@ struct TodoItem: Identifiable, Codable, Equatable {
 
     var isCompleted: Bool { bucket == .completed }
 
-    /// Only used to read files written before categories became user-defined.
-    private enum LegacyKeys: String, CodingKey { case category }
+    /// Only used to read files written before categories became user-defined,
+    /// and before a date became a deadline rather than a filing instruction.
+    private enum LegacyKeys: String, CodingKey { case category, dueDate }
 
     /// Tolerate files written by earlier versions / missing keys.
     init(from decoder: Decoder) throws {
@@ -595,7 +610,21 @@ struct TodoItem: Identifiable, Codable, Equatable {
         id = try c.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
         title = try c.decode(String.self, forKey: .title)
         bucket = try c.decodeIfPresent(Bucket.self, forKey: .bucket) ?? .inbox
-        dueDate = try c.decodeIfPresent(Date.self, forKey: .dueDate)
+        // A date written by a version that filed cards is read as a deadline:
+        // the day is what the user meant, the moving was the app's idea. The
+        // old key is never written back, which is the only way to stop such a
+        // version filing again — it would ignore any flag it did not know, but
+        // it cannot file a date it cannot see.
+        if let date = try c.decodeIfPresent(Date.self, forKey: .deadline) {
+            deadline = date
+        } else if let legacy = try? decoder.container(keyedBy: LegacyKeys.self) {
+            deadline = try? legacy.decodeIfPresent(Date.self, forKey: .dueDate)
+        } else {
+            deadline = nil
+        }
+        remindAt = try c.decodeIfPresent(Date.self, forKey: .remindAt)
+        remindsEnabled = try c.decodeIfPresent(Bool.self, forKey: .remindsEnabled) ?? true
+        reminderAnsweredAt = try c.decodeIfPresent(Date.self, forKey: .reminderAnsweredAt)
 
         // `categoryID` is a UUID now. Files written when categories were a
         // fixed enum stored "research" / "teaching" / "personal" under a
@@ -625,13 +654,119 @@ struct TodoItem: Identifiable, Codable, Equatable {
         bucket: Bucket = .inbox,
         categoryID: UUID? = nil,
         projectID: UUID? = nil,
-        dueDate: Date? = nil
+        deadline: Date? = nil,
+        remindAt: Date? = nil
     ) {
         self.title = title
         self.bucket = bucket
         self.categoryID = categoryID
         self.projectID = projectID
-        self.dueDate = dueDate
+        self.deadline = deadline
+        self.remindAt = remindAt
+    }
+}
+
+// MARK: - Deadlines and reminders
+
+/// How close a deadline is, for the edge colour on the card.
+///
+/// A deadline states when work is due; it never moves the card, so the only
+/// way it can say anything is by how the card looks. Yellow while it is
+/// coming, red once it is here or past — and red is reserved for that, as it
+/// always was.
+enum DeadlineUrgency: Equatable {
+    case none
+    case approaching
+    case due
+    case overdue
+
+    /// Three days: long enough to act on, short enough that a wall of yellow
+    /// does not become the normal state of the list.
+    static let approachingWithin = 3
+
+    static func of(_ deadline: Date?, now: Date = Date(),
+                   calendar: Calendar = .current) -> DeadlineUrgency {
+        guard let deadline else { return .none }
+        let days = calendar.dateComponents(
+            [.day],
+            from: calendar.startOfDay(for: now),
+            to: calendar.startOfDay(for: deadline)
+        ).day ?? 0
+
+        if days < 0 { return .overdue }
+        if days == 0 { return .due }
+        return days <= approachingWithin ? .approaching : .none
+    }
+}
+
+/// Which reminders are waiting to be answered.
+///
+/// A reminder leaves this list for one reason only: the user said what to do
+/// with the card. Swiping the notification away is not an answer — it is how
+/// a notification is got rid of, not how a decision is made — so the review
+/// goes on holding it until one of the three choices is made.
+enum Reminders {
+    static func isOutstanding(_ card: TodoItem, now: Date = Date()) -> Bool {
+        guard card.remindsEnabled, !card.isCompleted, let at = card.remindAt else { return false }
+        guard at <= now else { return false }
+        // Answered before this reminder was due means it was a previous one:
+        // re-arming for tomorrow must not arrive already answered.
+        guard let answered = card.reminderAnsweredAt else { return true }
+        return answered < at
+    }
+
+    static func outstanding(in cards: [TodoItem], now: Date = Date()) -> [TodoItem] {
+        cards.filter { isOutstanding($0, now: now) }
+            .sorted { ($0.remindAt ?? .distantPast) < ($1.remindAt ?? .distantPast) }
+    }
+
+    /// The reminders a notification should be pending for: armed, in the
+    /// future, on a card still to do.
+    static func scheduled(in cards: [TodoItem], now: Date = Date()) -> [TodoItem] {
+        cards.filter { card in
+            guard card.remindsEnabled, !card.isCompleted, let at = card.remindAt else { return false }
+            return at > now
+        }
+    }
+
+    /// "Snooze" — the same time on the next day, since a card has no
+    /// recurrence of its own and what is being deferred is "not now".
+    static func again(after at: Date, calendar: Calendar = .current) -> Date? {
+        calendar.date(byAdding: .day, value: 1, to: at)
+    }
+}
+
+/// What the user chose to do about a reminder that has come due.
+///
+/// Doing nothing is deliberately not in here. Leaving a reminder alone is the
+/// absence of an answer, not one of them, which is exactly why it stays on the
+/// list — the same reason dismissing a notification changes nothing.
+enum ReminderAnswer: Equatable {
+    case move(Bucket)
+    /// Ask again at the same time tomorrow. The card does not move.
+    case snooze
+    /// Done with the reminder. The deadline is a separate field and is left
+    /// exactly as it was.
+    case clear
+
+    /// Applied here rather than in the store so it can be tested.
+    func apply(to card: inout TodoItem, now: Date, calendar: Calendar = .current) {
+        switch self {
+        case .move(let bucket):
+            card.bucket = bucket
+            card.bucketBeforeCompletion = nil
+            card.completedAt = nil
+            card.remindAt = nil
+        case .snooze:
+            card.remindAt = card.remindAt.flatMap { again(after: $0, calendar: calendar) }
+        case .clear:
+            card.remindAt = nil
+        }
+        card.reminderAnsweredAt = now
+    }
+
+    private func again(after at: Date, calendar: Calendar) -> Date? {
+        Reminders.again(after: at, calendar: calendar)
     }
 }
 
@@ -731,57 +866,17 @@ enum Scheduler {
         ).day ?? 0
     }
 
-    /// The soonest date a card in LATER is allowed to carry: the day after
-    /// tomorrow. Anything sooner contradicts what LATER means.
-    static func earliestLaterDate(_ now: Date = Date()) -> Date {
-        calendar.date(byAdding: .day, value: 2, to: startOfToday(now)) ?? startOfToday(now)
+    /// A reminder's opening suggestion: 9am tomorrow. Not "now", which is a
+    /// reminder that has already gone off before the sheet is closed.
+    static func defaultReminderTime(_ now: Date = Date()) -> Date {
+        let tomorrow = calendar.date(byAdding: .day, value: 1, to: startOfToday(now)) ?? now
+        return calendar.date(bySettingHour: 9, minute: 0, second: 0, of: tomorrow) ?? tomorrow
     }
 
-    /// The stack a date files a card into, or `nil` to leave the card where it
-    /// is.
-    ///
-    /// Only a date that has arrived files a card: tomorrow's into TOMORROW, and
-    /// today's — or any day already past, since an overdue card belongs with
-    /// today's work — into TODAY. A date further out says nothing about which
-    /// stack a card belongs in, only where it sits inside the one it is already
-    /// in. This applies to every stack including LATER: a LATER card whose day
-    /// has come round has stopped being "later".
-    static func autoStack(for date: Date, now: Date = Date()) -> Bucket? {
-        switch dayOffset(for: date, now: now) {
-        case 1:    return .tomorrow
-        case ...0: return .today
-        default:   return nil
-        }
-    }
-
-    /// Ordering tiers inside a bucket: dated for today (or overdue) float to the
-    /// top, then tomorrow's, then everything else.
-    enum Tier: Int, Comparable {
-        case todayOrOverdue = 0
-        case tomorrow       = 1
-        case rest           = 2
-
-        static func < (lhs: Tier, rhs: Tier) -> Bool { lhs.rawValue < rhs.rawValue }
-    }
-
-    static func tier(for item: TodoItem, now: Date = Date()) -> Tier {
-        guard let due = item.dueDate else { return .rest }
-        let days = calendar.dateComponents(
-            [.day],
-            from: startOfToday(now),
-            to: calendar.startOfDay(for: due)
-        ).day ?? 0
-
-        if days <= 0 { return .todayOrOverdue }
-        if days == 1 { return .tomorrow }
-        return .rest
-    }
-
-    /// A card whose day has already passed.
-    static func isOverdue(_ item: TodoItem, now: Date = Date()) -> Bool {
-        guard !item.isCompleted, let due = item.dueDate else { return false }
-        return calendar.startOfDay(for: due) < startOfToday(now)
-    }
+    /// Where a card sits inside its stack. A deadline orders a card; it never
+    /// moves one. Cards carrying one come first, soonest at the top, and the
+    /// undated follow in the order they always had.
+    static func sortKey(for item: TodoItem) -> Date? { item.deadline }
 
     static func relativeLabel(for date: Date, now: Date = Date()) -> String {
         let days = calendar.dateComponents(
@@ -803,31 +898,3 @@ enum Scheduler {
     }
 }
 
-// MARK: - Automatic filing
-
-/// A card the app moved out of LATER by itself, because the date written on it
-/// came round. Everything else the filing pass does is what the user already
-/// expects; this is the one move worth mentioning.
-struct AutoFiledCard: Equatable {
-    var title: String
-    var destination: Bucket
-}
-
-/// The message shown after such a move.
-struct AutoFileNotice: Identifiable, Equatable {
-    let id = UUID()
-    var cards: [AutoFiledCard]
-
-    var message: String {
-        if cards.count == 1, let only = cards.first {
-            return "\u{201C}\(only.title)\u{201D} moved to \(only.destination.title)."
-        }
-        let toToday = cards.filter { $0.destination == .today }.count
-        let toTomorrow = cards.count - toToday
-        switch (toToday, toTomorrow) {
-        case (0, _):  return "\(cards.count) Later cards moved to Tomorrow."
-        case (_, 0):  return "\(cards.count) Later cards moved to Today."
-        default:      return "\(cards.count) Later cards moved: \(toToday) to Today, \(toTomorrow) to Tomorrow."
-        }
-    }
-}

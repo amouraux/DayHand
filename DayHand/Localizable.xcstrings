@@ -1502,6 +1502,47 @@
         }
       }
     },
+    "A reminder stays here until you answer it. Closing a notification does not." : {
+      "comment" : "Empty state of the reminder review",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine Erinnerung bleibt hier, bis Sie sie beantworten. Eine Mitteilung wegzuwischen genügt nicht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un recordatorio se queda aquí hasta que lo respondas. Cerrar la notificación no basta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un rappel reste ici jusqu’à ce que vous y répondiez. Fermer la notification ne suffit pas."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un promemoria resta qui finché non rispondi. Chiudere la notifica non basta."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Een herinnering blijft hier tot je hem beantwoordt. Een melding wegvegen telt niet."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um lembrete fica aqui até o responder. Fechar a notificação não chega."
+          }
+        }
+      }
+    },
     "A short one-word name for something you are working on." : {
       "localizations" : {
         "de" : {
@@ -2111,6 +2152,47 @@
         }
       }
     },
+    "At" : {
+      "comment" : "The reminder's time picker",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A las"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Om"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Às"
+          }
+        }
+      }
+    },
     "Backups" : {
       "localizations" : {
         "de" : {
@@ -2309,46 +2391,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Os cartões e os projetos são agrupados por categorias. Crie as suas — nos cartões aparece apenas o ícone, por isso a etiqueta nomeia-o aqui e para o VoiceOver."
-          }
-        }
-      }
-    },
-    "Cards in Later start from the day after tomorrow." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In Später beginnen Karten ab übermorgen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En Más tarde, las tarjetas empiezan pasado mañana."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dans Plus tard, les cartes commencent après-demain."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In Più tardi le carte partono da dopodomani."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In Later beginnen kaarten vanaf overmorgen."
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Em Mais tarde, os cartões começam depois de amanhã."
           }
         }
       }
@@ -2593,6 +2635,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Limpar a pesquisa"
+          }
+        }
+      }
+    },
+    "Clear the reminder" : {
+      "comment" : "Answer in the reminder review; the deadline is untouched",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erinnerung entfernen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quitar el recordatorio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer le rappel"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rimuovi il promemoria"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Herinnering verwijderen"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remover o lembrete"
           }
         }
       }
@@ -3124,46 +3207,6 @@
         }
       }
     },
-    "Date" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Datum"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fecha"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Date"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Data"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Datum"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Data"
-          }
-        }
-      }
-    },
     "DayHand follows your device's language. To read it in another one, pick a language for this app in the system settings." : {
       "localizations" : {
         "de" : {
@@ -3200,6 +3243,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O DayHand segue o idioma do seu dispositivo. Para o ler noutro, escolha um idioma para esta app nas definições do sistema."
+          }
+        }
+      }
+    },
+    "Deadline" : {
+      "comment" : "When the work is due",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frist"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fecha límite"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Échéance"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scadenza"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deadline"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prazo"
           }
         }
       }
@@ -3644,42 +3728,43 @@
         }
       }
     },
-    "Due date" : {
+    "Due" : {
+      "comment" : "The deadline's date picker",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fälligkeitsdatum"
+            "value" : "Fällig"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fecha límite"
+            "value" : "Vence"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Échéance"
+            "value" : "Pour le"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Scadenza"
+            "value" : "Entro"
           }
         },
         "nl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vervaldatum"
+            "value" : "Uiterlijk"
           }
         },
         "pt-PT" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Data limite"
+            "value" : "Até"
           }
         }
       }
@@ -4961,6 +5046,47 @@
         }
       }
     },
+    "Leave it here for now" : {
+      "comment" : "Not an answer: the reminder stays on the list",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorerst hier lassen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dejarlo aquí por ahora"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le laisser ici pour l’instant"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lascialo qui per ora"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laat het hier voorlopig staan"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deixar aqui por agora"
+          }
+        }
+      }
+    },
     "Make “%@” a project" : {
       "comment" : "Offer in the card editor when the first word reads like a code",
       "localizations" : {
@@ -5528,6 +5654,47 @@
         }
       }
     },
+    "Move it, or keep it where it is." : {
+      "comment" : "Notification body",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verschieben Sie sie, oder lassen Sie sie, wo sie ist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muévela o déjala donde está."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déplacez-la, ou laissez-la où elle est."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spostala, o lasciala dov’è."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verplaats hem, of laat hem staan."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mova-o, ou deixe-o onde está."
+          }
+        }
+      }
+    },
     "Move to %@" : {
       "localizations" : {
         "de" : {
@@ -5564,6 +5731,88 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mover para %@"
+          }
+        }
+      }
+    },
+    "Move to Today" : {
+      "comment" : "Answer in the reminder review",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach Heute verschieben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover a Hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déplacer vers Aujourd’hui"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sposta in Oggi"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Naar Vandaag verplaatsen"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover para Hoje"
+          }
+        }
+      }
+    },
+    "Move to Tomorrow" : {
+      "comment" : "Answer in the reminder review",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach Morgen verschieben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover a Mañana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déplacer vers Demain"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sposta in Domani"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Naar Morgen verplaatsen"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover para Amanhã"
           }
         }
       }
@@ -6413,6 +6662,47 @@
         }
       }
     },
+    "Nothing waiting" : {
+      "comment" : "Empty state of the reminder review",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nichts wartet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada pendiente"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rien en attente"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nulla in attesa"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niets in afwachting"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada a aguardar"
+          }
+        }
+      }
+    },
     "OK" : {
       "localizations" : {
         "de" : {
@@ -6730,6 +7020,170 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ler como isto funciona"
+          }
+        }
+      }
+    },
+    "Remind me" : {
+      "comment" : "Toggle for a reminder",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erinnere mich"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recuérdamelo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Me rappeler"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ricordamelo"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Herinner me"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lembrar-me"
+          }
+        }
+      }
+    },
+    "Reminders" : {
+      "comment" : "Title of the reminder review",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erinnerungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recordatorios"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rappels"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Promemoria"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Herinneringen"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lembretes"
+          }
+        }
+      }
+    },
+    "Reminders on" : {
+      "comment" : "Whether this card's reminder actually fires",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erinnerungen an"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recordatorios activados"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rappels activés"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Promemoria attivi"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Herinneringen aan"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lembretes ativados"
+          }
+        }
+      }
+    },
+    "Reminders waiting" : {
+      "comment" : "Accessibility label for the button that opens the review",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wartende Erinnerungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recordatorios pendientes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rappels en attente"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Promemoria in attesa"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wachtende herinneringen"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lembretes a aguardar"
           }
         }
       }
@@ -7714,6 +8168,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mostra apenas este grupo"
+          }
+        }
+      }
+    },
+    "Snooze until tomorrow" : {
+      "comment" : "Answer in the reminder review",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bis morgen zurückstellen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Posponer hasta mañana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reporter à demain"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rimanda a domani"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uitstellen tot morgen"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adiar para amanhã"
           }
         }
       }

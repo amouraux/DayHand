@@ -18,6 +18,7 @@
 		D00000000000000000000009 /* Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000000000000000000009 /* Sync.swift */; };
 		D0000000000000000000000B /* ProjectEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000B /* ProjectEditor.swift */; };
 		D0000000000000000000001A /* FilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001A /* FilterView.swift */; };
+		D0000000000000000000001B /* ReminderScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001B /* ReminderScheduler.swift */; };
 		D0000000000000000000000E /* ReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000E /* ReviewView.swift */; };
 		D0000000000000000000000C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000C /* PrivacyInfo.xcprivacy */; };
 		D0000000000000000000000D /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000D /* Localizable.xcstrings */; };
@@ -38,6 +39,7 @@
 		C0000000000000000000000E /* ReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewView.swift; sourceTree = "<group>"; };
 		C0000000000000000000000B /* ProjectEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectEditor.swift; sourceTree = "<group>"; };
 		C0000000000000000000001A /* FilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterView.swift; sourceTree = "<group>"; };
+		C0000000000000000000001B /* ReminderScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderScheduler.swift; sourceTree = "<group>"; };
 		C0000000000000000000000C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		C0000000000000000000000D /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -79,6 +81,7 @@
 				C00000000000000000000008 /* SettingsView.swift */,
 				C0000000000000000000000B /* ProjectEditor.swift */,
 				C0000000000000000000001A /* FilterView.swift */,
+				C0000000000000000000001B /* ReminderScheduler.swift */,
 				C0000000000000000000000E /* ReviewView.swift */,
 				C00000000000000000000002 /* Models.swift */,
 				C00000000000000000000009 /* Sync.swift */,
@@ -197,6 +200,7 @@
 				D00000000000000000000008 /* SettingsView.swift in Sources */,
 				D0000000000000000000000B /* ProjectEditor.swift in Sources */,
 				D0000000000000000000001A /* FilterView.swift in Sources */,
+				D0000000000000000000001B /* ReminderScheduler.swift in Sources */,
 				D0000000000000000000000E /* ReviewView.swift in Sources */,
 				D00000000000000000000001 /* DayHandApp.swift in Sources */,
 			);
