@@ -680,8 +680,15 @@ one that is currently filtering the list is never hidden from under its own
 selection.
 
 The filter button reflects the state: the plain filter glyph when nothing is
-chosen, the category's own icon and colour when exactly one is, and the **count**
-when several are — no single icon can stand for several. Deleting a category
+chosen, the category's own icon and colour when exactly one is, and a **count**
+when several are, since no single icon can stand for several.
+
+**That count is cards, not filters**, using the same rule as the numbers beside
+the rows in the sidebar — completed cards left out of both. It once counted how
+many filters were switched on, which is a different number wearing the same
+clothes: ticking a group of two projects holding three cards between them put a
+2 on the button while the sidebar said 3 a thumb's width away. One predicate
+now serves the list, the sidebar and the button, so they cannot disagree again. Deleting a category
 removes it from the selection, so the list is never filtered by something that
 no longer exists. On the Mac, right-click a card for "Show Only <project>";
 while any filter is on, that item becomes "Show All" on every card.

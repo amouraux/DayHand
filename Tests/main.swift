@@ -989,5 +989,67 @@ do {
     expect(!Reminders.isOutstanding(done, now: now), "finishing the work answers the reminder")
 }
 
+// MARK: AB — the filter button counts what the sidebar counts
+do {
+    let work = CardCategory(label: "Work", symbolName: "briefcase", color: .indigo)
+    let home = CardCategory(label: "Home", symbolName: "house", color: .teal)
+    let fresco = Project(name: "FRESCO", categoryID: work.id, group: "Projects")
+    let qspr = Project(name: "QSPR", categoryID: work.id, group: "Projects")
+
+    func card(_ title: String, _ bucket: Bucket = .later,
+              project: Project? = nil, category: CardCategory? = nil) -> TodoItem {
+        var c = TodoItem(title: title, bucket: bucket)
+        c.projectID = project?.id
+        c.categoryID = category?.id ?? project.map { _ in work.id }
+        return c
+    }
+
+    // The case from the screenshot: the Projects group ticked, which ticks the
+    // two projects under it. FRESCO holds three cards, QSPR none.
+    let cards = [
+        card("DMP", project: fresco),
+        card("plan secondments", project: fresco),
+        card("training event Brussels date", project: fresco),
+        card("Deliverables D8.6", .completed, project: qspr),
+        card("Reply Monir PKPD manuscript", .completed, project: qspr),
+        card("ERD/ERS lecture", .completed, project: fresco),
+        card("tidy the loft", .inbox, category: home)
+    ]
+    let chosen: Set<UUID> = [fresco.id, qspr.id]
+
+    let counts = FilterCounts.byProject(cards)
+    expect(counts[fresco.id] == 3, "the sidebar says FRESCO holds three")
+    expect(counts[qspr.id] == nil, "and QSPR none, its cards all being done")
+    expect(FilterCounts.total(of: [fresco, qspr], in: counts) == 3, "so the group heading says three")
+
+    // The button used to read 2 here — the number of filters switched on, one
+    // per project — which is indistinguishable from a card count.
+    expect(FilterCounts.matching(cards, categories: [], projects: chosen) == 3,
+           "and the button says three, not two: it counts cards, like every other number")
+    expect(FilterCounts.matching(cards, categories: [], projects: chosen)
+           == FilterCounts.total(of: [fresco, qspr], in: counts),
+           "the button and the group heading cannot drift apart — same rule, one function")
+
+    // The two sets are an either/or.
+    expect(FilterCounts.matching(cards, categories: [home.id], projects: []) == 1,
+           "a category filter finds a card carrying no project at all")
+    expect(FilterCounts.matching(cards, categories: [home.id], projects: chosen) == 4,
+           "and choosing both widens rather than narrows")
+    expect(FilterCounts.matching(cards, categories: [], projects: []) == 0,
+           "nothing chosen, nothing counted")
+
+    // Completed cards are left out of both, which is what makes the two agree.
+    expect(cards.filter { $0.isCompleted }.count == 3, "three of these are done")
+    expect(FilterCounts.matching(cards, categories: [work.id], projects: []) == 3,
+           "and none of them is counted")
+
+    // The list and the button must agree about what is in the narrowing.
+    for item in cards {
+        let inList = FilterCounts.matches(item, categories: [], projects: chosen)
+        expect(inList == (item.projectID == fresco.id || item.projectID == qspr.id),
+               "the list's predicate is the button's predicate")
+    }
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

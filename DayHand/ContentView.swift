@@ -304,10 +304,8 @@ struct ContentView: View {
             all = all.filter { Attention.needed($0) }
         }
         if isFiltered {
-            all = all.filter { card in
-                if let id = card.categoryID, filterCategoryIDs.contains(id) { return true }
-                if let id = card.projectID, filterProjectIDs.contains(id) { return true }
-                return false
+            all = all.filter {
+                FilterCounts.matches($0, categories: filterCategoryIDs, projects: filterProjectIDs)
             }
         }
         let terms = searchTerms
@@ -326,6 +324,15 @@ struct ContentView: View {
 
     /// Narrowed by either means, for the empty state.
     private var isNarrowed: Bool { isFiltered || attentionOnly || !searchTerms.isEmpty }
+
+    /// How many cards the narrowing holds, counted exactly as the sidebar
+    /// counts its rows. The button used to show how many filters were on,
+    /// which reads as a card count when it is sitting a thumb's width from
+    /// several real ones.
+    private var filteredCardCount: Int {
+        FilterCounts.matching(store.items,
+                              categories: filterCategoryIDs, projects: filterProjectIDs)
+    }
 
     /// The chosen categories, in the order the user arranged them.
     private var activeFilters: [CardCategory] {
@@ -379,8 +386,10 @@ struct ContentView: View {
                     Image(systemName: "number")
                         .foregroundStyle(filterTint)
                 } else {
-                    // Several at once: the count says more than any one icon.
-                    Text("\(activeFilters.count + activeProjects.count)")
+                    // Several at once: no single icon can stand for them, so
+                    // say how many cards they hold — the same number the
+                    // sidebar shows beside the rows that were ticked.
+                    Text("\(filteredCardCount)")
                         .monospacedDigit()
                         .foregroundStyle(Color.accentColor)
                 }

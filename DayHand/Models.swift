@@ -398,6 +398,30 @@ enum FilterCounts {
         projects.reduce(0) { $0 + (counts[$1.id] ?? 0) }
     }
 
+    /// Whether a card is inside the current narrowing.
+    ///
+    /// The two sets are an either/or, not an and: a category filter has to go
+    /// on showing cards that carry no project at all, and a project filter has
+    /// to go on showing its cards whatever category they ended up with.
+    static func matches(_ card: TodoItem,
+                        categories: Set<UUID>, projects: Set<UUID>) -> Bool {
+        if let id = card.categoryID, categories.contains(id) { return true }
+        if let id = card.projectID, projects.contains(id) { return true }
+        return false
+    }
+
+    /// How many cards a narrowing holds — the number the filter button shows.
+    ///
+    /// The same rule and the same exclusion of completed cards as the counts
+    /// beside the rows in the sidebar, so the two can never disagree. They did
+    /// once: the button was counting how many filters were switched on, which
+    /// looks exactly like a card count sitting next to several real ones.
+    static func matching(_ cards: [TodoItem],
+                         categories: Set<UUID>, projects: Set<UUID>) -> Int {
+        cards.filter { !$0.isCompleted && matches($0, categories: categories, projects: projects) }
+            .count
+    }
+
     private static func tally(_ cards: [TodoItem], by key: (TodoItem) -> UUID?) -> [UUID: Int] {
         var result: [UUID: Int] = [:]
         for card in cards where !card.isCompleted {
