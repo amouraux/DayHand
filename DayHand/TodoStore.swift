@@ -661,7 +661,20 @@ final class TodoStore: ObservableObject {
 
     // MARK: - Backups
 
-    func availableBackups() -> [BackupInfo] { storage.availableBackups() }
+    func availableBackups() -> [BackupFile] { storage.availableBackups() }
+
+    /// A copy the user asked for, kept under today's date. Returns where it
+    /// went, so the sheet can say something more useful than "done".
+    @discardableResult
+    func backUpNow(now: Date = Date()) -> URL? {
+        storage.writeBackup(document, kind: .manual(now), now: now)
+    }
+
+    func deleteBackup(_ backup: BackupFile) { storage.deleteBackup(backup) }
+
+    /// The name this device signs its backups with, shown so the user knows
+    /// which of several files came from where.
+    var backupDeviceName: String { storage.deviceName }
 
     /// Put the cards from a backup back.
     ///
@@ -671,8 +684,8 @@ final class TodoStore: ObservableObject {
     /// tombstoned: they are not what the user asked to remove, and if the other
     /// device still has them they simply come back on the next sync.
     @discardableResult
-    func restore(from slot: BackupSlot) -> Int {
-        guard let backup = storage.readBackup(slot) else { return 0 }
+    func restore(from file: BackupFile) -> Int {
+        guard let backup = storage.readBackup(at: file.url) else { return 0 }
 
         var restored = backup.cards
         let stamp = Date.stamp()

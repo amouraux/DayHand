@@ -938,8 +938,50 @@ otherwise it just shadows the dailies and the third point in time is wasted.
 Opening the app repeatedly in one day must not churn the chain, and a long gap
 with the app unopened should still rotate exactly once.
 
+**Back Up Now** takes one on demand, kept under the day it was taken. A second
+on the same day replaces the first, so pressing the button is never a way to
+fill the disk.
+
+### The name is the backup
+
+Each copy is its own file, named for what it is and which device wrote it:
+
+```
+DayHand-1day-Fatima-s-iPhone-9c3f.json
+DayHand-1week-Fatima-s-iPhone-9c3f.json
+DayHand-2026-09-28-Fatima-s-MacBook-Pro-1a2b.json
+```
+
+A backup that only makes sense to the app that wrote it is not much of a
+backup. The point is a folder of JSON that still means something to someone who
+has lost the app — which device, which copy, and when. The device part is the
+host name reduced to what a filesystem and a mail attachment can both carry,
+plus four fixed characters, because two phones that both call themselves
+"iPhone" would otherwise overwrite each other's copies. A `.local` suffix is
+dropped: every device has one, so it names none of them.
+
+A date tag is ten characters wide and holds dashes of its own, which is what
+makes the name readable back — it is parsed by width, not by splitting on the
+first dash.
+
+**When a copy was taken is the file's own timestamp**, not a note kept
+somewhere else. An earlier version recorded these in preferences; a file
+restored from a device backup while preferences were not is exactly the case
+this is meant to survive, and then only the file is telling the truth. Ageing a
+copy down the chain carries its timestamp with it, or the copy would appear to
+have been taken on the day it was moved.
+
+Anything in the folder that parses is listed, **including a file copied in from
+another device** — that is what the name is for. A row says where it came from
+when it was not this device, and says it was taken by hand when it was, because
+the automatic copy and a manual one from the same day both read "Today" and
+choosing the wrong one replaces every card.
+
+Files the earlier version wrote under fixed names are renamed on first launch
+rather than left behind, so updating never loses a copy.
+
 More lists them with their age and card count; tapping one restores it behind a
-confirmation.
+confirmation, and a swipe shares it somewhere safer or deletes a manual one.
 
 Restoring is a rescue, so it has to win: stamp the restored cards as edited now
 and clear their tombstones, or the very delete being undone will simply reapply

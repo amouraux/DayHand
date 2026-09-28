@@ -859,5 +859,82 @@ do {
            "and promoting is stable, so a merge does not keep rewriting the file")
 }
 
+// MARK: Y — a backup says what it is in its own name
+do {
+    let day = BackupKind.dayTag.date(from: "2026-09-28")!
+
+    expect(BackupKind.day.tag == "1day" && BackupKind.week.tag == "1week",
+           "the rotating copies are named for how far back they are")
+    expect(BackupKind.manual(day).tag == "2026-09-28", "one taken by hand is named for its day")
+    expect(BackupKind.manual(day).isManual && !BackupKind.week.isManual, "and knows which it is")
+
+    let phone = BackupFilename.device(from: "Fatima's iPhone", id: "9c3f")
+    expect(phone == "Fatima-s-iPhone-9c3f",
+           "a device name is reduced to what a filesystem and a mail attachment can both carry")
+    expect(BackupFilename.device(from: "andres-macbook-pro.local", id: "6d67")
+           == "andres-macbook-pro-6d67",
+           "the Bonjour suffix is dropped: every device has it, so it names none of them")
+    expect(BackupFilename.device(from: "", id: "9c3f") == "9c3f",
+           "and a device that will not say its name still gets a unique one")
+    expect(BackupFilename.device(from: "iPhone", id: "0001")
+           != BackupFilename.device(from: "iPhone", id: "0002"),
+           "two phones that both call themselves iPhone do not overwrite each other")
+
+    // Round-trip, which is the whole promise: a folder of these still makes
+    // sense to someone who has lost the app.
+    for kind in [BackupKind.day, .twoDays, .week, .manual(day)] {
+        let name = BackupFilename.make(kind: kind, device: phone)
+        guard let back = BackupFilename.parse(name) else {
+            expect(false, "\(name) parses back"); continue
+        }
+        expect(back.kind == kind && back.device == phone, "\(name) round-trips")
+    }
+
+    // The date tag holds dashes of its own, so it is read by width. This is
+    // the case that breaks a naive split.
+    expect(BackupFilename.parse("DayHand-2026-09-28-Mac-Pro-1a2b")?.device == nil,
+           "a name with no .json is not a backup")
+    let dated = BackupFilename.parse("DayHand-2026-09-28-Mac-Pro-1a2b.json")
+    expect(dated?.kind == .manual(day) && dated?.device == "Mac-Pro-1a2b",
+           "a dated name splits after the date, not at its first dash")
+    expect(BackupFilename.parse("cards.json") == nil, "the live file is not mistaken for a backup")
+    expect(BackupFilename.parse("DayHand-1day-.json") == nil, "and neither is one with no device")
+}
+
+// MARK: Z — rotation ages copies down the chain, once a day
+do {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(identifier: "Europe/Brussels")!
+    func at(_ s: String) -> Date {
+        let f = DateFormatter()
+        f.calendar = calendar; f.timeZone = calendar.timeZone
+        f.dateFormat = "yyyy-MM-dd HH:mm"
+        return f.date(from: s)!
+    }
+    let now = at("2026-10-01 09:00")
+    func plan(_ day: String?, _ twoDays: String?, _ week: String?) -> BackupRotation.Plan {
+        BackupRotation.plan(day: day.map(at), twoDays: twoDays.map(at), week: week.map(at),
+                            now: now, calendar: calendar)
+    }
+
+    expect(plan("2026-10-01 07:00", "2026-09-30 09:00", "2026-09-20 09:00") == .init(),
+           "one already taken today means nothing happens — the usual outcome")
+
+    var first = BackupRotation.Plan(); first.writeDay = true
+    expect(plan(nil, nil, nil) == first, "a first run writes one and has nothing to age")
+
+    let fresh = plan("2026-09-30 09:00", "2026-09-29 09:00", "2026-09-28 09:00")
+    expect(fresh == .init(ageTwoDaysToWeek: false, ageDayToTwoDays: true, writeDay: true),
+           "a weekly copy only three days old keeps its place, or it would just track the dailies")
+
+    let stale = plan("2026-09-30 09:00", "2026-09-29 09:00", "2026-09-20 09:00")
+    expect(stale == .init(ageTwoDaysToWeek: true, ageDayToTwoDays: true, writeDay: true),
+           "one genuinely a week behind steps aside")
+
+    expect(plan("2026-09-30 09:00", nil, nil)
+           == .init(ageTwoDaysToWeek: false, ageDayToTwoDays: true, writeDay: true),
+           "nothing is aged into a slot from a file that is not there")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

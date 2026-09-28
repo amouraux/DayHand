@@ -818,7 +818,12 @@ struct ContentView: View {
                 .frame(width: 58, height: 58)
                 .background(Circle().fill(Color.accentColor))
                 .shadow(color: .black.opacity(0.2), radius: 8, y: 4)
+                .contentShape(Circle())
         }
+        // Every other floating button has this. Without it the automatic
+        // style draws its own rounded rect behind the label — invisible on
+        // iOS, a grey square around the circle on the Mac.
+        .buttonStyle(.plain)
         .padding(.trailing, 22)
         .padding(.bottom, 28)
         .accessibilityLabel("Add card to inbox")

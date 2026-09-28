@@ -988,40 +988,161 @@ enum CardCSV {
 
 // MARK: - Backups
 
-/// One kept copy of the data, taken automatically.
+/// What a kept copy is.
 ///
-/// Three slots rather than an ever-growing pile: yesterday, the day before, and
-/// one from about a week back. That covers "I broke it just now" and "I broke it
-/// a while ago and only noticed today" without unbounded storage.
-enum BackupSlot: String, CaseIterable, Identifiable {
-    case previousDay
-    case dayBefore
-    case lastWeek
+/// Three rotating automatic ones — yesterday, the day before, and one from
+/// about a week back — which covers "I broke it just now" and "I broke it a
+/// while ago and only noticed today". Plus any number the user asked for.
+enum BackupKind: Equatable, Hashable {
+    case day
+    case twoDays
+    case week
+    /// Asked for, on the day it was asked for. One per day: a second on the
+    /// same day replaces the first, so pressing the button twice is not a way
+    /// to fill the disk.
+    case manual(Date)
 
-    var id: String { rawValue }
+    /// The three that rotate, oldest last.
+    static let automatic: [BackupKind] = [.day, .twoDays, .week]
 
-    var filename: String { "backup-\(rawValue).json" }
+    var isManual: Bool {
+        if case .manual = self { return true }
+        return false
+    }
 
-    var title: String {
+    /// What goes in the filename. Fixed width for a date, which is what makes
+    /// the name parseable again even though the date contains dashes too.
+    var tag: String {
         switch self {
-        case .previousDay: return "Most recent"
-        case .dayBefore:   return "Day before"
-        case .lastWeek:    return "About a week ago"
+        case .day:     return "1day"
+        case .twoDays: return "2day"
+        case .week:    return "1week"
+        case .manual(let date): return BackupKind.dayTag.string(from: date)
         }
+    }
+
+    static func kind(forTag tag: String) -> BackupKind? {
+        switch tag {
+        case "1day":  return .day
+        case "2day":  return .twoDays
+        case "1week": return .week
+        default:      return dayTag.date(from: tag).map { .manual($0) }
+        }
+    }
+
+    static let dayTag: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.timeZone = .current
+        f.dateFormat = "yyyy-MM-dd"
+        return f
+    }()
+}
+
+/// What a backup file is called.
+///
+/// `DayHand-1day-Fatima-MacBook-Pro-9c3f.json`. The name carries everything,
+/// because the point of a backup is to still make sense to someone who has
+/// lost the app and is looking at a folder full of JSON — which device wrote
+/// it, and which of that device's copies it is.
+enum BackupFilename {
+    static let prefix = "DayHand"
+    static let suffix = ".json"
+
+    static func make(kind: BackupKind, device: String) -> String {
+        "\(prefix)-\(kind.tag)-\(device)\(suffix)"
+    }
+
+    static func parse(_ filename: String) -> (kind: BackupKind, device: String)? {
+        guard filename.hasSuffix(suffix) else { return nil }
+        var body = String(filename.dropLast(suffix.count))
+        guard body.hasPrefix(prefix + "-") else { return nil }
+        body.removeFirst(prefix.count + 1)
+
+        // A date tag is exactly ten characters and holds dashes of its own, so
+        // it is read by width rather than by splitting.
+        for tag in ["1day", "2day", "1week"] where body.hasPrefix(tag + "-") {
+            let device = String(body.dropFirst(tag.count + 1))
+            guard !device.isEmpty, let kind = BackupKind.kind(forTag: tag) else { return nil }
+            return (kind, device)
+        }
+        guard body.count > 11 else { return nil }
+        let tag = String(body.prefix(10))
+        guard body[body.index(body.startIndex, offsetBy: 10)] == "-",
+              let kind = BackupKind.kind(forTag: tag) else { return nil }
+        return (kind, String(body.dropFirst(11)))
+    }
+
+    /// A device name a filesystem, a mail attachment and a person can all
+    /// cope with. The trailing id is what stops two phones that both call
+    /// themselves "iPhone" from overwriting each other's copies.
+    static func device(from raw: String, id: String) -> String {
+        // Host names arrive Bonjour-style. ".local" is true of every device
+        // that has one and so says nothing about which device this is.
+        var raw = raw
+        if raw.hasSuffix(".local") { raw.removeLast(6) }
+
+        var cleaned = ""
+        var lastWasDash = true
+        for character in raw.prefix(40) {
+            if character.isLetter || character.isNumber {
+                cleaned.append(character)
+                lastWasDash = false
+            } else if !lastWasDash {
+                cleaned.append("-")
+                lastWasDash = true
+            }
+        }
+        while cleaned.hasSuffix("-") { cleaned.removeLast() }
+        return cleaned.isEmpty ? id : "\(cleaned)-\(id)"
     }
 }
 
-struct BackupInfo: Identifiable {
-    let slot: BackupSlot
+/// Which files a rotation should produce, given what is already on disk.
+///
+/// Separated from the writing so it can be tested: the store's own directories
+/// are the user's real ones, and nothing here may go near them.
+enum BackupRotation {
+    struct Plan: Equatable {
+        var ageTwoDaysToWeek = false
+        var ageDayToTwoDays = false
+        var writeDay = false
+    }
+
+    static func plan(day: Date?, twoDays: Date?, week: Date?,
+                     now: Date, calendar: Calendar = .current) -> Plan {
+        // One a day. The most recent copy's own timestamp is the record of
+        // when that happened, so losing preferences cannot cause a second.
+        if let day, calendar.isDate(day, inSameDayAs: now) { return Plan() }
+
+        var plan = Plan()
+        plan.writeDay = true
+        plan.ageDayToTwoDays = day != nil
+        // The weekly slot only takes over when it is genuinely a week behind,
+        // otherwise it would just track the daily ones a day later.
+        let weekAge = week.map { calendar.dateComponents([.day], from: $0, to: now).day ?? 0 }
+        plan.ageTwoDaysToWeek = twoDays != nil && (weekAge == nil || weekAge! >= 7)
+        return plan
+    }
+}
+
+/// One backup found on disk.
+struct BackupFile: Identifiable {
+    let url: URL
+    let kind: BackupKind
+    /// Which device wrote it. Worth showing only when it was not this one —
+    /// a backup copied in from elsewhere is the whole reason the name says.
+    let device: String
     let takenAt: Date
     let cardCount: Int
 
-    var id: String { slot.rawValue }
+    var id: String { url.lastPathComponent }
 }
 
 extension DocumentStorage {
-    private static let rotationKey = "backupLastRotation"
-    private static let datesKey = "backupSlotDates"
+    private static let installIDKey = "backupInstallID"
+    private static let legacyDatesKey = "backupSlotDates"
+    private static let legacyRotationKey = "backupLastRotation"
 
     var backupsDirectory: URL {
         let directory = FileManager.default
@@ -1032,64 +1153,151 @@ extension DocumentStorage {
         return backups
     }
 
-    private func url(for slot: BackupSlot) -> URL {
-        backupsDirectory.appendingPathComponent(slot.filename)
+    /// Four hex characters, made once and kept. Short enough to live in a
+    /// filename without making it unreadable, and enough that two devices with
+    /// the same name do not collide.
+    var installID: String {
+        if let existing = UserDefaults.standard.string(forKey: DocumentStorage.installIDKey) {
+            return existing
+        }
+        let made = String(format: "%04x", Int.random(in: 0..<0x10000))
+        UserDefaults.standard.set(made, forKey: DocumentStorage.installIDKey)
+        return made
     }
 
-    private var slotDates: [String: Date] {
-        get { (UserDefaults.standard.dictionary(forKey: DocumentStorage.datesKey) as? [String: Date]) ?? [:] }
-        set { UserDefaults.standard.set(newValue, forKey: DocumentStorage.datesKey) }
+    var deviceName: String {
+        BackupFilename.device(from: ProcessInfo.processInfo.hostName, id: installID)
     }
 
-    /// Take today's backup if one has not been taken yet, ageing the older ones
-    /// down the chain first. Called once at launch; doing nothing is the normal
-    /// outcome.
-    func rotateBackupsIfNeeded(current: StoreDocument, now: Date = Date()) {
-        let calendar = Calendar.current
-        let last = UserDefaults.standard.object(forKey: DocumentStorage.rotationKey) as? Date
-        if let last, calendar.isDate(last, inSameDayAs: now) { return }
+    private func url(for kind: BackupKind) -> URL {
+        backupsDirectory.appendingPathComponent(
+            BackupFilename.make(kind: kind, device: deviceName))
+    }
 
-        var dates = slotDates
+    private func takenAt(_ url: URL) -> Date? {
+        guard let values = try? url.resourceValues(forKeys: [.contentModificationDateKey]) else {
+            return nil
+        }
+        return values.contentModificationDate
+    }
+
+    /// Copy, keeping the timestamp: when a copy was *taken* is the thing being
+    /// aged down the chain, and a fresh mtime would restart its clock.
+    private func age(_ from: BackupKind, to: BackupKind) {
         let manager = FileManager.default
-
-        func move(_ from: BackupSlot, to: BackupSlot) {
-            let source = url(for: from), target = url(for: to)
-            guard manager.fileExists(atPath: source.path) else { return }
-            try? manager.removeItem(at: target)
-            try? manager.copyItem(at: source, to: target)
-            dates[to.rawValue] = dates[from.rawValue]
+        let source = url(for: from), target = url(for: to)
+        guard manager.fileExists(atPath: source.path) else { return }
+        let stamp = takenAt(source)
+        try? manager.removeItem(at: target)
+        try? manager.copyItem(at: source, to: target)
+        if let stamp {
+            try? manager.setAttributes([.modificationDate: stamp], ofItemAtPath: target.path)
         }
-
-        // The weekly slot only takes over when it is genuinely a week behind,
-        // otherwise it would just track the daily ones.
-        let weeklyAge = dates[BackupSlot.lastWeek.rawValue].map {
-            calendar.dateComponents([.day], from: $0, to: now).day ?? 0
-        }
-        if weeklyAge == nil || weeklyAge! >= 7 {
-            move(.dayBefore, to: .lastWeek)
-        }
-        move(.previousDay, to: .dayBefore)
-
-        if let data = DocumentStorage.encodeDocument(current) {
-            try? data.write(to: url(for: .previousDay), options: .atomic)
-            dates[BackupSlot.previousDay.rawValue] = now
-        }
-
-        slotDates = dates
-        UserDefaults.standard.set(now, forKey: DocumentStorage.rotationKey)
     }
 
-    func availableBackups() -> [BackupInfo] {
-        BackupSlot.allCases.compactMap { slot in
-            guard let document = readBackup(slot),
-                  let date = slotDates[slot.rawValue] else { return nil }
-            return BackupInfo(slot: slot, takenAt: date, cardCount: document.cards.count)
+    /// Take today's backup if one has not been taken yet, ageing the older
+    /// ones down the chain first. Called once at launch; doing nothing is the
+    /// normal outcome.
+    func rotateBackupsIfNeeded(current: StoreDocument, now: Date = Date()) {
+        adoptLegacyBackups()
+
+        let plan = BackupRotation.plan(
+            day: takenAt(url(for: .day)),
+            twoDays: takenAt(url(for: .twoDays)),
+            week: takenAt(url(for: .week)),
+            now: now
+        )
+        guard plan.writeDay else { return }
+
+        if plan.ageTwoDaysToWeek { age(.twoDays, to: .week) }
+        if plan.ageDayToTwoDays { age(.day, to: .twoDays) }
+        writeBackup(current, kind: .day, now: now)
+    }
+
+    /// A copy the user asked for, named for the day. Returns where it went.
+    @discardableResult
+    func writeBackup(_ document: StoreDocument, kind: BackupKind, now: Date = Date()) -> URL? {
+        guard let data = DocumentStorage.encodeDocument(document) else { return nil }
+        let target = url(for: kind)
+        do {
+            try data.write(to: target, options: .atomic)
+            try? FileManager.default.setAttributes([.modificationDate: now],
+                                                   ofItemAtPath: target.path)
+            return target
+        } catch {
+            return nil
+        }
+    }
+
+    /// Everything in the folder that parses as a backup — including one
+    /// copied in from another device, which is the point of the name.
+    func availableBackups() -> [BackupFile] {
+        let manager = FileManager.default
+        let names = (try? manager.contentsOfDirectory(atPath: backupsDirectory.path)) ?? []
+        return names.compactMap { name -> BackupFile? in
+            guard let (kind, device) = BackupFilename.parse(name) else { return nil }
+            let url = backupsDirectory.appendingPathComponent(name)
+            guard let document = readBackup(at: url) else { return nil }
+            // A manual copy carries its day in its name; a rotating one is
+            // dated by the file, which is the only record either way.
+            let when: Date? = {
+                if case .manual(let date) = kind { return date }
+                return takenAt(url)
+            }()
+            guard let when else { return nil }
+            return BackupFile(url: url, kind: kind, device: device,
+                              takenAt: when, cardCount: document.cards.count)
         }
         .sorted { $0.takenAt > $1.takenAt }
     }
 
-    func readBackup(_ slot: BackupSlot) -> StoreDocument? {
-        guard let data = try? Data(contentsOf: url(for: slot)) else { return nil }
+    func readBackup(at url: URL) -> StoreDocument? {
+        guard let data = try? Data(contentsOf: url) else { return nil }
         return DocumentStorage.decode(data)
+    }
+
+    func deleteBackup(_ backup: BackupFile) {
+        try? FileManager.default.removeItem(at: backup.url)
+    }
+
+    /// Rename the three fixed-name files an earlier version wrote, so nobody
+    /// loses a copy by updating. Their dates lived in preferences; they live
+    /// in the files now, which is one fewer thing that can go missing.
+    private func adoptLegacyBackups() {
+        let manager = FileManager.default
+        let dates = (UserDefaults.standard.dictionary(forKey: DocumentStorage.legacyDatesKey)
+                     as? [String: Date]) ?? [:]
+        let old: [(String, BackupKind)] = [
+            ("backup-previousDay.json", .day),
+            ("backup-dayBefore.json", .twoDays),
+            ("backup-lastWeek.json", .week)
+        ]
+        var found = false
+        for (name, kind) in old {
+            let source = backupsDirectory.appendingPathComponent(name)
+            guard manager.fileExists(atPath: source.path) else { continue }
+            found = true
+            let target = url(for: kind)
+            let key = ["backup-previousDay.json": "previousDay",
+                       "backup-dayBefore.json": "dayBefore",
+                       "backup-lastWeek.json": "lastWeek"][name] ?? ""
+            // The file's own timestamp first. The old version tracked these
+            // in preferences and copied files with their dates intact, so the
+            // two agree on any real upgrade — but a file restored from a
+            // device backup while preferences were not is exactly the case
+            // this whole change is meant to survive, and then only the file
+            // is telling the truth.
+            let stamp = takenAt(source) ?? dates[key]
+            try? manager.removeItem(at: target)
+            try? manager.moveItem(at: source, to: target)
+            if let stamp {
+                try? manager.setAttributes([.modificationDate: stamp],
+                                           ofItemAtPath: target.path)
+            }
+        }
+        if found {
+            UserDefaults.standard.removeObject(forKey: DocumentStorage.legacyDatesKey)
+            UserDefaults.standard.removeObject(forKey: DocumentStorage.legacyRotationKey)
+        }
     }
 }

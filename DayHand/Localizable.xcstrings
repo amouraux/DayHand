@@ -2193,6 +2193,88 @@
         }
       }
     },
+    "Back Up Now" : {
+      "comment" : "Button that takes a backup on demand",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jetzt sichern"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar ahora"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sauvegarder maintenant"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salva ora"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nu back-uppen"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criar cópia agora"
+          }
+        }
+      }
+    },
+    "Backup" : {
+      "comment" : "Title of the alert after taking a backup by hand",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sicherung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copia de seguridad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sauvegarde"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copia di sicurezza"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back-up"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cópia de segurança"
+          }
+        }
+      }
+    },
     "Backups" : {
       "localizations" : {
         "de" : {
@@ -3122,6 +3204,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não foi possível ler o ficheiro de sincronização"
+          }
+        }
+      }
+    },
+    "Could not write the backup." : {
+      "comment" : "Alert when a manual backup fails",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Sicherung konnte nicht geschrieben werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido escribir la copia."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La sauvegarde n’a pas pu être écrite."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non è stato possibile scrivere la copia."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De back-up kon niet worden weggeschreven."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível escrever a cópia."
           }
         }
       }
@@ -7881,6 +8004,88 @@
         }
       }
     },
+    "Saved as %@." : {
+      "comment" : "Alert after taking a backup by hand, naming the file",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesichert als %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardada como %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrée sous %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvata come %@."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bewaard als %@."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardada como %@."
+          }
+        }
+      }
+    },
+    "Saved by hand" : {
+      "comment" : "Caption on a backup the user asked for",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Von Hand gesichert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardada a mano"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrée à la main"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salvata a mano"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Handmatig bewaard"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardada à mão"
+          }
+        }
+      }
+    },
     "Scroll to Today" : {
       "localizations" : {
         "de" : {
@@ -8080,6 +8285,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Definições"
+          }
+        }
+      }
+    },
+    "Share" : {
+      "comment" : "Swipe action on a backup",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teilen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compartir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partager"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Condividi"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deel"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partilhar"
           }
         }
       }
@@ -8579,46 +8825,6 @@
         }
       }
     },
-    "Taken automatically once a day: the most recent, the day before, and one from about a week ago. Tap one to restore it." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Automatisch einmal täglich: die neueste, die vom Vortag und eine von vor etwa einer Woche. Zum Wiederherstellen antippen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se hace automáticamente una vez al día: la más reciente, la del día anterior y una de hace una semana. Toca una para restaurarla."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prise automatiquement une fois par jour : la plus récente, celle de la veille et une d’il y a environ une semaine. Touchez-en une pour la restaurer."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eseguito automaticamente una volta al giorno: il più recente, quello del giorno prima e uno di circa una settimana fa. Toccane uno per ripristinarlo."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Automatisch eenmaal per dag: de meest recente, die van de dag ervoor en één van ongeveer een week geleden. Tik erop om te herstellen."
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Feita automaticamente uma vez por dia: a mais recente, a do dia anterior e uma de há cerca de uma semana. Toque numa para a restaurar."
-          }
-        }
-      }
-    },
     "Tap + to drop a card into your inbox." : {
       "localizations" : {
         "de" : {
@@ -8864,6 +9070,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Esta semana"
+          }
+        }
+      }
+    },
+    "Three are kept automatically — yesterday, the day before, and about a week ago — and every one you take by hand, under its date. Each file is named for this device (%@), so copies from two devices can sit side by side. Tap one to restore it; swipe to share it somewhere safer." : {
+      "comment" : "Footer under the Backups section",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drei werden automatisch aufbewahrt — gestern, vorgestern und eine von vor etwa einer Woche — und jede, die Sie selbst anlegen, unter ihrem Datum. Jede Datei trägt den Namen dieses Geräts (%@), damit Kopien von zwei Geräten nebeneinander liegen können. Tippen Sie eine an, um sie wiederherzustellen; streichen Sie, um sie an einen sichereren Ort zu teilen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se guardan tres automáticamente —ayer, anteayer y una de hace aproximadamente una semana— y todas las que hagas tú, con su fecha. Cada archivo lleva el nombre de este dispositivo (%@), para que las copias de dos dispositivos puedan convivir. Toca una para restaurarla; desliza para compartirla en un sitio más seguro."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trois sont conservées automatiquement — hier, avant-hier et une d’il y a environ une semaine — ainsi que chacune de celles que vous faites vous-même, à sa date. Chaque fichier porte le nom de cet appareil (%@), pour que les copies de deux appareils puissent coexister. Touchez-en une pour la restaurer ; balayez pour la partager en lieu plus sûr."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tre vengono conservate automaticamente — ieri, l’altroieri e una di circa una settimana fa — e ognuna di quelle che fai tu, con la sua data. Ogni file porta il nome di questo dispositivo (%@), così le copie di due dispositivi possono stare l’una accanto all’altra. Toccane una per ripristinarla; scorri per condividerla in un posto più sicuro."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Er worden er drie automatisch bewaard — gisteren, eergisteren en een van ongeveer een week geleden — en elke die u zelf maakt, onder de datum. Elk bestand draagt de naam van dit apparaat (%@), zodat kopieën van twee apparaten naast elkaar kunnen staan. Tik op een om die terug te zetten; veeg om die ergens veiliger te delen."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "São guardadas três automaticamente — ontem, anteontem e uma de há cerca de uma semana — e todas as que fizer à mão, com a sua data. Cada ficheiro tem o nome deste dispositivo (%@), para que as cópias de dois dispositivos possam coexistir. Toque numa para a restaurar; deslize para a partilhar num sítio mais seguro."
           }
         }
       }

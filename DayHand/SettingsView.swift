@@ -22,7 +22,11 @@ struct SettingsView: View {
     @State private var replaceOnImport = false
     @State private var replaceOnSync = false
     @State private var isConfirmingDeleteAll = false
-    @State private var pendingRestore: BackupInfo?
+    @State private var pendingRestore: BackupFile?
+
+    private func caption(_ text: String) -> some View {
+        Text(text).font(.caption).foregroundStyle(.secondary)
+    }
 
     var body: some View {
         NavigationStack {
@@ -225,7 +229,20 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    Button {
+                        if let url = store.backUpNow() {
+                            reportTitle = String(localized: "Backup")
+                            importReport = String(localized: "Saved as \(url.lastPathComponent).")
+                        } else {
+                            reportTitle = String(localized: "Backup")
+                            importReport = String(localized: "Could not write the backup.")
+                        }
+                    } label: {
+                        Label("Back Up Now", systemImage: "arrow.down.document")
+                    }
+
                     let backups = store.availableBackups()
+                    let mine = store.backupDeviceName
                     if backups.isEmpty {
                         Text("No backups yet. One is taken automatically each day the app is opened.")
                             .foregroundStyle(.secondary)
@@ -238,10 +255,40 @@ struct SettingsView: View {
                                     Text("\(backup.cardCount) cards")
                                         .foregroundStyle(.secondary)
                                 } label: {
-                                    Label(
-                                        Scheduler.relativeLabel(for: backup.takenAt),
-                                        systemImage: "clock.arrow.circlepath"
-                                    )
+                                    Label {
+                                        VStack(alignment: .leading, spacing: 1) {
+                                            Text(Scheduler.relativeLabel(for: backup.takenAt))
+                                            // Where it came from, if not here —
+                                            // naming this device on every row
+                                            // would be noise. Otherwise which
+                                            // kind it is, because the automatic
+                                            // copy and a manual one taken the
+                                            // same day both read "Today", and
+                                            // picking the wrong one replaces
+                                            // every card.
+                                            if backup.device != mine {
+                                                caption(backup.device)
+                                            } else if backup.kind.isManual {
+                                                caption(String(localized: "Saved by hand"))
+                                            }
+                                        }
+                                    } icon: {
+                                        Image(systemName: backup.kind.isManual
+                                              ? "arrow.down.document" : "clock.arrow.circlepath")
+                                    }
+                                }
+                            }
+                            .swipeActions(edge: .trailing) {
+                                ShareLink(item: backup.url) {
+                                    Label("Share", systemImage: "square.and.arrow.up")
+                                }
+                                .tint(.accentColor)
+                                if backup.kind.isManual {
+                                    Button(role: .destructive) {
+                                        withAnimation { store.deleteBackup(backup) }
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
                                 }
                             }
                         }
@@ -249,7 +296,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Backups")
                 } footer: {
-                    Text("Taken automatically once a day: the most recent, the day before, and one from about a week ago. Tap one to restore it.")
+                    Text("Three are kept automatically — yesterday, the day before, and about a week ago — and every one you take by hand, under its date. Each file is named for this device (\(store.backupDeviceName)), so copies from two devices can sit side by side. Tap one to restore it; swipe to share it somewhere safer.")
                 }
 
                 Section {
@@ -304,7 +351,7 @@ struct SettingsView: View {
                 presenting: pendingRestore
             ) { backup in
                 Button("Restore", role: .destructive) {
-                    let count = withAnimation { store.restore(from: backup.slot) }
+                    let count = withAnimation { store.restore(from: backup) }
                     // "from today", but "from Sat, 12 Sep": only the relative
                     // words read naturally in lowercase mid-sentence.
                     let when = Scheduler.relativeLabel(for: backup.takenAt)
