@@ -7,9 +7,14 @@ over on its own.
 ## Install it
 
 - **iPhone and iPad** — [join the TestFlight beta](https://testflight.apple.com/join/37FbdQp6), iOS 17 or later.
-- **Mac** — macOS 14 or later, through the same TestFlight once a Mac build is
-  uploaded (testers need TestFlight from the Mac App Store). Until then, open
-  the project in Xcode, choose **My Mac** and press ⌘R.
+- **Mac** — [the same TestFlight link](https://testflight.apple.com/join/37FbdQp6),
+  macOS 14 or later. TestFlight for the Mac is a separate app from the iPhone
+  one, from the Mac App Store, signed in to the same Apple Account.
+
+The TestFlight Mac build is sandboxed, so it keeps its data somewhere other
+than a build made in Xcode did: anyone moving across opens it to an empty list.
+Nothing is lost — the old file is where it always was, and re-picking the sync
+file in **More** brings it back.
 
 A public `.dmg` is a separate, later channel: `scripts/release-mac.sh` builds a
 signed and notarised one, but it needs a **Developer ID Application**
@@ -25,10 +30,17 @@ the two one-time steps.
 **An undated card stays where you put it.** A card in Tomorrow is still in
 Tomorrow next week. Time passing never moves it; only you do.
 
-**A date files a card, but only once it arrives.** Give a card a date and it
-sits where it is until that day comes round, then it moves to Today or
-Tomorrow by itself. Cards raised out of Later that way say so in a banner,
-since that is the one move you did not ask for.
+**A card stays where you put it, full stop.** Nothing files a card, ever. A
+card in Tomorrow is still in Tomorrow next week, and moving one by hand keeps
+its dates.
+
+**A reminder says when to start; a deadline says when to finish.** The reminder
+is the card's one date: it fires a notification and colours the card's edge —
+orange within three days, red on the day itself and after. Once a reminder is
+set you can add an optional deadline, which is shown on the card and does
+nothing else. Answering a reminder is something you do to the card: moving,
+completing or deleting it all count, and Snooze and Clear sit in the card's own
+menu.
 
 **Tags for subprojects.** A card can carry one project — a course code, a study
 — typed as `#ABC1234`. It shows as a coloured prefix on the card, fills in the

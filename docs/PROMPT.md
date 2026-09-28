@@ -306,7 +306,7 @@ same wash separates a card from the grey page by very different amounts
 depending on the hue, and at a single value the orange and green cards nearly
 disappear while the blue stands clear. Completed carries **no wash at all** —
 the strikethrough, filled checkmark and dimming already say "done", and every
-remaining colour is spoken for. Red is reserved exclusively for overdue.
+remaining colour is spoken for. Red is reserved exclusively for the edge of a card whose reminder has arrived.
 
 Each card shows:
 

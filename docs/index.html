@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DayHand</title>
-<meta name="description" content="A to-do app for iPhone, iPad and Mac with no overdue state. Cards live in stacks you file them into, and a job that takes four days can sit in Today for four days.">
+<meta name="description" content="A to-do app for iPhone, iPad and Mac. Cards stay in the stack you put them in until you move them, and a reminder brings work back to your attention without rescheduling it for you.">
 <link rel="icon" href="icon.png">
 <meta property="og:title" content="DayHand">
-<meta property="og:description" content="Nothing is ever overdue.">
+<meta property="og:description" content="Your work. Your pace. Your decision.">
 <meta property="og:image" content="icon.png">
 <style>
   :root {
@@ -21,6 +21,8 @@
     --later:     #1da34f;
     --night:     #2f3486;
     --review:    #8a4bd0;
+    --flag:      #d92d20;
+    --keep:      #0f8a8a;
     --shadow:    0 1px 2px rgba(18,19,26,.05), 0 8px 24px rgba(18,19,26,.07);
   }
   @media (prefers-color-scheme: dark) {
@@ -35,6 +37,8 @@
       --later:    #5fd48a;
       --night:    #9099ee;
       --review:   #c18cf0;
+      --flag:     #ff7a70;
+      --keep:     #4fd0d0;
       --shadow:   0 1px 2px rgba(0,0,0,.4), 0 8px 28px rgba(0,0,0,.45);
     }
   }
@@ -103,6 +107,8 @@
   .i-later    { --accent: var(--later); }
   .i-night    { --accent: var(--night); }
   .i-review   { --accent: var(--review); }
+  .i-flag     { --accent: var(--flag); }
+  .i-keep     { --accent: var(--keep); }
   /* Full width: it is the answer to "then how do I know I am getting
      anywhere?", which deserves more than a quarter of the grid. */
   @media (min-width: 720px) { .wide-idea { grid-column: 1 / -1; } }
@@ -161,11 +167,12 @@
 <header class="wrap">
   <img class="icon" src="icon.png" alt="DayHand">
   <h1>DayHand</h1>
-  <p class="tagline">Nothing is ever overdue.</p>
+  <p class="tagline">Your work. Your pace. Your decision.</p>
   <p class="sub">
-    Cards live in stacks you file them into — Inbox, Today, Tomorrow, Later.
-    A four-day job can sit in Today for four days, and the app will never once
-    mention it.
+    Cards stay in the stack you put them in — Inbox, Today, Tomorrow, Later —
+    until you move them yourself. A reminder brings a task back to your
+    attention when you asked it to, and then leaves the decision to you.
+    Nothing is ever rescheduled on your behalf.
   </p>
 
   <div class="cta">
@@ -179,39 +186,55 @@
 </header>
 
 <section class="wrap">
-  <h2>What is different about it</h2>
+  <h2>What makes it different</h2>
   <div class="ideas">
     <div class="idea i-today">
-      <h3>Made for work that takes more than a day</h3>
-      <p>Most real jobs are not one sitting. A card can stay in Today for as
-         long as the job takes: it never turns red, and it never asks to be
-         rescheduled. Today is the pile you are working from, not a deadline.
-         Time passing moves nothing — only you do.</p>
-    </div>
-    <div class="idea i-tomorrow">
-      <h3>A date files a card, once it arrives</h3>
-      <p>Give a card a date and it sits where it is until that day comes round,
-         then files itself into Today or Tomorrow — and says so, since that is
-         the one move you did not make yourself.</p>
+      <h3>You decide what happens today</h3>
+      <p>A card stays in Inbox, Today, Tomorrow or Later until you move it.
+         Nothing is filed on your behalf and nothing reshuffles overnight, so
+         the list you left is the list you come back to.</p>
     </div>
     <div class="idea i-later">
-      <h3>Tags for the work you keep returning to</h3>
-      <p>Type <code>#TRIP</code> and the card carries that project: a coloured
-         prefix, a category filled in for you, and a name you can change on
-         every card at once.</p>
+      <h3>Made for work that takes more than a day</h3>
+      <p>Most real jobs are not one sitting. A card can stay in Today for as
+         long as the work takes, with nothing to reschedule each morning. Today
+         is the pile you are working from, not a promise about when you will be
+         finished.</p>
+    </div>
+    <div class="idea i-flag">
+      <h3>Remember when to start. Keep sight of when to finish.</h3>
+      <p>A reminder says when to pick a task up. Once one is set you can add an
+         optional deadline, recording the day the work has to be done. The
+         card's coloured edge follows the <em>reminder</em>, not the deadline:
+         orange within three days, red on the day itself and after. What you
+         see is when to begin.</p>
+    </div>
+    <div class="idea i-tomorrow">
+      <h3>A reminder leaves the decision with you</h3>
+      <p>When one arrives you can move the card, snooze it until tomorrow, or
+         clear the reminder. Swiping the notification away is not a decision —
+         the card is still there in the app afterwards, waiting for one.</p>
     </div>
     <div class="idea i-night">
+      <h3>Keep related work together</h3>
+      <p>Type <code>#TRIP</code> and the card carries that project: a coloured
+         prefix, a category filled in for you, and a name you can change on
+         every card at once. Categories, groups and filters hold the rest
+         together without crowding the main list.</p>
+    </div>
+    <div class="idea i-keep">
       <h3>Your cards stay yours</h3>
-      <p>Two devices sync through one file you pick in your own iCloud Drive.
-         No account, no server, nothing to sign up for. English, French, Dutch,
-         German, Spanish, Italian and Portuguese.</p>
+      <p>Everything is kept on your device. Two of them sync through a single
+         file you pick in your own iCloud Drive — no DayHand account, no
+         server, nothing to sign up for. Import and export as CSV, and a backup
+         is taken automatically each day.</p>
     </div>
     <div class="idea i-review wide-idea">
-      <h3>A week, seen from the other end</h3>
-      <p>Any to-do app can show you what you owe. DayHand also shows what you
-         got done — this week and last, grouped by the day you finished it. It
-         is the counterweight to a list that never nags: progress measured as
-         what you finished, rather than as what is late.</p>
+      <h3>See what you have accomplished</h3>
+      <p>Any to-do app can show what you owe. DayHand also shows what you got
+         done — this week and last, grouped by the day you finished it. The
+         counterweight to a list that otherwise only ever looks forward:
+         progress measured as what you finished.</p>
     </div>
   </div>
 </section>
@@ -288,6 +311,7 @@
 
 <footer class="wrap">
   <p>Built in SwiftUI. One target for iPhone, iPad and Mac, and no third-party dependencies.</p>
+  <p>In English, French, Dutch, German, Spanish, Italian and Portuguese.</p>
   <p><a href="https://github.com/amouraux/DayHand">Source on GitHub</a></p>
 </footer>
 
