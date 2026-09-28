@@ -319,7 +319,9 @@ struct ContentView: View {
 
     private var isFiltered: Bool { !filterCategoryIDs.isEmpty || !filterProjectIDs.isEmpty }
 
-    /// Everything with a coloured edge, plus anything a reminder is waiting on.
+    /// Cards whose reminder has arrived and that are still sitting in Inbox
+    /// or Later. Filing one into Today takes it off the count, which is what
+    /// makes the number worth acting on.
     private var waitingCount: Int { Attention.count(in: store.items) }
 
     /// Narrowed by either means, for the empty state.
@@ -496,11 +498,10 @@ struct ContentView: View {
         }
     }
 
-    /// Shows the cards to pick up now — every red card, whether its reminder
-    /// has fired yet or not — in their own stacks. The bell in the button row
-    /// answers the ones that have fired, one at a time; this one puts the
-    /// whole day back among the cards, where they can be ticked off or swiped
-    /// like anything else.
+    /// Shows what is still to be settled: a reminder that has arrived, on a
+    /// card still in Inbox or Later. They appear in their own stacks, where
+    /// they can be moved, ticked off or swiped like anything else — and doing
+    /// any of that takes them off the flag.
     private var attentionFilterButton: some View {
         Button {
             withAnimation(.easeInOut(duration: 0.2)) {
@@ -512,9 +513,8 @@ struct ContentView: View {
                 }
             }
         } label: {
-            // A flag, not a bell: it gathers a whole day's work, while the
-            // bell in the button row means the narrower "a reminder is
-            // waiting on an answer". The same flag the cards carry.
+            // The same flag the cards carry, so the button and the edge it
+            // gathers are plainly the same thing.
             Image(systemName: "flag.fill")
                 .foregroundStyle(attentionOnly ? Color.white : Color.red)
                 // Solid while it is on. Tinted glass says "a filter is
@@ -680,7 +680,7 @@ struct ContentView: View {
                     ContentUnavailableView(
                         "Nothing to address",
                         systemImage: "flag",
-                        description: Text("No card is waiting to be picked up today.")
+                        description: Text("Nothing due is still sitting in Inbox or Later.")
                     )
                 } else if searchTerms.isEmpty {
                     ContentUnavailableView(

@@ -6177,47 +6177,6 @@
         }
       }
     },
-    "No card is waiting to be picked up today." : {
-      "comment" : "Empty state detail for the flag filter",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heute wartet keine Karte darauf, angefangen zu werden."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoy no hay ninguna tarjeta esperando a que la empieces."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucune carte n’attend d’être commencée aujourd’hui."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oggi nessuna carta aspetta di essere iniziata."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vandaag wacht geen kaart om opgepakt te worden."
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoje nenhum cartão espera para ser começado."
-          }
-        }
-      }
-    },
     "No card matches “%@”" : {
       "comment" : "Empty state when a search finds nothing",
       "localizations" : {
@@ -6457,6 +6416,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nenhuma"
+          }
+        }
+      }
+    },
+    "Nothing due is still sitting in Inbox or Later." : {
+      "comment" : "Empty state detail for the flag filter",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nichts Fälliges liegt noch im Eingang oder in Später."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada que venza sigue en la bandeja de entrada ni en Más tarde."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rien d’échu ne traîne encore dans la boîte de réception ou dans Plus tard."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niente in scadenza è rimasto in Entrata o in Più tardi."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Niets wat aan de beurt is, staat nog in Postvak in of Later."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada por tratar continua na caixa de entrada nem em Mais tarde."
           }
         }
       }

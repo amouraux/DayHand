@@ -372,12 +372,29 @@ notification away is how a notification is got rid of, not how a decision is
 made, so the reminder is still waiting afterwards.
 
 **There is one way in.** The **badged flag beside the jump-to-Today button**
-narrows the card list to every **red** card: a reminder due today, or one that
-came and went. It wears the same flag the cards do, it appears only while
-something is red, and the cards show up in their own stacks where they can be
-ticked off, swiped or moved like anything else. Opening the notification goes
-there, since the notification was a question about one card and that is the
-list the card is in.
+narrows the card list to what is still to be settled: a **red** reminder — due
+today, or come and gone — on a card **still sitting in Inbox or Later**. It
+wears the same flag the cards do, it appears only while something is on it, and
+the cards show up in their own stacks where they can be moved, ticked off or
+swiped like anything else. Opening the notification goes there, since the
+notification was a question about one card and that is the list the card is in.
+
+**The stack is the answer, so filing a card takes it off the flag.** A card in
+Today is one the user has already decided to do today; flagging it would be the
+app asking a question it has been given the answer to, and the number would
+never go down however much work got done. Moving a card to Today or Tomorrow
+drops it from the count while leaving its red edge alone — it is still today's
+work, it is simply no longer an open question. Moving it back to Later brings
+it back, which is right: that is un-deciding.
+
+Read from where the card *is*, not from a record of what was done to it, so the
+reason a card is or is not flagged is visible on screen. And it is not the app
+having a view about where a dated card belongs: nothing files anything, and a
+card reminded today may live in Later as long as the user likes — it is just
+still on the list of things to settle.
+
+So every flagged card carries a red edge, but not every red card is flagged.
+The count is a subset of the colour, never the other way round.
 
 There was a second way in — a bell in the button row opening a review sheet
 that answered reminders one at a time — and it was dropped. The two sets were

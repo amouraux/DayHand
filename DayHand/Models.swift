@@ -30,6 +30,14 @@ enum Bucket: String, Codable, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
+    /// Whether putting a card here counts as having decided about it.
+    ///
+    /// Today and Tomorrow are not storage, they are an answer: moving a card
+    /// into one is the user saying when they will do it. Inbox and Later are
+    /// where a card waits to be decided about. Completed is an answer too, and
+    /// a final one.
+    var isAddressed: Bool { self == .today || self == .tomorrow || self == .completed }
+
     /// Shown on the section headings, in the pickers and on the card's own
     /// menu, so it is translated like any other visible text.
     var title: String {
@@ -733,20 +741,31 @@ enum Urgency: Equatable {
     }
 }
 
-/// The cards asking for attention: the red ones — a reminder due today, or one
-/// that came and went.
+/// The cards asking to be dealt with: a reminder that has arrived, on a card
+/// still sitting in Inbox or Later.
+///
+/// **The stack is the answer.** A card in Today is one the user has already
+/// decided to do today; flagging it would be the app asking a question it has
+/// already been given the answer to, and the count would never go down however
+/// much work got done. Filing a card is what takes it off the flag, which
+/// makes the number worth acting on.
+///
+/// This is read from where the card *is*, not from a timestamp recording what
+/// was done to it — so the reason a card is or is not flagged is visible on
+/// screen, and moving one back to Later flags it again, which is right: that
+/// is un-deciding.
+///
+/// Note it does not mean the app has a view about where a dated card belongs.
+/// Nothing files anything, and a card reminded today may live in Later for as
+/// long as the user likes — it is simply still on the list of things to settle.
 ///
 /// Orange is deliberately left out. A card three days off is being shown, not
 /// asked about, and a list of things to deal with now loses its meaning the
 /// moment it also contains things to deal with later.
-///
-/// Wider than the review, and on purpose: a reminder set for five this
-/// afternoon has not fired, so it is not waiting on an answer, but it is
-/// today's work and belongs under the flag.
 enum Attention {
     static func needed(_ card: TodoItem, now: Date = Date(),
                        calendar: Calendar = .current) -> Bool {
-        guard !card.isCompleted else { return false }
+        guard !card.bucket.isAddressed else { return false }
         return Urgency.of(card.remindAt, now: now, calendar: calendar).isRed
     }
 

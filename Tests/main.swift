@@ -755,7 +755,7 @@ do {
            "the deadline key is preferred over the legacy one")
 }
 
-// MARK: W — one flag gathers the cards to pick up now
+// MARK: W — the flag gathers what is still to be settled
 do {
     var calendar = Calendar(identifier: .gregorian)
     calendar.timeZone = TimeZone(identifier: "Europe/Brussels")!
@@ -794,21 +794,37 @@ do {
     expect(!Attention.needed(tomorrow, now: now, calendar: calendar),
            "tomorrow is orange — being shown, not asked about")
     expect(!Attention.needed(distant, now: now, calendar: calendar), "and a distant one is neither")
-    expect(Attention.needed(running, now: now, calendar: calendar),
-           "a four-day job is gathered by its start, not by its far-off deadline")
+    // Already in Today: the user has said when they will do it, so the flag
+    // has no question left to ask. The card still wears its red edge.
+    expect(!Attention.needed(running, now: now, calendar: calendar),
+           "a card already filed into Today is not still to be settled")
+    expect(Urgency.of(running.remindAt, now: now, calendar: calendar).isRed,
+           "though it is still red, which is what says it is today's work")
     expect(!Attention.needed(done, now: now, calendar: calendar),
            "and a finished card asks for nothing, however late it was")
 
     let all = [overdue, thisMorning, thisEvening, tomorrow, distant, running, done]
-    expect(Attention.count(in: all, now: now) == 4, "so the badge reads four")
+    expect(Attention.count(in: all, now: now) == 3, "so the badge reads three")
 
-    // The flag and the red edge must agree, or the badge counts cards the user
-    // cannot see the mark on.
-    for item in all {
-        let red = !item.isCompleted && Urgency.of(item.remindAt, now: now, calendar: calendar).isRed
-        expect(Attention.needed(item, now: now, calendar: calendar) == red,
-               "the filter takes exactly the cards the list draws a red edge on")
+    // Every flagged card is one the list draws a red edge on. Not the other
+    // way round any more: filing a card into Today keeps the edge and drops
+    // the flag, which is the whole point — the number goes down as work is
+    // decided about.
+    for item in all where Attention.needed(item, now: now, calendar: calendar) {
+        expect(Urgency.of(item.remindAt, now: now, calendar: calendar).isRed,
+               "the flag never counts a card the user can see no mark on")
+        expect(!item.bucket.isAddressed, "and never one already filed")
     }
+
+    // Filing it is what clears it, and un-filing brings it back.
+    var settled = overdue
+    settled.bucket = .today
+    expect(!Attention.needed(settled, now: now, calendar: calendar), "filing it settles it")
+    settled.bucket = .tomorrow
+    expect(!Attention.needed(settled, now: now, calendar: calendar), "Tomorrow counts as decided too")
+    settled.bucket = .later
+    expect(Attention.needed(settled, now: now, calendar: calendar),
+           "and putting it back in Later is un-deciding, so it asks again")
 }
 
 // MARK: X — a deadline with no start becomes the day to start
@@ -962,8 +978,10 @@ do {
            "moving it is an answer: a card dealt with must not go on asking")
     expect(card.remindAt == fired,
            "but the date stays — moving a card keeps both fields, as it always has")
-    expect(Attention.needed(card, now: now, calendar: calendar),
-           "so it keeps its red edge: it is still today's work, just no longer a question")
+    expect(Urgency.of(card.remindAt, now: now, calendar: calendar).isRed,
+           "so it keeps its red edge: it is still today's work")
+    expect(!Attention.needed(card, now: now, calendar: calendar),
+           "but it is off the flag — moving it was the decision the flag was asking for")
 
     // Snooze re-arms, and the old answer must not carry over to the new ask.
     var snoozed = card
