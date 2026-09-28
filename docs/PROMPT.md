@@ -430,11 +430,18 @@ it also contains things to deal with later.
 Both appear only while there is something to count; a count of nothing is not
 worth a permanent control.
 
-**The app icon counts the unanswered reminders** — ones that have fired and
-that nothing has been done about — which is a narrower number than the flag's.
-The two say different things on purpose: the icon is what happened while you
-were away, the flag is the day. Dealing with a card takes it off the icon and
-leaves it under the flag. That count is the only thing that says something is waiting without the
+**The app icon carries the flag's number**, and exactly that: two numbers
+meaning nearly the same thing is how you end up with an icon saying 1 beside a
+button saying 0.
+
+Each scheduled notification carries the badge the icon should show **once it
+fires** — the flag's count evaluated at that moment, not a running total. It
+has to be worked out in advance, because nothing can update a badge while the
+app is closed, and it is knowable: a card joins the flagged set when its
+reminder's day begins and leaves it only when someone files or finishes it. So
+a reminder arriving on a card already red adds nothing, and a card that turns
+red at midnight adds itself with no notification to announce it. The app
+corrects the count the moment it is opened. That count is the only thing that says something is waiting without the
 app being opened, which is exactly what an unanswered reminder needs. Each
 scheduled notification carries the badge the icon should show once it has fired — those already waiting, plus itself and
 everything before it — and the app corrects the number the moment it is opened.

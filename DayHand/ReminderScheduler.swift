@@ -51,35 +51,42 @@ final class ReminderScheduler: NSObject, UNUserNotificationCenterDelegate {
     /// Rewriting the lot is deliberate. The set is a handful of notifications,
     /// and patching them one at a time is how a reminder ends up firing for a
     /// card finished last week.
-    /// - Parameters:
-    ///   - cards: the reminders still to come, which become pending notifications.
-    ///   - waiting: how many have already fired and not been answered, which is
-    ///     what the icon badge counts.
-    func sync(to cards: [TodoItem], waiting: Int) {
-        // Sorted, because each notification carries the badge the icon should
-        // show once it has fired: the ones already waiting plus itself and
-        // everything before it. The app corrects the count the moment it is
-        // opened; this keeps the icon honest while it is closed.
-        let wanted = cards
+    /// - Parameter cards: every card, not just the ones with reminders to
+    ///   come. The badge each notification carries is the flag's count at the
+    ///   moment that notification fires, and working that out needs the lot.
+    func sync(to cards: [TodoItem], now: Date = Date()) {
+        let wanted = Reminders.scheduled(in: cards, now: now)
             .compactMap { card -> (TodoItem, Date)? in
                 guard let at = card.remindAt else { return nil }
                 return (card, at)
             }
             .sorted { $0.1 < $1.1 }
 
-        setBadge(waiting)
+        setBadge(Attention.count(in: cards, now: now))
         centre.removeAllPendingNotificationRequests()
         guard !wanted.isEmpty else { return }
 
         requestPermissionIfNeeded { [weak self] granted in
             guard granted, let self else { return }
-            for (index, (card, at)) in wanted.enumerated() {
+            // Again: the first attempt above ran before there was permission
+            // to show a badge at all. Belt and braces rather than a proven
+            // fix — a brand-new install still shows no badge until its second
+            // launch, which looks like the system not accepting one in the
+            // same session the permission was granted. It corrects itself,
+            // and nothing is wrong by the time a reminder matters.
+            self.setBadge(Attention.count(in: cards, now: now))
+
+            for (card, at) in wanted {
                 let content = UNMutableNotificationContent()
                 content.title = card.title
                 content.body = String(localized: "Move it, or keep it where it is.",
                                       comment: "Notification body for a reminder")
                 content.sound = .default
-                content.badge = NSNumber(value: waiting + index + 1)
+                // What the flag will read once this has fired. Not a running
+                // total: a card whose reminder arrives while it already sits
+                // in Today adds nothing, and one that turns red at midnight
+                // adds itself without any notification to announce it.
+                content.badge = NSNumber(value: Attention.count(in: cards, now: at))
                 // Carries the card so opening the notification can go straight
                 // to the review rather than to the top of the list.
                 content.userInfo = ["card": card.id.uuidString]
@@ -96,11 +103,17 @@ final class ReminderScheduler: NSObject, UNUserNotificationCenterDelegate {
         }
     }
 
-    /// The one number on the icon: reminders that have fired and not been
-    /// answered. Nothing else is worth a badge — a card sitting in Today is
-    /// not a thing the app is waiting on an answer for.
+    /// The one number on the icon, and the same one the flag shows: cards
+    /// whose reminder has arrived that are still sitting in Inbox or Later.
+    /// Two numbers meaning nearly the same thing is how you end up with an
+    /// icon saying 1 and a button saying 0.
     func setBadge(_ count: Int) {
-        centre.setBadgeCount(count)
+        // On the main queue always: the permission callback arrives on one of
+        // the notification centre's own queues, and anything touching the icon
+        // belongs on the main one.
+        DispatchQueue.main.async { [weak self] in
+            self?.centre.setBadgeCount(count)
+        }
     }
 
     private func requestPermissionIfNeeded(_ done: @escaping (Bool) -> Void) {

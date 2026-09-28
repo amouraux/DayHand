@@ -330,8 +330,7 @@ final class TodoStore: ObservableObject {
     /// has drifted from the cards is the kind of bug nobody notices until a
     /// reminder fires for a card that was finished last week.
     func rescheduleNotifications() {
-        ReminderScheduler.shared.sync(to: Reminders.scheduled(in: items),
-                                      waiting: Reminders.outstanding(in: items).count)
+        ReminderScheduler.shared.sync(to: items)
     }
 
     // MARK: - Projects

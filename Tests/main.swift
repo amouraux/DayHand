@@ -1069,5 +1069,58 @@ do {
     }
 }
 
+// MARK: AC — the icon badge is the flag's count, worked out ahead of time
+do {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(identifier: "Europe/Brussels")!
+    func at(_ s: String) -> Date {
+        let f = DateFormatter()
+        f.calendar = calendar; f.timeZone = calendar.timeZone
+        f.dateFormat = "yyyy-MM-dd HH:mm"
+        return f.date(from: s)!
+    }
+    let now = at("2026-10-01 09:00")
+    func count(_ cards: [TodoItem], _ moment: Date) -> Int {
+        Attention.count(in: cards, now: moment, calendar: calendar)
+    }
+
+    func card(_ title: String, _ bucket: Bucket, _ remind: String) -> TodoItem {
+        TodoItem(title: title, bucket: bucket, remindAt: at(remind))
+    }
+
+    let already = card("chase the letter", .later, "2026-10-01 08:00")   // red now
+    let noon = card("ring the surveyor", .inbox, "2026-10-01 12:00")     // red now: same day
+    let tomorrow = card("book the hall", .later, "2026-10-02 09:00")     // orange now
+    let filed = card("write the grant case", .today, "2026-10-02 09:00") // never counts
+    let cards = [already, noon, tomorrow, filed]
+
+    expect(count(cards, now) == 2, "two are red and unfiled this morning")
+
+    // The badge a notification carries is this function at the moment it
+    // fires, which is why the whole set has to be handed to the scheduler.
+    expect(count(cards, at("2026-10-01 12:00")) == 2,
+           "a reminder arriving on a card already red adds nothing to the count")
+    expect(count(cards, at("2026-10-02 09:00")) == 3,
+           "and tomorrow's card counts from the moment its day starts")
+    expect(count(cards, at("2026-10-02 00:01")) == 3,
+           "which is midnight, not the reminder's hour — no notification announces that")
+    expect(count(cards, at("2026-10-09 09:00")) == 3,
+           "the filed one never joins, however late it gets")
+
+    // The old arithmetic was "those waiting, plus this one, plus everything
+    // before it". These are the two cases that breaks on.
+    let running = 2 + 1  // what the running total would have said at noon
+    expect(count(cards, at("2026-10-01 12:00")) != running,
+           "a running total would have over-counted the reminder on an already-red card")
+
+    // Filing or finishing a card takes it off, and only the app being opened
+    // can see that — which is why it corrects the badge on launch.
+    var settled = cards
+    settled[0].bucket = .today
+    expect(count(settled, now) == 1, "filing one drops the count the app will set on opening")
+    settled[1].bucket = .completed
+    expect(count(settled, now) == 0, "and finishing the other empties it")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

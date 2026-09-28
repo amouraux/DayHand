@@ -769,8 +769,17 @@ enum Attention {
         return Urgency.of(card.remindAt, now: now, calendar: calendar).isRed
     }
 
-    static func count(in cards: [TodoItem], now: Date = Date()) -> Int {
-        cards.filter { needed($0, now: now) }.count
+    /// How many cards are on the flag at `now`.
+    ///
+    /// Takes the moment rather than assuming the present, because the icon
+    /// badge has to be decided in advance: a notification fired while the app
+    /// is closed carries the number the icon should then show, and that is
+    /// this function evaluated at the moment it fires. The set only changes on
+    /// its own as days turn, which is knowable ahead of time — the rest needs
+    /// the user, and the app corrects the count the moment it is opened.
+    static func count(in cards: [TodoItem], now: Date = Date(),
+                      calendar: Calendar = .current) -> Int {
+        cards.filter { needed($0, now: now, calendar: calendar) }.count
     }
 }
 
