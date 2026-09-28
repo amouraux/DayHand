@@ -9,7 +9,6 @@ struct ContentView: View {
     @State private var editItem: TodoItem?
     @State private var isAdding = false
     @State private var isShowingSettings = false
-    @State private var isShowingReminders = false
     /// Narrows the list to the cards asking for attention, so they can be dealt
     /// with among their own stacks rather than in a sheet.
     @State private var attentionOnly = false
@@ -140,13 +139,6 @@ struct ContentView: View {
                     filterButton.glassChromeID("filter", in: chrome)
                     searchButton.glassChromeID("search", in: chrome)
                     settingsButton.glassChromeID("more", in: chrome)
-                    // Only while something is waiting. A permanent bell would
-                    // be a button that usually does nothing; this one appearing
-                    // is itself the news — so it grows out of the row rather
-                    // than fading in on top of it.
-                    if !store.outstandingReminders.isEmpty {
-                        remindersButton.glassChromeID("bell", in: chrome)
-                    }
                 }
                 .padding(.leading, 22)
                 .padding(.bottom, 42)
@@ -201,16 +193,19 @@ struct ContentView: View {
                 )
                 .environmentObject(store)
             }
-            #if !targetEnvironment(macCatalyst)
-            .sheet(isPresented: $isShowingReminders) {
-                ReminderReviewView().environmentObject(store)
-            }
-            // Opening a notification goes to the review, not to the top of the
-            // list: the notification was a question, and this is where it is
-            // answered.
+            // Opening a notification narrows to the day's work rather than
+            // landing at the top of the list. The notification was a question
+            // about one card, and this is the list that card is in. Outside
+            // the Catalyst guard below, because a Mac notification opens the
+            // app the same way.
             .onReceive(NotificationCenter.default.publisher(for: .reminderOpened)) { _ in
-                isShowingReminders = true
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    attentionOnly = true
+                    filterCategoryIDs = []
+                    filterProjectIDs = []
+                }
             }
+            #if !targetEnvironment(macCatalyst)
             .sheet(isPresented: $isShowingSettings) {
                 SettingsView().environmentObject(store)
             }
@@ -232,6 +227,20 @@ struct ContentView: View {
                 ForEach(Bucket.quickMoveTargets.filter { $0 != card.bucket }) { target in
                     Button(target.title) {
                         withAnimation { store.move(card, to: target) }
+                    }
+                }
+                // The two things that are about the reminder rather than the
+                // card. Snooze only for one that has actually gone off —
+                // "until tomorrow" on a reminder set for next week would move
+                // it earlier, which is not what the word means.
+                if Reminders.isOutstanding(card) {
+                    Button("Snooze until tomorrow") {
+                        withAnimation { store.answerReminder(card, .snooze) }
+                    }
+                }
+                if card.remindAt != nil {
+                    Button("Clear the reminder") {
+                        withAnimation { store.answerReminder(card, .clear) }
                     }
                 }
                 // Then the editor, so it is reachable from a plain click. On
@@ -524,16 +533,6 @@ struct ContentView: View {
         .accessibilityLabel(attentionOnly ? "Show all cards" : "Show cards to address")
     }
 
-    private var remindersButton: some View {
-        Button { isShowingReminders = true } label: {
-            Image(systemName: "bell.badge.fill")
-                .foregroundStyle(Color.red)
-                .floatingChrome(state: .red)
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel("Reminders waiting")
-    }
-
     private var settingsButton: some View {
         Button {
             // Clicking the button while the popover is open light-dismisses it
@@ -720,7 +719,27 @@ struct ContentView: View {
                 }
             }
 
+            // Only for a reminder that has actually gone off. "Snooze until
+            // tomorrow" on one set for next week would move it *earlier*,
+            // which is not what the word means.
+            if Reminders.isOutstanding(card) {
+                Divider().padding(.vertical, 4)
+                menuRow(Text("Snooze until tomorrow"), symbol: "bell.badge",
+                        tint: .accentColor, wash: 0) {
+                    stackPickItem = nil
+                    withAnimation { store.answerReminder(card, .snooze) }
+                }
+            }
+
             Divider().padding(.vertical, 4)
+
+            if card.remindAt != nil {
+                menuRow(Text("Clear the reminder"), symbol: "bell.slash",
+                        tint: .secondary, wash: 0) {
+                    stackPickItem = nil
+                    withAnimation { store.answerReminder(card, .clear) }
+                }
+            }
 
             menuRow(Text("Edit…"), symbol: "square.and.pencil", tint: .accentColor, wash: 0) {
                 stackPickItem = nil

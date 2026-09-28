@@ -1502,47 +1502,6 @@
         }
       }
     },
-    "A reminder stays here until you answer it. Closing a notification does not." : {
-      "comment" : "Empty state of the reminder review",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eine Erinnerung bleibt hier, bis Sie sie beantworten. Eine Mitteilung wegzuwischen genügt nicht."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un recordatorio se queda aquí hasta que lo respondas. Cerrar la notificación no basta."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un rappel reste ici jusqu’à ce que vous y répondiez. Fermer la notification ne suffit pas."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un promemoria resta qui finché non rispondi. Chiudere la notifica non basta."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Een herinnering blijft hier tot je hem beantwoordt. Een melding wegvegen telt niet."
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Um lembrete fica aqui até o responder. Fechar a notificação não chega."
-          }
-        }
-      }
-    },
     "A short one-word name for something you are working on." : {
       "localizations" : {
         "de" : {
@@ -5170,47 +5129,6 @@
         }
       }
     },
-    "Leave it here for now" : {
-      "comment" : "Not an answer: the reminder stays on the list",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vorerst hier lassen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dejarlo aquí por ahora"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le laisser ici pour l’instant"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lascialo qui per ora"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Laat het hier voorlopig staan"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deixar aqui por agora"
-          }
-        }
-      }
-    },
     "Make “%@” a project" : {
       "comment" : "Offer in the card editor when the first word reads like a code",
       "localizations" : {
@@ -5855,47 +5773,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mover para %@"
-          }
-        }
-      }
-    },
-    "Move to Today" : {
-      "comment" : "Answer in the reminder review",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nach Heute verschieben"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mover a Hoy"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Déplacer vers Aujourd’hui"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sposta in Oggi"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Naar Vandaag verplaatsen"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mover para Hoje"
           }
         }
       }
@@ -6868,47 +6745,6 @@
         }
       }
     },
-    "Nothing waiting" : {
-      "comment" : "Empty state of the reminder review",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nichts wartet"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nada pendiente"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rien en attente"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nulla in attesa"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Niets in afwachting"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nada a aguardar"
-          }
-        }
-      }
-    },
     "OK" : {
       "localizations" : {
         "de" : {
@@ -7267,88 +7103,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lembrar-me"
-          }
-        }
-      }
-    },
-    "Reminders" : {
-      "comment" : "Title of the reminder review",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Erinnerungen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recordatorios"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rappels"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Promemoria"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Herinneringen"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lembretes"
-          }
-        }
-      }
-    },
-    "Reminders waiting" : {
-      "comment" : "Accessibility label for the button that opens the review",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wartende Erinnerungen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recordatorios pendientes"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rappels en attente"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Promemoria in attesa"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wachtende herinneringen"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lembretes a aguardar"
           }
         }
       }

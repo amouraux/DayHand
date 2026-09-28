@@ -152,6 +152,16 @@ final class TodoStore: ObservableObject {
             // Both dates survive the move. Nothing files a card any more, so a
             // date and a stack cannot contradict each other — a four-day job
             // sits in Today for four days and is still due on the fourth.
+            //
+            // But deciding where a card goes *is* an answer to the reminder
+            // that asked. Without this a card could be dealt with and go on
+            // asking, and the only way to stop it would be a separate sheet
+            // whose whole job was to say "yes, I did that".
+            //
+            // Answered, not cleared: the date stays, so the card keeps its
+            // red edge for the rest of the day. It is still today's work —
+            // it just is not a question any more.
+            if Reminders.isOutstanding(card) { card.reminderAnsweredAt = .stamp() }
         }
     }
 
@@ -184,7 +194,6 @@ final class TodoStore: ObservableObject {
         rescheduleNotifications()
     }
 
-    var outstandingReminders: [TodoItem] { Reminders.outstanding(in: items) }
 
 
     // MARK: - The day turning underneath an open window

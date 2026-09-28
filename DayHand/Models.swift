@@ -779,11 +779,14 @@ enum Reminders {
 
 /// What the user chose to do about a reminder that has come due.
 ///
-/// Doing nothing is deliberately not in here. Leaving a reminder alone is the
-/// absence of an answer, not one of them, which is exactly why it stays on the
-/// list — the same reason dismissing a notification changes nothing.
+/// Moving the card is not in here, and neither is completing it: both are
+/// answers, but they are things the user does to the *card*, and the card
+/// already knows how to do them. Only these two are about the reminder alone.
+///
+/// Doing nothing is deliberately not in here either. Leaving a reminder alone
+/// is the absence of an answer, not one of them, which is exactly why it goes
+/// on asking — the same reason dismissing a notification changes nothing.
 enum ReminderAnswer: Equatable {
-    case move(Bucket)
     /// Ask again at the same time tomorrow. The card does not move.
     case snooze
     /// Done with the reminder. The deadline is left exactly as it was: the
@@ -794,11 +797,6 @@ enum ReminderAnswer: Equatable {
     /// Applied here rather than in the store so it can be tested.
     func apply(to card: inout TodoItem, now: Date, calendar: Calendar = .current) {
         switch self {
-        case .move(let bucket):
-            card.bucket = bucket
-            card.bucketBeforeCompletion = nil
-            card.completedAt = nil
-            card.remindAt = nil
         case .snooze:
             card.remindAt = card.remindAt.flatMap {
                 Reminders.again(after: $0, now: now, calendar: calendar)

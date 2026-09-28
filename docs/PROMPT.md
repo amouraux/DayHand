@@ -374,25 +374,40 @@ notification. **Dismissing that notification changes nothing.** Swiping a
 notification away is how a notification is got rid of, not how a decision is
 made, so the reminder is still waiting afterwards.
 
-Where it waits is the **reminder review**, reached from a bell that appears in
-the button row only while something is on it — a permanent bell would be a
-button that usually does nothing, and its appearing is itself the news.
-Opening the notification goes straight there, since the notification was a
-question and that is where it is answered.
+**There is one way in.** The **badged flag beside the jump-to-Today button**
+narrows the card list to every **red** card: a reminder due today, or one that
+came and went. It wears the same flag the cards do, it appears only while
+something is red, and the cards show up in their own stacks where they can be
+ticked off, swiped or moved like anything else. Opening the notification goes
+there, since the notification was a question about one card and that is the
+list the card is in.
 
-Two ways in, doing different jobs, and they answer different questions.
+There was a second way in — a bell in the button row opening a review sheet
+that answered reminders one at a time — and it was dropped. The two sets were
+almost identical, and the only reason the sheet was not redundant is that
+**moving a card did not answer its reminder**: you could deal with a card and
+have it go on asking, and the sheet existed to say "yes, I did that". Fixing
+that removed the reason for the sheet.
 
-The **bell in the button row** opens the review and answers reminders one at a
-time. It appears only while a reminder is waiting.
+### Dealing with a card answers the reminder that asked
 
-The **badged flag beside the jump-to-Today button** narrows the card list to
-every **red** card: a reminder due today, or one that came and went. It wears
-the same flag the cards do. The cards appear in their own stacks, where they
-can be ticked off or swiped like anything else.
+Moving a card, completing it or deleting it is an answer. The user has decided
+what to do with it; nothing should still be asking.
 
-It is wider than the review, on purpose. A reminder set for five this afternoon
-has not fired, so nothing is waiting on an answer — but it is today's work and
-belongs under the flag. The bell holds questions; the flag holds the day.
+**Answered is not cleared.** A move keeps both dates — that rule has not
+changed — so the card holds on to its reminder and stays red for the rest of
+the day. It is still today's work; it just is not a question any more. The flag
+goes on showing it after you have moved it, which is right: the flag is the
+day, not a queue of unanswered questions.
+
+The only two things that are about the reminder rather than the card live on
+the card's own menu, beside Edit and the four stacks:
+
+- **Snooze until tomorrow**, shown only for a reminder that has actually gone
+  off. On one set for next week "until tomorrow" would move it *earlier*, which
+  is not what the word means.
+- **Clear the reminder**, shown whenever there is one. This is how a reminder is
+  silenced for good, and it takes the red edge with it.
 
 **Orange is deliberately left out.** A card three days off is being shown, not
 asked about, and a list of things to deal with now loses its meaning the moment
@@ -401,26 +416,28 @@ it also contains things to deal with later.
 Both appear only while there is something to count; a count of nothing is not
 worth a permanent control.
 
-**The app icon counts only the unanswered reminders**, not the flag's wider
-tally. That count is the only thing that says something is waiting without the
+**The app icon counts the unanswered reminders** — ones that have fired and
+that nothing has been done about — which is a narrower number than the flag's.
+The two say different things on purpose: the icon is what happened while you
+were away, the flag is the day. Dealing with a card takes it off the icon and
+leaves it under the flag. That count is the only thing that says something is waiting without the
 app being opened, which is exactly what an unanswered reminder needs. Each
 scheduled notification carries the badge the icon should show once it has fired — those already waiting, plus itself and
 everything before it — and the app corrects the number the moment it is opened.
 
-Each waiting reminder offers four answers and one non-answer:
+**Snooze** asks again at the same time of day tomorrow, counted from **now**,
+not from the reminder. A reminder left alone for a week is the usual case, and
+adding a day to it would land in the past: the card would go quiet and never
+ask again, which reads exactly like the button having eaten it. The card does
+not move.
 
-- **Move to Today** / **Move to Tomorrow** — moves the card and is done with
-  the reminder.
-- **Snooze until tomorrow** — asks again at the same time of day tomorrow,
-  counted from **now**, not from the reminder. A reminder left alone for a week
-  is the usual case, and adding a day to it would land in the past: the card
-  would go quiet and never ask again, which reads exactly like the button
-  having eaten it. The card does not move.
-- **Clear the reminder** — done with it. The **deadline is left exactly as it
-  was**: the job may still have a day it must be finished by, and the editor
-  offers the field again the moment a reminder is set.
-- **Leave it here for now** — not an answer, and says so. Without it, closing
-  the sheet looks like a way of losing the card.
+**Clearing** leaves the **deadline exactly as it was**: the job may still have
+a day it must be finished by, and the editor offers the field again the moment
+a reminder is set.
+
+Doing nothing is deliberately not an answer. Leaving a reminder alone is the
+absence of one, which is why it goes on asking — the same reason dismissing a
+notification changes nothing.
 
 A reminder is silenced by clearing it. There is no separate switch for
 whether one fires: a card with a date that will not go off is a card that lies

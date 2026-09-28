@@ -695,11 +695,13 @@ do {
     var done = card; done.bucket = .completed
     expect(!Reminders.isOutstanding(done, now: now), "finishing the work answers the reminder")
 
-    // Dismissing the notification is not an answer; only these are.
+    // Dismissing the notification is not an answer. Moving the card is, but
+    // that happens on the card — see AA.
     var moved = card
-    ReminderAnswer.move(.today).apply(to: &moved, now: now, calendar: calendar)
-    expect(moved.bucket == .today && moved.remindAt == nil, "Move to Today moves it and is done")
-    expect(!Reminders.isOutstanding(moved, now: now), "and it leaves the list")
+    moved.bucket = .today
+    moved.reminderAnsweredAt = now
+    expect(!Reminders.isOutstanding(moved, now: now), "answering stops it asking")
+    expect(moved.remindAt == fired, "without throwing the date away")
 
     var snoozed = card
     ReminderAnswer.snooze.apply(to: &snoozed, now: now, calendar: calendar)
@@ -934,6 +936,57 @@ do {
     expect(plan("2026-09-30 09:00", nil, nil)
            == .init(ageTwoDaysToWeek: false, ageDayToTwoDays: true, writeDay: true),
            "nothing is aged into a slot from a file that is not there")
+}
+
+// MARK: AA — dealing with a card answers the reminder that asked
+do {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(identifier: "Europe/Brussels")!
+    func at(_ s: String) -> Date {
+        let f = DateFormatter()
+        f.calendar = calendar; f.timeZone = calendar.timeZone
+        f.dateFormat = "yyyy-MM-dd HH:mm"
+        return f.date(from: s)!
+    }
+    let now = at("2026-10-01 10:00")
+    let fired = at("2026-10-01 08:00")
+
+    // What the store does on a move. Answered, not cleared.
+    var card = TodoItem(title: "chase the letter", bucket: .later, remindAt: fired)
+    expect(Reminders.isOutstanding(card, now: now), "it is asking to begin with")
+
+    card.bucket = .today
+    card.reminderAnsweredAt = now
+
+    expect(!Reminders.isOutstanding(card, now: now),
+           "moving it is an answer: a card dealt with must not go on asking")
+    expect(card.remindAt == fired,
+           "but the date stays — moving a card keeps both fields, as it always has")
+    expect(Attention.needed(card, now: now, calendar: calendar),
+           "so it keeps its red edge: it is still today's work, just no longer a question")
+
+    // Snooze re-arms, and the old answer must not carry over to the new ask.
+    var snoozed = card
+    ReminderAnswer.snooze.apply(to: &snoozed, now: now, calendar: calendar)
+    expect(snoozed.remindAt == at("2026-10-02 08:00"), "snoozing asks again tomorrow")
+    expect(snoozed.bucket == .today, "and moves nothing")
+    expect(!Reminders.isOutstanding(snoozed, now: now), "quiet until then")
+    expect(Reminders.isOutstanding(snoozed, now: at("2026-10-02 09:00")),
+           "then asking again — the answer given was to the previous one")
+
+    // Clearing is the way to silence a reminder for good.
+    var cleared = card
+    cleared.deadline = at("2026-10-31 00:00")
+    ReminderAnswer.clear.apply(to: &cleared, now: now, calendar: calendar)
+    expect(cleared.remindAt == nil, "clearing takes the date with it")
+    expect(cleared.deadline == at("2026-10-31 00:00"), "and leaves the deadline alone")
+    expect(!Attention.needed(cleared, now: now, calendar: calendar),
+           "so the edge goes too — nothing is asking for this card any more")
+
+    // Completing already answered it, and still does.
+    var done = TodoItem(title: "collect the keys", bucket: .today, remindAt: fired)
+    done.bucket = .completed
+    expect(!Reminders.isOutstanding(done, now: now), "finishing the work answers the reminder")
 }
 
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")

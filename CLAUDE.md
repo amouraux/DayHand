@@ -84,8 +84,15 @@ available — moves a deadline with no reminder into `remindAt` at 9am. It is
 derived, so it stamps nothing; a moment already past arrives answered, or a
 year of old dates lands in the review as a backlog.
 
-A reminder leaves the review for one reason: the user answered it. Dismissing
-the notification is explicitly not an answer — see
+A reminder stops asking when the user answers it, and **dealing with the card
+is an answer**: `TodoStore.move` stamps `reminderAnsweredAt` while keeping
+`remindAt`, so the card stops nagging but keeps its red edge for the rest of
+the day. Completing or deleting answers it too. Only Snooze and Clear are about
+the reminder alone, and they live on the card's menu — in **both** the popover
+(Mac/iPad) and the `confirmationDialog` (phone), which are separate code paths
+and easy to update by half.
+
+Dismissing the notification is explicitly not an answer — see
 `UNUserNotificationCenterDelegate` in `ReminderScheduler.swift`, which posts
 only on the default action.
 
