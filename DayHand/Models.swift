@@ -30,8 +30,8 @@ enum Bucket: String, Codable, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    /// Shown on the section headings, in the pickers and inside sentences such
-    /// as "Move to Tomorrow", so it is translated like any other visible text.
+    /// Shown on the section headings, in the pickers and on the card's own
+    /// menu, so it is translated like any other visible text.
     var title: String {
         switch self {
         case .inbox:     return String(localized: "Inbox", comment: "Stack name")

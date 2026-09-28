@@ -12,9 +12,6 @@ struct ContentView: View {
     /// Narrows the list to the cards asking for attention, so they can be dealt
     /// with among their own stacks rather than in a sheet.
     @State private var attentionOnly = false
-    /// Ties the floating buttons together so one appearing or leaving grows
-    /// out of the row rather than fading in on top of it.
-    @Namespace private var chrome
     /// When the More popover last closed, so the click that dismissed it is not
     /// also read as a click asking for it back.
     @State private var settingsDismissedAt: Date?
@@ -115,13 +112,13 @@ struct ContentView: View {
                 // It stands down for the search bar, which wants the width —
                 // and on a handful of results there is nothing to jump over.
                 if !isSearching {
-                    chromeCluster {
+                    HStack(spacing: 12) {
                         // Only while something is waiting: a count of nothing
                         // is not worth a permanent control.
                         if waitingCount > 0 || attentionOnly {
-                            attentionFilterButton.glassChromeID("flag", in: chrome)
+                            attentionFilterButton
                         }
-                        todayButton(proxy).glassChromeID("today", in: chrome)
+                        todayButton(proxy)
                     }
                     .padding(.trailing, 16)
                     .padding(.top, 6)
@@ -135,10 +132,10 @@ struct ContentView: View {
                 // Filter leads: on a wide window it is the sidebar's switch,
                 // and a switch belongs against the edge the sidebar comes from.
                 // The two narrowing tools then sit together, with More last.
-                chromeCluster {
-                    filterButton.glassChromeID("filter", in: chrome)
-                    searchButton.glassChromeID("search", in: chrome)
-                    settingsButton.glassChromeID("more", in: chrome)
+                HStack(spacing: 12) {
+                    filterButton
+                    searchButton
+                    settingsButton
                 }
                 .padding(.leading, 22)
                 .padding(.bottom, 42)
@@ -515,7 +512,11 @@ struct ContentView: View {
                 // running" more quietly than this needs saying: the list on
                 // screen is not the whole list.
                 .floatingChrome(state: .red, solid: attentionOnly ? .red : nil)
-                // After the fill, so the glass does not clip it away.
+                // After the fill, so the glass does not draw over it. This
+                // is also why these buttons are a plain HStack and not a
+                // GlassEffectContainer: a container composites its children's
+                // glass into one layer that lands on top of a child's own
+                // overlay, and the count ends up half-swallowed by the disc.
                 .overlay(alignment: .topTrailing) {
                     if waitingCount > 0 && !attentionOnly {
                         Text("\(waitingCount)")
@@ -852,46 +853,6 @@ struct ContentView: View {
 /// The look of a control that floats over the card stack: a 48pt disc with a
 /// ring that defines it whatever happens to be scrolled behind.
 ///
-/// Glass where the system has it, because the fill was never carrying state.
-/// Every one of these buttons says what it is with its icon and its ring — the
-/// fill is the same grey in every one of them — so letting the cards show
-/// through costs nothing, and four opaque discs stop reading like holes
-/// punched in the list.
-///
-/// The ring is why this works on glass at all: over an empty stretch of page
-/// background there is nothing to refract, and a glass disc would have only
-/// its own rim to prove it is there.
-extension View {
-    /// Groups floating buttons so the system can render them as one sheet of
-    /// glass and animate one arriving. `spacing: 0` on purpose: the buttons
-    /// are 12pt apart so a thumb aimed at one does not catch the next, and
-    /// letting them flow into each other would undo that — four controls that
-    /// read as one lozenge are worse than four that read as four.
-    @ViewBuilder
-    func chromeCluster<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
-        let row = HStack(spacing: 12) { content() }
-        if #available(iOS 26.0, macOS 26.0, *) {
-            GlassEffectContainer(spacing: 0) { row }
-        } else {
-            row
-        }
-    }
-
-    /// Names a button inside a cluster, so the container knows which shape is
-    /// which when one comes or goes.
-    @ViewBuilder
-    func glassChromeID(_ id: String, in namespace: Namespace.ID) -> some View {
-        if #available(iOS 26.0, macOS 26.0, *) {
-            glassEffectID(id, in: namespace)
-        } else {
-            self
-        }
-    }
-}
-
-/// The look of a control that floats over the card stack: a 48pt disc with a
-/// ring that defines it whatever happens to be scrolled behind.
-///
 /// Glass where the system has it. The fill was never carrying state — every
 /// one of these buttons says what it is with its icon and its ring — so
 /// letting the cards show through costs nothing, and four opaque discs stop
@@ -905,9 +866,8 @@ private struct FloatingChrome: ViewModifier {
     /// holding a query, waiting on an answer — or nil at rest.
     ///
     /// It thickens the ring *and* tints the glass. The ring alone was enough
-    /// on an opaque disc; on glass it is not. Measured on the phone: the
-    /// bell's 2pt red ring all but disappears against a dark backdrop, and
-    /// that bell appearing is the one thing in the app meant to be noticed.
+    /// on an opaque disc; on glass it is not — measured on the phone, a 2pt
+    /// red ring all but disappears against a dark backdrop.
     var state: Color?
     /// A fill that replaces the glass entirely, set while the control is
     /// changing what the list shows. Glass is for chrome at rest; a filter
