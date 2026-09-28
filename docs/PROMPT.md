@@ -209,21 +209,18 @@ apart from newlines arriving in *pasted* text — those fold into spaces and lea
 the sheet open. Guard the add itself so that a platform delivering Return by
 both routes at once files one card, not two.
 
-Keep the stack and date **reconciled live**, using the same rules as the rest of
-the app, so a card can never be created in a state the next launch would
-immediately correct:
+**The stack and the dates do not talk to each other.** There is nothing to
+reconcile: a date never decides which stack a card belongs in, so picking one
+cannot contradict the other. A card can be filed in Later and be due to be
+picked up tomorrow, and both are true.
 
-- Picking a date of today or tomorrow moves the stack picker to match.
-- Picking a stack by hand wins over a contradicting date, which is dropped —
-  exactly as moving an existing card does.
-- Choosing Later pushes a too-soon date forward to the earliest day Later
-  allows, and restricts the picker's range, rather than changing the stack.
+This section used to describe the opposite — a date of today moving the stack
+picker to match, a stack chosen by hand dropping a contradicting date, a floor
+pushing a too-soon date forward for Later. All of it existed to keep the sheet
+consistent with a filing pass that no longer runs, and its absence is the
+feature.
 
-The last one matters: switching the date on defaults it to today, and without
-the Later exception that silently drags the stack to Today and undoes the user's
-explicit choice.
-
-The footer says where the card is actually going.
+The footer says where the card is going.
 
 ## Tapping a card
 

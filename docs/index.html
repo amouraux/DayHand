@@ -82,9 +82,6 @@
   .btn small { font-weight: 400; font-size: 12.5px; opacity: .8; letter-spacing: 0; }
   .btn-primary { background: var(--today); color: #fff; }
   .btn-secondary { background: var(--panel); color: var(--ink); border-color: var(--line); box-shadow: var(--shadow); }
-  /* Not a link: it says where the Mac build is, without pretending to be one. */
-  .btn-quiet { background: transparent; color: var(--ink-soft); border-color: var(--line); cursor: default; }
-  .btn-quiet:hover { transform: none; filter: none; }
 
   /* ---------- ideas ---------- */
   section.wrap { padding: 62px 16px; }
@@ -132,7 +129,22 @@
   .card h3 { margin: 0 0 6px; font-size: 19px; letter-spacing: -.012em; }
   .card .req { color: var(--ink-soft); font-size: 14px; margin: 0 0 16px; }
   .card p { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 18px; }
+  .card .steps { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 18px; padding-left: 20px; }
+  .card .steps li { margin-bottom: 7px; }
+  .card .steps li:last-child { margin-bottom: 0; }
+  /* The thing you would otherwise only find out by hitting it. */
+  .card .aside {
+    font-size: 14px; border-left: 2px solid var(--line);
+    padding-left: 12px; margin: 0 0 18px;
+  }
   .card .btn { display: inline-flex; }
+
+  .notice {
+    max-width: 640px; margin: 22px auto 0; padding: 16px 18px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    color: var(--ink-soft); font-size: 14.5px; line-height: 1.5;
+  }
+  .notice b { color: var(--ink); }
 
   footer.wrap {
     border-top: 1px solid var(--line); margin-top: 24px;
@@ -160,11 +172,9 @@
     <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">
       Join the beta<small>iPhone &amp; iPad · TestFlight</small>
     </a>
-    <!-- Once a Mac build has been uploaded to App Store Connect and added to
-         the tester group, swap this span for:
-         <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">
-           Get it on Mac<small>macOS · TestFlight</small></a>  -->
-    <span class="btn btn-quiet">Mac build on the way<small>Runs today from source</small></span>
+    <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">
+      Get it on Mac<small>macOS · TestFlight</small>
+    </a>
   </div>
 </header>
 
@@ -233,20 +243,47 @@
     <div class="card">
       <h3>iPhone and iPad</h3>
       <p class="req">iOS 17 or later</p>
-      <p>The beta runs through TestFlight. Install Apple's TestFlight app first,
-         then open the link — you will get each new build as it lands.</p>
+      <ol class="steps">
+        <li>Install Apple's <b>TestFlight</b> from the App Store.</li>
+        <li>Open the link below <em>on the device</em>. It hands over to
+            TestFlight.</li>
+        <li>Tap <b>Accept</b>, then <b>Install</b>.</li>
+      </ol>
       <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">Join the beta</a>
     </div>
     <div class="card">
       <h3>Mac</h3>
       <p class="req">macOS 14 or later</p>
-      <p>The same app, one target, no separate Mac version. The Mac beta is
-         coming to the same TestFlight — you will need Apple's TestFlight app
-         from the Mac App Store. Until then you can build it yourself: open the
-         project in Xcode, choose <b>My Mac</b>, and press ⌘R.</p>
-      <a class="btn btn-secondary" href="https://github.com/amouraux/DayHand">Get the source</a>
+      <ol class="steps">
+        <li>Install <b>TestFlight</b> from the <b>Mac</b> App Store — it is a
+            separate app from the iPhone one, and the same Apple Account has to
+            be signed in.</li>
+        <li>Open the same link below <em>on the Mac</em>. Safari hands it to
+            TestFlight.</li>
+        <li>Click <b>Accept</b>, then <b>Install</b>. It lands in your
+            Applications folder like any other app.</li>
+      </ol>
+      <p class="aside">One link for both — it is one app and one target, not a
+         separate Mac version. If the link opens the App Store instead of
+         TestFlight, TestFlight is not installed on that Mac yet.</p>
+      <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Get it on Mac</a>
     </div>
   </div>
+
+  <!-- The Mac build has to be sandboxed for App Store Connect to take it, and
+       the sandbox moves where its data lives. Anyone who had been running a
+       build straight from Xcode opens this one to an empty list, which looks
+       exactly like losing everything. Nothing is lost, and saying so here is
+       cheaper than saying it afterwards. -->
+  <p class="notice">
+    <b>Already running DayHand on your Mac from a build you made yourself?</b>
+    The TestFlight build is sandboxed — App Store Connect will not take one that
+    is not — and a sandboxed app keeps its data somewhere else. It will open
+    with no cards, which looks alarming and is not: your old file is untouched
+    where it always was. If you sync through iCloud Drive, open
+    <b>More → Use Existing Sync File…</b> and pick the same file again, and
+    everything comes back.
+  </p>
 </section>
 
 <footer class="wrap">
