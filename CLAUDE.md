@@ -60,16 +60,29 @@ and, when one is configured, to the user's sync file in iCloud Drive.
 
 ## Dates never move cards
 
-Two optional fields, deliberately separate: **`deadline`** (a day, when the
-work is due) and **`remindAt`** (a day and a time, when to be interrupted).
-Neither moves a card, and moving a card keeps both. There is no filing pass,
-no auto-stack rule and no Later date floor — those existed only to serve
-automatic filing, and their absence is the feature.
+One date, and optionally its far end. **`remindAt`** (a day and a time) is when
+to *pick the card up*: it fires the notification, colours the edge, orders the
+card and is what the flag gathers. **`deadline`** (a day) is when a multi-day
+job must be *finished*; it is drawn on the card and does nothing else.
 
-`dueDate` is read once as a migration and **never written back**. That is the
-only thing stopping a version that still files cards from doing it again: it
-would ignore any flag it did not recognise, but it cannot file a date it cannot
-see.
+`Urgency.of` takes `remindAt`, not `deadline` — colouring both would put two
+things on one card competing to say "now". The editor offers the deadline only
+once a reminder exists, or when the card already carries one, so a deadline
+left behind by clearing a reminder is never stranded where it can be seen but
+not changed.
+
+Neither moves a card, and moving a card keeps both. There is no filing pass, no
+auto-stack rule and no Later date floor — those existed only to serve automatic
+filing, and their absence is the feature.
+
+Two migrations, and they run in different places. `dueDate` is read once by
+`TodoItem.init(from:)` and **never written back**, which is the only thing
+stopping a version that still files cards from doing it again: it would ignore
+any flag it did not recognise, but it cannot file a date it cannot see. Then
+`StoreDocument.promotingOrphanDeadlines` — in the document, where a clock is
+available — moves a deadline with no reminder into `remindAt` at 9am. It is
+derived, so it stamps nothing; a moment already past arrives answered, or a
+year of old dates lands in the review as a backlog.
 
 A reminder leaves the review for one reason: the user answered it. Dismissing
 the notification is explicitly not an answer — see

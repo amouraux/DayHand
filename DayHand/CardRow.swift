@@ -135,10 +135,10 @@ struct CardRow: View {
     @State private var isHorizontal = false
     @State private var didCommit = false
 
-    /// How close the deadline is. The only thing a deadline does to a card is
+    /// How close the reminder is. The only thing a date does to a card is
     /// colour its edge and order it — it never moves it.
-    private var urgency: DeadlineUrgency {
-        item.isCompleted ? .none : DeadlineUrgency.of(item.deadline)
+    private var urgency: Urgency {
+        item.isCompleted ? .none : Urgency.of(item.remindAt)
     }
     private var progress: CGFloat { min(1, abs(dragX) / Self.commitDistance) }
     private var armed: Bool { abs(dragX) >= Self.commitDistance }
@@ -218,19 +218,26 @@ struct CardRow: View {
                         .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
-                    if let deadline = item.deadline {
-                        HStack(spacing: 8) {
-                            Label(Scheduler.relativeLabel(for: deadline), systemImage: "flag")
-                                .foregroundStyle(urgency.tint ?? Color.secondary)
-                            if item.remindAt != nil && item.remindsEnabled && !item.isCompleted {
-                                Image(systemName: "bell").foregroundStyle(.secondary)
+                    if item.remindAt != nil || item.deadline != nil {
+                        // Start then finish, in that order and in that visual
+                        // weight: a plain flag for the day to pick the card
+                        // up, a chequered one for the day it has to be done.
+                        // The second is the far end of a job and says so by
+                        // staying grey while the first carries the colour.
+                        HStack(spacing: 10) {
+                            if let at = item.remindAt {
+                                Label(Scheduler.relativeLabel(for: at), systemImage: "flag")
+                                    .foregroundStyle(urgency.tint ?? Color.secondary)
+                            }
+                            if let deadline = item.deadline {
+                                Label(Scheduler.relativeLabel(for: deadline),
+                                      systemImage: "flag.checkered")
+                                    .foregroundStyle(.secondary)
                             }
                         }
                         .font(.caption)
-                    } else if let at = item.remindAt, item.remindsEnabled, !item.isCompleted {
-                        Label(Scheduler.relativeLabel(for: at), systemImage: "bell")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                     } else if item.isCompleted, let origin = item.bucketBeforeCompletion {
                         Label("from \(origin.title)", systemImage: origin.symbolName)
                             .font(.caption)
@@ -244,9 +251,10 @@ struct CardRow: View {
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(stackBackground)
-        // The deadline's whole voice: yellow while it is coming, red once it is
-        // here or past. Thicker than a hairline so it reads as a state of the
-        // card rather than an edge that happens to be coloured.
+        // The reminder's whole voice before it fires: orange while it is
+        // coming, red once it is here or past. Thicker than a hairline so it
+        // reads as a state of the card rather than an edge that happens to be
+        // coloured.
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .strokeBorder(urgency.tint?.opacity(urgency == .approaching ? 0.55 : 0.8)

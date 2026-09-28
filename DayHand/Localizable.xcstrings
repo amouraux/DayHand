@@ -2153,7 +2153,7 @@
       }
     },
     "At" : {
-      "comment" : "The reminder's time picker",
+      "comment" : "The reminder's date and time picker",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3248,7 +3248,7 @@
       }
     },
     "Deadline" : {
-      "comment" : "When the work is due",
+      "comment" : "When the work must be finished, for a job of more than a day",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3649,6 +3649,7 @@
       }
     },
     "Dismiss" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5655,7 +5656,7 @@
       }
     },
     "Move it, or keep it where it is." : {
-      "comment" : "Notification body",
+      "comment" : "Notification body for a reminder",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6217,6 +6218,47 @@
         }
       }
     },
+    "No card is waiting to be picked up today." : {
+      "comment" : "Empty state detail for the flag filter",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute wartet keine Karte darauf, angefangen zu werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoy no hay ninguna tarjeta esperando a que la empieces."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune carte n’attend d’être commencée aujourd’hui."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oggi nessuna carta aspetta di essere iniziata."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vandaag wacht geen kaart om opgepakt te worden."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoje nenhum cartão espera para ser começado."
+          }
+        }
+      }
+    },
     "No card matches “%@”" : {
       "comment" : "Empty state when a search finds nothing",
       "localizations" : {
@@ -6536,47 +6578,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nada em %@"
-          }
-        }
-      }
-    },
-    "Nothing is due today, and every reminder has been answered." : {
-      "comment" : "Empty state detail for the attention filter",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heute ist nichts fällig, und jede Erinnerung ist beantwortet."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoy no vence nada y todos los recordatorios están respondidos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rien n’est dû aujourd’hui, et chaque rappel a reçu une réponse."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oggi non scade nulla e ogni promemoria ha una risposta."
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vandaag is er niets te doen en elke herinnering is beantwoord."
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nada vence hoje e todos os lembretes foram respondidos."
           }
         }
       }
@@ -7107,7 +7108,7 @@
       }
     },
     "Remind me" : {
-      "comment" : "Toggle for a reminder",
+      "comment" : "Toggle for the day to pick the card up",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -7184,47 +7185,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lembretes"
-          }
-        }
-      }
-    },
-    "Reminders on" : {
-      "comment" : "Whether this card's reminder actually fires",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Erinnerungen an"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recordatorios activados"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rappels activés"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Promemoria attivi"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Herinneringen aan"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lembretes ativados"
           }
         }
       }
@@ -8083,46 +8043,6 @@
         }
       }
     },
-    "Set" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Festlegen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Establecer"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Définir"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Imposta"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stel in"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Definir"
-          }
-        }
-      }
-    },
     "Settings" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -8867,6 +8787,7 @@
       }
     },
     "Their date arrived" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {

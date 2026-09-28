@@ -314,6 +314,40 @@ extension StoreDocument {
     }
 }
 
+extension StoreDocument {
+    /// A card whose only date is a deadline had that date written by a version
+    /// where a date meant one thing. It means the reminder now — the day to
+    /// pick the card up — so move it there rather than leaving it as a finish
+    /// line with no start, which is a date the app can do nothing with and the
+    /// editor no longer offers.
+    ///
+    /// Nine in the morning, because the old date carried no time. Derived, so
+    /// nothing is stamped as edited: every device computes the same thing from
+    /// the same file.
+    ///
+    /// A reminder whose moment has already passed arrives answered. The card
+    /// still shows red, which is the part worth seeing; what it must not do is
+    /// drop a year of old dates into the review as a backlog of questions
+    /// nobody asked.
+    func promotingOrphanDeadlines(now: Date = Date(),
+                                  calendar: Calendar = .current) -> StoreDocument {
+        guard cards.contains(where: { $0.remindAt == nil && $0.deadline != nil }) else { return self }
+
+        var result = self
+        for index in result.cards.indices {
+            guard result.cards[index].remindAt == nil,
+                  let deadline = result.cards[index].deadline,
+                  let at = calendar.date(bySettingHour: 9, minute: 0, second: 0,
+                                         of: calendar.startOfDay(for: deadline))
+            else { continue }
+            result.cards[index].remindAt = at
+            result.cards[index].deadline = nil
+            if at <= now { result.cards[index].reminderAnsweredAt = at }
+        }
+        return result
+    }
+}
+
 /// Watches the shared file and reports when something else writes to it —
 /// the other device, or iCloud finishing a download.
 private final class SyncFilePresenter: NSObject, NSFilePresenter {
@@ -679,10 +713,11 @@ enum CardCSV {
     /// `project` and `group` come last so that files written before they existed
     /// still read correctly by position when they have no header row.
     /// `deadline` kept the old `due` column's place so a header-less export
-    /// still reads by position; `remind` and `reminds` go last, as every new
-    /// column does.
+    /// still reads by position, and `remind` goes last, as every new column
+    /// does. An older export's `reminds` column is simply ignored: what it
+    /// recorded no longer exists, and a reminder is silenced by clearing it.
     static let header = ["id", "title", "stack", "category", "deadline", "completed", "created",
-                         "project", "group", "remind", "reminds"]
+                         "project", "group", "remind"]
 
     private static let dayFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -769,8 +804,7 @@ enum CardCSV {
                 stampFormatter.string(from: card.createdAt),
                 card.projectID.flatMap { names[$0] } ?? "",
                 card.projectID.flatMap { groups[$0] } ?? "",
-                card.remindAt.map { stampFormatter.string(from: $0) } ?? "",
-                card.remindAt == nil ? "" : (card.remindsEnabled ? "yes" : "no")
+                card.remindAt.map { stampFormatter.string(from: $0) } ?? ""
             ].map(escape).joined(separator: ","))
         }
         return rows.joined(separator: "\n") + "\n"
@@ -857,10 +891,6 @@ enum CardCSV {
             card.categoryID = byLabel[field("category").lowercased()]
             card.deadline = parseDay(field("deadline"))
             card.remindAt = stampFormatter.date(from: field("remind")) ?? parseDay(field("remind"))
-            if !field("reminds").isEmpty {
-                card.remindsEnabled = ["1", "true", "yes", "y"].contains(
-                    field("reminds").lowercased().trimmingCharacters(in: .whitespaces))
-            }
             card.completedAt = stampFormatter.date(from: field("completed"))
             if let created = stampFormatter.date(from: field("created")) { card.createdAt = created }
 
@@ -889,7 +919,6 @@ enum CardCSV {
         "category":  ["category", "label", "tag"],
         "deadline":  ["deadline", "due", "due date", "duedate", "date", "scheduled"],
         "remind":    ["remind", "reminder", "remind me", "remind at"],
-        "reminds":   ["reminds", "reminders", "remind enabled", "reminding"],
         "completed": ["completed", "completed at", "completedat", "done", "done at"],
         "created":   ["created", "created at", "createdat", "added"]
     ]

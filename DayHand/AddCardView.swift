@@ -51,6 +51,7 @@ struct AddCardView: View {
     let projects: [Project]
     /// When each project was last used, for ranking the chips.
     let projectLastUsed: [UUID: Date]
+    /// `(title, stack, category, project, remindAt, deadline)`.
     let onAdd: (String, Bucket, UUID?, ProjectChoice, Date?, Date?) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -81,10 +82,10 @@ struct AddCardView: View {
     }
 
     @State private var bucket: Bucket = .inbox
-    @State private var hasDeadline = false
-    @State private var deadline = Scheduler.startOfToday()
     @State private var hasReminder = false
     @State private var remindAt = Scheduler.defaultReminderTime()
+    @State private var hasDeadline = false
+    @State private var deadline = Scheduler.startOfToday()
     @FocusState private var focused: Bool
     /// Set once the card has been filed, so it cannot be filed again.
     @State private var didAdd = false
@@ -137,24 +138,25 @@ struct AddCardView: View {
                     }
                     .disabled(categories.isEmpty)
 
-                    // Two separate questions. When the work is due is not the
-                    // same as when you want to be interrupted about it, and
-                    // neither one moves the card.
-                    Toggle(isOn: $hasDeadline.animation(.easeInOut(duration: 0.2))) {
-                        Label("Deadline", systemImage: "flag")
-                    }
-                    if hasDeadline {
-                        DatePicker("Due", selection: $deadline, displayedComponents: [.date])
-                            .datePickerStyle(.compact)
-                    }
-
+                    // One date, then optionally its far end. The reminder is
+                    // when to pick the card up; the deadline only means
+                    // something once there is a day to start, so it is not
+                    // offered until there is one. Neither moves the card.
                     Toggle(isOn: $hasReminder.animation(.easeInOut(duration: 0.2))) {
-                        Label("Remind me", systemImage: "bell")
+                        Label("Remind me", systemImage: "flag")
                     }
                     if hasReminder {
                         DatePicker("At", selection: $remindAt,
                                    displayedComponents: [.date, .hourAndMinute])
                             .datePickerStyle(.compact)
+
+                        Toggle(isOn: $hasDeadline.animation(.easeInOut(duration: 0.2))) {
+                            Label("Deadline", systemImage: "flag.checkered")
+                        }
+                        if hasDeadline {
+                            DatePicker("Due", selection: $deadline, displayedComponents: [.date])
+                                .datePickerStyle(.compact)
+                        }
                     }
                 } footer: {
                     Label(footerText, systemImage: bucket.symbolName)
@@ -229,7 +231,8 @@ struct AddCardView: View {
         }
         didAdd = true
         onAdd(titleWithoutToken, bucket, category, choice,
-              hasDeadline ? deadline : nil, hasReminder ? remindAt : nil)
+              hasReminder ? remindAt : nil,
+              hasReminder && hasDeadline ? deadline : nil)
         dismiss()
     }
 }
@@ -457,53 +460,6 @@ struct ProjectTitleField: View {
         }
     }
 }
-
-/// Pick a due date for a card.
-///
-/// A card in LATER may not be dated today, tomorrow or in the past, so for those
-/// cards the picker simply starts at the day after tomorrow — the contradictory
-/// dates are never offered rather than being rejected after the fact.
-struct DatePickerSheet: View {
-    let item: TodoItem
-    let onPick: (Date) -> Void
-
-    @Environment(\.dismiss) private var dismiss
-    @State private var date: Date
-
-    init(item: TodoItem, onPick: @escaping (Date) -> Void) {
-        self.item = item
-        self.onPick = onPick
-        // No floor any more: a deadline never moves a card, so no stack can
-        // contradict one. A card in Later may be due tomorrow and stay in Later.
-        _date = State(initialValue: item.deadline ?? Scheduler.startOfToday())
-    }
-
-    var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                DatePicker("Deadline", selection: $date, displayedComponents: [.date])
-                    .datePickerStyle(.graphical)
-                    .padding(.horizontal)
-
-                Spacer(minLength: 0)
-            }
-            .navigationTitle(item.title)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Set") {
-                        onPick(date)
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
-}
-
 /// What opens when a card is tapped: its name, editable in place, with the same
 /// controls the compose sheet uses so both read the same way.
 ///
@@ -598,31 +554,27 @@ struct CardActionsSheet: View {
                         }
                         .disabled(store.categories.isEmpty)
 
-                        Toggle(isOn: hasDeadlineBinding(item).animation(.easeInOut(duration: 0.2))) {
-                            Label("Deadline", systemImage: "flag")
-                        }
-                        if item.deadline != nil {
-                            DatePicker("Due", selection: deadlineBinding(item),
-                                       displayedComponents: [.date])
-                                .datePickerStyle(.compact)
-                        }
-
                         Toggle(isOn: hasReminderBinding(item).animation(.easeInOut(duration: 0.2))) {
-                            Label("Remind me", systemImage: "bell")
+                            Label("Remind me", systemImage: "flag")
                         }
                         if item.remindAt != nil {
                             DatePicker("At", selection: reminderBinding(item),
                                        displayedComponents: [.date, .hourAndMinute])
                                 .datePickerStyle(.compact)
+                        }
 
-                            // Silences the reminder without losing the time it
-                            // was set for, which is why it is a field on the
-                            // card rather than just clearing the date.
-                            Toggle(isOn: Binding(
-                                get: { item.remindsEnabled },
-                                set: { store.setRemindsEnabled(item, $0) }
-                            )) {
-                                Label("Reminders on", systemImage: "bell.badge")
+                        // Shown once there is a day to start from — or when
+                        // the card already carries one, so a deadline left
+                        // behind by clearing a reminder is never stranded
+                        // somewhere it can be seen but not changed.
+                        if item.remindAt != nil || item.deadline != nil {
+                            Toggle(isOn: hasDeadlineBinding(item).animation(.easeInOut(duration: 0.2))) {
+                                Label("Deadline", systemImage: "flag.checkered")
+                            }
+                            if item.deadline != nil {
+                                DatePicker("Due", selection: deadlineBinding(item),
+                                           displayedComponents: [.date])
+                                    .datePickerStyle(.compact)
                             }
                         }
                     }
@@ -791,17 +743,23 @@ struct CardActionsSheet: View {
         )
     }
 
+    /// Opens on the day the card is to be started, not today: a finish line
+    /// before the start is the one date that cannot be meant.
+    private func deadlineDefault(_ item: TodoItem) -> Date {
+        item.remindAt.map { Scheduler.calendar.startOfDay(for: $0) } ?? Scheduler.startOfToday()
+    }
+
     private func hasDeadlineBinding(_ item: TodoItem) -> Binding<Bool> {
         Binding(
             get: { item.deadline != nil },
-            set: { $0 ? store.setDeadline(item, to: Scheduler.startOfToday())
+            set: { $0 ? store.setDeadline(item, to: deadlineDefault(item))
                       : store.clearDeadline(item) }
         )
     }
 
     private func deadlineBinding(_ item: TodoItem) -> Binding<Date> {
         Binding(
-            get: { item.deadline ?? Scheduler.startOfToday() },
+            get: { item.deadline ?? deadlineDefault(item) },
             set: { store.setDeadline(item, to: $0) }
         )
     }

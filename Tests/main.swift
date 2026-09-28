@@ -159,7 +159,7 @@ do {
     let p = Project(name: "ABC1234", categoryID: cat.id)
     var card = TodoItem(title: "slides, part 2", categoryID: cat.id); card.projectID = p.id
     let text = CardCSV.export(cards: [card], categories: [cat], projects: [p])
-    expect(text.hasPrefix("id,title,stack,category,deadline,completed,created,project,group,remind,reminds\n"),
+    expect(text.hasPrefix("id,title,stack,category,deadline,completed,created,project,group,remind\n"),
            "the deadline keeps the old date column's place; new ones go last")
     let back = CardCSV.parse(text, categories: [cat])
     expect(back.cards.first?.title == "slides, part 2", "title round-trips")
@@ -231,11 +231,17 @@ do {
     let text = CardCSV.export(cards: [c1, c2, c3], categories: [cat], projects: [grant, loose])
     let lines = text.split(separator: "\n").map(String.init)
     // Every new column goes last, so an older export still reads by position.
-    expect(lines[0].hasSuffix(",project,group,remind,reminds"),
+    expect(lines[0].hasSuffix(",project,group,remind"),
            "the newest columns are the last ones — got \(lines[0])")
     expect(lines[1].contains(",BETA,Grants,"), "a grouped project's cards carry its group")
     expect(lines[2].contains(",DELTA,,"), "no group: empty column")
-    expect(lines[3].hasSuffix(",,,,"), "no project, no group, no reminder: empty to the end")
+    expect(lines[3].hasSuffix(",,,"), "no project, no group, no reminder: empty to the end")
+
+    // An older export still carries a "reminds" column. It records something
+    // that no longer exists, and is read as the unknown column it now is.
+    let withDead = CardCSV.parse("title,remind,reminds\nold card,2026-10-02T09:00:00Z,no\n",
+                                 categories: [])
+    expect(withDead.cards.first?.remindAt != nil, "an older export's reminder still imports")
 
     let back = CardCSV.parse(text, categories: [cat])
     expect(back.projectGroups == [Project.key(for: "BETA"): "Grants"], "round-trip: the group comes back, empty ones do not")
@@ -624,7 +630,7 @@ do {
            "distantPast has not broken ordinary last-edit-wins")
 }
 
-// MARK: T — deadlines say when, and move nothing
+// MARK: T — the reminder says when to start, and moves nothing
 do {
     var calendar = Calendar(identifier: .gregorian)
     calendar.timeZone = TimeZone(identifier: "Europe/Brussels")!
@@ -636,27 +642,35 @@ do {
     }
     let now = at("2026-10-01 09:00")
 
-    expect(DeadlineUrgency.of(nil, now: now, calendar: calendar) == DeadlineUrgency.none,
-           "no deadline, no colour")
-    expect(DeadlineUrgency.of(at("2026-09-30 00:00"), now: now, calendar: calendar) == .overdue,
+    expect(Urgency.of(nil, now: now, calendar: calendar) == Urgency.none,
+           "no reminder, no colour")
+    expect(Urgency.of(at("2026-09-30 00:00"), now: now, calendar: calendar) == .overdue,
            "yesterday is overdue")
-    expect(DeadlineUrgency.of(at("2026-10-01 23:00"), now: now, calendar: calendar) == .due,
-           "today is due, whatever the clock says")
-    expect(DeadlineUrgency.of(at("2026-10-02 00:00"), now: now, calendar: calendar) == .approaching,
+    expect(Urgency.of(at("2026-10-01 23:00"), now: now, calendar: calendar) == .due,
+           "today is due, whatever the clock says — the day is what is being asked about")
+    expect(Urgency.of(at("2026-10-02 00:00"), now: now, calendar: calendar) == .approaching,
            "tomorrow is approaching")
-    expect(DeadlineUrgency.of(at("2026-10-04 00:00"), now: now, calendar: calendar) == .approaching,
+    expect(Urgency.of(at("2026-10-04 00:00"), now: now, calendar: calendar) == .approaching,
            "and so is the last day inside the window")
-    expect(DeadlineUrgency.of(at("2026-10-05 00:00"), now: now, calendar: calendar) == DeadlineUrgency.none,
+    expect(Urgency.of(at("2026-10-05 00:00"), now: now, calendar: calendar) == Urgency.none,
            "a day past the window is not yet worth colouring")
 
-    // The point of the whole change: a deadline in the past does not imply a
+    // The deadline is the far end of a job already started. Colouring it too
+    // would put two things on one card competing to say "now".
+    var dated = TodoItem(title: "write the case", bucket: .later)
+    dated.deadline = at("2026-09-28 00:00")
+    expect(Urgency.of(dated.remindAt, now: now, calendar: calendar) == Urgency.none,
+           "a deadline on its own colours nothing")
+
+    // The point of the whole change: a date in the past does not imply a
     // stack, so a four-day job can sit in Today for four days.
     var card = TodoItem(title: "write the case", bucket: .later,
-                        deadline: at("2026-09-28 00:00"))
-    _ = card
-    expect(card.bucket == .later, "an overdue deadline leaves the card where it was put")
+                        remindAt: at("2026-09-28 09:00"),
+                        deadline: at("2026-10-02 00:00"))
+    expect(card.bucket == .later, "an overdue reminder leaves the card where it was put")
     card.bucket = .today
-    expect(card.deadline == at("2026-09-28 00:00"), "moving a card keeps its deadline")
+    expect(card.remindAt == at("2026-09-28 09:00") && card.deadline == at("2026-10-02 00:00"),
+           "moving a card keeps both dates")
 }
 
 // MARK: U — a reminder waits to be answered
@@ -678,9 +692,6 @@ do {
     var later = card; later.remindAt = at("2026-10-02 08:00")
     expect(!Reminders.isOutstanding(later, now: now), "one still to come is not")
 
-    var off = card; off.remindsEnabled = false
-    expect(!Reminders.isOutstanding(off, now: now), "a card whose reminders are off says nothing")
-
     var done = card; done.bucket = .completed
     expect(!Reminders.isOutstanding(done, now: now), "finishing the work answers the reminder")
 
@@ -694,6 +705,14 @@ do {
     ReminderAnswer.snooze.apply(to: &snoozed, now: now, calendar: calendar)
     expect(snoozed.bucket == .later, "snoozing moves nothing")
     expect(snoozed.remindAt == at("2026-10-02 08:00"), "it asks again at the same time tomorrow")
+
+    // Counted from now, not from the reminder. A week-old reminder snoozed by
+    // adding a day would land in the past, go quiet and never ask again —
+    // which reads exactly like the button having eaten the card.
+    var stale = card; stale.remindAt = at("2026-09-24 08:00")
+    ReminderAnswer.snooze.apply(to: &stale, now: now, calendar: calendar)
+    expect(stale.remindAt == at("2026-10-02 08:00"), "a long-ignored reminder still lands tomorrow")
+    expect(Reminders.isOutstanding(stale, now: at("2026-10-02 09:00")), "and asks again then")
     expect(!Reminders.isOutstanding(snoozed, now: now), "and is quiet until then")
     expect(Reminders.isOutstanding(snoozed, now: at("2026-10-02 09:00")),
            "then it is waiting again — the answer given was to the last one")
@@ -706,21 +725,20 @@ do {
     expect(cleared.bucket == .later, "and moves nothing")
 
     // Only the future is scheduled, and only for cards still to do.
-    let cards = [card, later, off, done, moved]
+    let cards = [card, later, done, moved]
     expect(Reminders.scheduled(in: cards, now: now).map(\.title) == ["chase the letter"],
            "one notification pending, for the one reminder still to come")
     expect(Reminders.outstanding(in: cards, now: now).count == 1, "and one waiting to be answered")
 }
 
-// MARK: V — an old file's date becomes a deadline, and moves nothing
+// MARK: V — an old file's date becomes the day to start, and moves nothing
 do {
     let id = UUID().uuidString
     let old = #"{"id":"\#(id)","title":"renew the passports","bucket":"later","dueDate":"2026-09-20T00:00:00.000Z"}"#
     let card = try! dec.decode(TodoItem.self, from: Data(old.utf8))
-    expect(card.deadline != nil, "a date written by a version that filed cards is read as a deadline")
+    expect(card.deadline != nil, "a date written by a version that filed cards is read at all")
     expect(card.bucket == .later, "and the card stays exactly where that version left it")
-    expect(card.remindAt == nil, "migrating arms no reminders")
-    expect(card.remindsEnabled, "and reminders are on by default, so one set later will fire")
+    expect(card.remindAt == nil, "the promotion needs a clock, so it happens in the document pass")
 
     // The old key is never written back: a version that files cards cannot
     // file a date it cannot see.
@@ -735,49 +753,110 @@ do {
            "the deadline key is preferred over the legacy one")
 }
 
-// MARK: W — one button gathers everything asking for attention
+// MARK: W — one flag gathers the cards to pick up now
 do {
-    let cal = Calendar.current
-    let now = Date()
-    func day(_ n: Int) -> Date { cal.date(byAdding: .day, value: n, to: now)! }
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(identifier: "Europe/Brussels")!
+    func at(_ s: String) -> Date {
+        let f = DateFormatter()
+        f.calendar = calendar; f.timeZone = calendar.timeZone
+        f.dateFormat = "yyyy-MM-dd HH:mm"
+        return f.date(from: s)!
+    }
+    let now = at("2026-10-01 09:00")
 
-    var overdue = TodoItem(title: "renew the passports", bucket: .later)
-    overdue.deadline = day(-2)
-    var today = TodoItem(title: "ring the surveyor", bucket: .inbox)
-    today.deadline = now
-    var soon = TodoItem(title: "book the hall", bucket: .inbox)
-    soon.deadline = day(1)
-    var distant = TodoItem(title: "plan the trip", bucket: .later)
-    distant.deadline = day(30)
-    var reminded = TodoItem(title: "chase the letter", bucket: .later)
-    reminded.remindAt = day(-1)          // fired, unanswered, no deadline at all
-    var answered = TodoItem(title: "pay the bill", bucket: .today)
-    answered.remindAt = day(-1)
-    answered.reminderAnsweredAt = now
-    var done = TodoItem(title: "collect the keys", bucket: .completed)
-    done.deadline = day(-5)
+    func card(_ title: String, _ bucket: Bucket,
+              remind: String? = nil, due: String? = nil) -> TodoItem {
+        TodoItem(title: title, bucket: bucket,
+                 remindAt: remind.map(at), deadline: due.map(at))
+    }
 
-    let cards = [overdue, today, soon, distant, reminded, answered, done]
+    let overdue = card("renew the passports", .later, remind: "2026-09-29 09:00")
+    let thisMorning = card("chase the letter", .later, remind: "2026-10-01 08:00")
+    // Not fired yet, so the review is not holding it — but it is today's work.
+    let thisEvening = card("ring the surveyor", .inbox, remind: "2026-10-01 17:00")
+    let tomorrow = card("book the hall", .inbox, remind: "2026-10-02 09:00")
+    let distant = card("plan the trip", .later, remind: "2026-10-30 09:00")
+    // A long job: started days ago, due at the end of the month.
+    let running = card("write the case", .today, remind: "2026-09-28 09:00", due: "2026-10-31 00:00")
+    var done = card("collect the keys", .completed, remind: "2026-09-26 09:00")
+    done.bucket = .completed
 
-    expect(Attention.needed(overdue, now: now), "an overdue deadline asks for attention")
-    expect(Attention.needed(today, now: now), "so does one that has arrived")
-    expect(!Attention.needed(soon, now: now),
-           "one still to come does not — yellow is a warning, not a thing to deal with now")
-    expect(!Attention.needed(distant, now: now), "and a distant deadline certainly does not")
-    expect(Attention.needed(reminded, now: now),
-           "a reminder waiting on an answer counts even with no deadline — the two claims are different")
-    expect(!Attention.needed(answered, now: now), "an answered reminder is settled")
-    expect(!Attention.needed(done, now: now), "and a finished card asks for nothing, however late it was")
+    expect(Attention.needed(overdue, now: now, calendar: calendar),
+           "a reminder that came and went asks to be picked up")
+    expect(Attention.needed(thisMorning, now: now, calendar: calendar), "so does one that fired today")
+    expect(Attention.needed(thisEvening, now: now, calendar: calendar),
+           "and one set for later today, which the review has not got yet")
+    expect(!Reminders.isOutstanding(thisEvening, now: now),
+           "the flag is wider than the review, on purpose")
+    expect(!Attention.needed(tomorrow, now: now, calendar: calendar),
+           "tomorrow is orange — being shown, not asked about")
+    expect(!Attention.needed(distant, now: now, calendar: calendar), "and a distant one is neither")
+    expect(Attention.needed(running, now: now, calendar: calendar),
+           "a four-day job is gathered by its start, not by its far-off deadline")
+    expect(!Attention.needed(done, now: now, calendar: calendar),
+           "and a finished card asks for nothing, however late it was")
 
-    expect(Attention.count(in: cards, now: now) == 3, "so the badge reads three")
+    let all = [overdue, thisMorning, thisEvening, tomorrow, distant, running, done]
+    expect(Attention.count(in: all, now: now) == 4, "so the badge reads four")
 
-    // The button and the red edge must agree, or the badge counts cards the
-    // user cannot see the mark on.
-    for card in cards where !card.isCompleted && card.remindAt == nil {
-        expect(Attention.needed(card, now: now)
-               == DeadlineUrgency.of(card.deadline, now: now).isRed,
+    // The flag and the red edge must agree, or the badge counts cards the user
+    // cannot see the mark on.
+    for item in all {
+        let red = !item.isCompleted && Urgency.of(item.remindAt, now: now, calendar: calendar).isRed
+        expect(Attention.needed(item, now: now, calendar: calendar) == red,
                "the filter takes exactly the cards the list draws a red edge on")
     }
+}
+
+// MARK: X — a deadline with no start becomes the day to start
+do {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(identifier: "Europe/Brussels")!
+    func at(_ s: String) -> Date {
+        let f = DateFormatter()
+        f.calendar = calendar; f.timeZone = calendar.timeZone
+        f.dateFormat = "yyyy-MM-dd HH:mm"
+        return f.date(from: s)!
+    }
+    let now = at("2026-10-01 09:00")
+
+    var past = TodoItem(title: "renew the passports", bucket: .later)
+    past.deadline = at("2026-09-20 00:00")
+    let edited = past.modifiedAt
+
+    var future = TodoItem(title: "book the hall", bucket: .inbox)
+    future.deadline = at("2026-10-20 00:00")
+
+    // Already has both: written by this version, so nothing to promote.
+    let whole = TodoItem(title: "write the case", bucket: .today,
+                         remindAt: at("2026-10-05 09:00"), deadline: at("2026-10-31 00:00"))
+
+    var document = StoreDocument.starter()
+    document.cards = [past, future, whole]
+    let after = document.promotingOrphanDeadlines(now: now, calendar: calendar)
+
+    expect(after.cards[0].remindAt == at("2026-09-20 09:00"),
+           "the old date becomes the day to pick the card up, at nine")
+    expect(after.cards[0].deadline == nil, "and is no longer a finish line with no start")
+    expect(after.cards[0].bucket == .later, "the card does not move")
+    expect(after.cards[0].modifiedAt == edited,
+           "and is not stamped as edited: every device computes this from the same file")
+    expect(after.cards[0].reminderAnsweredAt == at("2026-09-20 09:00"),
+           "a moment already past arrives answered, so a year of old dates is not a backlog")
+    expect(!Reminders.isOutstanding(after.cards[0], now: now), "so the review stays empty")
+    expect(Attention.needed(after.cards[0], now: now, calendar: calendar),
+           "but the card is still red, which is the part worth seeing")
+
+    expect(after.cards[1].remindAt == at("2026-10-20 09:00"), "a date still to come is promoted too")
+    expect(after.cards[1].reminderAnsweredAt == nil, "and will ask, because it has not yet")
+
+    expect(after.cards[2].remindAt == at("2026-10-05 09:00")
+           && after.cards[2].deadline == at("2026-10-31 00:00"),
+           "a card that already has both is left alone")
+
+    expect(after.promotingOrphanDeadlines(now: now, calendar: calendar) == after,
+           "and promoting is stable, so a merge does not keep rewriting the file")
 }
 
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")

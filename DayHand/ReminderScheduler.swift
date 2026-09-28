@@ -199,9 +199,9 @@ struct ReminderReviewView: View {
         if let deadline = card.deadline {
             LabeledContent {
                 Text(Scheduler.relativeLabel(for: deadline, now: now))
-                    .foregroundStyle(DeadlineUrgency.of(deadline, now: now).tint ?? .secondary)
+                    .foregroundStyle(.secondary)
             } label: {
-                Label("Deadline", systemImage: "flag")
+                Label("Deadline", systemImage: "flag.checkered")
             }
             .font(.subheadline)
         }
@@ -241,13 +241,13 @@ struct ReminderReviewView: View {
     }
 }
 
-extension DeadlineUrgency {
-    /// Yellow while it is coming, red once it is here or past. Red stays
+extension Urgency {
+    /// Orange while it is coming, red once it is here or past. Red stays
     /// reserved for exactly that.
     var tint: Color? {
         switch self {
         case .none:        return nil
-        case .approaching: return .yellow
+        case .approaching: return .orange
         case .due, .overdue: return .red
         }
     }

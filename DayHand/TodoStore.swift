@@ -6,7 +6,7 @@ import SwiftUI
 /// data.
 ///
 /// An undated card sits in exactly the bucket it was put in. A dated one is
-/// ordered by its deadline but never moved by it, and
+/// ordered by its dates but never moved by them, and
 /// until then the date only reorders it within its bucket.
 @MainActor
 final class TodoStore: ObservableObject {
@@ -107,29 +107,31 @@ final class TodoStore: ObservableObject {
         bucket: Bucket = .inbox,
         categoryID: UUID?? = nil,
         projectID: UUID? = nil,
-        deadline: Date? = nil,
-        remindAt: Date? = nil
+        remindAt: Date? = nil,
+        deadline: Date? = nil
     ) {
         addCard(
             title: title,
             bucket: bucket,
             categoryID: categoryID ?? defaultCategoryID,
             projectID: projectID,
-            deadline: deadline,
-            remindAt: remindAt
+            remindAt: remindAt,
+            deadline: deadline
         )
     }
 
     private func addCard(title: String, bucket: Bucket, categoryID: UUID?, projectID: UUID?,
-                         deadline: Date?, remindAt: Date?) {
+                         remindAt: Date?, deadline: Date?) {
         let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
 
         var card = TodoItem(title: trimmed, bucket: bucket, categoryID: categoryID, projectID: projectID)
-        // Kept exactly as chosen. A deadline no longer decides which stack a
-        // card belongs in, so there is nothing for it to contradict.
-        card.deadline = deadline.map { Scheduler.calendar.startOfDay(for: $0) }
+        // Kept exactly as chosen. Neither date decides which stack a card
+        // belongs in, so there is nothing for them to contradict. A deadline
+        // without a reminder is dropped: it is the far end of a job with no
+        // start, which the editor does not offer and nothing would read.
         card.remindAt = remindAt
+        card.deadline = remindAt == nil ? nil : deadline.map { Scheduler.calendar.startOfDay(for: $0) }
 
         items.append(card)
         save()
@@ -148,29 +150,28 @@ final class TodoStore: ObservableObject {
             card.bucketBeforeCompletion = nil
             card.completedAt = nil
             // Both dates survive the move. Nothing files a card any more, so a
-            // deadline and a stack cannot contradict each other — a four-day
-            // job sits in Today for four days and is still due on the fourth.
+            // date and a stack cannot contradict each other — a four-day job
+            // sits in Today for four days and is still due on the fourth.
         }
     }
 
-    /// When the work is due. It orders the card inside its stack and colours
-    /// its edge as the day approaches; it never moves it.
+    /// When the work must be done, for a job of more than a day. It is shown
+    /// on the card and nothing else: the reminder is what colours an edge.
     func setDeadline(_ item: TodoItem, to date: Date) {
         update(item) { $0.deadline = Scheduler.calendar.startOfDay(for: date) }
     }
 
-    /// When to be reminded. Setting a time re-arms the reminder: an answer
-    /// given to the previous one does not carry over to this.
+    /// When to pick the card up. Setting a time re-arms the reminder: an
+    /// answer given to the previous one does not carry over to this.
+    ///
+    /// Clearing it leaves the deadline where it is. The job may still have a
+    /// day it must be finished by, and setting a reminder again brings the
+    /// field back with its value intact.
     func setReminder(_ item: TodoItem, at date: Date?) {
         update(item) { card in
             card.remindAt = date
             card.reminderAnsweredAt = nil
         }
-        rescheduleNotifications()
-    }
-
-    func setRemindsEnabled(_ item: TodoItem, _ enabled: Bool) {
-        update(item) { $0.remindsEnabled = enabled }
         rescheduleNotifications()
     }
 
@@ -225,7 +226,7 @@ final class TodoStore: ObservableObject {
     private static let dayCheckInterval: TimeInterval = 15 * 60
 
     /// The day turning changes what the labels say and what colour an edge is
-    /// — "Tomorrow" becomes "Today", an approaching deadline becomes due — so
+    /// — "Tomorrow" becomes "Today", an approaching reminder becomes due — so
     /// the list is nudged to redraw. Nothing moves; that is the point.
     func refreshIfDayChanged(now: Date = Date()) {
         guard Scheduler.startOfToday(now) != lastFiledDay else { return }
@@ -845,7 +846,7 @@ final class TodoStore: ObservableObject {
     }
 
     private func apply(_ incoming: StoreDocument) {
-        let document = incoming.canonicalizingProjects()
+        let document = incoming.canonicalizingProjects().promotingOrphanDeadlines()
         categories = document.categories.isEmpty ? CardCategory.defaults : document.categories
         items = document.cards
         deletedCards = document.deletedCards

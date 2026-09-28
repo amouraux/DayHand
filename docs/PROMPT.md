@@ -22,17 +22,34 @@ that takes four days can sit in Today for four days, and nothing ever marks it
 late.
 
 **Neither date moves a card. Ever.** That is the rule the rest of this section
-exists to protect, and the two fields are deliberately separate questions:
+exists to protect. There is one date, and optionally its far end:
 
-- **Deadline** (a day) — when the work is due. It orders the card inside its
-  stack and colours the card's edge as the day approaches. It does not move it.
-- **Remind me** (a day and a time) — when to be interrupted about it. A
-  different question, asked separately, because "due Friday" and "poke me
-  Wednesday evening" are not the same thing.
+- **Remind me** (a day and a time) — when to *pick the card up*. It fires a
+  notification, colours the card's edge as it approaches, orders the card
+  inside its stack, and is what the flag gathers. Offered first, because for
+  most cards it is the only date worth having.
+- **Deadline** (a day) — when the work must be *finished*, for a job of more
+  than a day. Shown on the card and nothing else: it colours nothing and fires
+  nothing.
 
-Moving a card by hand keeps both. There is nothing for a stack and a date to
-disagree about any more, so there is no rule dropping one to satisfy the other,
-and a card in Later may be due tomorrow and stay in Later.
+**The deadline is only offered once a reminder exists.** A finish line with no
+start is a date the app can do nothing with — it cannot ask about it, cannot
+colour by it, and cannot tell you when to begin. Asking "when is it due?"
+before "when will you start?" is what made the earlier version of this confusing.
+
+The distinction is the whole reason a four-day job works here. "Write the
+grant case" is picked up on Monday and due on the 23rd: the reminder is
+Monday, and Monday is what turns the card red. A list that only knew the 23rd
+would leave it grey until the day it was already too late.
+
+Moving a card by hand keeps both dates. There is nothing for a stack and a date
+to disagree about, so there is no rule dropping one to satisfy the other, and a
+card in Later may be started tomorrow and stay in Later.
+
+A deadline can outlive its reminder — answering a reminder clears it, and the
+job still has a day it must be done by — so the editor also shows the deadline
+whenever a card already carries one. A date that can be seen but not changed is
+worse than one that was never offered.
 
 ## Identity
 
@@ -279,15 +296,19 @@ Each card shows:
   no taller. Yellow is darkened to ochre in light mode. Struck through and
   dimmed when completed. There is no way to remove a project from the card face
   — that is the editor's job.
-- Its **deadline** as a relative label ("Today", "Tomorrow", "Tue, 1 Sep"), and
-  a bell beside it when a reminder is armed. A card with only a reminder shows
-  that instead.
-- **A coloured edge for how close the deadline is**: yellow while it is coming —
+- Its dates as relative labels ("Today", "Tomorrow", "Tue, 1 Sep"), **start
+  then finish, in that order**: a plain **flag** for the reminder — the day to
+  pick the card up — and, when the card has one, a **chequered flag** for the
+  deadline after it. The chequered flag stays grey while the plain one carries
+  the colour, because only one of the two is saying "now". Both fit on one
+  line; the pair shrinks slightly rather than wrapping.
+- **A coloured edge for how close the reminder is**: orange while it is coming —
   within three days, long enough to act on and short enough that a wall of
-  yellow does not become the normal state of the list — and red once it is here
-  or past. Red stays reserved for exactly that. The edge is the deadline's
-  whole voice: it never moves the card, so how the card looks is the only thing
-  it can say.
+  orange does not become the normal state of the list — and red once it is here
+  or past. Red stays reserved for exactly that. The edge is the reminder's
+  whole voice before it fires: it never moves the card, so how the card looks
+  is the only thing it can say. The deadline colours nothing; two things on one
+  card competing to say "now" is how the earlier version got confusing.
 - For completed cards with no date, a caption naming the stack it came from.
 
 On a multi-line card the checkbox and category icon centre vertically rather
@@ -295,9 +316,10 @@ than sitting on the first line.
 
 ## Sort order
 
-**Within INBOX, TODAY, TOMORROW and LATER**: cards carrying a deadline come
-first, soonest at the top; the rest follow. A deadline orders a card — that and
-the colour of its edge are the only things it does.
+**Within INBOX, TODAY, TOMORROW and LATER**: cards carrying a date come first,
+soonest at the top; the rest follow. The reminder orders a card, falling back
+to the deadline for a card that has only that — ordering and the colour of the
+edge are the only things a date does.
 
 Alphabetical within each group by the **displayed text** (project + title),
 case-insensitive and number-aware (so "item 2" precedes "item 10"). Sorting by
@@ -335,15 +357,15 @@ The **bell in the button row** opens the review and answers reminders one at a
 time. It appears only while a reminder is waiting.
 
 The **badged flag beside the jump-to-Today button** narrows the card list to
-everything asking for attention — every **red** card, plus every card a
-reminder is waiting on. A deadline that has arrived and an unanswered question
-are two different claims on the user, but from where they are sitting both mean
-the same thing, so one button gathers both rather than two competing for the
-same corner. What it gathers is mostly deadlines, which is why it is a flag and
-not a second bell. The cards appear in their own stacks, where they can be
-ticked off or swiped like anything else.
+every **red** card: a reminder due today, or one that came and went. It wears
+the same flag the cards do. The cards appear in their own stacks, where they
+can be ticked off or swiped like anything else.
 
-**Yellow is deliberately left out.** A card three days off is being shown, not
+It is wider than the review, on purpose. A reminder set for five this afternoon
+has not fired, so nothing is waiting on an answer — but it is today's work and
+belongs under the flag. The bell holds questions; the flag holds the day.
+
+**Orange is deliberately left out.** A card three days off is being shown, not
 asked about, and a list of things to deal with now loses its meaning the moment
 it also contains things to deal with later.
 
@@ -360,17 +382,23 @@ Each waiting reminder offers four answers and one non-answer:
 
 - **Move to Today** / **Move to Tomorrow** — moves the card and is done with
   the reminder.
-- **Snooze until tomorrow** — asks again at the same time the next day. The
-  card does not move. A card has no recurrence of its own, and what is being
-  deferred is "not now".
-- **Clear the reminder** — done with it. The **deadline is a separate field and
-  is left exactly as it was**.
+- **Snooze until tomorrow** — asks again at the same time of day tomorrow,
+  counted from **now**, not from the reminder. A reminder left alone for a week
+  is the usual case, and adding a day to it would land in the past: the card
+  would go quiet and never ask again, which reads exactly like the button
+  having eaten it. The card does not move.
+- **Clear the reminder** — done with it. The **deadline is left exactly as it
+  was**: the job may still have a day it must be finished by, and the editor
+  offers the field again the moment a reminder is set.
 - **Leave it here for now** — not an answer, and says so. Without it, closing
   the sheet looks like a way of losing the card.
 
-**Whether reminders fire at all is a field on the card**, on by default, so one
-can be silenced without losing the time it was set for. Completing or deleting
-a card cancels its reminders.
+A reminder is silenced by clearing it. There is no separate switch for
+whether one fires: a card with a date that will not go off is a card that lies
+about what it is going to do, and the field only ever meant "clear this, but
+keep the date I can no longer see".
+
+Completing or deleting a card cancels its reminders.
 
 Pending notifications are rewritten wholesale from the cards after every change
 that could affect them, rather than patched one at a time — the set is a
@@ -742,7 +770,23 @@ keys it does not know. It cannot file a date it cannot see. The cost is that
 such a version shows no dates at all, which is the right way round: cards sit
 still and look bare, rather than moving on their own.
 
-Migrating creates no reminders, and moves nothing.
+**A card whose only date is a deadline becomes a card to start that day.**
+Every date written before this scheme — an old `dueDate`, or a deadline written
+by the version in between — meant one thing, and that thing is the reminder
+now. Leaving it as a deadline would leave a finish line with no start: a date
+that colours nothing, asks nothing, and that the editor no longer offers.
+
+Promote it to nine in the morning on that day, since the old date carried no
+time. The pass is **derived** — every device computes the same thing from the
+same file — so nothing is stamped as edited, and running it twice changes
+nothing.
+
+A promoted reminder whose moment has already passed **arrives answered**. The
+card still shows red, which is the part worth seeing; what it must not do is
+drop a year of old dates into the review as a backlog of questions nobody
+asked. One still to come is left unanswered, and will ask.
+
+Migrating moves nothing.
 
 **Merging must not need to know which device is "newer".** Give every card,
 category and project a `modifiedAt`, and resolve each one independently — latest

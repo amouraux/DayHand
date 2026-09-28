@@ -3,7 +3,6 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject private var store: TodoStore
 
-    @State private var dateItem: TodoItem?
     /// The card whose stack is being picked, from a tap.
     @State private var stackPickItem: TodoItem?
     /// The card being edited in full, from a right swipe.
@@ -165,7 +164,7 @@ struct ContentView: View {
                     projects: store.projects,
                     projectLastUsed: store.projectLastUsed,
                     defaultCategoryID: store.defaultCategoryID
-                ) { title, bucket, categoryID, projectChoice, deadline, remindAt in
+                ) { title, bucket, categoryID, projectChoice, remindAt, deadline in
                     // A new project is only created now, when the card is, so
                     // a cancelled sheet leaves nothing behind. It takes the
                     // category chosen for this first card.
@@ -185,15 +184,10 @@ struct ContentView: View {
                             bucket: bucket,
                             categoryID: .some(categoryID),
                             projectID: projectID,
-                            deadline: deadline,
-                            remindAt: remindAt
+                            remindAt: remindAt,
+                            deadline: deadline
                         )
                     }
-                }
-            }
-            .sheet(item: $dateItem) { item in
-                DatePickerSheet(item: item) { date in
-                    store.setDeadline(item, to: date)
                 }
             }
             .sheet(isPresented: $isFiltering) {
@@ -503,10 +497,11 @@ struct ContentView: View {
         }
     }
 
-    /// Shows the cards asking for attention — a close deadline, or a reminder
-    /// waiting on an answer — in their own stacks. The bell in the button row
-    /// answers reminders one at a time; this one puts the whole lot back among
-    /// the cards, where they can be ticked off or swiped like anything else.
+    /// Shows the cards to pick up now — every red card, whether its reminder
+    /// has fired yet or not — in their own stacks. The bell in the button row
+    /// answers the ones that have fired, one at a time; this one puts the
+    /// whole day back among the cards, where they can be ticked off or swiped
+    /// like anything else.
     private var attentionFilterButton: some View {
         Button {
             withAnimation(.easeInOut(duration: 0.2)) {
@@ -518,8 +513,9 @@ struct ContentView: View {
                 }
             }
         } label: {
-            // A flag, not a bell: what it gathers is mostly deadlines, and the
-            // bell in the button row already means "a reminder is waiting".
+            // A flag, not a bell: it gathers a whole day's work, while the
+            // bell in the button row means the narrower "a reminder is
+            // waiting on an answer". The same flag the cards carry.
             Image(systemName: "flag.fill")
                 .font(.body.weight(.semibold))
                 .foregroundStyle(attentionOnly ? Color.white : Color.red)
@@ -707,7 +703,7 @@ struct ContentView: View {
                     ContentUnavailableView(
                         "Nothing to address",
                         systemImage: "flag",
-                        description: Text("Nothing is due today, and every reminder has been answered.")
+                        description: Text("No card is waiting to be picked up today.")
                     )
                 } else if searchTerms.isEmpty {
                     ContentUnavailableView(
