@@ -13,6 +13,9 @@ struct ContentView: View {
     /// Narrows the list to the cards asking for attention, so they can be dealt
     /// with among their own stacks rather than in a sheet.
     @State private var attentionOnly = false
+    /// Ties the floating buttons together so one appearing or leaving grows
+    /// out of the row rather than fading in on top of it.
+    @Namespace private var chrome
     /// When the More popover last closed, so the click that dismissed it is not
     /// also read as a click asking for it back.
     @State private var settingsDismissedAt: Date?
@@ -113,13 +116,13 @@ struct ContentView: View {
                 // It stands down for the search bar, which wants the width —
                 // and on a handful of results there is nothing to jump over.
                 if !isSearching {
-                    HStack(spacing: 12) {
+                    chromeCluster {
                         // Only while something is waiting: a count of nothing
                         // is not worth a permanent control.
                         if waitingCount > 0 || attentionOnly {
-                            attentionFilterButton
+                            attentionFilterButton.glassChromeID("flag", in: chrome)
                         }
-                        todayButton(proxy)
+                        todayButton(proxy).glassChromeID("today", in: chrome)
                     }
                     .padding(.trailing, 16)
                     .padding(.top, 6)
@@ -133,15 +136,16 @@ struct ContentView: View {
                 // Filter leads: on a wide window it is the sidebar's switch,
                 // and a switch belongs against the edge the sidebar comes from.
                 // The two narrowing tools then sit together, with More last.
-                HStack(spacing: 12) {
-                    filterButton
-                    searchButton
-                    settingsButton
+                chromeCluster {
+                    filterButton.glassChromeID("filter", in: chrome)
+                    searchButton.glassChromeID("search", in: chrome)
+                    settingsButton.glassChromeID("more", in: chrome)
                     // Only while something is waiting. A permanent bell would
                     // be a button that usually does nothing; this one appearing
-                    // is itself the news.
+                    // is itself the news — so it grows out of the row rather
+                    // than fading in on top of it.
                     if !store.outstandingReminders.isEmpty {
-                        remindersButton
+                        remindersButton.glassChromeID("bell", in: chrome)
                     }
                 }
                 .padding(.leading, 22)
@@ -375,17 +379,7 @@ struct ContentView: View {
                         .foregroundStyle(Color.accentColor)
                 }
             }
-            .font(.body.weight(.semibold))
-            .frame(width: 48, height: 48)
-            .background(Circle().fill(Color(.secondarySystemGroupedBackground)))
-            .overlay(
-                Circle().strokeBorder(
-                    isFiltered ? filterTint.opacity(0.85) : Color.primary.opacity(0.10),
-                    lineWidth: isFiltered ? 2 : 1
-                )
-            )
-            .shadow(color: .black.opacity(0.18), radius: 6, y: 3)
-            .contentShape(Circle())
+            .floatingChrome(state: isFiltered ? filterTint : nil)
         }
         .buttonStyle(.plain)
         .accessibilityLabel(
@@ -406,18 +400,8 @@ struct ContentView: View {
             searchFocused = isSearching
         } label: {
             Image(systemName: isSearching ? "magnifyingglass.circle.fill" : "magnifyingglass")
-                .font(.body.weight(.semibold))
                 .foregroundStyle(searchTerms.isEmpty ? Color.primary.opacity(0.75) : Color.accentColor)
-                .frame(width: 48, height: 48)
-                .background(Circle().fill(Color(.secondarySystemGroupedBackground)))
-                .overlay(
-                    Circle().strokeBorder(
-                        searchTerms.isEmpty ? Color.primary.opacity(0.10) : Color.accentColor.opacity(0.85),
-                        lineWidth: searchTerms.isEmpty ? 1 : 2
-                    )
-                )
-                .shadow(color: .black.opacity(0.18), radius: 6, y: 3)
-                .contentShape(Circle())
+                .floatingChrome(state: searchTerms.isEmpty ? nil : .accentColor)
         }
         .buttonStyle(.plain)
         .keyboardShortcut("f", modifiers: .command)
@@ -517,12 +501,12 @@ struct ContentView: View {
             // bell in the button row means the narrower "a reminder is
             // waiting on an answer". The same flag the cards carry.
             Image(systemName: "flag.fill")
-                .font(.body.weight(.semibold))
                 .foregroundStyle(attentionOnly ? Color.white : Color.red)
-                .frame(width: 48, height: 48)
-                .background(Circle().fill(attentionOnly ? Color.red
-                                          : Color(.secondarySystemGroupedBackground)))
-                .overlay(Circle().strokeBorder(Color.red.opacity(0.85), lineWidth: 2))
+                // Solid while it is on. Tinted glass says "a filter is
+                // running" more quietly than this needs saying: the list on
+                // screen is not the whole list.
+                .floatingChrome(state: .red, solid: attentionOnly ? .red : nil)
+                // After the fill, so the glass does not clip it away.
                 .overlay(alignment: .topTrailing) {
                     if waitingCount > 0 && !attentionOnly {
                         Text("\(waitingCount)")
@@ -535,8 +519,6 @@ struct ContentView: View {
                             .offset(x: 4, y: -2)
                     }
                 }
-                .shadow(color: .black.opacity(0.18), radius: 6, y: 3)
-                .contentShape(Circle())
         }
         .buttonStyle(.plain)
         .accessibilityLabel(attentionOnly ? "Show all cards" : "Show cards to address")
@@ -545,13 +527,8 @@ struct ContentView: View {
     private var remindersButton: some View {
         Button { isShowingReminders = true } label: {
             Image(systemName: "bell.badge.fill")
-                .font(.body.weight(.semibold))
                 .foregroundStyle(Color.red)
-                .frame(width: 48, height: 48)
-                .background(Circle().fill(Color(.secondarySystemGroupedBackground)))
-                .overlay(Circle().strokeBorder(Color.red.opacity(0.85), lineWidth: 2))
-                .shadow(color: .black.opacity(0.18), radius: 6, y: 3)
-                .contentShape(Circle())
+                .floatingChrome(state: .red)
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Reminders waiting")
@@ -570,12 +547,8 @@ struct ContentView: View {
             isShowingSettings.toggle()
         } label: {
             Image(systemName: "ellipsis")
-                .font(.body.weight(.semibold))
                 .foregroundStyle(Color.primary.opacity(0.75))
-                .frame(width: 48, height: 48)
-                .background(Circle().fill(Color(.secondarySystemGroupedBackground)))
-                .overlay(Circle().strokeBorder(Color.primary.opacity(0.10)))
-                .shadow(color: .black.opacity(0.18), radius: 6, y: 3)
+                .floatingChrome()
                 .contentShape(Circle())
         }
         .buttonStyle(.plain)
@@ -600,13 +573,8 @@ struct ContentView: View {
             jumpToToday(proxy, animated: true)
         } label: {
             Image(systemName: "sun.max.fill")
-                .font(.body.weight(.semibold))
                 .foregroundStyle(Bucket.today.tint)
-                .frame(width: 48, height: 48)
-                .background(Circle().fill(Color(.secondarySystemGroupedBackground)))
-                .overlay(Circle().strokeBorder(Color.primary.opacity(0.10)))
-                .shadow(color: .black.opacity(0.18), radius: 6, y: 3)
-                .contentShape(Circle())
+                .floatingChrome()
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Scroll to Today")
@@ -854,6 +822,116 @@ struct ContentView: View {
         .padding(.trailing, 22)
         .padding(.bottom, 28)
         .accessibilityLabel("Add card to inbox")
+    }
+}
+
+/// The look of a control that floats over the card stack: a 48pt disc with a
+/// ring that defines it whatever happens to be scrolled behind.
+///
+/// Glass where the system has it, because the fill was never carrying state.
+/// Every one of these buttons says what it is with its icon and its ring — the
+/// fill is the same grey in every one of them — so letting the cards show
+/// through costs nothing, and four opaque discs stop reading like holes
+/// punched in the list.
+///
+/// The ring is why this works on glass at all: over an empty stretch of page
+/// background there is nothing to refract, and a glass disc would have only
+/// its own rim to prove it is there.
+extension View {
+    /// Groups floating buttons so the system can render them as one sheet of
+    /// glass and animate one arriving. `spacing: 0` on purpose: the buttons
+    /// are 12pt apart so a thumb aimed at one does not catch the next, and
+    /// letting them flow into each other would undo that — four controls that
+    /// read as one lozenge are worse than four that read as four.
+    @ViewBuilder
+    func chromeCluster<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
+        let row = HStack(spacing: 12) { content() }
+        if #available(iOS 26.0, macOS 26.0, *) {
+            GlassEffectContainer(spacing: 0) { row }
+        } else {
+            row
+        }
+    }
+
+    /// Names a button inside a cluster, so the container knows which shape is
+    /// which when one comes or goes.
+    @ViewBuilder
+    func glassChromeID(_ id: String, in namespace: Namespace.ID) -> some View {
+        if #available(iOS 26.0, macOS 26.0, *) {
+            glassEffectID(id, in: namespace)
+        } else {
+            self
+        }
+    }
+}
+
+/// The look of a control that floats over the card stack: a 48pt disc with a
+/// ring that defines it whatever happens to be scrolled behind.
+///
+/// Glass where the system has it. The fill was never carrying state — every
+/// one of these buttons says what it is with its icon and its ring — so
+/// letting the cards show through costs nothing, and four opaque discs stop
+/// reading like holes punched in the list.
+///
+/// The ring is why this works on glass at all: over an empty stretch of page
+/// background there is nothing to refract, and a glass disc would otherwise
+/// have only its own rim to prove it is there.
+private struct FloatingChrome: ViewModifier {
+    /// The colour of whatever this button is currently doing — filtering,
+    /// holding a query, waiting on an answer — or nil at rest.
+    ///
+    /// It thickens the ring *and* tints the glass. The ring alone was enough
+    /// on an opaque disc; on glass it is not. Measured on the phone: the
+    /// bell's 2pt red ring all but disappears against a dark backdrop, and
+    /// that bell appearing is the one thing in the app meant to be noticed.
+    var state: Color?
+    /// A fill that replaces the glass entirely, set while the control is
+    /// changing what the list shows. Glass is for chrome at rest; a filter
+    /// that is on has to say so louder than a tint can.
+    var solid: Color?
+
+    private var ring: Color { state?.opacity(0.85) ?? .primary.opacity(0.10) }
+    private var lineWidth: CGFloat { state == nil ? 1 : 2 }
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        let shaped = content
+            .font(.body.weight(.semibold))
+            .frame(width: 48, height: 48)
+
+        if let solid {
+            edged(shaped.background(Circle().fill(solid)), shadowed: true)
+        } else if #available(iOS 26.0, macOS 26.0, *) {
+            // No shadow: the glass carries its own depth, and a drop shadow
+            // under it reads as two light sources.
+            edged(shaped.glassEffect(glass, in: .circle), shadowed: false)
+        } else {
+            edged(shaped.background(Circle().fill(Color(.secondarySystemGroupedBackground))),
+                  shadowed: true)
+        }
+    }
+
+    @available(iOS 26.0, macOS 26.0, *)
+    private var glass: Glass {
+        // Light enough to stay glass rather than becoming a coloured disc:
+        // the tint is there to carry the ring, not to replace the fill.
+        guard let state else { return .regular.interactive() }
+        return .regular.tint(state.opacity(0.28)).interactive()
+    }
+
+    private func edged(_ view: some View, shadowed: Bool) -> some View {
+        view
+            .overlay(Circle().strokeBorder(ring, lineWidth: lineWidth))
+            .shadow(color: .black.opacity(shadowed ? 0.18 : 0), radius: 6, y: 3)
+            .contentShape(Circle())
+    }
+}
+
+extension View {
+    /// Applied by every button that floats over the cards. The one place the
+    /// glass is decided, so the two paths cannot drift apart.
+    func floatingChrome(state: Color? = nil, solid: Color? = nil) -> some View {
+        modifier(FloatingChrome(state: state, solid: solid))
     }
 }
 

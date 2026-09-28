@@ -153,12 +153,41 @@ scrolling down. If Today is empty, fall back to the nearest non-empty section
 below it so the jump never silently does nothing.
 
 A small round button in the **top-right** corner scrolls back to that same Today
-position, animated. Give these floating buttons a **solid background and a
-shadow**, not a thin material: over a pale list background a material-filled
-circle nearly disappears. It sits alone, mirroring the + button, so nothing
-crowds the top of the list and nothing sits close enough to Today to be hit by
-mistake. It stands down while the search bar is open: the bar wants the width,
+position, animated. It sits alone, mirroring the + button, so nothing crowds the
+top of the list and nothing sits close enough to Today to be hit by mistake. It stands down while the search bar is open: the bar wants the width,
 and there is nothing to jump over in a handful of results.
+
+### Glass, and where it stops
+
+The floating buttons are **glass**, on a system that has it; an opaque disc and
+a drop shadow everywhere else. That shadow was the app faking depth, and glass
+is depth. The point is not the finish: four opaque circles sitting on a green
+Later card read like holes punched in the list, and glass lets the card pass
+under them.
+
+**The `+` button stays solid.** It is the primary action and has to be
+findable without looking. A solid accent circle is findable on any backdrop; a
+glass one is as prominent as whatever happens to be scrolled behind it. One
+solid action with glass chrome around it is the right hierarchy anyway.
+
+**A button that is doing something tints its glass**, and does not rely on its
+ring. On an opaque disc a 2pt coloured ring was enough to say "filtering", "has
+a query", "a reminder is waiting". On glass it is not — measured on the phone,
+the bell's red ring all but vanishes against a dark backdrop, and that bell
+appearing is the one thing in the app meant to be noticed. The ring thickens
+*and* the glass takes a light tint of the same colour.
+
+**Glass at rest, solid for a mode.** The flag filter is glass until it is on,
+and then a solid red disc: it is telling you the list on screen is not the
+whole list, and a tint says that too quietly. Its count sits outside the glass
+shape, or it is clipped away.
+
+**Not on the cards, and not in the sheets.** A card's stack colour is the
+information — blue Today, green Later — and glass samples what is behind it,
+washing those toward each other. The urgency edge is a coloured stroke that
+glass fights. And card contrast is checked deliberately; translucency makes it
+depend on what happens to be underneath, which cannot be checked. Sheets
+already carry the system's own material.
 
 ## Adding cards
 

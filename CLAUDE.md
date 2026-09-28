@@ -119,6 +119,10 @@ deletions. Two consequences:
 - Both platforms at once: this is one target. A change to a card, a sheet or a
   gesture lands on the phone and the Mac together — check the Mac path
   (`#if targetEnvironment(macCatalyst)`) when touching gestures or menus.
+- **One modifier owns the floating buttons**: `floatingChrome(state:solid:)` in
+  `ContentView.swift` holds the only `#available(iOS 26, *)` fork in the app.
+  Glass above 26, an opaque disc and a shadow below it. Add a floating control
+  and it goes through there, or the two paths drift.
 - Dark mode is not an afterthought. Colours on cards are checked for contrast;
   category tints are lightened in dark mode for exactly that reason.
 
