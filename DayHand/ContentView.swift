@@ -599,7 +599,7 @@ struct ContentView: View {
                 .floatingChrome()
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Scroll to Today")
+        .accessibilityLabel("Scroll to Now")
     }
 
     // MARK: - Stack of cards

@@ -1,7 +1,7 @@
 # DayHand
 
 A to-do app for iPhone and Mac, built in SwiftUI. Cards live in stacks you file
-them into — **Inbox, Today, Tomorrow, Later, Completed** — and nothing rolls
+them into — **Inbox, Now, Next, Later, Completed** — and nothing rolls
 over on its own.
 
 ## Install it

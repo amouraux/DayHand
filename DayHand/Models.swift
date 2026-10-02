@@ -43,8 +43,13 @@ enum Bucket: String, Codable, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .inbox:     return String(localized: "Inbox", comment: "Stack name")
-        case .today:     return String(localized: "Today", comment: "Stack name")
-        case .tomorrow:  return String(localized: "Tomorrow", comment: "Stack name")
+        // Not "Today" and "Tomorrow". The stacks are piles of work, not days
+        // in a calendar, and a card may sit in one of them for a week without
+        // anything being wrong — which a calendar word makes look like a
+        // failure. The stored values stay `today` and `tomorrow`: every file
+        // ever written holds them, and this is a change of label, not of data.
+        case .today:     return String(localized: "Now", comment: "Stack name")
+        case .tomorrow:  return String(localized: "Next", comment: "Stack name")
         case .later:     return String(localized: "Later", comment: "Stack name")
         case .completed: return String(localized: "Completed", comment: "Stack name")
         }

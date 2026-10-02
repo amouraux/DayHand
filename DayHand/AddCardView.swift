@@ -206,10 +206,16 @@ struct AddCardView: View {
 
     private var footerText: String {
         switch bucket {
-        case .inbox:    return "This card goes to your inbox."
-        case .today:    return "This card goes to Today."
-        case .tomorrow: return "This card goes to Tomorrow."
-        case .later:    return "This card goes to Later."
+        // `Label` takes a plain String verbatim, so these have to be looked up
+        // here or they ship in English however the app is set.
+        case .inbox:    return String(localized: "This card goes to your inbox.",
+                                      comment: "Footer under the New Task sheet")
+        case .today:    return String(localized: "This card goes to Now.",
+                                      comment: "Footer under the New Task sheet")
+        case .tomorrow: return String(localized: "This card goes to Next.",
+                                      comment: "Footer under the New Task sheet")
+        case .later:    return String(localized: "This card goes to Later.",
+                                      comment: "Footer under the New Task sheet")
         case .completed: return ""
         }
     }

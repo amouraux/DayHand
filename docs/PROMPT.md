@@ -14,12 +14,26 @@ A card has five independent properties. Nothing is derived from anything else:
 4. **Due date** (optional) — a specific day.
 5. **Title** (required).
 
-**A card's stack is stored, never computed.** A card placed in Tomorrow is
-still in Tomorrow next week and next year. Nothing rolls over as time passes;
-only the user moves it. Today / Tomorrow / Later are named lists you file
-things into, not calendar queries. This is the whole point of the app: a job
-that takes four days can sit in Today for four days, and nothing ever marks it
-late.
+**A card's stack is stored, never computed.** A card placed in Next is still in
+Next next week and next year. Nothing rolls over as time passes; only the user
+moves it. Now / Next / Later are named lists you file things into, not calendar
+queries. This is the whole point of the app: a job that takes four days can sit
+in Now for four days, and nothing ever marks it late.
+
+**They are called Now, Next and Later, and not Today and Tomorrow**, because a
+calendar word turns a pile into a promise. A card that has sat in "Today" since
+Monday looks like a failure; one that has sat in "Now" looks like work in
+progress, which is what it is. The old names needed a sentence of explanation
+wherever they appeared — the surest sign a label is wrong.
+
+**The stored values are still `today` and `tomorrow`.** Every file ever
+written holds them, in cards, backups, sync files and CSV exports. This is a
+change of label and nothing else; renaming the raw values would strand every
+one of those files.
+
+The **dates on a card stay calendar words** — a reminder falling tomorrow reads
+"Tomorrow" whatever stack the card is in. That contrast is the point: the stack
+says what you decided, the date says when.
 
 **Neither date moves a card. Ever.** That is the rule the rest of this section
 exists to protect. There is one date, and optionally its far end:
@@ -121,7 +135,7 @@ Three things are easy to miss:
 ## Screen
 
 One screen, no app title and no navigation bar. A vertically scrolling stack of
-cards grouped into five sections, in this fixed order: Inbox, Today, Tomorrow,
+cards grouped into five sections, in this fixed order: Inbox, Now, Next,
 Later, Completed.
 
 - Section headers are large — the size an iOS large navigation title would be —
@@ -347,7 +361,7 @@ than sitting on the first line.
 
 ## Sort order
 
-**Within INBOX, TODAY, TOMORROW and LATER**: cards carrying a date come first,
+**Within INBOX, NOW, NEXT and LATER**: cards carrying a date come first,
 soonest at the top; the rest follow. The reminder orders a card, falling back
 to the deadline for a card that has only that — ordering and the colour of the
 edge are the only things a date does.

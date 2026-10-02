@@ -239,7 +239,9 @@ struct CardRow: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                     } else if item.isCompleted, let origin = item.bucketBeforeCompletion {
-                        Label("from \(origin.title)", systemImage: origin.symbolName)
+                        // "was in", not "from": "from Today" read naturally and
+                        // "from Now" does not.
+                        Label("was in \(origin.title)", systemImage: origin.symbolName)
                             .font(.caption)
                             .foregroundStyle(.tertiary)
                     }
