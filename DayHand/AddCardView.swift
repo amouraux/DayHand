@@ -384,6 +384,21 @@ struct ProjectTitleField: View {
     // MARK: - Reading the word being typed
 
     private func handle(_ entered: String) {
+        // A Return typed into a field that wraps arrives as a line break, and
+        // `onSubmit` never fires at all. A card's title is one line, so take
+        // it for the submit it was meant to be. This lives here rather than at
+        // the call sites because the New Task sheet went without it for want
+        // of someone remembering to add it there too.
+        var entered = entered
+        if let typed = titleReturn(in: entered) {
+            entered = typed.cleaned
+            title = entered
+            if typed.isSubmit {
+                onSubmit()
+                return
+            }
+        }
+
         guard let token = ProjectToken.find(in: entered) else {
             query = nil
             release()
@@ -505,16 +520,6 @@ struct CardActionsSheet: View {
                             },
                             onProjectChosen: { choice in applyProject(choice, to: item) }
                         )
-                        .onChange(of: title) { _, entered in
-                            guard let typed = titleReturn(in: entered) else { return }
-                            title = typed.cleaned
-                            // Renaming saves as you go, so Return here only
-                            // needs to commit and put the keyboard away.
-                            if typed.isSubmit {
-                                commitTitle(item)
-                                titleFocused = false
-                            }
-                        }
                     }
 
                     Section {

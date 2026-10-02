@@ -264,12 +264,25 @@ struct ContentView: View {
                 Button("Cancel", role: .cancel) { }
             }
             .onChange(of: scenePhase) { _, phase in
-                guard phase == .active else {
-                    // Nothing to watch for while we are not on screen.
+                // A Mac window that is not frontmost is still a window the
+                // user is looking at. Tearing down the watcher there meant a
+                // visible list could sit an hour behind the phone and only
+                // catch up when clicked into — which looks exactly like sync
+                // being broken. Only being properly put away stops it.
+                #if targetEnvironment(macCatalyst)
+                let watching = phase != .background
+                #else
+                let watching = phase == .active
+                #endif
+
+                guard watching else {
                     store.endLiveSync()
                     return
                 }
                 store.beginLiveSync()
+                // The rest is catching up after being away, and only applies
+                // on the way back to the front.
+                guard phase == .active else { return }
                 // Whatever the other device wrote while we were away.
                 withAnimation { store.refreshFromSyncFile() }
                 store.refreshIfDayChanged()

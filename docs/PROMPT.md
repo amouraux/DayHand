@@ -209,6 +209,11 @@ apart from newlines arriving in *pasted* text — those fold into spaces and lea
 the sheet open. Guard the add itself so that a platform delivering Return by
 both routes at once files one card, not two.
 
+**This belongs to the title field, not to the sheets that use it.** It was
+written at one call site and the New Task sheet went without it, so a Return
+there put a line break in the title and did nothing else — on the Mac, where
+Return is the obvious way to finish, for weeks. One field, one rule.
+
 **The stack and the dates do not talk to each other.** There is nothing to
 reconcile: a date never decides which stack a card belongs in, so picking one
 cannot contradict the other. A card can be filed in Later and be due to be
@@ -812,9 +817,16 @@ with different contents was *updated* — moving stack counts, it is the same ca
 an `NSFilePresenter` on the shared file — it fires as soon as another device (or
 iCloud finishing a download) writes to it — *and* poll its modification date
 every few seconds as a backstop, since a presenter does not catch every way a
-file can be replaced. Tear both down when the app leaves the screen. The
-re-read must bail out when the file already matches what is held in memory,
-or a write triggers a notification that triggers a write.
+file can be replaced. The re-read must bail out when the file already matches
+what is held in memory, or a write triggers a notification that triggers a
+write.
+
+**"Off screen" means something different on the Mac.** A phone that is
+backgrounded should stop watching. A Mac window that is merely not frontmost is
+still a window being looked at, and stopping there means a visible list can sit
+an hour behind the other device and catch up only when it is clicked into —
+indistinguishable from sync being broken. On Catalyst, stop only when the app is
+properly put away; everywhere else, stop as soon as it is not active.
 
 **iCloud does not merge simultaneous writes.** When two devices write the file
 at once it keeps one copy as the current file and parks the others as
