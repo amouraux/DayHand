@@ -227,10 +227,10 @@ struct ContentView: View {
                     }
                 }
                 // The two things that are about the reminder rather than the
-                // card. Snooze only for one that has actually gone off —
-                // "until tomorrow" on a reminder set for next week would move
-                // it earlier, which is not what the word means.
-                if Reminders.isOutstanding(card) {
+                // card. Snooze for any reminder that has arrived — see
+                // `Reminders.canSnooze` for why that is wider than "waiting on
+                // an answer".
+                if Reminders.canSnooze(card) {
                     Button("Snooze until tomorrow") {
                         withAnimation { store.answerReminder(card, .snooze) }
                     }
@@ -742,10 +742,10 @@ struct ContentView: View {
                 }
             }
 
-            // Only for a reminder that has actually gone off. "Snooze until
-            // tomorrow" on one set for next week would move it *earlier*,
-            // which is not what the word means.
-            if Reminders.isOutstanding(card) {
+            // Any reminder that has arrived — the same rule the flag uses to
+            // gather the card in the first place, so a card it shows always
+            // offers the choices that go with it.
+            if Reminders.canSnooze(card) {
                 Divider().padding(.vertical, 4)
                 menuRow(Text("Snooze until tomorrow"), symbol: "bell.badge",
                         tint: .accentColor, wash: 0) {

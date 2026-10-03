@@ -436,9 +436,15 @@ day, not a queue of unanswered questions.
 The only two things that are about the reminder rather than the card live on
 the card's own menu, beside Edit and the four stacks:
 
-- **Snooze until tomorrow**, shown only for a reminder that has actually gone
-  off. On one set for next week "until tomorrow" would move it *earlier*, which
-  is not what the word means.
+- **Snooze until tomorrow**, shown for any reminder that has **arrived** — red,
+  which starts at the beginning of its day. Not "waiting on an answer", which is
+  narrower and leaves cards the flag is showing with no snooze on them: a
+  reminder set for five this afternoon is on the flag from the morning without
+  having fired, and a card dealt with and then put back in Later is on the flag
+  again with its answer still stamped. **Anything the flag gathers offers the
+  choices that go with it** — one predicate, so the two cannot drift apart.
+  A reminder still to come is excluded, because "until tomorrow" would move it
+  *earlier*, which is not what the word means.
 - **Clear the reminder**, shown whenever there is one. This is how a reminder is
   silenced for good, and it takes the red edge with it.
 

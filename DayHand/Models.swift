@@ -804,6 +804,23 @@ enum Reminders {
         return answered < at
     }
 
+    /// Whether "snooze until tomorrow" means anything for this card.
+    ///
+    /// The reminder has to have *arrived* — red, which starts at the beginning
+    /// of its day. Deliberately not "unanswered", which is a narrower thing and
+    /// was the wrong gate: a reminder set for five this afternoon is on the
+    /// flag from the morning without having fired, and a card dealt with and
+    /// then put back in Later is on the flag again with its answer still
+    /// stamped. Both appeared under the flag offering no snooze at all.
+    ///
+    /// A reminder still to come is excluded, because tomorrow at the same time
+    /// would move it *earlier*, which is not what the word means.
+    static func canSnooze(_ card: TodoItem, now: Date = Date(),
+                          calendar: Calendar = .current) -> Bool {
+        guard !card.isCompleted else { return false }
+        return Urgency.of(card.remindAt, now: now, calendar: calendar).isRed
+    }
+
     static func outstanding(in cards: [TodoItem], now: Date = Date()) -> [TodoItem] {
         cards.filter { isOutstanding($0, now: now) }
             .sorted { ($0.remindAt ?? .distantPast) < ($1.remindAt ?? .distantPast) }

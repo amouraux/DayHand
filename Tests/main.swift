@@ -1122,5 +1122,55 @@ do {
     expect(count(settled, now) == 0, "and finishing the other empties it")
 }
 
+// MARK: AD — every card the flag shows offers the choices that go with it
+do {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(identifier: "Europe/Brussels")!
+    func at(_ s: String) -> Date {
+        let f = DateFormatter()
+        f.calendar = calendar; f.timeZone = calendar.timeZone
+        f.dateFormat = "yyyy-MM-dd HH:mm"
+        return f.date(from: s)!
+    }
+    let now = at("2026-10-03 09:00")
+    func snooze(_ c: TodoItem) -> Bool { Reminders.canSnooze(c, now: now, calendar: calendar) }
+    func flagged(_ c: TodoItem) -> Bool { Attention.needed(c, now: now, calendar: calendar) }
+
+    // The two cases the old gate got wrong, both reachable in a normal day.
+    var laterToday = TodoItem(title: "ring the surveyor", bucket: .inbox,
+                              remindAt: at("2026-10-03 17:00"))
+    expect(flagged(laterToday), "a reminder due this afternoon is on the flag from the morning")
+    expect(!Reminders.isOutstanding(laterToday, now: now), "without having fired yet")
+    expect(snooze(laterToday), "and it can still be pushed to tomorrow")
+
+    var answeredThenBack = TodoItem(title: "chase the letter", bucket: .later,
+                                    remindAt: at("2026-10-03 08:00"))
+    answeredThenBack.reminderAnsweredAt = at("2026-10-03 08:30")   // moved, then moved back
+    expect(flagged(answeredThenBack), "a card dealt with and put back in Later is on the flag again")
+    expect(!Reminders.isOutstanding(answeredThenBack, now: now), "with its answer still stamped")
+    expect(snooze(answeredThenBack), "and it must offer the same choices as any other flagged card")
+
+    // The invariant that was broken: nothing the flag shows is without a snooze.
+    for card in [laterToday, answeredThenBack] {
+        expect(!flagged(card) || snooze(card), "a flagged card always offers snooze")
+    }
+
+    // Still excluded, for the reason the word demands.
+    let nextWeek = TodoItem(title: "plan the trip", bucket: .later,
+                            remindAt: at("2026-10-10 09:00"))
+    expect(!snooze(nextWeek), "a reminder still to come is not snoozed — tomorrow is earlier than it")
+    var done = laterToday; done.bucket = .completed
+    expect(!snooze(done), "and a finished card has nothing to be reminded about")
+    let dateless = TodoItem(title: "tidy the loft", bucket: .inbox)
+    expect(!snooze(dateless), "nor has one with no reminder at all")
+
+    // Snoozing always lands later than now, which is the point of excluding
+    // the future ones.
+    for card in [laterToday, answeredThenBack] {
+        let next = Reminders.again(after: card.remindAt!, now: now, calendar: calendar)
+        expect(next != nil && next! > now, "snoozing \(card.title) moves it forward, never back")
+    }
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)
