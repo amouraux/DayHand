@@ -900,22 +900,10 @@ final class TodoStore: ObservableObject {
         lastSeenSyncDate = storage.syncFileModifiedAt()
     }
 
-    /// Look for the iCloud copy, fold it into what we already have, and keep
-    /// listening for writes from another device.
+    /// Keep listening for writes from another device.
     private func startSyncing() {
         storage.onRemoteChange = { [weak self] in
             Task { @MainActor in self?.pullRemoteChanges() }
-        }
-
-        storage.adoptCloudStorage { [weak self] remote in
-            guard let self else { return }
-            if let remote {
-                discardSamples(given: remote)
-                apply(document.merged(with: remote))
-                rescheduleNotifications()
-            }
-            // Push whatever we have, so a first run seeds the cloud copy.
-            save()
         }
     }
 

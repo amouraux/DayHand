@@ -991,6 +991,16 @@ enum Scheduler {
     /// undated follow in the order they always had.
     static func sortKey(for item: TodoItem) -> Date? { item.remindAt ?? item.deadline }
 
+    /// Whether `relativeLabel` will answer with a word rather than a date.
+    ///
+    /// Those are the ones that read naturally in lowercase inside a sentence —
+    /// "restored from today", but "restored from Sat, 12 Sep". Asking here
+    /// rather than comparing the answer against "Today" means it still works
+    /// once the answer is in Dutch.
+    static func labelIsWord(for date: Date, now: Date = Date()) -> Bool {
+        (-1...1).contains(dayOffset(for: date, now: now))
+    }
+
     static func relativeLabel(for date: Date, now: Date = Date()) -> String {
         let days = calendar.dateComponents(
             [.day],
@@ -999,9 +1009,12 @@ enum Scheduler {
         ).day ?? 0
 
         switch days {
-        case 0:  return "Today"
-        case 1:  return "Tomorrow"
-        case -1: return "Yesterday"
+        // The dates stay calendar words even though the stacks no longer are,
+        // and they are looked up like any other visible text — these three had
+        // been shipping in English whatever the app was set to.
+        case 0:  return String(localized: "Today", comment: "A date on a card")
+        case 1:  return String(localized: "Tomorrow", comment: "A date on a card")
+        case -1: return String(localized: "Yesterday", comment: "A date on a card")
         default:
             let formatter = DateFormatter()
             formatter.locale = .current

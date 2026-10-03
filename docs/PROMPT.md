@@ -31,9 +31,13 @@ written holds them, in cards, backups, sync files and CSV exports. This is a
 change of label and nothing else; renaming the raw values would strand every
 one of those files.
 
-The **dates on a card stay calendar words** — a reminder falling tomorrow reads
-"Tomorrow" whatever stack the card is in. That contrast is the point: the stack
+The **dates on a card stay calendar words**: a reminder falling tomorrow reads
+"Tomorrow" whatever stack the card is in. That contrast is the point — the stack
 says what you decided, the date says when.
+
+They are looked up like any other visible text. These three had been hard-coded
+English in all seven languages, which nobody noticed until the stack beside them
+started saying "Maintenant".
 
 **Neither date moves a card. Ever.** That is the rule the rest of this section
 exists to protect. There is one date, and optionally its far end:
@@ -779,22 +783,25 @@ pointed at by as many as the user likes.
 ## Persistence and sync
 
 One JSON document holding categories, cards, projects, tombstones and the
-default-category choice. Written to **iCloud Drive's ubiquity container** when it
-is available so a companion Mac app shares the same data, and to Application
-Support otherwise — a user not signed into iCloud must still get a working app.
+default-category choice. Written to Application Support, and to the file the
+user picked as well when there is one.
 
-Note that a **free Apple developer account cannot sign the iCloud entitlement** —
-Xcode refuses with "Personal development teams do not support the iCloud
-capability". Keep the entitlement easy to switch off so the app still installs on
-a device without a paid membership, falling back to local storage.
+**There is no iCloud container, and no entitlement for one.** A
+**free Apple developer account cannot sign the iCloud entitlement** — Xcode
+refuses with "Personal development teams do not support the iCloud capability"
+— so the app syncs the other way instead: the user picks their own file through
+the document picker and access is kept with a **security-scoped bookmark**. Put
+that file in iCloud Drive and the system syncs it between devices. Access is
+granted by the choosing, not by the app claiming a container.
 
-**Offer a second route that needs no entitlement:** let the user pick their own
-sync file through the document picker and keep access with a **security-scoped
-bookmark**. Put that file in iCloud Drive and the system syncs it between
-devices — access is granted by the user choosing the file, not by the app
-claiming a container. The picked file takes precedence over both the ubiquity
-container and local storage; keep writing the local copy too, so the app still
-works if the file is moved or deleted.
+The container route was built first and removed once the entitlement went. Its
+code outlived it by a long way — unreachable on both platforms, writing nothing,
+watching nothing, and from the outside looking exactly like the thing that
+noticed another device's writes. **Delete the mechanism when the entitlement
+goes**, or the next person to read the file will believe it.
+
+The picked file takes precedence over local storage; keep writing the local copy
+too, so the app still works if the file is moved or deleted.
 
 Three things this needs to actually work on iOS:
 
@@ -863,10 +870,10 @@ through a stored `URL` can keep returning the value it first saw, so the poll
 never fires. Copy the URL and call `removeAllCachedResourceValues()` before each
 probe — the same applies to checking an iCloud download's status in a loop.
 
-Resolve the iCloud container **off the main thread**; `url(forUbiquityContainerIdentifier:)`
-blocks, sometimes for seconds. Start on the local copy, adopt the cloud one when
-it resolves, merge the two, and keep watching for writes from the other device
-with an `NSMetadataQuery`. Read and write through `NSFileCoordinator`.
+Read and write through `NSFileCoordinator`. There is no `NSMetadataQuery`:
+it watches an app's *own* ubiquity container, which is precisely what this
+design does without, and it will never match a file the user picked somewhere in
+their iCloud Drive. The presenter and the poll are the whole mechanism.
 
 **An older version must not be able to start filing cards again.** A version
 that moved cards by their date read a `dueDate` key. That key is read once, as

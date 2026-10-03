@@ -9076,7 +9076,7 @@
       }
     },
     "Today" : {
-      "comment" : "Stack name",
+      "comment" : "A date on a card",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9117,7 +9117,7 @@
       }
     },
     "Tomorrow" : {
-      "comment" : "Stack name",
+      "comment" : "A date on a card",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9641,6 +9641,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Trabalho"
+          }
+        }
+      }
+    },
+    "Yesterday" : {
+      "comment" : "A date on a card",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestern"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayer"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ieri"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gisteren"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ontem"
           }
         }
       }

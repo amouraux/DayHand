@@ -355,7 +355,7 @@ struct SettingsView: View {
                     // "from today", but "from Sat, 12 Sep": only the relative
                     // words read naturally in lowercase mid-sentence.
                     let when = Scheduler.relativeLabel(for: backup.takenAt)
-                    let phrase = ["Today", "Yesterday"].contains(when) ? when.lowercased() : when
+                    let phrase = Scheduler.labelIsWord(for: backup.takenAt) ? when.lowercased() : when
                     reportTitle = "Restore"
                     importReport = String(localized: "Restored \(count) cards from \(phrase).")
                 }

@@ -367,20 +367,22 @@ private final class SyncFilePresenter: NSObject, NSFilePresenter {
 
 // MARK: - Where the file lives
 
-/// Reads and writes the document, from iCloud Drive when it is available and
-/// from Application Support when it is not.
+/// Reads and writes the document: Application Support always, and the file the
+/// user picked as well when there is one.
 ///
-/// The iCloud container is resolved off the main thread — `url(forUbiquityContainerIdentifier:)`
-/// blocks, sometimes for seconds — so the app always starts on the local copy
-/// and adopts the cloud one as soon as it appears.
+/// There is no iCloud *container* here, and no entitlement for one. Syncing is
+/// a file the user chose, which the system happens to sync because they put it
+/// in iCloud Drive — access granted by the choosing, not by the app claiming a
+/// container. An earlier design did claim one, and the code for it survived
+/// long after the entitlement was dropped: unreachable on both platforms,
+/// quietly doing nothing, while looking from the outside like the thing that
+/// noticed remote changes.
 final class DocumentStorage {
     /// Called when the file changes underneath us: another device, or the Mac
     /// companion, has written to it.
     var onRemoteChange: (() -> Void)?
 
     private let localURL: URL
-    private var cloudURL: URL?
-    private var query: NSMetadataQuery?
 
     /// A file the user picked themselves — typically inside iCloud Drive, so the
     /// system syncs it between devices. This needs no iCloud entitlement,
@@ -393,11 +395,10 @@ final class DocumentStorage {
     private var pendingConflictURL: URL?
     private static let bookmarkKey = "syncFileBookmark"
 
-    var isUsingCloud: Bool { cloudURL != nil }
     var syncFileName: String? { syncURL?.lastPathComponent }
 
-    /// The picked file wins: it is an explicit choice, unlike the container.
-    private var activeURL: URL { syncURL ?? cloudURL ?? localURL }
+    /// The picked file wins; without one, the local copy is all there is.
+    private var activeURL: URL { syncURL ?? localURL }
 
     init() {
         let directory = FileManager.default
@@ -614,7 +615,7 @@ final class DocumentStorage {
         // picked file goes away or the user signs out of iCloud later.
         try? data.write(to: localURL, options: .atomic)
 
-        for target in [syncURL, cloudURL].compactMap({ $0 }) {
+        if let target = syncURL {
             withAccess(target) { url in
                 var coordinationError: NSError?
                 NSFileCoordinator().coordinate(writingItemAt: url, options: .forReplacing, error: &coordinationError) { writeURL in
@@ -632,56 +633,6 @@ final class DocumentStorage {
         }
     }
 
-    // MARK: Adopting iCloud
-
-    /// Resolves the iCloud container in the background. `completion` runs on the
-    /// main queue with the cloud document, if there is one to merge in.
-    func adoptCloudStorage(completion: @escaping (StoreDocument?) -> Void) {
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            guard let self,
-                  let container = FileManager.default.url(forUbiquityContainerIdentifier: nil) else {
-                DispatchQueue.main.async { completion(nil) }
-                return
-            }
-
-            let documents = container.appendingPathComponent("Documents", isDirectory: true)
-            try? FileManager.default.createDirectory(at: documents, withIntermediateDirectories: true)
-            let url = documents.appendingPathComponent("cards.json")
-
-            var remote: StoreDocument?
-            var coordinationError: NSError?
-            NSFileCoordinator().coordinate(readingItemAt: url, options: [], error: &coordinationError) { readURL in
-                if let data = try? Data(contentsOf: readURL) {
-                    remote = DocumentStorage.decode(data)
-                }
-            }
-
-            DispatchQueue.main.async {
-                self.cloudURL = url
-                self.startWatching(url)
-                completion(remote)
-            }
-        }
-    }
-
-    /// Notices writes made by another device.
-    private func startWatching(_ url: URL) {
-        let query = NSMetadataQuery()
-        query.searchScopes = [NSMetadataQueryUbiquitousDocumentsScope]
-        query.predicate = NSPredicate(format: "%K == %@", NSMetadataItemFSNameKey, url.lastPathComponent)
-
-        for name in [NSNotification.Name.NSMetadataQueryDidFinishGathering,
-                     NSNotification.Name.NSMetadataQueryDidUpdate] {
-            NotificationCenter.default.addObserver(
-                forName: name, object: query, queue: .main
-            ) { [weak self] _ in
-                self?.onRemoteChange?()
-            }
-        }
-
-        self.query = query
-        query.start()
-    }
 
     // MARK: Coding
 
