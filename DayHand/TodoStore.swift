@@ -130,7 +130,7 @@ final class TodoStore: ObservableObject {
         // belongs in, so there is nothing for them to contradict. A deadline
         // without a reminder is dropped: it is the far end of a job with no
         // start, which the editor does not offer and nothing would read.
-        card.remindAt = remindAt
+        card.remindAt = remindAt.map { Scheduler.reminderTime(on: $0) }
         card.deadline = remindAt == nil ? nil : deadline.map { Scheduler.calendar.startOfDay(for: $0) }
 
         items.append(card)
@@ -179,7 +179,12 @@ final class TodoStore: ObservableObject {
     /// field back with its value intact.
     func setReminder(_ item: TodoItem, at date: Date?) {
         update(item) { card in
-            card.remindAt = date
+            // Snapped to the reminder hour: the picker asks for a day, so a
+            // time left over from whatever the binding held before is not an
+            // answer the user gave. Reminders already on a card keep the time
+            // they were set with — they fire when they were told to, and
+            // nothing is gained by moving them.
+            card.remindAt = date.map { Scheduler.reminderTime(on: $0) }
             card.reminderAnsweredAt = nil
         }
         rescheduleNotifications()

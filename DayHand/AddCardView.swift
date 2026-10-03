@@ -146,8 +146,8 @@ struct AddCardView: View {
                         Label("Remind me", systemImage: "flag")
                     }
                     if hasReminder {
-                        DatePicker("At", selection: $remindAt,
-                                   displayedComponents: [.date, .hourAndMinute])
+                        DatePicker("Date", selection: $remindAt,
+                                   displayedComponents: [.date])
                             .datePickerStyle(.compact)
 
                         Toggle(isOn: $hasDeadline.animation(.easeInOut(duration: 0.2))) {
@@ -569,8 +569,8 @@ struct CardActionsSheet: View {
                             Label("Remind me", systemImage: "flag")
                         }
                         if item.remindAt != nil {
-                            DatePicker("At", selection: reminderBinding(item),
-                                       displayedComponents: [.date, .hourAndMinute])
+                            DatePicker("Date", selection: reminderBinding(item),
+                                       displayedComponents: [.date])
                                 .datePickerStyle(.compact)
                         }
 

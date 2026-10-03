@@ -1172,5 +1172,47 @@ do {
     }
 }
 
+// MARK: AE — a reminder is a day, fired at a fixed hour
+do {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(identifier: "Europe/Brussels")!
+    func at(_ s: String) -> Date {
+        let f = DateFormatter()
+        f.calendar = calendar; f.timeZone = calendar.timeZone
+        f.dateFormat = "yyyy-MM-dd HH:mm"
+        return f.date(from: s)!
+    }
+
+    // Whatever time of day comes out of the picker, the reminder is the day.
+    for messy in ["2026-10-07 00:00", "2026-10-07 13:42", "2026-10-07 23:59"] {
+        expect(Scheduler.reminderTime(on: at(messy), calendar: calendar) == at("2026-10-07 09:00"),
+               "\(messy) is a reminder for the 7th, and fires at nine like every other")
+    }
+
+    let now = at("2026-10-03 15:00")
+    expect(Scheduler.defaultReminderTime(now) == Scheduler.reminderTime(on: at("2026-10-04 12:00"),
+                                                                        calendar: calendar),
+           "the opening suggestion is tomorrow at the same hour as everything else")
+    expect(Scheduler.defaultReminderTime(now) > now,
+           "and never a moment that has already gone by")
+
+    // Snoozing keeps the hour, so a day-granular reminder stays day-granular.
+    let tomorrow = Reminders.again(after: Scheduler.reminderTime(on: at("2026-10-03 09:00"),
+                                                                 calendar: calendar),
+                                   now: now, calendar: calendar)
+    expect(tomorrow == at("2026-10-04 09:00"), "snoozing lands on the next day at nine")
+
+    // A reminder set by an older version at some other hour is left alone: it
+    // fires when it was told to, and moving it would be a change nobody asked
+    // for. Only the day matters to everything that reads it.
+    var legacy = TodoItem(title: "chase the letter", bucket: .later,
+                          remindAt: at("2026-10-03 17:00"))
+    expect(Urgency.of(legacy.remindAt, now: now, calendar: calendar).isRed,
+           "it is red on its day whatever hour it holds")
+    expect(Attention.needed(legacy, now: now, calendar: calendar), "and the flag gathers it")
+    legacy.remindAt = Scheduler.reminderTime(on: legacy.remindAt!, calendar: calendar)
+    expect(legacy.remindAt == at("2026-10-03 09:00"), "editing its date snaps it to the hour")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

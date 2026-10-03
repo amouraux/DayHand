@@ -979,11 +979,25 @@ enum Scheduler {
         ).day ?? 0
     }
 
-    /// A reminder's opening suggestion: 9am tomorrow. Not "now", which is a
-    /// reminder that has already gone off before the sheet is closed.
+    /// The hour a reminder goes off.
+    ///
+    /// A reminder is a *day*, not a minute — the whole app thinks in days, and
+    /// being asked for a time you did not care about is a question with no
+    /// right answer. But a notification has to fire at some point, so they all
+    /// fire at nine, which is when a day's work gets looked at.
+    static let reminderHour = 9
+
+    /// The moment a reminder set for `day` goes off.
+    static func reminderTime(on day: Date, calendar: Calendar = .current) -> Date {
+        calendar.date(bySettingHour: reminderHour, minute: 0, second: 0,
+                      of: calendar.startOfDay(for: day)) ?? day
+    }
+
+    /// A reminder's opening suggestion: tomorrow. Not today, which may already
+    /// have gone off before the sheet is closed.
     static func defaultReminderTime(_ now: Date = Date()) -> Date {
         let tomorrow = calendar.date(byAdding: .day, value: 1, to: startOfToday(now)) ?? now
-        return calendar.date(bySettingHour: 9, minute: 0, second: 0, of: tomorrow) ?? tomorrow
+        return reminderTime(on: tomorrow, calendar: calendar)
     }
 
     /// Where a card sits inside its stack. A date orders a card; it never

@@ -42,7 +42,7 @@ started saying "Maintenant".
 **Neither date moves a card. Ever.** That is the rule the rest of this section
 exists to protect. There is one date, and optionally its far end:
 
-- **Remind me** (a day and a time) — when to *pick the card up*. It fires a
+- **Remind me** (a day) — when to *pick the card up*. It fires a
   notification, colours the card's edge as it approaches, orders the card
   inside its stack, and is what the flag gathers. Offered first, because for
   most cards it is the only date worth having.
@@ -389,8 +389,18 @@ the list never hides a match behind it.
 
 ## Reminders
 
-A reminder is armed on a card with a day and a time, and fires a local
-notification. **Dismissing that notification changes nothing.** Swiping a
+A reminder is armed on a card with a **day**, and fires a local notification.
+
+**Not a time.** The whole app thinks in days — the edge colours by day, the flag
+gathers by day, snooze means tomorrow — and being asked for an hour you did not
+care about is a question with no right answer. A notification has to go off at
+some point, so they all go off at **nine**, which is when a day's work gets
+looked at. The picker shows a date and nothing else.
+
+A reminder set by an earlier version at some other hour keeps it: it fires when
+it was told to, and moving it would be a change nobody asked for. Everything
+that reads a reminder reads its day, so it behaves like any other; editing its
+date snaps it to the hour as a new one would be. **Dismissing that notification changes nothing.** Swiping a
 notification away is how a notification is got rid of, not how a decision is
 made, so the reminder is still waiting afterwards.
 
@@ -802,6 +812,13 @@ goes**, or the next person to read the file will believe it.
 
 The picked file takes precedence over local storage; keep writing the local copy
 too, so the app still works if the file is moved or deleted.
+
+**Say when there is no sync file, in Settings and nowhere else.** One device
+needs no sync file and must not be nagged about it — but a device that has *lost*
+one looks exactly like a device that never had one, and the only way to tell was
+to notice the other device had stopped agreeing with you. A plain "Not syncing"
+beside the sync-file row costs nothing and answers the question wherever it is
+asked.
 
 Three things this needs to actually work on iOS:
 

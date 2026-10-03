@@ -156,6 +156,21 @@ struct SettingsView: View {
                         } label: {
                             Label("Sync file", systemImage: "arrow.triangle.2.circlepath")
                         }
+                    } else {
+                        // Said here and nowhere else. One device needs no sync
+                        // file and should not be nagged about it — but a
+                        // device that has lost one looks exactly like a device
+                        // that never had one, and the only way to tell was to
+                        // notice the other one had stopped agreeing with you.
+                        LabeledContent {
+                            Text("Not syncing").foregroundStyle(.secondary)
+                        } label: {
+                            Label("Sync file", systemImage: "arrow.triangle.2.circlepath")
+                        }
+                        .foregroundStyle(.secondary)
+                    }
+
+                    if store.syncFileName != nil {
 
                         Button {
                             withAnimation { store.refreshFromSyncFile() }

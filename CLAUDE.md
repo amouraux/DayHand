@@ -60,8 +60,8 @@ and, when one is configured, to the user's sync file in iCloud Drive.
 
 ## Dates never move cards
 
-One date, and optionally its far end. **`remindAt`** (a day and a time) is when
-to *pick the card up*: it fires the notification, colours the edge, orders the
+One date, and optionally its far end. **`remindAt`** (a day, fired at
+`Scheduler.reminderHour`) is when to *pick the card up*: it fires the notification, colours the edge, orders the
 card and is what the flag gathers. **`deadline`** (a day) is when a multi-day
 job must be *finished*; it is drawn on the card and does nothing else.
 
