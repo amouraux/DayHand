@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DayHand</title>
-<meta name="description" content="A to-do app for iPhone, iPad and Mac. Cards stay in the stack you put them in until you move them, and a reminder brings work back to your attention without rescheduling it for you.">
+<meta name="description" content="A task is not a date. A to-do app for iPhone, iPad and Mac where work stays active for as long as it takes: stacks express intention, reminders ask for attention, deadlines mark obligation.">
 <link rel="icon" href="icon.png">
 <meta property="og:title" content="DayHand">
-<meta property="og:description" content="Your work. Your pace. Your decision.">
+<meta property="og:description" content="A task is not a date.">
 <meta property="og:image" content="icon.png">
 <style>
   :root {
@@ -23,6 +23,7 @@
     --review:    #8a4bd0;
     --flag:      #d92d20;
     --keep:      #0f8a8a;
+    --waiting:   #6b7a90;
     --shadow:    0 1px 2px rgba(18,19,26,.05), 0 8px 24px rgba(18,19,26,.07);
   }
   @media (prefers-color-scheme: dark) {
@@ -39,6 +40,7 @@
       --review:   #c18cf0;
       --flag:     #ff7a70;
       --keep:     #4fd0d0;
+      --waiting:  #9aa8bd;
       --shadow:   0 1px 2px rgba(0,0,0,.4), 0 8px 28px rgba(0,0,0,.45);
     }
   }
@@ -109,6 +111,7 @@
   .i-review   { --accent: var(--review); }
   .i-flag     { --accent: var(--flag); }
   .i-keep     { --accent: var(--keep); }
+  .i-waiting  { --accent: var(--waiting); }
   /* Full width: it is the answer to "then how do I know I am getting
      anywhere?", which deserves more than a quarter of the grid. */
   @media (min-width: 720px) { .wide-idea { grid-column: 1 / -1; } }
@@ -145,6 +148,27 @@
   }
   .card .btn { display: inline-flex; }
 
+  /* One task, one week: the sequence that makes the model click. */
+  .walk {
+    list-style: none; margin: 0 auto; padding: 0; max-width: 560px;
+    display: grid; gap: 10px;
+  }
+  .walk li {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 18px; box-shadow: var(--shadow);
+    color: var(--ink-soft); font-size: 15.5px;
+  }
+  .walk b { color: var(--ink); min-width: 92px; }
+  .walk .to { margin-left: auto; font-weight: 600; color: var(--accent, var(--today)); }
+  .walk .w-now     { --accent: var(--today); }
+  .walk .w-waiting { --accent: var(--waiting); }
+  .walk .w-due     { --accent: var(--night); }
+  .walk-note {
+    max-width: 560px; margin: 16px auto 0; text-align: center;
+    color: var(--ink-soft); font-size: 15px;
+  }
+
   .notice {
     max-width: 640px; margin: 22px auto 0; padding: 16px 18px;
     background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
@@ -167,12 +191,16 @@
 <header class="wrap">
   <img class="icon" src="icon.png" alt="DayHand">
   <h1>DayHand</h1>
-  <p class="tagline">Your work. Your pace. Your decision.</p>
+  <p class="tagline">A task is not a date.</p>
   <p class="sub">
-    Cards stay in the stack you put them in — Inbox, Now, Next, Later —
-    until you move them yourself. A reminder brings a task back to your
-    attention when you asked it to, and then leaves the decision to you.
-    Nothing is ever rescheduled on your behalf.
+    Preparing a talk, writing a manuscript, building a feature, renovating a
+    room — most real work is not created and finished on one particular day.
+    Date-led to-do lists make you pick a day anyway, then call the task overdue
+    when that day passes. So you reschedule it, or chop it up, to make the app
+    agree with reality.
+  </p>
+  <p class="sub">
+    DayHand lets a task simply stay active for as long as it takes.
   </p>
 
   <div class="cta">
@@ -186,55 +214,45 @@
 </header>
 
 <section class="wrap">
-  <h2>What makes it different</h2>
+  <h2>Intention. Attention. Obligation.</h2>
   <div class="ideas">
     <div class="idea i-today">
-      <h3>You decide what happens today</h3>
-      <p>A card stays in Inbox, Now, Next or Later until you move it.
-         Nothing is filed on your behalf and nothing reshuffles overnight, so
-         the list you left is the list you come back to.</p>
+      <h3>Stacks express intention</h3>
+      <p><b>Now</b> is what you are working on. <b>Next</b> is what you mean to
+         pick up after it. <b>Later</b> is kept, but consciously not now. New
+         cards land in <b>Inbox</b> until you decide. A task can sit in Now for
+         a week — there is nothing wrong with that, and nothing says otherwise.</p>
     </div>
-    <div class="idea i-later">
-      <h3>Made for work that takes more than a day</h3>
-      <p>Most real jobs are not one sitting. A card can stay in Today for as
-         long as the work takes, with nothing to reschedule each morning. The
-         stacks are called Now, Next and Later rather than Today and Tomorrow
-         for exactly that reason: a pile is not a promise.</p>
+    <div class="idea i-waiting">
+      <h3>Waiting is work that is not yours</h3>
+      <p>Sent for review, a quote not yet received, a reply owed to you. The
+         task is still live, but you cannot advance it. It moves out of the way
+         without being forgotten, and comes back to Now, Next or Later the
+         moment the other side moves.</p>
     </div>
     <div class="idea i-flag">
-      <h3>Remember when to start. Keep sight of when to finish.</h3>
-      <p>A reminder says when to pick a task up. Once one is set you can add an
-         optional deadline, recording the day the work has to be done. The
-         card's coloured edge follows the <em>reminder</em>, not the deadline:
-         orange within three days, red on the day itself and after. What you
-         see is when to begin.</p>
-    </div>
-    <div class="idea i-tomorrow">
-      <h3>A reminder leaves the decision with you</h3>
-      <p>When one arrives you can move the card, snooze it until tomorrow, or
-         clear the reminder. Swiping the notification away is not a decision —
-         the card is still there in the app afterwards, waiting for one.</p>
+      <h3>Reminders ask for attention</h3>
+      <p><em>When should I think about this again?</em> A reminder brings a task
+         back to your attention on the day you asked — a notification, and a
+         coloured edge: orange within three days, red on the day and after. It
+         does not decide where the task belongs, and it moves nothing.</p>
     </div>
     <div class="idea i-night">
-      <h3>Keep related work together</h3>
-      <p>Type <code>#TRIP</code> and the card carries that project: a coloured
-         prefix, a category filled in for you, and a name you can change on
-         every card at once. Categories, groups and filters hold the rest
-         together without crowding the main list.</p>
+      <h3>Deadlines mark obligation</h3>
+      <p><em>When must this actually be finished?</em> Added once a reminder
+         exists, and shown on the card. Because a deadline is only ever a real
+         one, it means something — a task can sit in Now all week and keep the
+         same genuine Friday deadline.</p>
     </div>
-    <div class="idea i-keep">
-      <h3>Your cards stay yours</h3>
-      <p>Everything is kept on your device. Two of them sync through a single
-         file you pick in your own iCloud Drive — no DayHand account, no
-         server, nothing to sign up for. Import and export as CSV, and a backup
-         is taken automatically each day.</p>
-    </div>
-    <div class="idea i-review wide-idea">
-      <h3>See what you have accomplished</h3>
-      <p>Any to-do app can show what you owe. DayHand also shows what you got
-         done — this week and last, grouped by the day you finished it. The
-         counterweight to a list that otherwise only ever looks forward:
-         progress measured as what you finished.</p>
+    <div class="idea i-later wide-idea">
+      <h3>Nothing moves behind your back</h3>
+      <p>Tasks stay exactly where you put them. Tomorrow arriving does not
+         change what you intended to work on, and a reminder coming due does not
+         move anything by itself — it tells you, and you decide. The list stays
+         a picture of what you mean to do, rather than a picture of the
+         calendar. <b>Later</b> does not mean forgotten, it means not yet;
+         <b>Waiting</b> does not mean dropped, it means not mine right now. And
+         when something is genuinely overdue, that word still means something.</p>
     </div>
   </div>
 </section>
@@ -243,7 +261,7 @@
   <h2>On every screen</h2>
   <div class="shots">
     <figure class="phone">
-      <img src="screenshots/iphone.png" alt="DayHand on iPhone, showing cards stacked under Today and Tomorrow"
+      <img src="screenshots/iphone.png" alt="DayHand on iPhone, showing cards stacked under Now and Next"
            onerror="this.closest('figure').remove()">
       <figcaption><b>iPhone</b> — the stacks, and the tags in front of each card.</figcaption>
     </figure>
@@ -257,6 +275,93 @@
            onerror="this.closest('figure').remove()">
       <figcaption><b>Mac</b> — the same app, in a window you can size.</figcaption>
     </figure>
+  </div>
+</section>
+
+<section class="wrap">
+  <h2>How DayHand fits real work</h2>
+  <div class="ideas">
+    <div class="idea i-later">
+      <h3>Architect</h3>
+      <p>A project runs for weeks. Drawings in progress sit in Now, the next
+         revision in Next, future ideas in Later. Once a set goes to the client
+         for approval it moves to Waiting, with a reminder to follow up — and a
+         deadline only on the actual submission date.</p>
+    </div>
+    <div class="idea i-tomorrow">
+      <h3>Plumber</h3>
+      <p>Jobs depend on customers, parts and other trades. Today's jobs in Now,
+         this week's in Next, the rest in Later. A job held up by a valve on
+         order or a customer who has not confirmed goes to Waiting, with a
+         reminder to chase — without pretending the job was due today.</p>
+    </div>
+    <div class="idea i-review">
+      <h3>Student</h3>
+      <p>"Write the thesis" is not a Tuesday task. The chapter you are writing
+         stays in Now for as long as it takes, the next one in Next, later
+         chapters in Later. It goes to Waiting while your supervisor has it.
+         Deadlines are the real submission dates, and only those.</p>
+    </div>
+    <div class="idea i-keep">
+      <h3>Researcher</h3>
+      <p>An analysis or a manuscript stays in Now while it is actually moving.
+         Upcoming experiments in Next, longer-term ideas in Later. A manuscript
+         with co-authors, equipment on order or an experiment awaiting data all
+         go to Waiting. Grant and journal dates are genuine deadlines.</p>
+    </div>
+    <div class="idea i-today wide-idea">
+      <h3>Web developer</h3>
+      <p>A feature takes several days. The one you are building sits in Now, the
+         next in Next, the backlog in Later. When it depends on an API key,
+         client feedback or a pull request someone else has to review, it moves
+         to Waiting. The reminder says when to follow up; the deadline says when
+         the release actually has to ship.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <h2>One task, one week</h2>
+  <ol class="walk">
+    <li><b>Monday</b> You start on the conference talk.
+        <span class="to w-now">Now</span></li>
+    <li><b>Wednesday</b> Draft sent to a colleague.
+        <span class="to w-waiting">Waiting</span></li>
+    <li><b>Thursday</b> They reply.
+        <span class="to w-now">Now</span></li>
+    <li><b>Friday, 17:00</b> You give the talk.
+        <span class="to w-due">Deadline</span></li>
+  </ol>
+  <p class="walk-note">
+    One card the whole week. The Friday deadline never changed, and the task was
+    never recreated, split up or pushed to a new day.
+  </p>
+</section>
+
+<section class="wrap">
+  <h2>And the rest of it</h2>
+  <div class="ideas">
+    <div class="idea i-night">
+      <h3>Keep related work together</h3>
+      <p>Type <code>#TRIP</code> and the card carries that project: a coloured
+         prefix, a category filled in for you, and a name you can change on
+         every card at once. Projects gather into groups, and the filter narrows
+         the list to any of them without complicating the main view.</p>
+    </div>
+    <div class="idea i-keep">
+      <h3>Your cards stay yours</h3>
+      <p>Everything is kept on your device. Two of them sync through a single
+         file you pick in your own iCloud Drive — no DayHand account, no server,
+         nothing to sign up for. Import and export as CSV, and a backup is taken
+         automatically each day, plus any you take by hand.</p>
+    </div>
+    <div class="idea i-review wide-idea">
+      <h3>See what you have accomplished</h3>
+      <p>Any to-do app can show what you owe. DayHand also shows what you got
+         done — this week and last, grouped by the day you finished it. The
+         counterweight to a list that otherwise only ever looks forward:
+         progress measured as what you finished.</p>
+    </div>
   </div>
 </section>
 
