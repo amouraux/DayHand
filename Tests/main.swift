@@ -1214,5 +1214,60 @@ do {
     expect(legacy.remindAt == at("2026-10-03 09:00"), "editing its date snaps it to the hour")
 }
 
+// MARK: AF — Waiting is not your move, and the flag still chases it
+do {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(identifier: "Europe/Brussels")!
+    func at(_ s: String) -> Date {
+        let f = DateFormatter()
+        f.calendar = calendar; f.timeZone = calendar.timeZone
+        f.dateFormat = "yyyy-MM-dd HH:mm"
+        return f.date(from: s)!
+    }
+    let now = at("2026-10-04 09:00")
+
+    // Everything above Waiting is work you can pick up; Waiting and Completed
+    // are not. The order is what puts them below the line on screen.
+    expect(Bucket.allCases.map(\.rawValue)
+           == ["inbox", "today", "tomorrow", "later", "waiting", "completed"],
+           "Waiting sits after Later and before Completed")
+    expect(Bucket.quickMoveTargets.contains(.waiting),
+           "and a card can be moved there in one tap, like any other stack")
+    expect(!Bucket.quickMoveTargets.contains(.completed),
+           "while Completed is still reached by ticking, not by moving")
+
+    // The point of the whole thing: a reminder on a waiting card is a chase,
+    // and the flag must go on gathering it.
+    expect(!Bucket.waiting.isAddressed,
+           "Waiting is not an answer — somebody else still has it")
+    var chase = TodoItem(title: "chase the co-author", bucket: .waiting,
+                         remindAt: at("2026-10-04 09:00"))
+    expect(Attention.needed(chase, now: now, calendar: calendar),
+           "so a reminder that has arrived on a waiting card is still flagged")
+    expect(Reminders.canSnooze(chase, now: now, calendar: calendar),
+           "and can be pushed to tomorrow like any other")
+
+    // A waiting card with nothing due is quiet. That is the relief it buys.
+    let parked = TodoItem(title: "quote from the supplier", bucket: .waiting)
+    expect(!Attention.needed(parked, now: now, calendar: calendar),
+           "a waiting card with no reminder asks for nothing at all")
+
+    // It survives a save, and a build that has never heard of it is not harmed.
+    chase.remindAt = at("2026-10-04 09:00")
+    let saved = try! enc.encode(chase)
+    expect(String(data: saved, encoding: .utf8)!.contains("\"bucket\" : \"waiting\""),
+           "it is stored under its own name")
+    let back = try! dec.decode(TodoItem.self, from: saved)
+    expect(back.bucket == .waiting, "and reads back as itself")
+
+    // An older build: `decodeIfPresent` answers nil for a raw value it does not
+    // know, so the card lands in Inbox and the rest of the file is untouched.
+    // Verified against the shipped decoder before this case was added.
+    let unknown = #"{"id":"\#(UUID().uuidString)","title":"x","bucket":"someFutureStack"}"#
+    let tolerated = try! dec.decode(TodoItem.self, from: Data(unknown.utf8))
+    expect(tolerated.bucket == .inbox,
+           "an unknown stack falls back rather than throwing the document away")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

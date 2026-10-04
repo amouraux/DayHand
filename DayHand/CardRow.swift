@@ -76,6 +76,9 @@ extension Bucket {
         case .today:     return 0.27
         case .tomorrow:  return 0.44
         case .later:     return 0.44
+        // Fainter than the rest. A waiting card is not your move, and should
+        // not shout as loudly as one that is.
+        case .waiting:   return 0.26
         case .completed: return 0
         }
     }
@@ -86,6 +89,9 @@ extension Bucket {
         case .today:     return .blue
         case .tomorrow:  return .orange
         case .later:     return .green
+        // Slate: muted on purpose, and the one cool neutral left once grey
+        // went to Inbox.
+        case .waiting:   return Color(red: 0.42, green: 0.49, blue: 0.60)
         // Completed cards carry no wash at all: the strikethrough, the filled
         // checkmark and the dimming already say "done", and every remaining
         // colour is spoken for by a live stack.

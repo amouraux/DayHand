@@ -26,6 +26,16 @@ enum Bucket: String, Codable, CaseIterable, Identifiable {
     case today
     case tomorrow
     case later
+    /// Blocked on somebody else: sent for review, quote requested, reply owed.
+    /// Everything above this line is work you can pick up; everything from here
+    /// down is not, which is why it sits between them.
+    ///
+    /// A build that predates this case reads `"waiting"` as an unknown raw
+    /// value, and `decodeIfPresent` answers nil — so the card lands in Inbox
+    /// and nothing else in the file is harmed. It is not stamped as edited
+    /// either, so on the next merge the newer device's copy ties and the local
+    /// one wins, and the card stays where it was put.
+    case waiting
     case completed
 
     var id: String { rawValue }
@@ -36,6 +46,10 @@ enum Bucket: String, Codable, CaseIterable, Identifiable {
     /// into one is the user saying when they will do it. Inbox and Later are
     /// where a card waits to be decided about. Completed is an answer too, and
     /// a final one.
+    /// Waiting is deliberately *not* addressed. A reminder on a waiting card —
+    /// "chase the co-author on Friday" — is the best use a reminder has, and
+    /// when it arrives there is something to do. So the flag goes on gathering
+    /// it, which turns the flag into "what do I need to chase?".
     var isAddressed: Bool { self == .today || self == .tomorrow || self == .completed }
 
     /// Shown on the section headings, in the pickers and on the card's own
@@ -51,6 +65,7 @@ enum Bucket: String, Codable, CaseIterable, Identifiable {
         case .today:     return String(localized: "Now", comment: "Stack name")
         case .tomorrow:  return String(localized: "Next", comment: "Stack name")
         case .later:     return String(localized: "Later", comment: "Stack name")
+        case .waiting:   return String(localized: "Waiting", comment: "Stack name")
         case .completed: return String(localized: "Completed", comment: "Stack name")
         }
     }
@@ -60,6 +75,9 @@ enum Bucket: String, Codable, CaseIterable, Identifiable {
         case .inbox:     return "tray"
         case .today:     return "sun.max"
         case .tomorrow:  return "sunrise"
+        // Not an hourglass, which is Later's and means time passing. This is
+        // somebody else's move, so it is a pause.
+        case .waiting:   return "pause.circle"
         case .later:     return "hourglass"
         case .completed: return "checkmark.circle"
         }
@@ -67,7 +85,7 @@ enum Bucket: String, Codable, CaseIterable, Identifiable {
 
     /// The buckets a card can be sent to straight from the tap menu.
     /// COMPLETED is reached by completing.
-    static let quickMoveTargets: [Bucket] = [.inbox, .today, .tomorrow, .later]
+    static let quickMoveTargets: [Bucket] = [.inbox, .today, .tomorrow, .later, .waiting]
 
     /// Where the move gesture sends a card: forward into TODAY, or on to
     /// TOMORROW for a card that is already in TODAY.

@@ -20,6 +20,29 @@ moves it. Now / Next / Later are named lists you file things into, not calendar
 queries. This is the whole point of the app: a job that takes four days can sit
 in Now for four days, and nothing ever marks it late.
 
+**WAITING is for work that is not yours to do.** A manuscript out with
+co-authors, a quote asked for and not received, a reply owed to you. The card is
+not late and you are not behind — somebody else has it. Left in Now it makes the
+pile look fuller and more accusatory than it is, which is the exact feeling this
+app exists to remove.
+
+It is a stack like any other: one tap from the card's menu, and one tap back when
+the thing arrives. **Nothing returns it automatically.** "The quote came — when
+do I do this?" is a real decision, and restoring the card to wherever it was
+before would answer it wrongly, because the context has moved on.
+
+**Waiting does not count as addressed.** A reminder on a waiting card — "chase
+the co-author on Friday" — is the best use a reminder has, and when it arrives
+there is something to do. So the flag goes on gathering it, which quietly turns
+the flag into *what do I need to chase?* alongside *what do I need to start?*.
+
+**Adding a stack is safe for a device that has not updated.** `decodeIfPresent`
+answers nil for a raw value it does not recognise, so an older build reads
+`"waiting"` as Inbox and the rest of the document is untouched — no throw, no
+replacement with the starter file. It does not stamp the card as edited either,
+so the next merge is a tie on `modifiedAt` and the newer device keeps its own
+copy. Check this before adding a case, not after.
+
 **They are called Now, Next and Later, and not Today and Tomorrow**, because a
 calendar word turns a pile into a promise. A card that has sat in "Today" since
 Monday looks like a failure; one that has sat in "Now" looks like work in
@@ -139,8 +162,10 @@ Three things are easy to miss:
 ## Screen
 
 One screen, no app title and no navigation bar. A vertically scrolling stack of
-cards grouped into five sections, in this fixed order: Inbox, Now, Next,
-Later, Completed.
+cards grouped into six sections, in this fixed order: Inbox, Now, Next, Later,
+Waiting, Completed. **An empty section is not drawn at all**, which is what lets
+there be six of them without the screen growing: Waiting costs nothing on the
+days nothing is blocked.
 
 - Section headers are large — the size an iOS large navigation title would be —
   led by the stack's own symbol in the stack's colour (the same symbols the
@@ -323,7 +348,9 @@ Each card has **one flat background colour, taken from its stack**. Keep it
 low-opacity over the system card colour so text stays readable in light and dark
 mode.
 
-Stack colours: Inbox gray, Today blue, Tomorrow orange, Later green, washed
+Stack colours: Inbox gray, Now blue, Next orange, Later green, Waiting a muted
+slate at a fainter wash than the rest — it is not your move and should not shout
+as loudly as one that is — washed
 over the card at a strength chosen **per stack**, not one strength for all: the
 same wash separates a card from the grey page by very different amounts
 depending on the hue, and at a single value the orange and green cards nearly

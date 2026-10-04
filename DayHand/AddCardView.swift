@@ -216,6 +216,8 @@ struct AddCardView: View {
                                       comment: "Footer under the New Task sheet")
         case .later:    return String(localized: "This card goes to Later.",
                                       comment: "Footer under the New Task sheet")
+        case .waiting:  return String(localized: "This card goes to Waiting.",
+                                      comment: "Footer under the New Task sheet")
         case .completed: return ""
         }
     }
