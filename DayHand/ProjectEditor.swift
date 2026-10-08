@@ -13,6 +13,57 @@ import SwiftUI
 /// row — which is two copies of the same list of buttons, and they drifted
 /// apart within an hour of the second one being written. Naming the new group
 /// is the only difference, so it is the only thing passed in.
+/// The group a project belongs to, as one row.
+///
+/// Offered wherever a project is being chosen — the New Task sheet and the card
+/// editor — because a group is easiest to set at the moment the project is
+/// first named, and hunting for the Filter afterwards is how projects end up
+/// ungrouped forever.
+///
+/// Shown only when there *is* a project. A group with nothing in it is not a
+/// thing this app has: groups are labels the projects carry, so offering one
+/// before there is a project to carry it would be offering nothing.
+struct ProjectGroupRow: View {
+    let names: [String]
+    @Binding var selection: String?
+    let tint: Color
+    let onNewGroup: () -> Void
+
+    var body: some View {
+        LabeledContent {
+            Menu {
+                Button {
+                    withAnimation { selection = nil }
+                } label: {
+                    if selection == nil { Label("None", systemImage: "checkmark") } else { Text("None") }
+                }
+                if !names.isEmpty { Divider() }
+                ForEach(names, id: \.self) { name in
+                    Button {
+                        withAnimation { selection = name }
+                    } label: {
+                        if Project.groupKey(for: name) == selection.map(Project.groupKey) {
+                            Label(name, systemImage: "checkmark")
+                        } else {
+                            Text(name)
+                        }
+                    }
+                }
+                Divider()
+                Button(action: onNewGroup) {
+                    Label("New Group…", systemImage: "folder.badge.plus")
+                }
+            } label: {
+                Text(selection ?? "None")
+                    .fontWeight(selection == nil ? .regular : .semibold)
+                    .foregroundStyle(selection == nil ? Color.secondary : tint)
+            }
+        } label: {
+            Label("Group", systemImage: "folder")
+        }
+    }
+}
+
 struct ProjectGroupMenu: View {
     let project: Project
     /// Called when the user wants a group that does not exist yet; each caller

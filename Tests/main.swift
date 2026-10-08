@@ -1269,5 +1269,45 @@ do {
            "an unknown stack falls back rather than throwing the document away")
 }
 
+// MARK: AG — a project can be created straight into a group
+do {
+    let research = UUID(), teaching = UUID()
+    var projects = [Project(name: "GRANT", categoryID: research, group: "Grants"),
+                    Project(name: "PAPER", categoryID: research, group: "Manuscripts")]
+
+    expect(ProjectGroups.names(in: research, projects: projects) == ["Grants", "Manuscripts"],
+           "the groups offered are the ones that category's projects already carry")
+    expect(ProjectGroups.names(in: teaching, projects: projects).isEmpty,
+           "and a category with no projects has none to offer — nothing to put a card in")
+
+    // A typed label that already exists keeps the spelling it has, so "grants"
+    // does not become a second group sitting beside "Grants".
+    expect(ProjectGroups.existingName(for: "grants", in: research, projects: projects) == "Grants",
+           "a label already in use keeps its spelling")
+    expect(ProjectGroups.existingName(for: "Ongoing", in: research, projects: projects) == nil,
+           "and one that is not is taken as typed")
+
+    // What the store does when a project is created with a group.
+    func created(_ name: String, group: String?) -> Project {
+        var p = Project(name: name, categoryID: research)
+        p.group = group.flatMap(Project.cleanGroup).map {
+            ProjectGroups.existingName(for: $0, in: research, projects: projects) ?? $0
+        }
+        return p
+    }
+    expect(created("STUDY", group: "grants").group == "Grants",
+           "a new project joins the existing group rather than making a near-duplicate")
+    expect(created("STUDY", group: "Ongoing").group == "Ongoing", "or starts a new one")
+    expect(created("STUDY", group: nil).group == nil, "and none is still none")
+    expect(created("STUDY", group: "   ").group == nil, "whitespace is not a group name")
+
+    // The layout the sidebar draws: a group exists only while something is in
+    // it, which is why a group cannot be offered before there is a project.
+    projects.append(created("STUDY", group: "Ongoing"))
+    let names = ProjectGroups.names(in: research, projects: projects)
+    expect(names == ["Grants", "Manuscripts", "Ongoing"],
+           "and once a project carries it, the group is there for the next one to pick")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

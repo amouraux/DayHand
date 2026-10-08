@@ -672,6 +672,25 @@ several words; they match without regard to case or accents, and the first
 spelling in use names the group. Groups belong to a category: moving a project
 to another category clears its group.
 
+**A group can be chosen where a project is**, in the New Task sheet and in the
+card editor: one row under the project, naming the group and offering the ones
+the category already has, plus **New Group…**. A group is easiest to set at the
+moment the project is first named, and having to find the Filter afterwards is
+how projects end up ungrouped for good.
+
+That row appears **only when there is a project**. A group is a label projects
+carry, so there is nothing to put in one until something exists to put — and
+offering a group for a card with no project would be offering nothing.
+
+The two cases differ in when the choice takes effect. On a project that already
+exists, picking a group refiles it **immediately and everywhere**, because the
+group belongs to the project rather than to this card. On a project that is only
+being typed, the choice is just remembered and applied when the card is added
+and the project is actually created — a cancelled sheet still leaves nothing
+behind. And a typed name that turns out to name an existing project keeps the
+group it already had: the user was naming a card's project, not quietly refiling
+one that other cards carry.
+
 Group headings sit inside the category section with the grouped projects
 indented beneath them, followed by ungrouped projects. Tapping a heading selects
 the group, and it carries the same **ⓘ** the projects under it do, opening the

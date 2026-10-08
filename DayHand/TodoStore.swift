@@ -385,7 +385,11 @@ final class TodoStore: ObservableObject {
     /// The project with this name, created if it does not exist yet. Typing an
     /// archived project's name brings it back — a course running again.
     @discardableResult
-    func ensureProject(named raw: String, categoryID: UUID?) -> Project? {
+    /// - Parameter group: only applied when the project is actually created.
+    ///   A name that turns out to already exist keeps the group it has: the
+    ///   user was naming a card's project, not quietly refiling an existing
+    ///   one on every card that carries it.
+    func ensureProject(named raw: String, categoryID: UUID?, group: String? = nil) -> Project? {
         let name = Project.clean(raw)
         guard !name.isEmpty else { return nil }
 
@@ -397,7 +401,10 @@ final class TodoStore: ObservableObject {
             }
             return projects[index]
         }
-        let project = Project(name: name, categoryID: categoryID)
+        var project = Project(name: name, categoryID: categoryID)
+        project.group = group.flatMap(Project.cleanGroup).map { typed in
+            ProjectGroups.existingName(for: typed, in: categoryID, projects: projects) ?? typed
+        }
         projects.append(project)
         save()
         return project

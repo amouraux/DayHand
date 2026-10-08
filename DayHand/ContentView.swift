@@ -157,7 +157,7 @@ struct ContentView: View {
                     projects: store.projects,
                     projectLastUsed: store.projectLastUsed,
                     defaultCategoryID: store.defaultCategoryID
-                ) { title, bucket, categoryID, projectChoice, remindAt, deadline in
+                ) { title, bucket, categoryID, projectChoice, newProjectGroup, remindAt, deadline in
                     // A new project is only created now, when the card is, so
                     // a cancelled sheet leaves nothing behind. It takes the
                     // category chosen for this first card.
@@ -166,7 +166,8 @@ struct ContentView: View {
                     case .none:                  projectID = nil
                     case .existing(let project): projectID = project.id
                     case .new(let name):
-                        projectID = store.ensureProject(named: name, categoryID: categoryID)?.id
+                        projectID = store.ensureProject(named: name, categoryID: categoryID,
+                                                        group: newProjectGroup)?.id
                     }
                     withAnimation {
                         // The sheet already resolved the default, so pass the
@@ -182,6 +183,7 @@ struct ContentView: View {
                         )
                     }
                 }
+                .environmentObject(store)
             }
             .sheet(isPresented: $isFiltering) {
                 FilterSheet(

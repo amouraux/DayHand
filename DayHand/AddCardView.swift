@@ -47,12 +47,15 @@ enum ProjectChoice: Equatable {
 /// appear as chips under the field — or, before typing anything, by tapping one
 /// of the recent projects already shown there. A project fills in its category.
 struct AddCardView: View {
+    @EnvironmentObject private var store: TodoStore
+
     let categories: [CardCategory]
     let projects: [Project]
     /// When each project was last used, for ranking the chips.
     let projectLastUsed: [UUID: Date]
     /// `(title, stack, category, project, remindAt, deadline)`.
-    let onAdd: (String, Bucket, UUID?, ProjectChoice, Date?, Date?) -> Void
+    /// `(title, stack, category, project, newProjectGroup, remindAt, deadline)`.
+    let onAdd: (String, Bucket, UUID?, ProjectChoice, String?, Date?, Date?) -> Void
 
     @Environment(\.dismiss) private var dismiss
     @State private var title = ""
@@ -70,7 +73,7 @@ struct AddCardView: View {
         projects: [Project] = [],
         projectLastUsed: [UUID: Date] = [:],
         defaultCategoryID: UUID?,
-        onAdd: @escaping (String, Bucket, UUID?, ProjectChoice, Date?, Date?) -> Void
+        onAdd: @escaping (String, Bucket, UUID?, ProjectChoice, String?, Date?, Date?) -> Void
     ) {
         self.categories = categories
         self.projects = projects
@@ -82,6 +85,12 @@ struct AddCardView: View {
     }
 
     @State private var bucket: Bucket = .inbox
+    /// The group a *new* project should be created in. Kept here rather than
+    /// inside `ProjectChoice`, because the title field rebuilds that choice on
+    /// every keystroke and would drop the group with it.
+    @State private var newProjectGroup: String?
+    @State private var isNamingGroup = false
+    @State private var typedGroup = ""
     @State private var hasReminder = false
     @State private var remindAt = Scheduler.defaultReminderTime()
     @State private var hasDeadline = false
@@ -115,6 +124,19 @@ struct AddCardView: View {
                         onSubmit: add,
                         onProjectChosen: projectChosen
                     )
+
+                    // Only once there is a project to put somewhere.
+                    if project != .none {
+                        ProjectGroupRow(
+                            names: groupNames,
+                            selection: groupSelection,
+                            tint: categories.first { $0.id == categoryID }?.color.prefixTint
+                                  ?? Color.accentColor
+                        ) {
+                            typedGroup = ""
+                            isNamingGroup = true
+                        }
+                    }
                 }
 
                 Section {
@@ -162,6 +184,17 @@ struct AddCardView: View {
                     Label(footerText, systemImage: bucket.symbolName)
                 }
             }
+            .alert("New Group", isPresented: $isNamingGroup) {
+                TextField("Grants", text: $typedGroup)
+                    .autocorrectionDisabled()
+                Button("Add") {
+                    guard let name = Project.cleanGroup(typedGroup) else { return }
+                    groupSelection.wrappedValue = name
+                }
+                Button("Cancel", role: .cancel) { }
+            } message: {
+                Text("Groups gather projects that belong together, such as Grants or Courses.")
+            }
             .navigationTitle("New Task")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -195,6 +228,32 @@ struct AddCardView: View {
         }
         if categoryBeforeProject == nil { categoryBeforeProject = categoryID }
         if let category = category(for: choice) { categoryID = category }
+    }
+
+    /// The groups already in use in the category the card is heading for.
+    private var groupNames: [String] { store.groupNames(in: categoryID) }
+
+    /// Reading and writing the group, whichever kind of project is chosen.
+    ///
+    /// An existing project is refiled for real, on the spot, because it is a
+    /// property of the project rather than of this card — and changing it here
+    /// changes it everywhere that project appears. A project that does not
+    /// exist yet only records the choice; it is applied when the card is added
+    /// and the project is actually created.
+    private var groupSelection: Binding<String?> {
+        Binding(
+            get: {
+                if case .existing(let chosen) = project { return chosen.group }
+                return newProjectGroup
+            },
+            set: { chosen in
+                if case .existing(let existing) = project {
+                    withAnimation { store.setProjectGroup(existing, to: chosen) }
+                } else {
+                    newProjectGroup = chosen
+                }
+            }
+        )
     }
 
     /// The category a choice brings with it, if any.
@@ -238,7 +297,7 @@ struct AddCardView: View {
             category = self.category(for: typed) ?? category
         }
         didAdd = true
-        onAdd(titleWithoutToken, bucket, category, choice,
+        onAdd(titleWithoutToken, bucket, category, choice, newProjectGroup,
               hasReminder ? remindAt : nil,
               hasReminder && hasDeadline ? deadline : nil)
         dismiss()
@@ -501,6 +560,8 @@ struct CardActionsSheet: View {
     /// the card, and read back from it when the sheet opens.
     @State private var editorProject: ProjectChoice = .none
     @State private var isNamingProject = false
+    @State private var isNamingGroup = false
+    @State private var typedGroup = ""
     @State private var newProjectName = ""
 
     private var item: TodoItem? { store.items.first { $0.id == itemID } }
@@ -532,6 +593,25 @@ struct CardActionsSheet: View {
 
                     Section {
                         projectRow(item)
+
+                        // Only when the card has a project: a group is a label
+                        // projects carry, so there is nothing to put in one
+                        // until there is a project to put.
+                        if let project = store.project(for: item) {
+                            ProjectGroupRow(
+                                names: store.groupNames(in: project.categoryID),
+                                selection: Binding(
+                                    get: { store.project(id: project.id)?.group },
+                                    set: { chosen in
+                                        withAnimation { store.setProjectGroup(project, to: chosen) }
+                                    }
+                                ),
+                                tint: store.category(for: item)?.color.prefixTint ?? Color.accentColor
+                            ) {
+                                typedGroup = ""
+                                isNamingGroup = true
+                            }
+                        }
 
                         if let split = firstWordProject(item) {
                             Button {
@@ -631,6 +711,18 @@ struct CardActionsSheet: View {
                 }
                 // Typing then dismissing by swipe must not lose the edit.
                 .onDisappear { commitTitle(item) }
+                .alert("New Group", isPresented: $isNamingGroup) {
+                    TextField("Grants", text: $typedGroup)
+                        .autocorrectionDisabled()
+                    Button("Add") {
+                        guard let name = Project.cleanGroup(typedGroup),
+                              let project = store.project(for: item) else { return }
+                        withAnimation { store.setProjectGroup(project, to: name) }
+                    }
+                    Button("Cancel", role: .cancel) { }
+                } message: {
+                    Text("Groups gather projects that belong together, such as Grants or Courses.")
+                }
                 .alert("New Project", isPresented: $isNamingProject) {
                     TextField("TRIP", text: $newProjectName)
                         .textInputAutocapitalization(.characters)

@@ -4307,6 +4307,47 @@
         }
       }
     },
+    "Grants" : {
+      "comment" : "Placeholder in the New Group field — an example group name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Förderungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Becas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subventions"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finanziamenti"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subsidies"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bolsas"
+          }
+        }
+      }
+    },
     "Group" : {
       "comment" : "Row in the project editor",
       "localizations" : {
@@ -4390,6 +4431,47 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Grupo %@, %lld projetos"
+          }
+        }
+      }
+    },
+    "Groups gather projects that belong together, such as Grants or Courses." : {
+      "comment" : "Explains what a group is, under the New Group field",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gruppen fassen Projekte zusammen, die zusammengehören, etwa Förderungen oder Kurse."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los grupos reúnen proyectos que van juntos, como Becas o Cursos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les groupes rassemblent des projets qui vont ensemble, comme Subventions ou Cours."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I gruppi riuniscono progetti che stanno insieme, come Finanziamenti o Corsi."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Groepen bundelen projecten die bij elkaar horen, zoals Subsidies of Cursussen."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os grupos reúnem projetos que andam juntos, como Bolsas ou Cursos."
           }
         }
       }
