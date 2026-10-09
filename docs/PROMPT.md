@@ -682,14 +682,20 @@ That row appears **only when there is a project**. A group is a label projects
 carry, so there is nothing to put in one until something exists to put — and
 offering a group for a card with no project would be offering nothing.
 
-The two cases differ in when the choice takes effect. On a project that already
-exists, picking a group refiles it **immediately and everywhere**, because the
-group belongs to the project rather than to this card. On a project that is only
-being typed, the choice is just remembered and applied when the card is added
-and the project is actually created — a cancelled sheet still leaves nothing
-behind. And a typed name that turns out to name an existing project keeps the
-group it already had: the user was naming a card's project, not quietly refiling
-one that other cards carry.
+**In the New Task sheet the row is settable only for a project that does not
+exist yet.** For one that does, it shows the group and nothing more. A group
+belongs to the project, not to this card, so changing it there would refile that
+project on every card carrying it — and that edit would survive **Cancel**,
+which is the opposite of what this sheet promises. Creating new projects late
+exists precisely so a cancelled sheet leaves nothing behind; a global write
+sitting in the same sheet would undo the point of it. Changing an existing
+project's group belongs in the card editor, which saves as you go and has no
+Cancel to contradict.
+
+So a project still being typed only records the choice, and it is applied when
+the card is added and the project is actually created. A typed name that turns
+out to name an existing project keeps the group it already had: the user was
+naming a card's project, not quietly refiling one that other cards carry.
 
 Group headings sit inside the category section with the grouped projects
 indented beneath them, followed by ungrouped projects. Tapping a heading selects

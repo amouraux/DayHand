@@ -27,10 +27,18 @@ struct ProjectGroupRow: View {
     let names: [String]
     @Binding var selection: String?
     let tint: Color
+    /// False where changing it would be a side effect the surrounding screen
+    /// has promised not to have — see the New Task sheet.
+    var editable: Bool = true
     let onNewGroup: () -> Void
 
     var body: some View {
         LabeledContent {
+            if !editable {
+                Text(selection ?? "None")
+                    .fontWeight(selection == nil ? .regular : .semibold)
+                    .foregroundStyle(selection == nil ? Color.secondary : tint)
+            } else {
             Menu {
                 Button {
                     withAnimation { selection = nil }
@@ -57,6 +65,7 @@ struct ProjectGroupRow: View {
                 Text(selection ?? "None")
                     .fontWeight(selection == nil ? .regular : .semibold)
                     .foregroundStyle(selection == nil ? Color.secondary : tint)
+            }
             }
         } label: {
             Label("Group", systemImage: "folder")

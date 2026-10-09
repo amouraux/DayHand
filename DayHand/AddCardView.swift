@@ -131,7 +131,14 @@ struct AddCardView: View {
                             names: groupNames,
                             selection: groupSelection,
                             tint: categories.first { $0.id == categoryID }?.color.prefixTint
-                                  ?? Color.accentColor
+                                  ?? Color.accentColor,
+                            // Shown, not settable, for a project that already
+                            // exists. Changing it would refile that project on
+                            // every card carrying it, and this sheet promises
+                            // that cancelling leaves nothing behind — a global
+                            // edit that survives Cancel is the opposite of
+                            // that. The card editor is where it is changed.
+                            editable: !isExistingProject
                         ) {
                             typedGroup = ""
                             isNamingGroup = true
@@ -230,6 +237,11 @@ struct AddCardView: View {
         if let category = category(for: choice) { categoryID = category }
     }
 
+    private var isExistingProject: Bool {
+        if case .existing = project { return true }
+        return false
+    }
+
     /// The groups already in use in the category the card is heading for.
     private var groupNames: [String] { store.groupNames(in: categoryID) }
 
@@ -246,13 +258,9 @@ struct AddCardView: View {
                 if case .existing(let chosen) = project { return chosen.group }
                 return newProjectGroup
             },
-            set: { chosen in
-                if case .existing(let existing) = project {
-                    withAnimation { store.setProjectGroup(existing, to: chosen) }
-                } else {
-                    newProjectGroup = chosen
-                }
-            }
+            // Only ever the pending one: an existing project's group is read
+            // here, never written.
+            set: { newProjectGroup = $0 }
         )
     }
 
