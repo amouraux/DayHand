@@ -59,6 +59,16 @@ struct ContentView: View {
         UIDevice.current.userInterfaceIdiom != .phone
     }
 
+    /// How far the corner buttons sit from the top of the space they are in.
+    /// On the Mac that space starts at the window's own top edge, so this is
+    /// the one number to turn if they sit too high or too low against the
+    /// traffic lights.
+    #if targetEnvironment(macCatalyst)
+    private static let topControlInset: CGFloat = 2
+    #else
+    private static let topControlInset: CGFloat = 6
+    #endif
+
     private var showsSidebar: Bool {
         horizontalSizeClass == .regular && UIDevice.current.userInterfaceIdiom != .phone
     }
@@ -121,7 +131,8 @@ struct ContentView: View {
                         todayButton(proxy)
                     }
                     .padding(.trailing, 16)
-                    .padding(.top, 6)
+                    .padding(.top, Self.topControlInset)
+                    .macTitlebarAligned()
                     .transition(.opacity)
                 }
             }
@@ -716,6 +727,7 @@ struct ContentView: View {
                 }
             }
         }
+        .macTopScrollEdge()
     }
 
     // MARK: - The menu a click on a card opens
@@ -871,6 +883,49 @@ struct ContentView: View {
         .padding(.trailing, 22)
         .padding(.bottom, 28)
         .accessibilityLabel("Add card to inbox")
+    }
+}
+
+extension View {
+    /// Tightens the band the system draws where scrolling content meets the
+    /// top of the window — on the Mac only.
+    ///
+    /// `.soft` is the default: a long translucent gradient. Under a status bar
+    /// that reads as iOS, but the Mac has no status bar for it to belong to,
+    /// and it lands below the traffic lights as a tall strip with the first
+    /// card half-legible behind it. `.hard` is the same idea at the height of
+    /// the titlebar and with a defined edge — a thin band rather than a fade,
+    /// which is what the window wanted all along. Removing it entirely left
+    /// the traffic lights sitting on top of a card.
+    ///
+    /// The second and last `#available(iOS 26, *)` fork in the app — see
+    /// `floatingChrome` for the other.
+    @ViewBuilder
+    func macTopScrollEdge() -> some View {
+        #if targetEnvironment(macCatalyst)
+        if #available(iOS 26.0, macOS 26.0, *) {
+            scrollEdgeEffectStyle(.hard, for: .top)
+        } else {
+            self
+        }
+        #else
+        self
+        #endif
+    }
+
+    /// Lifts the corner buttons into the titlebar strip, beside the traffic
+    /// lights, where a Mac window keeps its controls.
+    ///
+    /// They cannot *centre* on the lights: the buttons are 48pt and the strip
+    /// is about half that, so matching centres would put their tops above the
+    /// window. They sit at the top of it instead and hang below.
+    @ViewBuilder
+    func macTitlebarAligned() -> some View {
+        #if targetEnvironment(macCatalyst)
+        ignoresSafeArea(.container, edges: .top)
+        #else
+        self
+        #endif
     }
 }
 
