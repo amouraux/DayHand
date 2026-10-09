@@ -59,12 +59,15 @@ struct ContentView: View {
         UIDevice.current.userInterfaceIdiom != .phone
     }
 
-    /// How far the corner buttons sit from the top of the space they are in.
-    /// On the Mac that space starts at the window's own top edge, so this is
-    /// the one number to turn if they sit too high or too low against the
-    /// traffic lights.
+    /// How far the corner buttons sit below the titlebar.
+    ///
+    /// They used to be lifted *into* that strip, level with the traffic
+    /// lights, and it looked right — but the strip is the window's drag
+    /// region, and a control behind it never receives the click. There is no
+    /// public way to carve a hole in it; putting them up there for real means
+    /// an `NSToolbar`. Until then they sit just under it, which works.
     #if targetEnvironment(macCatalyst)
-    private static let topControlInset: CGFloat = 2
+    private static let topControlInset: CGFloat = 4
     #else
     private static let topControlInset: CGFloat = 6
     #endif
@@ -132,7 +135,6 @@ struct ContentView: View {
                     }
                     .padding(.trailing, 16)
                     .padding(.top, Self.topControlInset)
-                    .macTitlebarAligned()
                     .transition(.opacity)
                 }
             }
@@ -908,21 +910,6 @@ extension View {
         } else {
             self
         }
-        #else
-        self
-        #endif
-    }
-
-    /// Lifts the corner buttons into the titlebar strip, beside the traffic
-    /// lights, where a Mac window keeps its controls.
-    ///
-    /// They cannot *centre* on the lights: the buttons are 48pt and the strip
-    /// is about half that, so matching centres would put their tops above the
-    /// window. They sit at the top of it instead and hang below.
-    @ViewBuilder
-    func macTitlebarAligned() -> some View {
-        #if targetEnvironment(macCatalyst)
-        ignoresSafeArea(.container, edges: .top)
         #else
         self
         #endif
