@@ -331,7 +331,7 @@ struct ProjectTitleField: View {
     /// The category the card carries, for tinting the pill before a project
     /// has been chosen.
     let categoryID: UUID?
-    var placeholder: LocalizedStringKey = "What needs doing?  #project"
+    var placeholder: LocalizedStringKey = "#project  What needs doing?"
     /// The title as it stood before this edit began, so a `#word` already in
     /// it is left alone. Empty in the New Task sheet, where everything in the
     /// field was typed just now.
@@ -368,7 +368,14 @@ struct ProjectTitleField: View {
             // a layout that puts £ there — which would undo the time a project
             // saves. One tap here starts one, and lists every project rather
             // than only the recent ones.
-            if project == .none && query == nil {
+            // Only on an empty field. The tag goes at the *start*, and the
+            // cursor follows a programmatic change to the end of the text —
+            // so on a field with a title already in it the hash would land in
+            // front and the typing would land behind, which is no use to
+            // anybody. With a title already typed, the chips below are the way
+            // to a project.
+            if project == .none && query == nil
+                && title.trimmingCharacters(in: .whitespaces).isEmpty {
                 Button { insertHash() } label: {
                     Image(systemName: "number")
                         .font(.body.weight(.semibold))
@@ -547,12 +554,10 @@ struct ProjectTitleField: View {
         onProjectChosen(choice)
     }
 
+    /// Starts a tag. The field is empty when this is offered, so the hash is
+    /// both at the beginning and under the cursor.
     private func insertHash() {
-        if title.isEmpty || title.last?.isWhitespace == true {
-            title += "#"
-        } else {
-            title += " #"
-        }
+        title = "#"
     }
 }
 /// What opens when a card is tapped: its name, editable in place, with the same

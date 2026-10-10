@@ -41,6 +41,47 @@
         }
       }
     },
+    "#project  What needs doing?" : {
+      "comment" : "Placeholder in the New Task title field — the tag comes first",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "#projekt  Was ist zu tun?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "#proyecto  ¿Qué hay que hacer?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "#projet  Que faut-il faire ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "#progetto  Che cosa c'è da fare?"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "#project  Wat moet er gebeuren?"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "#projeto  O que é preciso fazer?"
+          }
+        }
+      }
+    },
     "%@ already exists" : {
       "localizations" : {
         "de" : {
@@ -9724,46 +9765,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O que é preciso fazer?"
-          }
-        }
-      }
-    },
-    "What needs doing?  #project" : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Was ist zu tun?  #projekt"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Qué hay que hacer?  #proyecto"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Que faut-il faire ?  #projet"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Che cosa c’è da fare?  #progetto"
-          }
-        },
-        "nl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wat moet er gebeuren?  #project"
-          }
-        },
-        "pt-PT" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O que é preciso fazer?  #projeto"
           }
         }
       }

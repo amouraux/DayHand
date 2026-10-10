@@ -619,6 +619,21 @@ everywhere in the interface; never "subproject" or "tag".
   shown as first written. A name is one word (spaces removed), so a space can
   finish it.
 - **A project fills in its category** on cards given it afterwards.
+- **The `#` button is offered only on an empty field.** It exists because `#`
+  is two layer-switches away on the iPhone keyboard, and it puts the hash where
+  a tag goes: at the start, under the cursor. With a title already typed it is
+  hidden, because the cursor follows a programmatic edit to the *end* of the
+  text — the hash would land in front and the typing behind it. The chips are
+  the way to a project from there.
+- **A `#word` is a project only at the very start of the title**, and nowhere
+  else. `#TRIP book flights` is the project TRIP; `book flights #TRIP` is a
+  title that happens to contain a hash, and so are "fix issue #42" and "buy a
+  #2 pencil". The rule used to read the *last* word instead, which made the
+  order of typing matter invisibly — a tag typed first worked, a tag pasted in
+  front of a title did not — and left every title ending in a hash-word one
+  keystroke away from becoming a project. Reading only the first word cannot
+  confuse the two, and it agrees with the CSV importer, which has always lifted
+  a leading `#CODE`.
 - **Entry (New Task).** Typing `#` plus letters shows matching projects as chips
   under the field (prefix matches first, then contains; most recently *created*
   first — not last edited, because converting or merging touches every card).

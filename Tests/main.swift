@@ -12,11 +12,18 @@ do {
     expect(t == ProjectToken(query: "lk", isFinished: false, remainder: ""), "#lk is a query in progress")
     expect(ProjectToken.find(in: "#")?.query == "", "a bare # shows all projects")
     expect(ProjectToken.find(in: "#lk ")?.isFinished == true, "a space finishes it")
-    expect(ProjectToken.find(in: "exam #lk")?.remainder == "exam", "a #word at the end keeps the title before it")
+    expect(ProjectToken.find(in: "#lk exam")?.remainder == "exam", "the rest of the line is the title")
     expect(ProjectToken.find(in: "exam questions") == nil, "no # means no project")
     expect(ProjectToken.find(in: "# ") == nil, "hash-space is not a project")
-    expect(ProjectToken.find(in: "#lk  ") == nil, "two spaces: finished long ago, not re-taken")
     expect(ProjectToken.find(in: "use C#") == nil, "a # inside a word is not a project")
+
+    // The whole rule: a tag is the first word or it is nothing. Anything else
+    // is a title that happens to contain a hash, and there are plenty.
+    expect(ProjectToken.find(in: "exam #lk") == nil, "a #word at the end is just text now")
+    expect(ProjectToken.find(in: "fix issue #42") == nil, "and so is a bug number")
+    expect(ProjectToken.find(in: "buy a #2 pencil") == nil, "and so is one in the middle")
+    expect(ProjectToken.find(in: "#lk  exam")?.remainder == "exam",
+           "extra spaces after the tag are not part of the title")
     expect(ProjectToken.find(in: "\u{FF03}lk")?.query == "lk", "full-width # from a CJK keyboard works")
 }
 
@@ -1311,47 +1318,39 @@ do {
 
 // MARK: AH — a hash already in a title is not a gesture
 do {
-    // The bug this pins: opening the editor on a card whose name happens to
-    // end in a #word, typing nothing, and closing it renamed the card and
-    // invented a project out of the remainder.
-    let untouched = "fix issue #42"
+    // The bug this pins: opening the editor on a card whose name carried a
+    // #word, typing nothing, and closing it renamed the card and invented a
+    // project out of the rest. Reading only the first word removed most of
+    // that by itself — "fix issue #42" is no longer a token at all — but a
+    // title that genuinely starts with one still needs the guard.
+    let untouched = "#1 priority for the week"
     guard let found = ProjectToken.find(in: untouched) else {
         expect(false, "the parser does see a token here — that was never in doubt")
         fatalError()
     }
-    expect(found.query == "42", "it reads the number as a project name")
+    expect(found.query == "1", "it reads the number as a project name")
     expect(!ProjectToken.isNewlyTyped(found, givenTitleBefore: untouched),
            "but against the title it came from, nothing was typed — so it is not taken")
 
-    // Same title, now actually edited into a project.
-    let edited = "fix issue #42 "
-    let typed = ProjectToken.find(in: edited)!
-    expect(typed.isFinished, "a space finishes the word")
-    expect(!ProjectToken.isNewlyTyped(typed, givenTitleBefore: untouched),
-           "yet it is still the same #42 the card already carried, so still not taken")
-
     // A genuinely new one, typed into a title that had none.
-    let fresh = ProjectToken.find(in: "book flights #TRIP ")!
+    let fresh = ProjectToken.find(in: "#TRIP book flights")!
     expect(ProjectToken.isNewlyTyped(fresh, givenTitleBefore: "book flights"),
            "a hash typed where there was none is taken")
     expect(ProjectToken.isNewlyTyped(fresh, givenTitleBefore: ""),
            "and in the New Task sheet, where nothing came before, everything is")
 
     // Changing which project a title names counts as typing one.
-    let changed = ProjectToken.find(in: "fix issue #43 ")!
+    let changed = ProjectToken.find(in: "#2 priority for the week")!
     expect(ProjectToken.isNewlyTyped(changed, givenTitleBefore: untouched),
-           "editing #42 into #43 is a new one — the user clearly meant it")
+           "editing #1 into #2 is a new one — the user clearly meant it")
 
     // Case and spelling are matched the way project names always are, so
-    // #Trip is not mistaken for a new project beside #TRIP.
-    let recased = ProjectToken.find(in: "book flights #trip ")!
-    expect(!ProjectToken.isNewlyTyped(recased, givenTitleBefore: "book flights #TRIP"),
+    // #trip is not mistaken for a new project beside #TRIP.
+    let recased = ProjectToken.find(in: "#trip book flights")!
+    expect(!ProjectToken.isNewlyTyped(recased, givenTitleBefore: "#TRIP book flights"),
            "the same name in another case is the same name")
 
-    // Titles with no hash at all are unaffected either way.
     expect(ProjectToken.find(in: "a plain title") == nil, "no hash, no token")
-    expect(ProjectToken.find(in: "buy a #2 pencil") == nil,
-           "and a hash that is not the last word was never a token")
 }
 
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")

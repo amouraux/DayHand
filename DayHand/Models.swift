@@ -475,28 +475,34 @@ struct ProjectToken: Equatable {
     /// The title with the token removed.
     let remainder: String
 
-    /// Finds the last `#word` in the text, if the text ends with it (or with it
-    /// and one space). A `#` in the middle of finished words is left alone.
+    /// Reads a `#word` at the **very start** of the text, and nowhere else.
+    ///
+    /// `#TRIP book flights` is the project TRIP. `book flights #TRIP` is a
+    /// title that happens to contain a hash, and so is `fix issue #42` — a
+    /// rule that only looks at the first word cannot mistake one for the
+    /// other, whatever is typed after it or pasted in alongside.
+    ///
+    /// It also stops the order of typing mattering. The old rule read the
+    /// *last* word, so a tag typed first and a tag typed last both worked,
+    /// but a tag pasted in front of a title did not, and nothing on screen
+    /// said which kind you had. The CSV importer has always read the leading
+    /// word; this is the field agreeing with it.
     static func find(in text: String) -> ProjectToken? {
-        let finished = text.hasSuffix(" ")
-        let body = finished ? String(text.dropLast()) : text
-        // Two spaces means the word was finished some time ago.
-        if finished && body.last?.isWhitespace == true { return nil }
+        guard let first = text.first, first == "#" || first == "\u{FF03}" else { return nil }
+        let body = text.dropFirst()
 
-        // The final word of what is left.
-        let start = body.lastIndex(where: { $0.isWhitespace }).map { body.index(after: $0) } ?? body.startIndex
-        let word = String(body[start...])
-        guard let first = word.first, first == "#" || first == "\u{FF03}" else { return nil }
-
-        let query = String(word.dropFirst())
+        guard let space = body.firstIndex(where: \.isWhitespace) else {
+            // Still being typed: no space has ended the word yet.
+            return ProjectToken(query: String(body), isFinished: false, remainder: "")
+        }
+        let query = String(body[..<space])
         // "# " on its own is someone typing a hash and a space, not a project.
-        if finished && query.isEmpty { return nil }
+        guard !query.isEmpty else { return nil }
 
-        let before = String(body[..<start])
-        let remainder = before
-            .split(whereSeparator: { $0.isWhitespace })
+        let remainder = body[space...]
+            .split(whereSeparator: \.isWhitespace)
             .joined(separator: " ")
-        return ProjectToken(query: query, isFinished: finished, remainder: remainder)
+        return ProjectToken(query: query, isFinished: true, remainder: remainder)
     }
 
     /// Whether this `#word` is one the user has just made, rather than one the
