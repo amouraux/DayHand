@@ -332,6 +332,10 @@ struct ProjectTitleField: View {
     /// has been chosen.
     let categoryID: UUID?
     var placeholder: LocalizedStringKey = "What needs doing?  #project"
+    /// The title as it stood before this edit began, so a `#word` already in
+    /// it is left alone. Empty in the New Task sheet, where everything in the
+    /// field was typed just now.
+    var titleBefore: String = ""
     @FocusState.Binding var focused: Bool
     /// Return true to swallow the submit; New Task adds the card on Return.
     var onSubmit: () -> Void = {}
@@ -474,7 +478,8 @@ struct ProjectTitleField: View {
             }
         }
 
-        guard let token = ProjectToken.find(in: entered) else {
+        guard let token = ProjectToken.find(in: entered),
+              ProjectToken.isNewlyTyped(token, givenTitleBefore: titleBefore) else {
             query = nil
             release()
             return
@@ -563,6 +568,9 @@ struct CardActionsSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var title = ""
+    /// The title this sheet opened on. Committing compares against it, so
+    /// opening the editor and closing it again changes nothing at all.
+    @State private var loadedTitle = ""
     @FocusState private var titleFocused: Bool
     /// What the field shows as the card's project. Written straight through to
     /// the card, and read back from it when the sheet opens.
@@ -590,6 +598,7 @@ struct CardActionsSheet: View {
                             categories: store.categories,
                             categoryID: item.categoryID,
                             placeholder: "Title",
+                            titleBefore: loadedTitle,
                             focused: $titleFocused,
                             onSubmit: {
                                 commitTitle(item)
@@ -713,6 +722,7 @@ struct CardActionsSheet: View {
                 }
                 .onAppear {
                     title = item.title
+                    loadedTitle = item.title
                     // The field shows what the card already carries, so the
                     // pill is there before anything is typed.
                     editorProject = store.project(for: item).map(ProjectChoice.existing) ?? .none
@@ -752,7 +762,11 @@ struct CardActionsSheet: View {
     /// A `#word` left unfinished when the sheet closes still counts, exactly as
     /// it does in New Task.
     private func takeTypedProject(_ item: TodoItem) -> Bool {
-        guard let token = ProjectToken.find(in: title),
+        // Finished, and typed just now. Without both, closing the editor on a
+        // card called "fix issue #42" renamed it and made a project out of the
+        // number — nobody having touched the field.
+        guard let token = ProjectToken.find(in: title), token.isFinished,
+              ProjectToken.isNewlyTyped(token, givenTitleBefore: loadedTitle),
               let choice = ProjectTitleField.choice(for: token.query, in: store.projects)
         else { return false }
 
@@ -789,8 +803,17 @@ struct CardActionsSheet: View {
     }
 
     private func commitTitle(_ item: TodoItem) {
-        if takeTypedProject(item) { return }
+        // Nothing typed, nothing to write. `onDisappear` fires for reasons
+        // other than the user having finished with the sheet, so a commit that
+        // runs unconditionally is a destructive edit waiting for a trigger.
+        guard title != loadedTitle else { return }
+
+        if takeTypedProject(item) {
+            loadedTitle = title
+            return
+        }
         store.rename(item, to: title)
+        loadedTitle = title
     }
 
     // MARK: - Project

@@ -498,6 +498,18 @@ struct ProjectToken: Equatable {
             .joined(separator: " ")
         return ProjectToken(query: query, isFinished: finished, remainder: remainder)
     }
+
+    /// Whether this `#word` is one the user has just made, rather than one the
+    /// title already carried before they started editing.
+    ///
+    /// A card called "fix issue #42" ends in a `#word` without anybody having
+    /// reached for a project. Treating it as one renames the card to "fix
+    /// issue" and invents a project called 42 — which is what used to happen
+    /// on merely opening the editor and closing it again.
+    static func isNewlyTyped(_ token: ProjectToken, givenTitleBefore before: String) -> Bool {
+        guard let had = find(in: before) else { return true }
+        return Project.key(for: had.query) != Project.key(for: token.query)
+    }
 }
 
 /// Ranks projects for the suggestion chips: names that start with what was

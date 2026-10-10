@@ -252,6 +252,21 @@ apart from newlines arriving in *pasted* text — those fold into spaces and lea
 the sheet open. Guard the add itself so that a platform delivering Return by
 both routes at once files one card, not two.
 
+**A `#word` the title already had is not a gesture.** A card called "fix issue
+#42" ends in one without anybody having reached for a project. The editor
+therefore compares against the title it opened on: a hash that was already
+there is inert — typing around it does nothing, and committing leaves it alone.
+Only a hash typed during this edit, and finished with a space, becomes a
+project. The New Task sheet has no "before" to compare against, so everything
+in that field counts as typed.
+
+**And committing does nothing when nothing changed.** The editor writes on
+`onDisappear`, which fires for reasons other than the user being finished with
+the sheet; an unconditional commit there is a destructive edit waiting for a
+trigger. Together these two rules are why opening the editor and closing it
+again cannot alter the card — which it could, renaming it and creating a
+project named after whatever followed the hash.
+
 **This belongs to the title field, not to the sheets that use it.** It was
 written at one call site and the New Task sheet went without it, so a Return
 there put a line break in the title and did nothing else — on the Mac, where

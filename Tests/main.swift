@@ -1309,5 +1309,50 @@ do {
            "and once a project carries it, the group is there for the next one to pick")
 }
 
+// MARK: AH — a hash already in a title is not a gesture
+do {
+    // The bug this pins: opening the editor on a card whose name happens to
+    // end in a #word, typing nothing, and closing it renamed the card and
+    // invented a project out of the remainder.
+    let untouched = "fix issue #42"
+    guard let found = ProjectToken.find(in: untouched) else {
+        expect(false, "the parser does see a token here — that was never in doubt")
+        fatalError()
+    }
+    expect(found.query == "42", "it reads the number as a project name")
+    expect(!ProjectToken.isNewlyTyped(found, givenTitleBefore: untouched),
+           "but against the title it came from, nothing was typed — so it is not taken")
+
+    // Same title, now actually edited into a project.
+    let edited = "fix issue #42 "
+    let typed = ProjectToken.find(in: edited)!
+    expect(typed.isFinished, "a space finishes the word")
+    expect(!ProjectToken.isNewlyTyped(typed, givenTitleBefore: untouched),
+           "yet it is still the same #42 the card already carried, so still not taken")
+
+    // A genuinely new one, typed into a title that had none.
+    let fresh = ProjectToken.find(in: "book flights #TRIP ")!
+    expect(ProjectToken.isNewlyTyped(fresh, givenTitleBefore: "book flights"),
+           "a hash typed where there was none is taken")
+    expect(ProjectToken.isNewlyTyped(fresh, givenTitleBefore: ""),
+           "and in the New Task sheet, where nothing came before, everything is")
+
+    // Changing which project a title names counts as typing one.
+    let changed = ProjectToken.find(in: "fix issue #43 ")!
+    expect(ProjectToken.isNewlyTyped(changed, givenTitleBefore: untouched),
+           "editing #42 into #43 is a new one — the user clearly meant it")
+
+    // Case and spelling are matched the way project names always are, so
+    // #Trip is not mistaken for a new project beside #TRIP.
+    let recased = ProjectToken.find(in: "book flights #trip ")!
+    expect(!ProjectToken.isNewlyTyped(recased, givenTitleBefore: "book flights #TRIP"),
+           "the same name in another case is the same name")
+
+    // Titles with no hash at all are unaffected either way.
+    expect(ProjectToken.find(in: "a plain title") == nil, "no hash, no token")
+    expect(ProjectToken.find(in: "buy a #2 pencil") == nil,
+           "and a hash that is not the last word was never a token")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)
