@@ -161,8 +161,15 @@ struct FilterList: View {
             } footer: {
                 // Where the eye already is, rather than a tip at the bottom
                 // that nobody scrolls to.
-                Text("Clicking a row picks that one; use the checkbox beside it to pick several. Tap \u{24D8} to rename a project or a group, or to put a project away.")
-                Text("Drag a project by its handle onto a group or an All category row to move it.")
+                //
+                // Stacked, not left loose: a section footer takes one view,
+                // and two of them side by side in the builder meant only the
+                // first was ever drawn — the drag line had never once been on
+                // screen.
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Clicking a row picks that one; use the checkbox beside it to pick several. Tap \u{24D8} to rename a project or a group, or to put a project away.")
+                    Text("Drag a project by its handle onto a group or an All category row to move it.")
+                }
             }
 
             // Above the categories, not below them: on a phone the search field
