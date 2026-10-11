@@ -706,6 +706,13 @@ everywhere in the interface; never "subproject" or "tag".
   digit in it. Every other first word would mean a chip under every title
   anyone ever writes, and most first words are just words. A project whose name
   is an ordinary word is made from the picker instead.
+- **The `#` keeps the button, with a chevron beside it.** The hash is what a
+  project looks like everywhere in the app — the Project row, Settings, the
+  project editor — and there is no symbol going spare, `tag` belonging to
+  Category and `folder` to groups. Taking it off this one button would leave it
+  disagreeing with the row beneath it. What had to go is the *reading*: a bare
+  `#` next to a text field is a key to press, which is the reflex this whole
+  change was retiring. The chevron makes it a place to choose from.
 - **The `#` button is now the picker.** There is no character to insert, so it
   lists every project and offers **New Project…** — the way to a project the
   first word will not offer, because it reads like a word or because it is not
