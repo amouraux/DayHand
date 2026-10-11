@@ -1378,6 +1378,38 @@ do {
     expect(!ProjectToken.startsTag(tail, after: tail), "no hash, no tag")
 }
 
+// MARK: AI — a project nothing is filed under is not offered
+do {
+    let cat = UUID()
+    let used = Project(name: "PAPER", categoryID: cat)
+    let emptied = Project(name: "TRIP", categoryID: cat)
+    let all = [used, emptied]
+    let inUse: Set<UUID> = [used.id]
+
+    let offered = ProjectSuggestions.rank(all, query: "", lastUsed: [:], inUse: inUse)
+    expect(offered.map(\.name) == ["PAPER"],
+           "a project whose last card moved away drops out of what is offered")
+
+    expect(ProjectSuggestions.rank(all, query: "TRI", lastUsed: [:], inUse: inUse).isEmpty,
+           "and is not offered by name either, the way an archived one is not")
+
+    // Nothing is deleted, so the name still finds it: a card filed under TRIP
+    // again gets the project it had, with its group and category, rather than
+    // a second one carrying the same name.
+    expect(all.contains { $0.key == Project.key(for: "TRIP") },
+           "the project is still there to be found and reused")
+
+    expect(ProjectSuggestions.rank(all, query: "", lastUsed: [:]).count == 2,
+           "with nothing said about use, every project is offered")
+
+    // The emptiness has to be read off the cards; it is not a property a
+    // project carries, which is exactly why it must not be written back.
+    let cards = [TodoItem(title: "rework the methods", bucket: .today,
+                          categoryID: cat, projectID: used.id)]
+    expect(Set(cards.compactMap(\.projectID)) == inUse,
+           "what is in use is whatever the cards say is in use")
+}
+
 // MARK: AI — what Tab completes a half-typed tag to
 do {
     let cat = UUID()

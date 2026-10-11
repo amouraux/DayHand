@@ -708,6 +708,20 @@ everywhere in the interface; never "subproject" or "tag".
   text field reports its placeholder's baseline lower than typed text.
 - **Archived projects** are never suggested and drop out of the project list,
   so the list stays about what is still going on.
+- **A project no card carries is not offered either.** The last card moving to
+  another project leaves one behind that is still in the file but no longer a
+  tag anybody is using, and it went on being suggested and listed in the
+  project menu. It is *not* deleted: whether a project is empty is read off the
+  cards, and two devices that have not merged yet do not agree about those — a
+  device holding an older copy would write a tombstone for a project the other
+  one is filing cards under, and leave those cards pointing at nothing. Folding
+  duplicate projects can write a tombstone precisely because it is decided by
+  the project list alone and every device decides it identically; emptiness is
+  not. So the project stays, stops being offered, and comes back by itself the
+  moment a card carries it again — keeping the id, group and category it had.
+  A name typed in full still matches it, so it is reused rather than made a
+  second time, and the Filter still lists it, which is where it can be renamed,
+  merged or deleted deliberately.
 
 ### Organising them — all in the Filter
 

@@ -378,6 +378,13 @@ final class TodoStore: ObservableObject {
     /// The same, per category, so both kinds of filter row read alike.
     var openCategoryCounts: [UUID: Int] { FilterCounts.byCategory(items) }
 
+    /// The projects at least one card carries, completed ones included: a
+    /// project does not stop existing because its work is finished. What the
+    /// field and the project menu *offer* is drawn from this rather than from
+    /// `projects`, so a project whose last card moved away stops being
+    /// suggested without anything being written or deleted.
+    var projectsInUse: Set<UUID> { Set(items.compactMap(\.projectID)) }
+
     func cardCount(using project: Project) -> Int {
         items.filter { $0.projectID == project.id }.count
     }

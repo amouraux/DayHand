@@ -164,40 +164,7 @@ struct ContentView: View {
                     store.beginLiveSync()
                 }
             }
-            .sheet(isPresented: $isAdding) {
-                AddCardView(
-                    categories: store.categories,
-                    projects: store.projects,
-                    projectLastUsed: store.projectLastUsed,
-                    defaultCategoryID: store.defaultCategoryID
-                ) { title, bucket, categoryID, projectChoice, newProjectGroup, remindAt, deadline in
-                    // A new project is only created now, when the card is, so
-                    // a cancelled sheet leaves nothing behind. It takes the
-                    // category chosen for this first card.
-                    let projectID: UUID?
-                    switch projectChoice {
-                    case .none:                  projectID = nil
-                    case .existing(let project): projectID = project.id
-                    case .new(let name):
-                        projectID = store.ensureProject(named: name, categoryID: categoryID,
-                                                        group: newProjectGroup)?.id
-                    }
-                    withAnimation {
-                        // The sheet already resolved the default, so pass the
-                        // choice through as-is rather than letting the store
-                        // substitute one.
-                        store.add(
-                            title: title,
-                            bucket: bucket,
-                            categoryID: .some(categoryID),
-                            projectID: projectID,
-                            remindAt: remindAt,
-                            deadline: deadline
-                        )
-                    }
-                }
-                .environmentObject(store)
-            }
+            .sheet(isPresented: $isAdding) { addCardSheet }
             .sheet(isPresented: $isFiltering) {
                 FilterSheet(
                     categorySelection: $filterCategoryIDs.animation(.easeInOut(duration: 0.2)),
@@ -513,6 +480,51 @@ struct ContentView: View {
     private var anchorBucket: Bucket {
         let preferred: [Bucket] = [.today, .tomorrow, .later, .completed, .inbox]
         return preferred.first { !cards(in: $0).isEmpty } ?? .today
+    }
+
+    /// Lifted out of `body`: this file sits at the limit of what the type
+    /// checker will infer in one expression, and one more argument to the
+    /// sheet below tipped it over — with the error landing on unrelated lines
+    /// hundreds of lines away.
+    private var addCardSheet: some View {
+        AddCardView(
+            categories: store.categories,
+            projects: store.projects,
+            projectLastUsed: store.projectLastUsed,
+            projectsInUse: store.projectsInUse,
+            defaultCategoryID: store.defaultCategoryID,
+            onAdd: addCard
+        )
+        .environmentObject(store)
+    }
+
+    private func addCard(title: String, bucket: Bucket, categoryID: UUID?,
+                         projectChoice: ProjectChoice, newProjectGroup: String?,
+                         remindAt: Date?, deadline: Date?) {
+            // A new project is only created now, when the card is, so
+            // a cancelled sheet leaves nothing behind. It takes the
+            // category chosen for this first card.
+            let projectID: UUID?
+            switch projectChoice {
+            case .none:                  projectID = nil
+            case .existing(let project): projectID = project.id
+            case .new(let name):
+                projectID = store.ensureProject(named: name, categoryID: categoryID,
+                                                group: newProjectGroup)?.id
+            }
+            withAnimation {
+                // The sheet already resolved the default, so pass the
+                // choice through as-is rather than letting the store
+                // substitute one.
+                store.add(
+                    title: title,
+                    bucket: bucket,
+                    categoryID: .some(categoryID),
+                    projectID: projectID,
+                    remindAt: remindAt,
+                    deadline: deadline
+                )
+            }
     }
 
     private func jumpToToday(_ proxy: ScrollViewProxy, animated: Bool) {

@@ -53,6 +53,8 @@ struct AddCardView: View {
     let projects: [Project]
     /// When each project was last used, for ranking the chips.
     let projectLastUsed: [UUID: Date]
+    /// The projects a card carries, so an emptied one is not offered here either.
+    let projectsInUse: Set<UUID>
     /// `(title, stack, category, project, remindAt, deadline)`.
     /// `(title, stack, category, project, newProjectGroup, remindAt, deadline)`.
     let onAdd: (String, Bucket, UUID?, ProjectChoice, String?, Date?, Date?) -> Void
@@ -72,12 +74,14 @@ struct AddCardView: View {
         categories: [CardCategory],
         projects: [Project] = [],
         projectLastUsed: [UUID: Date] = [:],
+        projectsInUse: Set<UUID> = [],
         defaultCategoryID: UUID?,
         onAdd: @escaping (String, Bucket, UUID?, ProjectChoice, String?, Date?, Date?) -> Void
     ) {
         self.categories = categories
         self.projects = projects
         self.projectLastUsed = projectLastUsed
+        self.projectsInUse = projectsInUse
         self.onAdd = onAdd
         // Pre-selected, not forced: it is an ordinary picker value the user can
         // change back to None before adding.
@@ -118,6 +122,7 @@ struct AddCardView: View {
                         project: $project,
                         projects: projects,
                         lastUsed: projectLastUsed,
+                        inUse: projectsInUse,
                         categories: categories,
                         categoryID: categoryID,
                         focused: $focused,
@@ -327,6 +332,10 @@ struct ProjectTitleField: View {
     @Binding var project: ProjectChoice
     let projects: [Project]
     let lastUsed: [UUID: Date]
+    /// The projects a card actually carries. Only what is *offered* is drawn
+    /// from this — a typed name is still matched against every project, so an
+    /// emptied one is reused rather than made a second time.
+    var inUse: Set<UUID>? = nil
     let categories: [CardCategory]
     /// The category the card carries, for tinting the pill before a project
     /// has been chosen.
@@ -430,7 +439,7 @@ struct ProjectTitleField: View {
         guard let token = ProjectToken.find(in: text), !token.isFinished,
               !token.query.isEmpty,
               let top = ProjectSuggestions.rank(projects, query: token.query,
-                                                lastUsed: lastUsed).first
+                                                lastUsed: lastUsed, inUse: inUse).first
         else {
             title = text
             return
@@ -462,10 +471,12 @@ struct ProjectTitleField: View {
 
     private var chips: [Project] {
         if let query {
-            return ProjectSuggestions.rank(projects, query: query, lastUsed: lastUsed)
+            return ProjectSuggestions.rank(projects, query: query,
+                                           lastUsed: lastUsed, inUse: inUse)
         }
         guard project == .none else { return [] }
-        return ProjectSuggestions.rank(projects, query: "", lastUsed: lastUsed, limit: 5)
+        return ProjectSuggestions.rank(projects, query: "", lastUsed: lastUsed,
+                                       inUse: inUse, limit: 5)
     }
 
     private var createName: String? {
@@ -710,6 +721,7 @@ struct CardActionsSheet: View {
                             project: projectBinding(item),
                             projects: store.projects,
                             lastUsed: store.projectLastUsed,
+                            inUse: store.projectsInUse,
                             categories: store.categories,
                             categoryID: item.categoryID,
                             placeholder: "Title",
@@ -954,8 +966,11 @@ struct CardActionsSheet: View {
     /// a project brings its category, exactly as in the New Task sheet.
     private func projectRow(_ item: TodoItem) -> some View {
         let current = store.project(for: item)
+        // The one the card already carries is always listed, even if it is the
+        // last card and the project would otherwise have dropped out.
+        let inUse = store.projectsInUse
         let offered = store.projects
-            .filter { !$0.isArchived || $0.id == current?.id }
+            .filter { (!$0.isArchived && inUse.contains($0.id)) || $0.id == current?.id }
             .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
         let tint = store.category(for: item)?.color.prefixTint ?? Color.accentColor
 

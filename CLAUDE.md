@@ -212,8 +212,17 @@ the code plainly says it should, check the product before debugging the code:
 stat -f '%Sm' ~/Library/Developer/Xcode/DerivedData/DayHand-*/Build/Products/Debug-iphonesimulator/DayHand.app/DayHand
 ```
 
-If that timestamp is older than the edit, `touch` the file and build again.
+If that timestamp is older than the edit, `touch` the file and build again —
+and check the timestamp a second time, because **`touch` is not always enough**.
+On 11 October a build reported SUCCEEDED, ran the build-number script phase, and
+left a binary 13 minutes older than the source; touching every `.swift` file
+changed nothing, and the log showed no compile step at all. Only `clean build`
+rebuilt it. So: if a second build leaves the timestamp where it was, go straight
+to `clean build` rather than reading the code for a bug that is not there.
+
 Believing the screenshot over the timestamp costs far more than the check does.
+It cost an hour here twice over — once chasing a fix that was already correct,
+once "confirming" a filter that the running app had never contained.
 
 ## Finishing a change
 

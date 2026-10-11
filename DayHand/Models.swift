@@ -537,14 +537,25 @@ struct ProjectToken: Equatable {
 /// typed, then names that merely contain it; most recently used first within
 /// each. Archived projects are never suggested.
 enum ProjectSuggestions {
+    /// - Parameter inUse: the projects at least one card carries. Nil offers
+    ///   every project, which is what a test or a caller with no cards to hand
+    ///   wants.
     static func rank(
         _ projects: [Project],
         query: String,
         lastUsed: [UUID: Date],
+        inUse: Set<UUID>? = nil,
         limit: Int = 6
     ) -> [Project] {
         let wanted = Project.key(for: query)
-        let live = projects.filter { !$0.isArchived }
+        // A project no card carries is not a tag any more — the last one
+        // having moved elsewhere — so it stops being offered, exactly as an
+        // archived one does. It is not deleted: emptiness is read off the
+        // cards, and two devices that have not merged yet do not agree about
+        // those, so a device holding an older copy would tombstone a project
+        // the other is using and leave that card pointing at nothing. Left
+        // alone it comes back by itself the moment a card carries it again.
+        let live = projects.filter { !$0.isArchived && (inUse?.contains($0.id) ?? true) }
 
         func recency(_ project: Project) -> Date { lastUsed[project.id] ?? .distantPast }
         func byRecency(_ a: Project, _ b: Project) -> Bool {
