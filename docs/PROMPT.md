@@ -651,6 +651,16 @@ everywhere in the interface; never "subproject" or "tag".
   onto a project that already exists — completing to something that does not
   exist is not completion, and a space already commits a new name.
 
+  **Backspace against the tag does not remove it, and cannot.** It was tried:
+  `onKeyPress(.delete)` never fires, for the same reason Tab's did not — a
+  focused text field takes keys first. Tab at least landed *in the text*, where
+  it could be caught; backspace on an empty field changes nothing and so fires
+  nothing at all. The only remaining route is wrapping a `UITextView` to
+  override `deleteBackward()`, which would mean rebuilding the placeholder, the
+  growing height, focus, submit and the tag colouring by hand — a great deal of
+  risk for one keystroke, when the pill's **×** already does it. Removing a tag
+  is the ×.
+
   **Tab arrives as a character, not as a key.** `onKeyPress(.tab)` never fires
   through a focused text field; it was tried and does not work. The tab lands
   in the text instead, where it is whitespace — and whitespace is what finishes
