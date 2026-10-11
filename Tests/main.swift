@@ -1353,5 +1353,40 @@ do {
     expect(ProjectToken.find(in: "a plain title") == nil, "no hash, no token")
 }
 
+// MARK: AI — what Tab completes a half-typed tag to
+do {
+    let cat = UUID()
+    let projects = [Project(name: "NOCIONS", categoryID: cat),
+                    Project(name: "NOTES", categoryID: cat),
+                    Project(name: "PAPER", categoryID: cat)]
+
+    /// The field's rule, as a function: the tag still being typed, and the
+    /// project Tab would take.
+    func completion(_ typed: String) -> String? {
+        guard let token = ProjectToken.find(in: typed), !token.isFinished,
+              !token.query.isEmpty else { return nil }
+        return ProjectSuggestions.rank(projects, query: token.query, lastUsed: [:]).first?.name
+    }
+
+    expect(completion("#NOC") == "NOCIONS", "half a name reaches the whole one")
+    expect(completion("#noc") == "NOCIONS", "case is not part of the question")
+    expect(completion("#NO") == "NOCIONS",
+           "and where two could match, the ranking decides — prefix, then recency")
+    expect(completion("#XYZ") == nil, "nothing matching, nothing to complete to")
+    expect(completion("#") == nil, "and a bare hash is not a question yet")
+    expect(completion("#NOCIONS book flights") == nil,
+           "a tag already finished by a space is not completed again")
+
+    // The bug: a tab left in the text is whitespace, and whitespace finishes a
+    // tag. Pressing Tab on "#NOC" committed a project called NOC rather than
+    // completing it, because the key arrives as a character and nothing
+    // stripped it first.
+    let withTab = ProjectToken.find(in: "#NOC\t")
+    expect(withTab?.isFinished == true && withTab?.query == "NOC",
+           "which is why the tab has to come out of the text before it is read")
+    expect(completion("#NOC\t".replacingOccurrences(of: "\t", with: "")) == "NOCIONS",
+           "with it gone, the half-typed name completes as it should")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

@@ -649,9 +649,15 @@ everywhere in the interface; never "subproject" or "tag".
   gives the project back: the colour drops away instead of a pill vanishing.
 - **Tab takes the first suggestion.** Only while a tag is being typed, and only
   onto a project that already exists — completing to something that does not
-  exist is not completion, and a space already commits a new name. Any other
-  time Tab is left alone to move focus, which is what it is for in a sheet full
-  of pickers.
+  exist is not completion, and a space already commits a new name.
+
+  **Tab arrives as a character, not as a key.** `onKeyPress(.tab)` never fires
+  through a focused text field; it was tried and does not work. The tab lands
+  in the text instead, where it is whitespace — and whitespace is what finishes
+  a tag, so Tab on `#NOC` committed a project called NOC rather than reaching
+  NOCIONS. It has to be taken out of the string before the tag is read. With
+  nothing to complete to, the tab is simply dropped: a title has no use for
+  one.
   Waiting means the sheet spends the whole time showing a category the card is
   not going to get, which reads as the tag having done nothing. Typing on past
   a name that matched, or deleting the `#`, gives back both the project and the

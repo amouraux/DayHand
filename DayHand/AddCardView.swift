@@ -371,7 +371,6 @@ struct ProjectTitleField: View {
                 .focused($focused)
                 .submitLabel(.done)
                 .onSubmit(onSubmit)
-                .onKeyPress(.tab) { completeTag() }
                 .onChange(of: title) { _, entered in handle(entered) }
 
             // On the iPhone keyboard `#` is two layer-switches away — three on
@@ -402,6 +401,28 @@ struct ProjectTitleField: View {
         }
     }
 
+    /// Tab takes the first suggestion, the way it does everywhere else.
+    ///
+    /// Only onto a project that already exists: completing to something that
+    /// does not exist is not completion, and a space already commits a new
+    /// name. With nothing to complete, the tab is simply dropped — it is not a
+    /// character a title has any use for.
+    private func completeTag(_ text: String) {
+        guard let token = ProjectToken.find(in: text), !token.isFinished,
+              !token.query.isEmpty,
+              let top = ProjectSuggestions.rank(projects, query: token.query,
+                                                lastUsed: lastUsed).first
+        else {
+            title = text
+            return
+        }
+        // Not read back from `title`: the write above may not be visible yet.
+        title = token.remainder.isEmpty ? "" : token.remainder + " "
+        query = nil
+        adoptedID = nil
+        choose(.existing(top))
+    }
+
     /// A `#word` with no space after it yet. Because a tag has to be the first
     /// word, this also means the field contains nothing else.
     private var typingTag: ProjectToken? {
@@ -415,19 +436,6 @@ struct ProjectTitleField: View {
         guard typingTag != nil, adoptedID != nil,
               case .existing(let chosen) = project else { return .primary }
         return tint(for: chosen)
-    }
-
-    /// Tab takes the first suggestion, the way it does everywhere else.
-    ///
-    /// Only while a tag is being typed and only onto a project that exists —
-    /// completing to something that does not exist is not completion, and a
-    /// space already commits a new name. Any other time Tab is left alone to
-    /// move focus, which is what it is for in a sheet full of pickers.
-    private func completeTag() -> KeyPress.Result {
-        guard let token = typingTag, !token.query.isEmpty,
-              let top = chips.first else { return .ignored }
-        pick(.existing(top))
-        return .handled
     }
 
     // MARK: - Chips
@@ -514,6 +522,17 @@ struct ProjectTitleField: View {
         // the call sites because the New Task sheet went without it for want
         // of someone remembering to add it there too.
         var entered = entered
+
+        // Tab arrives as a *character*, not as a key the view can intercept:
+        // `onKeyPress(.tab)` never fires through a focused field, which was
+        // tried and does not work. Left in the text it is whitespace, and
+        // whitespace is what finishes a tag — so Tab on "#NOC" committed a
+        // project called NOC rather than completing it to NOCIONS.
+        if entered.contains("\t") {
+            completeTag(entered.replacingOccurrences(of: "\t", with: ""))
+            return
+        }
+
         if let typed = titleReturn(in: entered) {
             entered = typed.cleaned
             title = entered
