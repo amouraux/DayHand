@@ -634,9 +634,6 @@ struct CardActionsSheet: View {
     /// opening the editor and closing it again changes nothing at all.
     @State private var loadedTitle = ""
     @FocusState private var titleFocused: Bool
-    /// What the field shows as the card's project. Written straight through to
-    /// the card, and read back from it when the sheet opens.
-    @State private var editorProject: ProjectChoice = .none
     @State private var isNamingProject = false
     @State private var isNamingGroup = false
     @State private var typedGroup = ""
@@ -654,7 +651,7 @@ struct CardActionsSheet: View {
                         // half-typed word are one view, not a lookalike.
                         ProjectTitleField(
                             title: $title,
-                            project: $editorProject,
+                            project: projectBinding(item),
                             projects: store.projects,
                             lastUsed: store.projectLastUsed,
                             categories: store.categories,
@@ -665,8 +662,7 @@ struct CardActionsSheet: View {
                             onSubmit: {
                                 commitTitle(item)
                                 titleFocused = false
-                            },
-                            onProjectChosen: { choice in applyProject(choice, to: item) }
+                            }
                         )
                     }
 
@@ -785,9 +781,6 @@ struct CardActionsSheet: View {
                 .onAppear {
                     title = item.title
                     loadedTitle = item.title
-                    // The field shows what the card already carries, so the
-                    // pill is there before anything is typed.
-                    editorProject = store.project(for: item).map(ProjectChoice.existing) ?? .none
                 }
                 // Typing then dismissing by swipe must not lose the edit.
                 .onDisappear { commitTitle(item) }
@@ -834,7 +827,6 @@ struct CardActionsSheet: View {
 
         title = token.remainder
         store.rename(item, to: token.remainder)
-        editorProject = choice
         applyProject(choice, to: item)
         return true
     }
@@ -846,6 +838,18 @@ struct CardActionsSheet: View {
               let split = ProjectConversion.split(title),
               ProjectConversion.looksLikeCode(split.word) else { return nil }
         return split
+    }
+
+    /// The card *is* the project, so the field reads it off the card rather
+    /// than holding a copy. Held as state, the copy went stale the moment the
+    /// Project row below wrote to the store, and the pill kept offering a
+    /// project the card no longer carried — the row and the pill being two
+    /// views of one fact, only one of which was told when it changed.
+    private func projectBinding(_ item: TodoItem) -> Binding<ProjectChoice> {
+        Binding(
+            get: { store.project(for: item).map(ProjectChoice.existing) ?? .none },
+            set: { choice in applyProject(choice, to: item) }
+        )
     }
 
     /// A project chosen in the field goes straight onto the card, which also

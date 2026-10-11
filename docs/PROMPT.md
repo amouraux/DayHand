@@ -339,6 +339,14 @@ once the drag is more horizontal than vertical.
   the title. It is the single-card version of Convert Title Prefixes, for a
   card written before its project existed.
 
+  In the editor the pill and the **Project** row are two views of one fact, so
+  neither may hold its own copy of it: both read the project off the card. Given
+  a copy to show, the pill went on offering a project the card no longer carried
+  the moment the row below was used — the row, the New Project alert and the
+  first-word button all write to the card, and only one of them was telling the
+  copy. For the same reason one of them writes: the card's edit stamp is what
+  decides a merge, so a second write of the same value would bump it for nothing.
+
 Feel: reveal a coloured panel behind the card that grows as you drag, ~96pt
 commit threshold, resistance past that, capped travel, and a haptic tick the
 moment the gesture arms. The move panel wears the **destination stack's own
