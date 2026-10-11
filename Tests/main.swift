@@ -1409,5 +1409,32 @@ do {
            "with it gone, the half-typed name completes as it should")
 }
 
+// MARK: Project drag destinations share the menu's filing rules
+do {
+    let source = UUID(), destination = UUID()
+    let project = Project(name: "PAPER", categoryID: source, group: "Research")
+    let open = TodoItem(title: "Draft", categoryID: source, projectID: project.id)
+    let done = TodoItem(title: "Outline", bucket: .completed, categoryID: source, projectID: project.id)
+    let unrelated = TodoItem(title: "Other", categoryID: source, projectID: UUID())
+    let cards = [open, done, unrelated]
+
+    expect(ProjectFiling.move(project, toCategory: source, group: "research", cards: cards) == nil,
+           "dropping into the same group is a no-op, including case variants")
+    let regroup = ProjectFiling.move(project, toCategory: source, group: "Clients", cards: cards)
+    expect(regroup?.group == "Clients" && regroup?.cards == 0,
+           "a group move leaves card categories alone")
+    let ungroup = ProjectFiling.move(project, toCategory: source, group: nil, cards: cards)
+    expect(ungroup != nil && ungroup?.group == nil && ungroup?.cards == 0,
+           "dropping on the current category removes the group without moving cards")
+    let across = ProjectFiling.move(project, toCategory: destination, group: "Clients", cards: cards)
+    expect(across?.categoryID == destination && across?.group == "Clients" && across?.cards == 2,
+           "a group in another category moves open and completed cards, excluding other projects")
+    let category = ProjectFiling.move(project, toCategory: destination, group: nil, cards: cards)
+    expect(category?.categoryID == destination && category?.group == nil && category?.cards == 2,
+           "a category target clears the group and asks about affected cards")
+    let empty = ProjectFiling.move(project, toCategory: destination, group: nil, cards: [])
+    expect(empty?.cards == 0, "an empty project can move without card confirmation")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

@@ -1,6 +1,88 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Move %@" : {
+      "comment" : "Project drag handle or drag instructions in the sidebar",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ verschieben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déplacer %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sposta %@"
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ verplaatsen"
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover %@"
+          }
+        }
+      }
+    },
+    "Drag a project by its handle onto a group or an All category row to move it." : {
+      "comment" : "Project drag handle or drag instructions in the sidebar",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ziehe ein Projekt an seinem Griff auf eine Gruppe oder eine Zeile „Alle“ einer Kategorie, um es zu verschieben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrastra un proyecto por su asa a un grupo o a la fila «Todo» de una categoría para moverlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faites glisser un projet par sa poignée vers un groupe ou la ligne « Tout » d’une catégorie pour le déplacer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trascina un progetto dalla maniglia su un gruppo o sulla riga «Tutte» di una categoria per spostarlo."
+          }
+        },
+        "nl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sleep een project met de greep naar een groep of de rij ‘Alle’ van een categorie om het te verplaatsen."
+          }
+        },
+        "pt-PT" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arraste um projeto pela pega para um grupo ou para a linha «Tudo» de uma categoria para o mover."
+          }
+        }
+      }
+    },
     " " : {
       "localizations" : {
         "de" : {

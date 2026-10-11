@@ -796,25 +796,22 @@ behind a dark row.
 that one says how many and asks first. Both go through one rule, so they cannot
 answer differently.
 
-**Dragging a project onto a heading is written but does not work, and is not
-the supported route.** The drag lifts the project, and no heading ever receives
-it. Four attempts: `dropDestination`, which does not attach to a row inside a
-List; `onDrop`, the older UIKit-backed one, which did not either; moving the
-`draggable` off the row's HStack onto the name, where the checkbox, the ⓘ and
-the taps had left nothing to grab; and a fix to the shared highlight state,
-which turned out to be addressing a race that was not happening — the brief
-highlight seen on the row being picked up is UIKit's own lift, not ours.
+**Drag a project by the handle beside its name onto a group or an “All
+[category]” row.** A group receives the project in that group's category;
+a category receives it with no group, including when removing it from a group
+in the same category. Valid targets show an accent outline, including folded
+headings. A move across categories still asks before changing any cards, using
+the same rule as the menu. Dropping onto its current location does nothing.
 
-The likely reason is that a `List` on Catalyst is a collection view that owns
-drag and drop itself, and the per-row SwiftUI modifiers never see the session —
-the same wall the card swipe hit, where only a UIKit recogniser could do the
-job. Doing that here means a real `UIDropInteraction` through a representable.
-It was left undone deliberately: the menu reaches everything the drag would,
-and none of this can be tested on this machine, because a drag session will not
-start from synthetic touches.
+The handle uses `UIDragInteraction`, and headings attach `UIDropInteraction`
+to their native list cell's content view. The earlier SwiftUI per-row drop
+modifiers never received the session in Catalyst's List. Only a single local
+project drag is accepted; arbitrary text and external drags cannot move a
+project. The dedicated handle leaves the name's selection and rename gestures
+available. The menu remains available as an alternative to dragging.
 
-**On a touch screen the drag is unreachable regardless**: the long press
-belongs to the context menu, which wins it every time.
+Builds and model tests do not verify a real pointer or touch drag; that still
+needs a manual check on a device, including cancellation and folded headings.
 
 **Double-clicking a project or a group name renames it in place.** Enter commits
 and so does clicking away, the way a Finder rename does — an untouched field

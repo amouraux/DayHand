@@ -1,5 +1,5 @@
 import SwiftUI
-import UniformTypeIdentifiers
+import UIKit
 
 /// Narrow the list to any mix of categories and projects. A card shows if it
 /// matches any of them: "Teaching, and also STUDY2026".
@@ -162,6 +162,7 @@ struct FilterList: View {
                 // Where the eye already is, rather than a tip at the bottom
                 // that nobody scrolls to.
                 Text("Clicking a row picks that one; use the checkbox beside it to pick several. Tap \u{24D8} to rename a project or a group, or to put a project away.")
+                Text("Drag a project by its handle onto a group or an All category row to move it.")
             }
 
             // Above the categories, not below them: on a phone the search field
@@ -331,9 +332,7 @@ struct FilterList: View {
         // A project dropped on a category belongs to it, in no group — which
         // is also the way one is taken out of a group, by dropping it on the
         // category it is already in.
-        .onDrop(of: Self.draggedTypes, isTargeted: aiming(at: .category(category.id))) { providers in
-            accept(providers, into: nil, categoryID: category.id)
-        }
+        .background(projectDropTarget(.category(category.id), categoryID: category.id, group: nil))
         .contextMenu { addToSelection(categories: [category.id]) }
     }
 
@@ -396,9 +395,7 @@ struct FilterList: View {
             headingBand(tint(forCategory: categoryID), strong: false)
                 .overlay(dropHighlight(aimedAt == .group(categoryID, name)))
         )
-        .onDrop(of: Self.draggedTypes, isTargeted: aiming(at: .group(categoryID, name))) { providers in
-            accept(providers, into: name, categoryID: categoryID)
-        }
+        .background(projectDropTarget(.group(categoryID, name), categoryID: categoryID, group: name))
         .contextMenu {
             addToSelection(projects: ids)
             Button {
@@ -421,7 +418,9 @@ struct FilterList: View {
             selectionBox(isOn: projectSelection.contains(project.id)) {
                 add(projects: [project.id])
             }
-            if isSidebar { Color.clear.frame(width: 18, height: 1) }
+            ProjectDragHandle(projectID: project.id, name: project.name)
+                .frame(width: 22, height: isSidebar ? 28 : 44)
+                .allowsHitTesting(renamingInline == nil)
             if renamingInline == .project(project.id) {
                 renameField()
             } else {
@@ -447,13 +446,10 @@ struct FilterList: View {
                     }
                     .onTapGesture { withAnimation { pick(projects: [project.id]) } }
                     .accessibilityAddTraits(.isButton)
-                    // On the name, and outside the taps. It was on the row's
-                    // HStack, where there was nothing left to grab: the
-                    // checkbox and the ⓘ are buttons, and the taps above —
-                    // with `contentShape` behind them — claim everything in
-                    // between. A drag needs somewhere its press is not already
-                    // spoken for.
-                    .draggable(project.id.uuidString)
+                    .contextMenu {
+                        addToSelection(projects: [project.id])
+                        moveMenu(project)
+                    }
             }
 
             // The row filters by the project; this opens it — the way a Wi-Fi
@@ -468,10 +464,6 @@ struct FilterList: View {
             }
             .buttonStyle(.borderless)
             .accessibilityLabel("Edit \(project.name)")
-        }
-        .contextMenu {
-            addToSelection(projects: [project.id])
-            moveMenu(project)
         }
     }
 
@@ -513,28 +505,8 @@ struct FilterList: View {
     /// where a modifier does not exist at all.
     // MARK: - Dragging a project somewhere else
 
-    /// Only a project this install actually has. The payload is a plain
-    /// string, so anything at all can be dropped on these rows.
-    private func dragged(_ payload: [String]) -> Project? {
-        guard let raw = payload.first, let id = UUID(uuidString: raw) else { return nil }
-        return store.projects.first { $0.id == id }
-    }
-
-    /// What a dragged project arrives as. `.draggable` on a String vends plain
-    /// text; the three are listed rather than only the general one because a
-    /// type that does not match looks exactly like a destination that is not
-    /// there — no highlight, no drop — and that is the bug being fixed.
-    private static let draggedTypes: [UTType] = [.utf8PlainText, .plainText, .text]
-
-    /// Whether a drag is over this heading, for the highlight.
-    ///
-    /// Leaving only clears the highlight if it is still this heading's. Every
-    /// heading shares the one piece of state, and crossing from one to the
-    /// next fires two callbacks whose order is nobody's to rely on: written as
-    /// `over ? target : nil`, the row being *left* reported false after the
-    /// row being entered reported true, and wiped it. Which looked like only
-    /// the first heading ever lighting up — and it was the one under the drag
-    /// when it started, the only one with nothing before it to do the wiping.
+    /// Exit callbacks can follow the next heading's entry callback, so only
+    /// clear the highlight when it still belongs to the heading being left.
     private func aiming(at target: DropTarget) -> Binding<Bool> {
         Binding(
             get: { aimedAt == target },
@@ -545,34 +517,21 @@ struct FilterList: View {
         )
     }
 
-    /// Dropping a project on a heading files it there: on a group it joins the
-    /// group, on a category row it lands in that category in no group — which
-    /// is also how a project is taken *out* of a group, by dropping it on the
-    /// category it already belongs to.
-    ///
-    /// `onDrop` rather than `dropDestination`, which never activates on a row
-    /// inside a List: the drag started and lifted the project, and no heading
-    /// ever lit up, because the destination was not there to be hit. The older
-    /// API is the UIKit one underneath, and it does attach. The cost is that
-    /// the payload arrives as an item provider to be read asynchronously, off
-    /// the main actor, rather than as a String already in hand.
-    private func accept(_ providers: [NSItemProvider],
-                        into group: String?, categoryID: UUID?) -> Bool {
-        guard let provider = providers.first else { return false }
-        provider.loadObject(ofClass: NSString.self) { text, _ in
-            guard let raw = text as? String else { return }
-            Task { @MainActor in
-                guard let project = dragged([raw]) else { return }
-                refile(project, categoryID: categoryID, group: group)
-            }
-        }
-        return true
+    private func projectDropTarget(_ target: DropTarget, categoryID: UUID?,
+                                   group: String?) -> some View {
+        ProjectDropTarget(isTargeted: aiming(at: target), accepts: { id in
+            guard let project = store.project(id: id) else { return false }
+            return ProjectFiling.move(project, toCategory: categoryID,
+                                      group: group, cards: store.items) != nil
+        }, move: { id in
+            guard let project = store.project(id: id) else { return }
+            refile(project, categoryID: categoryID, group: group)
+        })
     }
 
     /// Where a project is being sent, however it was asked for — dropped on a
-    /// heading, or chosen from its menu. The menu matters because a drag is
-    /// not reachable everywhere: on a touch screen the long press belongs to
-    /// the context menu, so this is the way there on a phone.
+    /// heading, or chosen from its menu. The menu also provides a route that
+    /// does not require a drag gesture.
     @discardableResult
     private func refile(_ project: Project, categoryID: UUID?, group: String?) -> Bool {
         guard let move = ProjectFiling.move(project, toCategory: categoryID,
@@ -801,5 +760,164 @@ struct FilterSheet: View {
                 }
         }
         .presentationDetents([.medium, .large], selection: $detent)
+    }
+}
+
+// MARK: - Native sidebar drag and drop
+
+/// Local-only identity keeps text dragged from another app from moving data.
+private struct DraggedProject {
+    let id: UUID
+}
+
+/// A dedicated grip leaves selection, renaming and the info button independent
+/// of the press that starts a drag, including on touch screens.
+private struct ProjectDragHandle: UIViewRepresentable {
+    let projectID: UUID
+    let name: String
+
+    func makeCoordinator() -> Coordinator { Coordinator(projectID: projectID, name: name) }
+
+    func makeUIView(context: Context) -> UIImageView {
+        let view = UIImageView(image: UIImage(systemName: "line.3.horizontal"))
+        view.contentMode = .center
+        view.tintColor = .tertiaryLabel
+        view.isUserInteractionEnabled = true
+        view.isAccessibilityElement = true
+        let interaction = UIDragInteraction(delegate: context.coordinator)
+        interaction.isEnabled = true
+        view.addInteraction(interaction)
+        return view
+    }
+
+    func updateUIView(_ view: UIImageView, context: Context) {
+        context.coordinator.projectID = projectID
+        context.coordinator.name = name
+        view.accessibilityLabel = String(localized: "Move \(name)")
+    }
+
+    final class Coordinator: NSObject, UIDragInteractionDelegate {
+        var projectID: UUID
+        var name: String
+
+        init(projectID: UUID, name: String) {
+            self.projectID = projectID
+            self.name = name
+        }
+
+        func dragInteraction(_ interaction: UIDragInteraction,
+                             itemsForBeginning session: UIDragSession) -> [UIDragItem] {
+            let item = UIDragItem(itemProvider: NSItemProvider(object: name as NSString))
+            item.localObject = DraggedProject(id: projectID)
+            return [item]
+        }
+
+        func dragInteraction(_ interaction: UIDragInteraction,
+                             sessionIsRestrictedToDraggingApplication session: UIDragSession) -> Bool { true }
+    }
+}
+
+/// SwiftUI's row drop modifiers are swallowed by List's collection view on
+/// Catalyst. Attach to the cell's content view, an ancestor of its buttons,
+/// instead of the background anchor (which never receives their hit tests).
+private struct ProjectDropTarget: UIViewRepresentable {
+    @Binding var isTargeted: Bool
+    var accepts: (UUID) -> Bool
+    var move: (UUID) -> Void
+
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
+
+    func makeUIView(context: Context) -> Anchor {
+        let anchor = Anchor()
+        anchor.isUserInteractionEnabled = false
+        anchor.coordinator = context.coordinator
+        return anchor
+    }
+
+    func updateUIView(_ anchor: Anchor, context: Context) {
+        context.coordinator.parent = self
+        context.coordinator.attach(from: anchor)
+    }
+
+    static func dismantleUIView(_ anchor: Anchor, coordinator: Coordinator) {
+        coordinator.detach()
+        anchor.coordinator = nil
+    }
+
+    final class Anchor: UIView {
+        weak var coordinator: Coordinator?
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+            if window == nil { coordinator?.detach() }
+            else { coordinator?.attach(from: self) }
+        }
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            coordinator?.attach(from: self)
+        }
+    }
+
+    final class Coordinator: NSObject, UIDropInteractionDelegate {
+        var parent: ProjectDropTarget
+        private weak var host: UIView?
+        private lazy var interaction = UIDropInteraction(delegate: self)
+
+        init(_ parent: ProjectDropTarget) { self.parent = parent }
+
+        func attach(from anchor: UIView) {
+            guard anchor.window != nil else { return }
+            var candidate = anchor.superview
+            while let view = candidate {
+                let content: UIView?
+                if let cell = view as? UICollectionViewCell { content = cell.contentView }
+                else if let cell = view as? UITableViewCell { content = cell.contentView }
+                else { content = nil }
+                if let content {
+                    guard content !== host else { return }
+                    detach()
+                    content.addInteraction(interaction)
+                    host = content
+                    return
+                }
+                candidate = view.superview
+            }
+        }
+
+        func detach() {
+            host?.removeInteraction(interaction)
+            host = nil
+        }
+
+        private func projectID(in session: UIDropSession) -> UUID? {
+            guard session.localDragSession != nil, session.items.count == 1,
+                  let project = session.items.first?.localObject as? DraggedProject,
+                  parent.accepts(project.id) else { return nil }
+            return project.id
+        }
+
+        func dropInteraction(_ interaction: UIDropInteraction, canHandle session: UIDropSession) -> Bool {
+            projectID(in: session) != nil
+        }
+
+        func dropInteraction(_ interaction: UIDropInteraction,
+                             sessionDidUpdate session: UIDropSession) -> UIDropProposal {
+            let accepted = session.allowsMoveOperation && projectID(in: session) != nil
+            parent.isTargeted = accepted
+            return UIDropProposal(operation: accepted ? .move : .forbidden)
+        }
+
+        func dropInteraction(_ interaction: UIDropInteraction, performDrop session: UIDropSession) {
+            parent.isTargeted = false
+            guard let id = projectID(in: session) else { return }
+            parent.move(id)
+        }
+
+        func dropInteraction(_ interaction: UIDropInteraction, sessionDidExit session: UIDropSession) {
+            parent.isTargeted = false
+        }
+
+        func dropInteraction(_ interaction: UIDropInteraction, sessionDidEnd session: UIDropSession) {
+            parent.isTargeted = false
+        }
     }
 }
