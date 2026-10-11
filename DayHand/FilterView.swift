@@ -527,9 +527,22 @@ struct FilterList: View {
     private static let draggedTypes: [UTType] = [.utf8PlainText, .plainText, .text]
 
     /// Whether a drag is over this heading, for the highlight.
+    ///
+    /// Leaving only clears the highlight if it is still this heading's. Every
+    /// heading shares the one piece of state, and crossing from one to the
+    /// next fires two callbacks whose order is nobody's to rely on: written as
+    /// `over ? target : nil`, the row being *left* reported false after the
+    /// row being entered reported true, and wiped it. Which looked like only
+    /// the first heading ever lighting up — and it was the one under the drag
+    /// when it started, the only one with nothing before it to do the wiping.
     private func aiming(at target: DropTarget) -> Binding<Bool> {
-        Binding(get: { aimedAt == target },
-                set: { over in aimedAt = over ? target : nil })
+        Binding(
+            get: { aimedAt == target },
+            set: { over in
+                if over { aimedAt = target }
+                else if aimedAt == target { aimedAt = nil }
+            }
+        )
     }
 
     /// Dropping a project on a heading files it there: on a group it joins the

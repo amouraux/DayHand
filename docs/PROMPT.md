@@ -808,6 +808,12 @@ does not attach to a row inside a List; `onDrop`, the older UIKit-backed one,
 does. The payload then arrives as an item provider to be read off the main
 actor rather than as a value already in hand, which is the price of it.
 
+All the headings share one piece of "which is the drag over" state, so leaving
+one only clears the highlight when it is still that heading's. Crossing from
+one heading to the next fires two callbacks in an order nobody may rely on, and
+clearing unconditionally meant the heading being *left* wiped the one being
+entered — which looked like only the first heading ever lighting up.
+
 **Double-clicking a project or a group name renames it in place.** Enter commits
 and so does clicking away, the way a Finder rename does — an untouched field
 writes nothing, so neither can rename anything by accident. A name that belongs
