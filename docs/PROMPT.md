@@ -252,18 +252,15 @@ apart from newlines arriving in *pasted* text — those fold into spaces and lea
 the sheet open. Guard the add itself so that a platform delivering Return by
 both routes at once files one card, not two.
 
-**A `#word` the title already had is not a gesture.** A card called "fix issue
-#42" ends in one without anybody having reached for a project. The editor
-therefore compares against the title it opened on: a hash that was already
-there is inert — typing around it does nothing, and committing leaves it alone.
-Only a hash typed during this edit, and finished with a space, becomes a
-project. The New Task sheet has no "before" to compare against, so everything
-in that field counts as typed.
+**A title may say whatever it likes.** A card called "fix issue #42" was once
+one keystroke from inventing a project called 42, which needed a rule comparing
+the title against the one the editor opened on. That rule is gone, and for a
+better reason than a guard: nothing is ever taken out of a title without being
+chosen. The first word is *offered* — as a chip, which can be ignored — so a
+title can begin with anything at all, including a hash, and mean only itself.
 
 **And committing does nothing when nothing changed.** The editor writes on
-`onDisappear`, which fires for reasons other than the user being finished with
-the sheet; an unconditional commit there is a destructive edit waiting for a
-trigger. Together these two rules are why opening the editor and closing it
+Done, and only what differs from the draft it opened on. Together these two rules are why opening the editor and closing it
 again cannot alter the card — which it could, renaming it and creating a
 project named after whatever followed the hash.
 
@@ -658,21 +655,14 @@ everywhere in the interface; never "subproject" or "tag".
   shown as first written. A name is one word (spaces removed), so a space can
   finish it.
 - **A project fills in its category** on cards given it afterwards.
-- **The `#` button is offered only on an empty field.** It exists because `#`
-  is two layer-switches away on the iPhone keyboard, and it puts the hash where
-  a tag goes: at the start, under the cursor. With a title already typed it is
-  hidden, because the cursor follows a programmatic edit to the *end* of the
-  text — the hash would land in front and the typing behind it. The chips are
-  the way to a project from there.
-- **A `#word` is a project only at the very start of the title**, and nowhere
-  else. `#TRIP book flights` is the project TRIP; `book flights #TRIP` is a
-  title that happens to contain a hash, and so are "fix issue #42" and "buy a
-  #2 pencil". The rule used to read the *last* word instead, which made the
-  order of typing matter invisibly — a tag typed first worked, a tag pasted in
-  front of a title did not — and left every title ending in a hash-word one
-  keystroke away from becoming a project. Reading only the first word cannot
-  confuse the two, and it agrees with the CSV importer, which has always lifted
-  a leading `#CODE`.
+- **A project comes from the first word of the title, and nowhere else.**
+  `BIO2140 mark the problem sets` offers BIO2140; `mark the problem sets for
+  BIO2140` offers nothing. The rule once read the *last* word, which made the
+  order of typing matter invisibly, and then the first word *behind a hash*,
+  which is where the hash finally proved unnecessary: the position was already
+  doing the work. The CSV importer still lifts a leading `#CODE`, because that
+  is a file format rather than a gesture, and `clean` strips a hash anywhere a
+  name is read, so an old habit costs nothing.
 - **Entry (New Task).** Typing `#` plus letters shows matching projects as chips
   under the field (prefix matches first, then contains; most recently *created*
   first — not last edited, because converting or merging touches every card).
@@ -749,14 +739,13 @@ everywhere in the interface; never "subproject" or "tag".
   nothing to complete to, the tab is simply dropped: a title has no use for
   one.
   Waiting means the sheet spends the whole time showing a category the card is
-  not going to get, which reads as the tag having done nothing. Typing on past
-  a name that matched, or deleting the `#`, gives back both the project and the
-  category the card had before. Tap a chip, or type a space, to take the word
-  literally (existing if it matches, otherwise new). An unknown word offers "Create #…". Before anything
-  is typed, the five most recent projects are already shown as chips, so the
-  common case is one tap. On the iPhone keyboard `#` is two layer-switches away,
-  so put a `#` button inside the title row — a keyboard-toolbar button does not
-  appear in this sheet. The chosen project sits as a pill before the title; tap
+  not going to get. Tap a chip, or press Tab for the first one, to take the
+  word — and only then does it leave the title. An unknown word that reads like
+  a code offers "New project …". Before anything is typed, the five most recent
+  projects are already shown as chips, so the common case is one tap. The
+  button beside the field opens the rest, including a project whose name is an
+  ordinary word.
+  The chosen project sits as a pill before the title; tap
   it to remove it. A new project is only created when the card is added, so a
   cancelled sheet leaves nothing behind. Top-align the row: an empty vertical
   text field reports its placeholder's baseline lower than typed text.
