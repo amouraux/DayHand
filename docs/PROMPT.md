@@ -706,14 +706,20 @@ everywhere in the interface; never "subproject" or "tag".
   digit in it. Every other first word would mean a chip under every title
   anyone ever writes, and most first words are just words. A project whose name
   is an ordinary word is made from the picker instead.
-- **The `#` keeps the button, with a chevron beside it.** The hash is what a
-  project looks like everywhere in the app — the Project row, Settings, the
-  project editor — and there is no symbol going spare, `tag` belonging to
-  Category and `folder` to groups. Taking it off this one button would leave it
-  disagreeing with the row beneath it. What had to go is the *reading*: a bare
-  `#` next to a text field is a key to press, which is the reflex this whole
-  change was retiring. The chevron makes it a place to choose from.
-- **The `#` button is now the picker.** There is no character to insert, so it
+- **A project's icon is a paperclip**, because that is what a project does:
+  it holds cards that belong together. It is the same glyph everywhere — the
+  button beside the title field, the Project row, the filter bar, Settings, the
+  project editor — so nothing points at a character nobody types any more. It
+  had to miss `CardCategory.iconChoices`, which people pick their own category
+  icons from, as well as `tag`, `folder` and `tray.full`, which Category,
+  groups and the stacks already use. The candidates were put side by side at
+  the real size to choose between them: a box read as a parcel, a stack
+  collided with the word this app uses for Now and Next, and the rest were
+  decorative rather than legible.
+- **The button carries a chevron.** It is a menu, not a key — a bare glyph
+  beside a text field invites a press, and pressing it is the reflex this
+  change retired.
+- **That button is the picker.** There is no character to insert, so it
   lists every project and offers **New Project…** — the way to a project the
   first word will not offer, because it reads like a word or because it is not
   what is being typed. One tap, from anywhere in the field.

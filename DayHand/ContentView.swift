@@ -384,7 +384,7 @@ struct ContentView: View {
                     Image(systemName: activeFilters[0].symbolName)
                         .foregroundStyle(activeFilters[0].tint)
                 } else if activeProjects.count == 1 && activeFilters.isEmpty {
-                    Image(systemName: "number")
+                    Image(systemName: "paperclip")
                         .foregroundStyle(filterTint)
                 } else {
                     // Several at once: no single icon can stand for them, so

@@ -105,7 +105,7 @@ struct SettingsView: View {
                             Text("\(store.projects.filter { !$0.isArchived }.count)")
                                 .monospacedDigit()
                         } label: {
-                            Label("Projects", systemImage: "number")
+                            Label("Projects", systemImage: "paperclip")
                         }
                     }
                 } footer: {

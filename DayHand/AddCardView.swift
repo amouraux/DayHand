@@ -407,20 +407,23 @@ struct ProjectTitleField: View {
                         Label("New Project\u{2026}", systemImage: "plus")
                     }
                 } label: {
-                    // The hash stays, because it is what a project looks like
-                    // everywhere else in the app — the Project row below this
-                    // one, Settings, the project editor. `tag` belongs to
-                    // Category and `folder` to groups, so there is no better
-                    // symbol going spare, and taking it off this button alone
-                    // would leave it disagreeing with the row beneath it.
+                    // A paperclip, because that is what a project does:
+                    // holds cards that belong together. It replaced the hash
+                    // everywhere at once — this button, the Project row, the
+                    // filter bar, Settings, the project editor — so nothing is
+                    // left pointing at a character nobody types any more.
                     //
-                    // The chevron is the point. A bare `#` beside a text field
-                    // reads as a key to press — which is exactly the thing
-                    // that is no longer true, and the reflex this change was
-                    // meant to retire. With it, the button reads as what it
-                    // now is: somewhere to choose from.
+                    // It had to miss `CardCategory.iconChoices`, which users
+                    // pick their category icons from, as well as `tag`,
+                    // `folder` and `tray.full`, which Category, groups and the
+                    // stacks already have. Candidates were put side by side at
+                    // this size to choose: a box reads as a parcel, a stack
+                    // collides with the word the app uses for Now and Next,
+                    // and the rest were decorative rather than legible.
+                    //
+                    // The chevron stays. It is a menu, not a key.
                     HStack(spacing: 1) {
-                        Image(systemName: "number")
+                        Image(systemName: "paperclip")
                             .font(.body.weight(.semibold))
                         Image(systemName: "chevron.down")
                             .font(.caption2.weight(.semibold))
@@ -999,7 +1002,7 @@ struct CardActionsSheet: View {
                     .foregroundStyle(draft.project == .none ? Color.secondary : tint)
             }
         } label: {
-            Label("Project", systemImage: "number")
+            Label("Project", systemImage: "paperclip")
         }
     }
 

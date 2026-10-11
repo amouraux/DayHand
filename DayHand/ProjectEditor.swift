@@ -138,7 +138,7 @@ struct ProjectEditor: View {
                 form(project)
             } else {
                 // Merged away or deleted from here, or from another device.
-                ContentUnavailableView("Project removed", systemImage: "number")
+                ContentUnavailableView("Project removed", systemImage: "paperclip")
             }
         }
         .navigationTitle(project?.name ?? "")
