@@ -131,7 +131,14 @@ struct CardRow: View {
     var onShowAll: (() -> Void)? = nil
 
     /// How far the card must travel to commit.
+    /// How far a finger goes before the card starts to follow it. Long
+    /// enough that a scroll, which engages within a few points, has always
+    /// claimed the touch first.
+    private static let swipeStart: CGFloat = 30
     private static let commitDistance: CGFloat = 96
+    /// How far the *card* travels before it is armed — the finger's commit
+    /// distance less the dead zone it spent starting the gesture.
+    private static let armDistance: CGFloat = commitDistance - swipeStart
     /// How far it is allowed to travel at all, so the gesture feels bounded.
     private static let maxDrag: CGFloat = 140
 
@@ -139,6 +146,9 @@ struct CardRow: View {
     @State private var dragX: CGFloat = 0
     /// Set once a drag is judged horizontal, so vertical scrolling wins otherwise.
     @State private var isHorizontal = false
+    /// Where the drag in progress began, which is how one gesture is told
+    /// from the next: a cancelled gesture never calls `onEnded`.
+    @State private var dragStart: CGPoint?
     @State private var didCommit = false
 
     /// How close the reminder is. The only thing a date does to a card is
@@ -146,8 +156,8 @@ struct CardRow: View {
     private var urgency: Urgency {
         item.isCompleted ? .none : Urgency.of(item.remindAt)
     }
-    private var progress: CGFloat { min(1, abs(dragX) / Self.commitDistance) }
-    private var armed: Bool { abs(dragX) >= Self.commitDistance }
+    private var progress: CGFloat { min(1, abs(dragX) / Self.armDistance) }
+    private var armed: Bool { abs(dragX) >= Self.armDistance }
 
     /// A left swipe pulls a card forward into TODAY — or, for a card already in
     /// TODAY, pushes it on to TOMORROW. The panel wears the destination stack's
@@ -177,15 +187,19 @@ struct CardRow: View {
             swipeBackdrop
             card
                 .offset(x: dragX)
-                // Simultaneous, not exclusive. A plain `.gesture` inside a
-                // ScrollView claims the touch as soon as it passes
-                // `minimumDistance`, and the direction check below runs only
-                // once that has already happened — too late to give the touch
-                // back. The result is a drag that neither swipes nor scrolls,
-                // which is most of them, because a thumb arcs sideways as it
-                // travels down. Recognising alongside the scroll view leaves
-                // scrolling untouched and lets the latch below decide only
-                // whether the *card* moves.
+                // Simultaneous, and deliberately slow to start. `.simultaneous`
+                // only makes this agree with other *SwiftUI* gestures; the
+                // scroll view's pan is UIKit's, and once this gesture begins
+                // the scroll has already lost the touch. A drag that began on
+                // a card therefore did not scroll at all — reproducibly, with
+                // the same drag scrolling fine when it began on a heading.
+                //
+                // So the two are left to race, and the distance below decides
+                // it. A scroll engages within a few points, well before this
+                // does, and takes the touch; a sideways swipe never starts the
+                // scroll, so it is still here when the finger has gone far
+                // enough. The thumb that arcs as it travels down now scrolls,
+                // because the arc is a few points wide and the descent is not.
                 .simultaneousGesture(swipe)
         }
         .accessibilityElement(children: .combine)
@@ -366,8 +380,18 @@ struct CardRow: View {
     // MARK: - Gesture
 
     private var swipe: some Gesture {
-        DragGesture(minimumDistance: 14)
+        DragGesture(minimumDistance: Self.swipeStart)
             .onChanged { value in
+                // A cancelled gesture never calls `onEnded`, and the scroll
+                // view taking the touch is exactly that, so the latch cannot
+                // be cleared only there: left set, the next touch moved the
+                // card without ever checking its direction. Each drag is told
+                // from the last by where it began.
+                if dragStart != value.startLocation {
+                    dragStart = value.startLocation
+                    isHorizontal = false
+                }
+
                 // Let the ScrollView have any drag that is mostly vertical.
                 if !isHorizontal {
                     guard abs(value.translation.width) > abs(value.translation.height) else { return }
@@ -377,10 +401,16 @@ struct CardRow: View {
                 // Resist past the commit point, and cap the travel, in both
                 // directions.
                 let raw = value.translation.width
-                let distance = abs(raw)
-                let eased = distance <= Self.commitDistance
-                    ? distance
-                    : Self.commitDistance + (distance - Self.commitDistance) * 0.25
+                // The gesture does not begin until the finger has gone
+                // `swipeStart`, and the translation it then reports counts
+                // from the touch, not from there — so without this the card
+                // appears already that far across the moment it starts to
+                // follow. The finger still commits at `commitDistance`; it is
+                // only the card that starts from nothing.
+                let travel = max(0, abs(raw) - Self.swipeStart)
+                let eased = travel <= Self.armDistance
+                    ? travel
+                    : Self.armDistance + (travel - Self.armDistance) * 0.25
 
                 let wasArmed = armed
                 dragX = min(eased, Self.maxDrag) * (raw < 0 ? -1 : 1)
@@ -390,6 +420,7 @@ struct CardRow: View {
                 let commit = isHorizontal && armed
                 let goingLeft = dragX < 0
                 isHorizontal = false
+                dragStart = nil
 
                 if commit, !didCommit {
                     didCommit = true
