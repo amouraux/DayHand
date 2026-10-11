@@ -74,10 +74,15 @@ never recreated, split up or pushed to a new day.
 
 ## The rest of it
 
-**Projects.** A card can carry one project — a course code, a study, a trip —
-typed as `#ABC1234`. It shows as a coloured prefix on the card, fills in the
-card's category, and can be renamed, merged or archived in one edit. Projects
-gather into groups such as Grants and Ongoing, all from the Filter.
+**Projects.** A card can carry one project — a course code, a study, a trip.
+**Start the card with its name** and it is offered below the field: `BIO2140
+mark the problem sets`. Take the offer and the word moves out of the title and
+becomes the project; ignore it and your title is your title. Nothing is filed
+because you typed a space. There is no symbol to learn, and the button beside
+the field lists every project for the times the first word is not the one you
+want. A project shows as a coloured prefix on the card, fills in the card's
+category, and can be renamed, merged or archived in one edit. Projects gather
+into groups such as Grants and Ongoing, all from the Filter.
 
 **What you finished.** Alongside the list of what you owe, DayHand shows what
 you got done — this week and last, grouped by the day you finished it.
