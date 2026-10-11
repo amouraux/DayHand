@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 /// Narrow the list to any mix of categories and projects. A card shows if it
 /// matches any of them: "Teaching, and also STUDY2026".
@@ -330,10 +331,8 @@ struct FilterList: View {
         // A project dropped on a category belongs to it, in no group — which
         // is also the way one is taken out of a group, by dropping it on the
         // category it is already in.
-        .dropDestination(for: String.self) { payload, _ in
-            drop(payload, into: nil, categoryID: category.id)
-        } isTargeted: { over in
-            aimedAt = over ? .category(category.id) : nil
+        .onDrop(of: Self.draggedTypes, isTargeted: aiming(at: .category(category.id))) { providers in
+            accept(providers, into: nil, categoryID: category.id)
         }
         .contextMenu { addToSelection(categories: [category.id]) }
     }
@@ -397,10 +396,8 @@ struct FilterList: View {
             headingBand(tint(forCategory: categoryID), strong: false)
                 .overlay(dropHighlight(aimedAt == .group(categoryID, name)))
         )
-        .dropDestination(for: String.self) { payload, _ in
-            drop(payload, into: name, categoryID: categoryID)
-        } isTargeted: { over in
-            aimedAt = over ? .group(categoryID, name) : nil
+        .onDrop(of: Self.draggedTypes, isTargeted: aiming(at: .group(categoryID, name))) { providers in
+            accept(providers, into: name, categoryID: categoryID)
         }
         .contextMenu {
             addToSelection(projects: ids)
@@ -523,13 +520,40 @@ struct FilterList: View {
         return store.projects.first { $0.id == id }
     }
 
+    /// What a dragged project arrives as. `.draggable` on a String vends plain
+    /// text; the three are listed rather than only the general one because a
+    /// type that does not match looks exactly like a destination that is not
+    /// there — no highlight, no drop — and that is the bug being fixed.
+    private static let draggedTypes: [UTType] = [.utf8PlainText, .plainText, .text]
+
+    /// Whether a drag is over this heading, for the highlight.
+    private func aiming(at target: DropTarget) -> Binding<Bool> {
+        Binding(get: { aimedAt == target },
+                set: { over in aimedAt = over ? target : nil })
+    }
+
     /// Dropping a project on a heading files it there: on a group it joins the
     /// group, on a category row it lands in that category in no group — which
     /// is also how a project is taken *out* of a group, by dropping it on the
     /// category it already belongs to.
-    private func drop(_ payload: [String], into group: String?, categoryID: UUID?) -> Bool {
-        guard let project = dragged(payload) else { return false }
-        return refile(project, categoryID: categoryID, group: group)
+    ///
+    /// `onDrop` rather than `dropDestination`, which never activates on a row
+    /// inside a List: the drag started and lifted the project, and no heading
+    /// ever lit up, because the destination was not there to be hit. The older
+    /// API is the UIKit one underneath, and it does attach. The cost is that
+    /// the payload arrives as an item provider to be read asynchronously, off
+    /// the main actor, rather than as a String already in hand.
+    private func accept(_ providers: [NSItemProvider],
+                        into group: String?, categoryID: UUID?) -> Bool {
+        guard let provider = providers.first else { return false }
+        provider.loadObject(ofClass: NSString.self) { text, _ in
+            guard let raw = text as? String else { return }
+            Task { @MainActor in
+                guard let project = dragged([raw]) else { return }
+                refile(project, categoryID: categoryID, group: group)
+            }
+        }
+        return true
     }
 
     /// Where a project is being sent, however it was asked for — dropped on a

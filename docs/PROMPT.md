@@ -801,8 +801,12 @@ reachable at all**: the long press belongs to the context menu, which wins it
 every time. So the menu carries the same two moves itself — **Move to Group**
 and **Move to Category** — and both go through the same rule the drop uses,
 including the question it asks before taking a project's cards to another
-category. A heading lights up while a drag is over it, so a drag that does
-nothing can be told from one that never started.
+category. A heading lights up while a drag is over it, which is what said
+where this was broken: the drag lifted the project and no heading ever
+responded, so the destinations were not there to be hit. `dropDestination`
+does not attach to a row inside a List; `onDrop`, the older UIKit-backed one,
+does. The payload then arrives as an item provider to be read off the main
+actor rather than as a value already in hand, which is the price of it.
 
 **Double-clicking a project or a group name renames it in place.** Enter commits
 and so does clicking away, the way a Finder rename does — an untouched field
