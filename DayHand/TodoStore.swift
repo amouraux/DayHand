@@ -763,24 +763,55 @@ final class TodoStore: ObservableObject {
 
     // MARK: Live updates
 
-    private static let pollInterval: TimeInterval = 4
+    /// The backstop's cadence, frontmost and away.
+    ///
+    /// The file presenter is what makes a change from another device appear at
+    /// once; this only catches the ways a file can be replaced without the
+    /// presenter hearing — iCloud swapping in a downloaded copy among them —
+    /// and none of those are to the second. It ran every four seconds, which
+    /// is some 900 wakeups an hour, each an uncached metadata read on a file
+    /// in iCloud Drive: enough to keep a Mac out of App Nap all day for a
+    /// backstop that almost never has anything to report.
+    private static let pollInterval: TimeInterval = 30
+    /// A window that is not frontmost is still showing cards, so this slows
+    /// down rather than stopping — stopping it is what made a Mac window sit
+    /// an hour behind the phone.
+    private static let awayPollInterval: TimeInterval = 120
 
     /// Start noticing the other device's writes while the app is in front: a
     /// file presenter for the immediate signal, and a cheap modification-date
     /// poll as a backstop, since presenters do not fire for every way a file
     /// can be replaced — iCloud swapping in a downloaded version among them.
-    func beginLiveSync() {
+    /// - Parameter frontmost: whether the window is the one being looked at.
+    ///   Called again on every scene change, which is also how the cadence
+    ///   follows the window to the back and forward again.
+    func beginLiveSync(frontmost: Bool = true) {
         guard syncFileName != nil else { return }
 
         storage.startWatching { [weak self] in
             Task { @MainActor in self?.pullRemoteChanges() }
         }
 
-        lastSeenSyncDate = storage.syncFileModifiedAt()
+        // Only when starting from nothing. Re-stamping on every scene change
+        // would mark a write that had just landed as already seen, and the
+        // backstop would then never pull it.
+        if pollTimer == nil { lastSeenSyncDate = storage.syncFileModifiedAt() }
+        schedulePoll(frontmost: frontmost)
+    }
+
+    private func schedulePoll(frontmost: Bool) {
+        let interval = frontmost ? Self.pollInterval : Self.awayPollInterval
+        guard pollTimer?.timeInterval != interval else { return }
+
         pollTimer?.invalidate()
-        pollTimer = Timer.scheduledTimer(withTimeInterval: Self.pollInterval, repeats: true) { [weak self] _ in
+        let timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
             Task { @MainActor in self?.pollSyncFile() }
         }
+        // Half the interval of slack, so the system can fire this alongside
+        // something it was waking for anyway rather than on its own account.
+        // A backstop has no business asking for a wakeup to itself.
+        timer.tolerance = interval / 2
+        pollTimer = timer
     }
 
     func endLiveSync() {

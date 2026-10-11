@@ -261,7 +261,10 @@ struct ContentView: View {
                     store.endLiveSync()
                     return
                 }
-                store.beginLiveSync()
+                // Frontmost or not decides how often the backstop runs, and
+                // this fires on every scene change, so the cadence follows the
+                // window back and forward.
+                store.beginLiveSync(frontmost: phase == .active)
                 // The rest is catching up after being away, and only applies
                 // on the way back to the front.
                 guard phase == .active else { return }
