@@ -107,6 +107,128 @@ private struct SwipeAction {
     let label: String
 }
 
+/// A sideways pan that can refuse a touch *before* it begins.
+///
+/// SwiftUI cannot. A `DragGesture` has already begun by the time `onChanged`
+/// can look at its direction, and the scroll view has lost the touch by then —
+/// which is why a drag that started on a card often did not scroll the list at
+/// all. UIKit asks `gestureRecognizerShouldBegin` first, and a recogniser that
+/// answers no leaves the scroll entirely alone.
+///
+/// The view itself takes no touches. It sits in the card's background with
+/// interaction off, there only to hand the recogniser to the view SwiftUI put
+/// the card in — a recogniser fires for the view that was hit and its
+/// ancestors, so it has to live above the card's content rather than beside
+/// it. That ancestor may hold every card in the list, so each one also checks
+/// the touch is inside its own card before agreeing to begin.
+struct HorizontalSwipe: UIViewRepresentable {
+    var onChanged: (CGFloat) -> Void
+    var onEnded: (CGFloat) -> Void
+
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView()
+        view.isUserInteractionEnabled = false
+        view.backgroundColor = .clear
+        context.coordinator.anchor = view
+        return view
+    }
+
+    func updateUIView(_ view: UIView, context: Context) {
+        context.coordinator.onChanged = onChanged
+        context.coordinator.onEnded = onEnded
+        // Here rather than in `makeUIView`: the view has no superview yet when
+        // it is made, and a lazy stack may move it to another one later.
+        context.coordinator.attach()
+    }
+
+    static func dismantleUIView(_ view: UIView, coordinator: Coordinator) {
+        coordinator.detach()
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator() }
+
+    final class Coordinator: NSObject, UIGestureRecognizerDelegate {
+        var onChanged: (CGFloat) -> Void = { _ in }
+        var onEnded: (CGFloat) -> Void = { _ in }
+        weak var anchor: UIView?
+        private weak var host: UIView?
+
+        private lazy var pan: UIPanGestureRecognizer = {
+            let pan = UIPanGestureRecognizer(target: self, action: #selector(handle))
+            pan.delegate = self
+            return pan
+        }()
+
+        /// The scroll view, not the immediate superview.
+        ///
+        /// A recogniser only fires for the view that was hit and its
+        /// ancestors, and the view SwiftUI gives a background representable is
+        /// not an ancestor of the card's own content — the recogniser went on
+        /// it and never saw a touch, which showed up as the swipe doing
+        /// nothing at all. The scroll view is an ancestor of everything in the
+        /// list, so it is where this has to hang; the frame check in
+        /// `shouldBegin` is what keeps each card answering only for itself.
+        private func enclosingScrollView() -> UIView? {
+            var candidate = anchor?.superview
+            while let current = candidate {
+                if current is UIScrollView { return current }
+                candidate = current.superview
+            }
+            return anchor?.superview
+        }
+
+        func attach() {
+            guard let target = enclosingScrollView() else {
+                // Not in the hierarchy yet. `updateUIView` may not run again,
+                // so come back rather than wait to be asked.
+                DispatchQueue.main.async { [weak self] in self?.attach() }
+                return
+            }
+            guard target !== host else { return }
+            detach()
+            target.addGestureRecognizer(pan)
+            host = target
+        }
+
+        func detach() {
+            host?.removeGestureRecognizer(pan)
+            host = nil
+        }
+
+        @objc private func handle(_ pan: UIPanGestureRecognizer) {
+            switch pan.state {
+            case .changed: onChanged(pan.translation(in: pan.view).x)
+            case .ended, .cancelled, .failed: onEnded(pan.translation(in: pan.view).x)
+            default: break
+            }
+        }
+
+        /// The whole point of going to UIKit for this.
+        func gestureRecognizerShouldBegin(_ recogniser: UIGestureRecognizer) -> Bool {
+            guard let pan = recogniser as? UIPanGestureRecognizer,
+                  let anchor, let host, anchor.window != nil else { return false }
+
+            // Answer only for touches on this card: the recogniser hangs off a
+            // view that may well hold all of them.
+            let touch = pan.location(in: host)
+            guard anchor.convert(anchor.bounds, to: host).contains(touch) else { return false }
+
+            // Sideways, or not at all. Saying no leaves the touch where it
+            // was, which is the thing SwiftUI had no way to express.
+            let speed = pan.velocity(in: host)
+            return abs(speed.x) > abs(speed.y)
+        }
+
+        /// The card's own tap and the context menu's long press are SwiftUI's,
+        /// and the scroll is the scroll view's. None of them need to lose.
+        func gestureRecognizer(_ recogniser: UIGestureRecognizer,
+                               shouldRecognizeSimultaneouslyWith other: UIGestureRecognizer) -> Bool {
+            true
+        }
+    }
+}
+
+
 /// One todo rendered as a card.
 ///
 /// - tap anywhere but the checkbox picks a stack, in one further tap
@@ -131,24 +253,13 @@ struct CardRow: View {
     var onShowAll: (() -> Void)? = nil
 
     /// How far the card must travel to commit.
-    /// How far a finger goes before the card starts to follow it. Long
-    /// enough that a scroll, which engages within a few points, has always
-    /// claimed the touch first.
-    private static let swipeStart: CGFloat = 30
     private static let commitDistance: CGFloat = 96
-    /// How far the *card* travels before it is armed — the finger's commit
-    /// distance less the dead zone it spent starting the gesture.
-    private static let armDistance: CGFloat = commitDistance - swipeStart
     /// How far it is allowed to travel at all, so the gesture feels bounded.
     private static let maxDrag: CGFloat = 140
 
     @Environment(\.colorScheme) private var colorScheme
     @State private var dragX: CGFloat = 0
     /// Set once a drag is judged horizontal, so vertical scrolling wins otherwise.
-    @State private var isHorizontal = false
-    /// Where the drag in progress began, which is how one gesture is told
-    /// from the next: a cancelled gesture never calls `onEnded`.
-    @State private var dragStart: CGPoint?
     @State private var didCommit = false
 
     /// How close the reminder is. The only thing a date does to a card is
@@ -156,8 +267,8 @@ struct CardRow: View {
     private var urgency: Urgency {
         item.isCompleted ? .none : Urgency.of(item.remindAt)
     }
-    private var progress: CGFloat { min(1, abs(dragX) / Self.armDistance) }
-    private var armed: Bool { abs(dragX) >= Self.armDistance }
+    private var progress: CGFloat { min(1, abs(dragX) / Self.commitDistance) }
+    private var armed: Bool { abs(dragX) >= Self.commitDistance }
 
     /// A left swipe pulls a card forward into TODAY — or, for a card already in
     /// TODAY, pushes it on to TOMORROW. The panel wears the destination stack's
@@ -187,20 +298,14 @@ struct CardRow: View {
             swipeBackdrop
             card
                 .offset(x: dragX)
-                // Simultaneous, and deliberately slow to start. `.simultaneous`
-                // only makes this agree with other *SwiftUI* gestures; the
-                // scroll view's pan is UIKit's, and once this gesture begins
-                // the scroll has already lost the touch. A drag that began on
-                // a card therefore did not scroll at all — reproducibly, with
-                // the same drag scrolling fine when it began on a heading.
-                //
-                // So the two are left to race, and the distance below decides
-                // it. A scroll engages within a few points, well before this
-                // does, and takes the touch; a sideways swipe never starts the
-                // scroll, so it is still here when the finger has gone far
-                // enough. The thumb that arcs as it travels down now scrolls,
-                // because the arc is a few points wide and the descent is not.
-                .simultaneousGesture(swipe)
+                // In the background, and taking no touches of its own: all
+                // it does is give the pan recogniser to the view SwiftUI put
+                // this card in. A SwiftUI DragGesture here claimed the touch
+                // before its direction could be read, and a drag that began on
+                // a card then did not scroll the list at all.
+                .background(
+                    HorizontalSwipe(onChanged: { dragTo($0) }, onEnded: { endDrag($0) })
+                )
         }
         .accessibilityElement(children: .combine)
         .accessibilityAction(named: Text("Move to \(moveDestination.title)"), onMove)
@@ -379,59 +484,32 @@ struct CardRow: View {
 
     // MARK: - Gesture
 
-    private var swipe: some Gesture {
-        DragGesture(minimumDistance: Self.swipeStart)
-            .onChanged { value in
-                // A cancelled gesture never calls `onEnded`, and the scroll
-                // view taking the touch is exactly that, so the latch cannot
-                // be cleared only there: left set, the next touch moved the
-                // card without ever checking its direction. Each drag is told
-                // from the last by where it began.
-                if dragStart != value.startLocation {
-                    dragStart = value.startLocation
-                    isHorizontal = false
-                }
+    /// The card follows the finger, resisting past the commit point and
+    /// capped so it cannot be dragged off the screen.
+    private func dragTo(_ raw: CGFloat) {
+        let travel = abs(raw)
+        let eased = travel <= Self.commitDistance
+            ? travel
+            : Self.commitDistance + (travel - Self.commitDistance) * 0.25
 
-                // Let the ScrollView have any drag that is mostly vertical.
-                if !isHorizontal {
-                    guard abs(value.translation.width) > abs(value.translation.height) else { return }
-                    isHorizontal = true
-                }
+        let wasArmed = armed
+        dragX = min(eased, Self.maxDrag) * (raw < 0 ? -1 : 1)
+        if armed && !wasArmed { hapticTick() }
+    }
 
-                // Resist past the commit point, and cap the travel, in both
-                // directions.
-                let raw = value.translation.width
-                // The gesture does not begin until the finger has gone
-                // `swipeStart`, and the translation it then reports counts
-                // from the touch, not from there — so without this the card
-                // appears already that far across the moment it starts to
-                // follow. The finger still commits at `commitDistance`; it is
-                // only the card that starts from nothing.
-                let travel = max(0, abs(raw) - Self.swipeStart)
-                let eased = travel <= Self.armDistance
-                    ? travel
-                    : Self.armDistance + (travel - Self.armDistance) * 0.25
+    private func endDrag(_ raw: CGFloat) {
+        let commit = armed
+        let goingLeft = dragX < 0
 
-                let wasArmed = armed
-                dragX = min(eased, Self.maxDrag) * (raw < 0 ? -1 : 1)
-                if armed && !wasArmed { hapticTick() }
-            }
-            .onEnded { _ in
-                let commit = isHorizontal && armed
-                let goingLeft = dragX < 0
-                isHorizontal = false
-                dragStart = nil
-
-                if commit, !didCommit {
-                    didCommit = true
-                    withAnimation(.easeOut(duration: 0.18)) { dragX = 0 }
-                    goingLeft ? onMove() : onEdit()
-                    // The card re-sorts or changes stack; allow the next swipe.
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { didCommit = false }
-                } else {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { dragX = 0 }
-                }
-            }
+        if commit, !didCommit {
+            didCommit = true
+            withAnimation(.easeOut(duration: 0.18)) { dragX = 0 }
+            goingLeft ? onMove() : onEdit()
+            // The card re-sorts or changes stack; allow the next swipe.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { didCommit = false }
+        } else {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { dragX = 0 }
+        }
     }
 
     private func hapticTick() {

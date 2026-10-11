@@ -319,21 +319,24 @@ once the drag is more horizontal than vertical.
 - **Swipe left** — moves the card to Today. For a card already in Today, it
   moves on to Tomorrow instead. This works from every stack, so a completed card
   swiped left comes back to life in Today.
-- **A swipe does not begin until the finger has gone 30pt.** The card's drag
-  and the scroll view's pan are two gestures over the same touch, and SwiftUI's
-  `.simultaneousGesture` only makes this one agree with other *SwiftUI*
-  gestures — the scroll is UIKit's, and once the card's gesture begins the
-  scroll has already lost the touch. At 14pt a flick whose first frame of
-  movement went further than that claimed the touch before the scroll could
-  start, and the list simply did not move; a gentler second try worked, which
-  is exactly how it was reported. Reproduced both ways: the same drag scrolled
-  when it began on a heading and not when it began on a card. The card follows
-  from *nothing* at that point rather than jumping 30pt across, because the
-  translation is counted from the touch and not from where the gesture began.
-  This widens the window rather than closing it — a drag that travels 30pt
-  before the first touch-move arrives can still beat the scroll — and closing
-  it entirely means a UIKit recogniser that can refuse the touch before it
-  begins, which SwiftUI has no way to express.
+- **The swipe is a UIKit pan recogniser, not a SwiftUI gesture**, and that is
+  the whole reason it exists. A `DragGesture` has already begun by the time
+  `onChanged` can look at its direction, and the scroll view has lost the touch
+  by then — so a drag that started on a card often did not scroll the list at
+  all, and trying again worked. Reproduced every time: the same drag scrolled
+  when it began on a heading and not when it began on a card. UIKit asks
+  `gestureRecognizerShouldBegin` *first*, and a recogniser that answers no
+  leaves the scroll completely alone. Nothing in SwiftUI can say no that early.
+
+  Two things about where it hangs. A recogniser fires for the view that was hit
+  and its **ancestors**, and the view SwiftUI gives a background representable
+  is not an ancestor of the card's own content — put there, it never saw a
+  touch and the swipe silently did nothing. So it goes on the enclosing scroll
+  view, which is an ancestor of everything in the list; and because that view
+  holds every card, each card's recogniser checks the touch is inside its own
+  bounds before agreeing to begin. The card's tap, its completion button and
+  the context menu's long press all still work, because the recogniser agrees
+  to run alongside anything else.
 - **Swipe right** — opens the **editor**: the card's name in an editable field,
   plus Stack, Category, Project, Due date, Complete and Delete. Everything a
   card has, in one place.
