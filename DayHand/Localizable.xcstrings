@@ -126,6 +126,16 @@
         }
       }
     },
+    "%@ and its %lld cards move to %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ and its %2$lld cards move to %3$@."
+          }
+        }
+      }
+    },
     "%@’s %lld cards move to %@, and %@ is removed." : {
       "localizations" : {
         "de" : {
@@ -5841,6 +5851,9 @@
         }
       }
     },
+    "Move Project?" : {
+
+    },
     "Move to %@" : {
       "localizations" : {
         "de" : {
@@ -5920,6 +5933,9 @@
           }
         }
       }
+    },
+    "Name Taken" : {
+
     },
     "New cards" : {
       "localizations" : {

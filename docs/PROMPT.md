@@ -750,6 +750,13 @@ a group's folder icon starts on, grouped or not — the heading above already sa
 whether it is in a group, and saying it again with an indent left a run of empty
 space between the checkbox and the name.
 
+**Headings carry a faint band of their category's colour**, so a category and
+everything under it read as one block: strongest on the category row, lighter on
+the groups inside it, and nothing at all on the projects, which keeps them the
+only coloured *text* in the list. The band is built from the same tint the
+project names use, which is lightened in dark mode — the plain colour goes muddy
+behind a dark row.
+
 **A project is dragged onto a heading to file it.** Dropped on a group it joins
 that group; dropped on a category row it lands in that category in no group,
 which is also how one is taken *out* of a group — drop it on the category it is

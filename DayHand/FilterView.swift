@@ -257,6 +257,18 @@ struct FilterList: View {
         ForEach(layout.ungrouped) { projectRow($0, tint: tint) }
     }
 
+    private func tint(forCategory id: UUID?) -> Color {
+        id.flatMap { wanted in categories.first { $0.id == wanted } }?.color.prefixTint ?? .primary
+    }
+
+    /// A heading's band. Faint on purpose, and built from the same tint the
+    /// project names under it are written in, so a category reads as one block
+    /// without competing with the only coloured text in the list. The tint is
+    /// the dark-mode-aware one: the plain colour goes muddy behind a dark row.
+    private func headingBand(_ tint: Color, strong: Bool) -> some View {
+        tint.opacity(strong ? 0.13 : 0.07)
+    }
+
     private func tint(for project: Project) -> Color {
         if project.isArchived { return .secondary }
         return project.categoryID.flatMap { id in categories.first { $0.id == id } }?.color.prefixTint ?? .primary
@@ -280,6 +292,7 @@ struct FilterList: View {
             }
             .buttonStyle(.plain)
         }
+        .listRowBackground(headingBand(category.color.prefixTint, strong: true))
         // A project dropped on a category belongs to it, in no group — which
         // is also the way one is taken out of a group, by dropping it on the
         // category it is already in.
@@ -349,6 +362,7 @@ struct FilterList: View {
             .buttonStyle(.borderless)
             .accessibilityLabel("Rename Group…")
         }
+        .listRowBackground(headingBand(tint(forCategory: categoryID), strong: false))
         .dropDestination(for: String.self) { payload, _ in
             drop(payload, into: name, categoryID: categoryID)
         }
