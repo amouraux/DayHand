@@ -353,15 +353,25 @@ struct ProjectTitleField: View {
         // reports its placeholder's baseline lower than typed text, so baseline
         // alignment made the pill jump as soon as typing began.
         HStack(alignment: .top, spacing: 8) {
-            if let name = project.name {
+            // Not while the tag is still being typed. A tag must be the first
+            // word, so an unfinished one means the field holds nothing *but*
+            // the tag — and a pill beside it is the same name twice, which is
+            // what it looked like: "NOCIONS ×  #NOCIONS".
+            if let name = project.name, typingTag == nil {
                 pill(name)
             }
             TextField(project.name == nil ? placeholder : "What needs doing?",
                       text: $title, axis: .vertical)
                 .lineLimit(1...5)
+                // The word itself turns the project's colour the moment it
+                // names one. Same signal the pill was giving, said once, under
+                // the cursor — and the coloured word becomes the coloured pill
+                // when the space lands, which reads as one movement.
+                .foregroundStyle(typedTint)
                 .focused($focused)
                 .submitLabel(.done)
                 .onSubmit(onSubmit)
+                .onKeyPress(.tab) { completeTag() }
                 .onChange(of: title) { _, entered in handle(entered) }
 
             // On the iPhone keyboard `#` is two layer-switches away — three on
@@ -390,6 +400,34 @@ struct ProjectTitleField: View {
         if !chips.isEmpty || createName != nil {
             chipRow
         }
+    }
+
+    /// A `#word` with no space after it yet. Because a tag has to be the first
+    /// word, this also means the field contains nothing else.
+    private var typingTag: ProjectToken? {
+        guard let token = ProjectToken.find(in: title), !token.isFinished else { return nil }
+        return token
+    }
+
+    /// The colour of the text being typed: the project's, once the word names
+    /// one, and ordinary text otherwise.
+    private var typedTint: Color {
+        guard typingTag != nil, adoptedID != nil,
+              case .existing(let chosen) = project else { return .primary }
+        return tint(for: chosen)
+    }
+
+    /// Tab takes the first suggestion, the way it does everywhere else.
+    ///
+    /// Only while a tag is being typed and only onto a project that exists —
+    /// completing to something that does not exist is not completion, and a
+    /// space already commits a new name. Any other time Tab is left alone to
+    /// move focus, which is what it is for in a sheet full of pickers.
+    private func completeTag() -> KeyPress.Result {
+        guard let token = typingTag, !token.query.isEmpty,
+              let top = chips.first else { return .ignored }
+        pick(.existing(top))
+        return .handled
     }
 
     // MARK: - Chips

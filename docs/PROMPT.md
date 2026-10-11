@@ -638,7 +638,20 @@ everywhere in the interface; never "subproject" or "tag".
   under the field (prefix matches first, then contains; most recently *created*
   first — not last edited, because converting or merging touches every card).
   **The project is taken the moment the typed word names an existing one** —
-  the pill appears and the category follows, without waiting for a space.
+  the category follows, without waiting for a space.
+- **While the tag is still being typed there is no pill**; the typed word turns
+  the project's own colour instead. Because a tag has to be the first word, an
+  unfinished one means the field holds nothing *but* the tag — so a pill beside
+  it was the same name twice over, reading as `NOCIONS ×  #NOCIONS` until the
+  space landed. The colour is the same signal said once, under the cursor, and
+  the coloured word becomes the coloured pill when the space arrives, which
+  reads as one movement rather than a stutter. Typing on past a match still
+  gives the project back: the colour drops away instead of a pill vanishing.
+- **Tab takes the first suggestion.** Only while a tag is being typed, and only
+  onto a project that already exists — completing to something that does not
+  exist is not completion, and a space already commits a new name. Any other
+  time Tab is left alone to move focus, which is what it is for in a sheet full
+  of pickers.
   Waiting means the sheet spends the whole time showing a category the card is
   not going to get, which reads as the tag having done nothing. Typing on past
   a name that matched, or deleting the `#`, gives back both the project and the
