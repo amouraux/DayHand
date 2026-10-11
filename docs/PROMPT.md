@@ -791,28 +791,30 @@ only coloured *text* in the list. The band is built from the same tint the
 project names use, which is lightened in dark mode — the plain colour goes muddy
 behind a dark row.
 
-**A project is dragged onto a heading to file it.** Dropped on a group it joins
-that group; dropped on a category row it lands in that category in no group,
-which is also how one is taken *out* of a group — drop it on the category it is
-already in. Moving between groups is a label and happens quietly; moving between
-categories takes every card in the project along, so that one says how many and
-asks first. On a Mac this is a click and a drag. **On a touch screen it is not
-reachable at all**: the long press belongs to the context menu, which wins it
-every time. So the menu carries the same two moves itself — **Move to Group**
-and **Move to Category** — and both go through the same rule the drop uses,
-including the question it asks before taking a project's cards to another
-category. A heading lights up while a drag is over it, which is what said
-where this was broken: the drag lifted the project and no heading ever
-responded, so the destinations were not there to be hit. `dropDestination`
-does not attach to a row inside a List; `onDrop`, the older UIKit-backed one,
-does. The payload then arrives as an item provider to be read off the main
-actor rather than as a value already in hand, which is the price of it.
+**A project is refiled from its menu.** **Move to Group** puts it in a group;
+**Move to Category** moves it, and takes every card in the project along, so
+that one says how many and asks first. Both go through one rule, so they cannot
+answer differently.
 
-All the headings share one piece of "which is the drag over" state, so leaving
-one only clears the highlight when it is still that heading's. Crossing from
-one heading to the next fires two callbacks in an order nobody may rely on, and
-clearing unconditionally meant the heading being *left* wiped the one being
-entered — which looked like only the first heading ever lighting up.
+**Dragging a project onto a heading is written but does not work, and is not
+the supported route.** The drag lifts the project, and no heading ever receives
+it. Four attempts: `dropDestination`, which does not attach to a row inside a
+List; `onDrop`, the older UIKit-backed one, which did not either; moving the
+`draggable` off the row's HStack onto the name, where the checkbox, the ⓘ and
+the taps had left nothing to grab; and a fix to the shared highlight state,
+which turned out to be addressing a race that was not happening — the brief
+highlight seen on the row being picked up is UIKit's own lift, not ours.
+
+The likely reason is that a `List` on Catalyst is a collection view that owns
+drag and drop itself, and the per-row SwiftUI modifiers never see the session —
+the same wall the card swipe hit, where only a UIKit recogniser could do the
+job. Doing that here means a real `UIDropInteraction` through a representable.
+It was left undone deliberately: the menu reaches everything the drag would,
+and none of this can be tested on this machine, because a drag session will not
+start from synthetic touches.
+
+**On a touch screen the drag is unreachable regardless**: the long press
+belongs to the context menu, which wins it every time.
 
 **Double-clicking a project or a group name renames it in place.** Enter commits
 and so does clicking away, the way a Finder rename does — an untouched field
