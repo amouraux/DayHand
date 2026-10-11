@@ -365,6 +365,35 @@ enum ProjectCategory {
     }
 }
 
+/// Filing a project somewhere else, by dragging it onto a heading.
+enum ProjectFiling {
+    struct Move: Equatable {
+        var categoryID: UUID?
+        var group: String?
+        /// How many cards change category as a result. A group is only a label
+        /// on the project, so moving between groups moves no cards at all;
+        /// moving between categories takes every card along, which is the
+        /// difference between doing it quietly and asking first.
+        var cards: Int
+    }
+
+    /// What dropping `project` on a heading should do, or nil when the heading
+    /// is the one it already sits under and there is nothing to do.
+    ///
+    /// Dropping on a category means that category in no group, which is also
+    /// how a project is taken *out* of a group: drop it on the category it is
+    /// already in.
+    static func move(_ project: Project, toCategory categoryID: UUID?,
+                     group: String?, cards: [TodoItem]) -> Move? {
+        let sameCategory = project.categoryID == categoryID
+        let sameGroup = Project.groupKey(for: project.group ?? "") == Project.groupKey(for: group ?? "")
+        guard !sameCategory || !sameGroup else { return nil }
+        let moving = sameCategory
+            ? 0 : ProjectCategory.cardsToRefile(project, to: categoryID, in: cards).count
+        return Move(categoryID: categoryID, group: group, cards: moving)
+    }
+}
+
 /// Putting a project away.
 ///
 /// A project is archived when it is over — a course that has finished, a grant

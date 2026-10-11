@@ -1378,6 +1378,39 @@ do {
     expect(!ProjectToken.startsTag(tail, after: tail), "no hash, no tag")
 }
 
+// MARK: AI — dragging a project onto a heading
+do {
+    let research = UUID(), teaching = UUID()
+    let paper = Project(name: "PAPER", categoryID: research, group: "Manuscripts")
+    let cards = [TodoItem(title: "rework the methods", bucket: .today,
+                          categoryID: research, projectID: paper.id),
+                 TodoItem(title: "co-author feedback", bucket: .waiting,
+                          categoryID: research, projectID: paper.id),
+                 TodoItem(title: "unrelated", bucket: .inbox, categoryID: teaching)]
+
+    expect(ProjectFiling.move(paper, toCategory: research, group: "Manuscripts", cards: cards) == nil,
+           "dropped where it already sits, there is nothing to do")
+
+    let regrouped = ProjectFiling.move(paper, toCategory: research, group: "Grants", cards: cards)
+    expect(regrouped?.group == "Grants" && regrouped?.cards == 0,
+           "another group in the same category moves no cards, so nothing is asked")
+
+    // Dropping on the category it is already in is how a project leaves a
+    // group: the category row means that category, in no group.
+    let ungrouped = ProjectFiling.move(paper, toCategory: research, group: nil, cards: cards)
+    expect(ungrouped?.group == nil && ungrouped?.cards == 0,
+           "dropped on its own category it keeps its cards and loses its group")
+
+    let moved = ProjectFiling.move(paper, toCategory: teaching, group: nil, cards: cards)
+    expect(moved?.categoryID == teaching && moved?.cards == 2,
+           "another category takes every card in the project along, and says how many")
+
+    // The spelling of a group is matched the way group names always are, so
+    // dropping on "manuscripts" is not a move at all.
+    expect(ProjectFiling.move(paper, toCategory: research, group: "manuscripts", cards: cards) == nil,
+           "the same group under another spelling is the same group")
+}
+
 // MARK: AI — a project nothing is filed under is not offered
 do {
     let cat = UUID()

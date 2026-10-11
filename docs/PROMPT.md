@@ -745,9 +745,27 @@ the Filter, which is the one place projects are listed at all.
 `#GRANT`. A separate glyph cost a 24pt frame and the gap beside it — 36pt of a
 sidebar that has none to spare, to say what one character already says. Names
 never wrap: a wrapped name turns one row into two and reads as two projects, so
-a long one shrinks a little and then truncates. A project inside a group is
-indented past its heading rather than short of it, or the group reads as one of
-the projects under it.
+a long one shrinks a little and then truncates. Every project sits on the column
+a group's folder icon starts on, grouped or not — the heading above already says
+whether it is in a group, and saying it again with an indent left a run of empty
+space between the checkbox and the name.
+
+**A project is dragged onto a heading to file it.** Dropped on a group it joins
+that group; dropped on a category row it lands in that category in no group,
+which is also how one is taken *out* of a group — drop it on the category it is
+already in. Moving between groups is a label and happens quietly; moving between
+categories takes every card in the project along, so that one says how many and
+asks first. On a Mac this is a click and a drag; on a touch screen the long
+press belongs to the context menu, which carries the same moves under **Move to
+Group**.
+
+**Double-clicking a project or a group name renames it in place.** Enter commits
+and so does clicking away, the way a Finder rename does — an untouched field
+writes nothing, so neither can rename anything by accident. A name that belongs
+to another project would be a merge rather than a rename, which is not something
+to do by accident from a list row: it says so and sends you to the ⓘ. The single
+click still picks, and is declared after the double so the double wins; only
+these rows pay the wait that costs, not the cards.
 
 **Categories and groups fold**, with the rows sliding in and out rather than
 appearing. A triangle beside a category or a group heading

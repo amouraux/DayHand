@@ -34,6 +34,29 @@ struct FilterList: View {
     /// merging and deleting all live there, reached from this list rather than
     /// from a second screen somewhere else.
     @State private var editingProject: Project?
+
+    /// What is being renamed in place, if anything.
+    enum Renaming: Equatable {
+        case project(UUID)
+        case group(UUID?, String)
+    }
+    @State private var renamingInline: Renaming?
+    @State private var inlineText = ""
+    @FocusState private var inlineFocused: Bool
+    /// A rename that would really be a merge, which is not something to do by
+    /// accident from a list row.
+    @State private var collision: String?
+
+    /// A drop that moves a project to another category, which takes every card
+    /// in it along. Worth asking about; a change of group is not.
+    struct PendingMove: Identifiable {
+        let id = UUID()
+        let project: Project
+        let categoryID: UUID?
+        let group: String?
+        let cards: Int
+    }
+    @State private var pendingMove: PendingMove?
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     /// The same test ContentView uses to decide on the sidebar. The sheet on a
@@ -148,7 +171,7 @@ struct FilterList: View {
                 let key = Project.key(for: search)
                 Section("Projects") {
                     ForEach(visibleProjects.filter { $0.key.contains(key) }) { project in
-                        projectRow(project, tint: tint(for: project), indented: false)
+                        projectRow(project, tint: tint(for: project))
                     }
                 }
             }
@@ -176,6 +199,25 @@ struct FilterList: View {
                         }
                     }
             }
+        }
+        // Moving a project to another category takes every card in it along,
+        // so it says how many rather than doing it quietly. A group is only a
+        // label, and changes without asking.
+        .alert("Move Project?", isPresented: Binding(
+            get: { pendingMove != nil }, set: { if !$0 { pendingMove = nil } }
+        ), presenting: pendingMove) { move in
+            Button("Move") { file(move.project, categoryID: move.categoryID, group: move.group) }
+            Button("Cancel", role: .cancel) { }
+        } message: { move in
+            let into = categories.first { $0.id == move.categoryID }?.label ?? "Other projects"
+            Text("\(move.project.name) and its \(move.cards) cards move to \(into).")
+        }
+        .alert("Name Taken", isPresented: Binding(
+            get: { collision != nil }, set: { if !$0 { collision = nil } }
+        ), presenting: collision) { _ in
+            Button("OK", role: .cancel) { }
+        } message: { message in
+            Text(message)
         }
         .alert("New Group", isPresented: Binding(
             get: { newGroupFor != nil }, set: { if !$0 { newGroupFor = nil } }
@@ -209,10 +251,10 @@ struct FilterList: View {
             groupRow(group.name, projects: group.projects,
                      categoryID: categoryID, folded: folded)
             if !folded {
-                ForEach(group.projects) { projectRow($0, tint: tint, indented: true) }
+                ForEach(group.projects) { projectRow($0, tint: tint) }
             }
         }
-        ForEach(layout.ungrouped) { projectRow($0, tint: tint, indented: false) }
+        ForEach(layout.ungrouped) { projectRow($0, tint: tint) }
     }
 
     private func tint(for project: Project) -> Color {
@@ -238,6 +280,12 @@ struct FilterList: View {
             }
             .buttonStyle(.plain)
         }
+        // A project dropped on a category belongs to it, in no group — which
+        // is also the way one is taken out of a group, by dropping it on the
+        // category it is already in.
+        .dropDestination(for: String.self) { payload, _ in
+            drop(payload, into: nil, categoryID: category.id)
+        }
         .contextMenu { addToSelection(categories: [category.id]) }
     }
 
@@ -255,9 +303,12 @@ struct FilterList: View {
             foldControl(folded, enabled: !projects.isEmpty) {
                 toggleCollapsed(groupFoldKey(name, in: categoryID))
             }
-            Button {
-                withAnimation { pick(projects: ids) }
-            } label: {
+            if renamingInline == .group(categoryID, name) {
+                Image(systemName: "folder")
+                    .foregroundStyle(.secondary)
+                    .frame(width: 22)
+                renameField()
+            } else {
             HStack(spacing: 8) {
                 Image(systemName: "folder")
                     .foregroundStyle(.secondary)
@@ -280,8 +331,10 @@ struct FilterList: View {
                     .foregroundStyle(.secondary)
             }
             .contentShape(Rectangle())
+            .onTapGesture(count: 2) { beginRename(.group(categoryID, name), text: name) }
+            .onTapGesture { withAnimation { pick(projects: ids) } }
+            .accessibilityAddTraits(.isButton)
             }
-            .buttonStyle(.plain)
 
             // The same affordance the projects under it carry. Renaming is all
             // a group has — it owns no other settings — so this opens straight
@@ -295,6 +348,9 @@ struct FilterList: View {
             }
             .buttonStyle(.borderless)
             .accessibilityLabel("Rename Group…")
+        }
+        .dropDestination(for: String.self) { payload, _ in
+            drop(payload, into: name, categoryID: categoryID)
         }
         .contextMenu {
             addToSelection(projects: ids)
@@ -310,28 +366,37 @@ struct FilterList: View {
         .accessibilityHint(allSelected ? "Shows every card again" : "Shows only this group")
     }
 
-    private func projectRow(_ project: Project, tint: Color, indented: Bool) -> some View {
+    /// Every project row sits on the same column, the one a group's folder
+    /// icon starts on: the heading above says whether it is in a group, so the
+    /// row does not have to say it again with space it cannot spare.
+    private func projectRow(_ project: Project, tint: Color) -> some View {
         HStack(spacing: 6) {
             selectionBox(isOn: projectSelection.contains(project.id)) {
                 add(projects: [project.id])
             }
             Color.clear.frame(width: 18, height: 1)
-            Button {
-                withAnimation { pick(projects: [project.id]) }
-            } label: {
+            if renamingInline == .project(project.id) {
+                renameField()
+            } else {
                 row(symbol: nil, tint: project.isArchived ? .secondary : tint,
                     text: Text("#\(project.name)"),
                     count: openCounts[project.id] ?? 0,
                     selected: false, bold: true)
-                    // Past the group's own name, not short of it: with the
-                    // `#` glyph gone the names had moved left of the heading
-                    // they sit under, which reads as the group being one of
-                    // them. A project in no group needs none of this — the
-                    // section heading above it is already at the margin.
-                    .padding(.leading, indented ? 32 : 0)
+                    // None. The checkbox and the fold column already carry
+                    // the name to where a group's folder icon sits, which is
+                    // the column everything under a heading lines up on.
+                    // Indenting past the group's *name* instead left a run of
+                    // empty space between the checkbox and the tag.
                     .contentShape(Rectangle())
+                    // Declared before the single tap, which gives it priority:
+                    // a click now waits to see whether a second one follows.
+                    // Only these rows pay that wait, not the cards.
+                    .onTapGesture(count: 2) {
+                        beginRename(.project(project.id), text: project.name)
+                    }
+                    .onTapGesture { withAnimation { pick(projects: [project.id]) } }
+                    .accessibilityAddTraits(.isButton)
             }
-            .buttonStyle(.plain)
 
             // The row filters by the project; this opens it — the way a Wi-Fi
             // network is joined by its row and configured by its ⓘ. Renaming
@@ -346,6 +411,10 @@ struct FilterList: View {
             .buttonStyle(.borderless)
             .accessibilityLabel("Edit \(project.name)")
         }
+        // Dropping it on a heading files it there. The payload is the id as
+        // text, because a Transferable of our own would have to live in the
+        // model layer, which imports Foundation and nothing else.
+        .draggable(project.id.uuidString)
         .contextMenu {
             addToSelection(projects: [project.id])
             moveMenu(project)
@@ -375,6 +444,84 @@ struct FilterList: View {
     /// no modifier key — ⇧-click cannot be read in a Catalyst app without a
     /// UIKit recogniser under every row — and it works the same on a phone,
     /// where a modifier does not exist at all.
+    // MARK: - Dragging a project somewhere else
+
+    /// Only a project this install actually has. The payload is a plain
+    /// string, so anything at all can be dropped on these rows.
+    private func dragged(_ payload: [String]) -> Project? {
+        guard let raw = payload.first, let id = UUID(uuidString: raw) else { return nil }
+        return store.projects.first { $0.id == id }
+    }
+
+    /// Dropping a project on a heading files it there: on a group it joins the
+    /// group, on a category row it lands in that category in no group — which
+    /// is also how a project is taken *out* of a group, by dropping it on the
+    /// category it already belongs to.
+    private func drop(_ payload: [String], into group: String?, categoryID: UUID?) -> Bool {
+        guard let project = dragged(payload),
+              let move = ProjectFiling.move(project, toCategory: categoryID,
+                                            group: group, cards: store.items)
+        else { return false }
+
+        // Changing a project's category takes its cards with it, a real edit
+        // to every one of them. A group is only a label, and goes quietly.
+        if move.cards > 0 {
+            pendingMove = PendingMove(project: project, categoryID: move.categoryID,
+                                      group: move.group, cards: move.cards)
+            return true
+        }
+        file(project, categoryID: move.categoryID, group: move.group)
+        return true
+    }
+
+    private func file(_ project: Project, categoryID: UUID?, group: String?) {
+        withAnimation(.snappy(duration: 0.28)) {
+            if project.categoryID != categoryID {
+                store.setProjectCategory(project, to: categoryID)
+            }
+            // Read it back: moving a category clears the group on the way.
+            if let fresh = store.projects.first(where: { $0.id == project.id }) {
+                store.setProjectGroup(fresh, to: group)
+            }
+        }
+    }
+
+    // MARK: - Renaming in place
+
+    private func beginRename(_ what: Renaming, text: String) {
+        inlineText = text
+        renamingInline = what
+        // A beat, or the field is not yet in the hierarchy to take the focus.
+        DispatchQueue.main.async { inlineFocused = true }
+    }
+
+    private func commitRename() {
+        guard let what = renamingInline else { return }
+        renamingInline = nil
+        switch what {
+        case .project(let id):
+            guard let project = store.projects.first(where: { $0.id == id }) else { return }
+            if case .collides(let other) = store.renameProject(project, to: inlineText) {
+                collision = "\(other.name) already exists. Open \(project.name) with \u{24D8} to merge them."
+            }
+        case .group(let categoryID, let name):
+            guard let renamed = Project.cleanGroup(inlineText), renamed != name else { return }
+            withAnimation { store.renameGroup(name, in: categoryID, to: renamed) }
+        }
+    }
+
+    /// The field, shown in place of the name while it is being edited.
+    private func renameField() -> some View {
+        TextField("Name", text: $inlineText)
+            .focused($inlineFocused)
+            .autocorrectionDisabled()
+            .onSubmit { commitRename() }
+            // Clicking away keeps what was typed, the way a Finder rename
+            // does. An untouched field writes nothing, so this cannot rename
+            // anything by accident.
+            .onChange(of: inlineFocused) { _, focused in if !focused { commitRename() } }
+    }
+
     /// The fold triangle. A heading with nothing under it still reserves the
     /// space, so the names below it stay in one column rather than stepping in
     /// and out as groups empty and fill.
