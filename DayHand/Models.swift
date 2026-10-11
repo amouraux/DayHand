@@ -409,6 +409,37 @@ enum ProjectFiling {
             ? 0 : ProjectCategory.cardsToRefile(project, to: categoryID, in: cards).count
         return Move(categoryID: categoryID, group: group, cards: moving)
     }
+
+    /// Resolve identity at execution time: sync can change or delete either
+    /// end while a move confirmation is open. Apply the complete destination
+    /// before the store saves, so sync never sees a temporary ungrouped move.
+    @discardableResult
+    static func apply(projectID: UUID, toCategory categoryID: UUID?, group: String?,
+                      projects: inout [Project], cards: inout [TodoItem],
+                      categories: [CardCategory], now: Date) -> Bool {
+        guard let index = projects.firstIndex(where: { $0.id == projectID }),
+              categoryID == nil || categories.contains(where: { $0.id == categoryID })
+        else { return false }
+        let project = projects[index]
+        let group = group.flatMap(Project.cleanGroup).map { name in
+            ProjectGroups.existingName(for: name, in: categoryID, projects: projects) ?? name
+        }
+        guard move(project, toCategory: categoryID, group: group, cards: cards) != nil
+        else { return false }
+
+        if project.categoryID != categoryID {
+            for cardIndex in cards.indices
+            where cards[cardIndex].projectID == projectID && cards[cardIndex].categoryID != categoryID {
+                cards[cardIndex].categoryID = categoryID
+                cards[cardIndex].modifiedAt = now
+            }
+        }
+        projects[index].categoryID = categoryID
+        projects[index].group = group
+        projects[index].modifiedAt = now
+        return true
+    }
+
 }
 
 /// Putting a project away.

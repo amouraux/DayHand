@@ -474,6 +474,18 @@ final class TodoStore: ObservableObject {
         return moving.count
     }
 
+    /// A sidebar move is one edit, including its destination group.
+    func moveProject(_ id: UUID, toCategory categoryID: UUID?, group: String?) {
+        var movedProjects = projects
+        var movedCards = items
+        guard ProjectFiling.apply(projectID: id, toCategory: categoryID, group: group,
+                                  projects: &movedProjects, cards: &movedCards,
+                                  categories: categories, now: .stamp()) else { return }
+        projects = movedProjects
+        items = movedCards
+        save()
+    }
+
     // MARK: Groups
 
     func groupNames(in categoryID: UUID?) -> [String] {

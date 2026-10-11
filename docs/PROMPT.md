@@ -808,7 +808,11 @@ to their native list cell's content view. The earlier SwiftUI per-row drop
 modifiers never received the session in Catalyst's List. Only a single local
 project drag is accepted; arbitrary text and external drags cannot move a
 project. The dedicated handle leaves the name's selection and rename gestures
-available. The menu remains available as an alternative to dragging.
+available. The menu remains available as an alternative to dragging. A confirmed
+move resolves the current project and category again: a project or destination
+deleted during sync makes the move a no-op. Category, group and affected cards
+are saved together with one edit timestamp, never as an intermediate move with
+no group.
 
 Builds and model tests do not verify a real pointer or touch drag; that still
 needs a manual check on a device, including cancellation and folded headings.

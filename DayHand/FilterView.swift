@@ -534,7 +534,9 @@ struct FilterList: View {
     /// does not require a drag gesture.
     @discardableResult
     private func refile(_ project: Project, categoryID: UUID?, group: String?) -> Bool {
-        guard let move = ProjectFiling.move(project, toCategory: categoryID,
+        guard let project = store.project(id: project.id),
+              categoryID == nil || categories.contains(where: { $0.id == categoryID }),
+              let move = ProjectFiling.move(project, toCategory: categoryID,
                                             group: group, cards: store.items)
         else { return false }
 
@@ -551,13 +553,7 @@ struct FilterList: View {
 
     private func file(_ project: Project, categoryID: UUID?, group: String?) {
         withAnimation(.snappy(duration: 0.28)) {
-            if project.categoryID != categoryID {
-                store.setProjectCategory(project, to: categoryID)
-            }
-            // Read it back: moving a category clears the group on the way.
-            if let fresh = store.projects.first(where: { $0.id == project.id }) {
-                store.setProjectGroup(fresh, to: group)
-            }
+            store.moveProject(project.id, toCategory: categoryID, group: group)
         }
     }
 

@@ -1436,5 +1436,66 @@ do {
     expect(empty?.cards == 0, "an empty project can move without card confirmation")
 }
 
+// MARK: A confirmed sidebar move uses current data and one edit timestamp
+do {
+    let source = CardCategory(label: "Source", symbolName: "folder", color: .purple)
+    let target = CardCategory(label: "Target", symbolName: "folder", color: .purple)
+    let categories = [source, target]
+    let stamp = Date(timeIntervalSince1970: 1000)
+    let project = Project(name: "PAPER", categoryID: source.id, group: "Drafts")
+    let neighbor = Project(name: "BOOK", categoryID: target.id, group: "Clients")
+    let open = TodoItem(title: "Draft", categoryID: source.id, projectID: project.id,
+                        remindAt: stamp, deadline: stamp.addingTimeInterval(100))
+    let done = TodoItem(title: "Outline", bucket: .completed, categoryID: source.id, projectID: project.id)
+    let unrelated = TodoItem(title: "Other", categoryID: source.id)
+    var projects = [project, neighbor]
+    var cards = [open, done, unrelated]
+
+    expect(ProjectFiling.apply(projectID: project.id, toCategory: target.id, group: " clients ",
+                               projects: &projects, cards: &cards, categories: categories, now: stamp),
+           "a complete move applies category and group together")
+    expect(projects[0].categoryID == target.id && projects[0].group == "Clients",
+           "the final destination uses the existing group's spelling")
+    expect(projects[0].modifiedAt == stamp && cards[0].modifiedAt == stamp && cards[1].modifiedAt == stamp,
+           "project and affected cards carry one edit timestamp")
+    expect(cards[0].categoryID == target.id && cards[1].categoryID == target.id,
+           "both open and completed cards follow the project")
+    expect(cards[0].remindAt == open.remindAt && cards[0].deadline == open.deadline && cards[1].isCompleted,
+           "refiling preserves dates and completion")
+    expect(projects[1] == neighbor && cards[2] == unrelated, "unrelated data is untouched")
+
+    let filedProjects = projects, filedCards = cards
+    expect(!ProjectFiling.apply(projectID: project.id, toCategory: target.id, group: "clients",
+                                projects: &projects, cards: &cards, categories: categories,
+                                now: stamp.addingTimeInterval(1)), "an already-applied move does nothing")
+    expect(projects == filedProjects && cards == filedCards, "a repeated confirmation stamps nothing")
+
+    // The destination disappeared through sync while the confirmation was open.
+    expect(!ProjectFiling.apply(projectID: project.id, toCategory: source.id, group: nil,
+                                projects: &projects, cards: &cards, categories: [target], now: stamp),
+           "a deleted destination rejects the pending move")
+    expect(projects == filedProjects && cards == filedCards, "a deleted destination cannot orphan cards")
+
+    projects.removeFirst()
+    let remaining = projects
+    expect(!ProjectFiling.apply(projectID: project.id, toCategory: source.id, group: nil,
+                                projects: &projects, cards: &cards, categories: categories, now: stamp),
+           "a deleted project rejects the pending move")
+    expect(projects == remaining && cards == filedCards, "a deleted project cannot move any remaining cards")
+
+    // An old menu snapshot says Source, but the live project is now in Target.
+    projects = filedProjects
+    expect(ProjectFiling.apply(projectID: project.id, toCategory: source.id, group: nil,
+                               projects: &projects, cards: &cards, categories: categories, now: stamp),
+           "the current category, rather than the menu snapshot, decides the move")
+    expect(projects[0].categoryID == source.id && projects[0].group == nil && cards[0].categoryID == source.id,
+           "a move back to the snapshot's category still refiles the live project and cards")
+    let beforeRegroup = cards
+    expect(ProjectFiling.apply(projectID: project.id, toCategory: source.id, group: "New group",
+                               projects: &projects, cards: &cards, categories: categories, now: stamp),
+           "a same-category regroup applies")
+    expect(cards == beforeRegroup, "a same-category regroup never edits card timestamps")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)
