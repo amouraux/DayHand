@@ -159,6 +159,10 @@ struct FilterList: View {
         // turns a dozen projects into a scroll. The phone's sheet is this same
         // view and keeps the full target.
         .environment(\.defaultMinListRowHeight, isSidebar ? 30 : 44)
+        // The rows fold in and out rather than appearing. AppStorage does not
+        // take part in the `withAnimation` at the button, so the animation is
+        // hung off the stored value itself.
+        .animation(.snappy(duration: 0.28), value: collapsedRaw)
         .searchable(text: $search, prompt: "Search projects")
         .sheet(item: $editingProject) { project in
             NavigationStack {
@@ -218,7 +222,7 @@ struct FilterList: View {
 
     private func categoryRow(_ category: CardCategory,
                              canFold: Bool = false, folded: Bool = false) -> some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 6) {
             selectionBox(isOn: categorySelection.contains(category.id)) {
                 add(categories: [category.id])
             }
@@ -246,7 +250,7 @@ struct FilterList: View {
         let allSelected = !ids.isEmpty && ids.isSubset(of: projectSelection)
         let open = FilterCounts.total(of: projects, in: openCounts)
 
-        return HStack(spacing: 10) {
+        return HStack(spacing: 6) {
             selectionBox(isOn: allSelected) { add(projects: ids) }
             foldControl(folded, enabled: !projects.isEmpty) {
                 toggleCollapsed(groupFoldKey(name, in: categoryID))
@@ -254,16 +258,19 @@ struct FilterList: View {
             Button {
                 withAnimation { pick(projects: ids) }
             } label: {
-            HStack(spacing: 12) {
+            HStack(spacing: 8) {
                 Image(systemName: "folder")
                     .foregroundStyle(.secondary)
-                    .frame(width: 24)
+                    .frame(width: 22)
                 // Primary, not secondary: a dimmed heading in a list reads as
                 // disabled, especially in dark mode.
                 Text(name)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Color.primary)
-                Spacer()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                    .truncationMode(.tail)
+                Spacer(minLength: 4)
                 // Cards, like every row under it. It used to be the number of
                 // projects, in the same slot and the same grey, so a group
                 // holding one finished project read as one card to be had.
@@ -304,7 +311,7 @@ struct FilterList: View {
     }
 
     private func projectRow(_ project: Project, tint: Color, indented: Bool) -> some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 6) {
             selectionBox(isOn: projectSelection.contains(project.id)) {
                 add(projects: [project.id])
             }
@@ -312,11 +319,16 @@ struct FilterList: View {
             Button {
                 withAnimation { pick(projects: [project.id]) }
             } label: {
-                row(symbol: "number", tint: project.isArchived ? .secondary : tint,
-                    text: Text(project.name),
+                row(symbol: nil, tint: project.isArchived ? .secondary : tint,
+                    text: Text("#\(project.name)"),
                     count: openCounts[project.id] ?? 0,
                     selected: false, bold: true)
-                    .padding(.leading, indented ? 16 : 0)
+                    // Past the group's own name, not short of it: with the
+                    // `#` glyph gone the names had moved left of the heading
+                    // they sit under, which reads as the group being one of
+                    // them. A project in no group needs none of this — the
+                    // section heading above it is already at the margin.
+                    .padding(.leading, indented ? 32 : 0)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
@@ -400,15 +412,26 @@ struct FilterList: View {
         .accessibilityLabel(isOn ? "Remove from Selection" : "Add to Selection")
     }
 
-    private func row(symbol: String, tint: Color, text: Text, count: Int?, selected: Bool, bold: Bool) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: symbol)
-                .foregroundStyle(tint)
-                .frame(width: 24)
+    /// - Parameter symbol: nil for a project, which carries its `#` inside its
+    ///   name instead. A separate glyph cost a 24pt frame and the 12pt beside
+    ///   it — 36pt of a sidebar that has none to spare, to say what one
+    ///   character already says.
+    private func row(symbol: String?, tint: Color, text: Text, count: Int?, selected: Bool, bold: Bool) -> some View {
+        HStack(spacing: 8) {
+            if let symbol {
+                Image(systemName: symbol)
+                    .foregroundStyle(tint)
+                    .frame(width: 22)
+            }
             text
                 .fontWeight(bold ? .semibold : .regular)
                 .foregroundStyle(bold ? tint : Color.primary)
-            Spacer()
+                // A name that wraps turns one row into two and reads as two
+                // projects. Shrink a little first, then tail-truncate.
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .truncationMode(.tail)
+            Spacer(minLength: 4)
             if let count {
                 Text("\(count)")
                     .monospacedDigit()

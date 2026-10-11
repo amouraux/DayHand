@@ -741,7 +741,16 @@ everywhere in the interface; never "subproject" or "tag".
 There is no separate Projects screen. Everything about a project is reached from
 the Filter, which is the one place projects are listed at all.
 
-**Categories and groups fold.** A triangle beside a category or a group heading
+**A project row carries no `#` of its own**; the hash is joined to the name,
+`#GRANT`. A separate glyph cost a 24pt frame and the gap beside it — 36pt of a
+sidebar that has none to spare, to say what one character already says. Names
+never wrap: a wrapped name turns one row into two and reads as two projects, so
+a long one shrinks a little and then truncates. A project inside a group is
+indented past its heading rather than short of it, or the group reads as one of
+the projects under it.
+
+**Categories and groups fold**, with the rows sliding in and out rather than
+appearing. A triangle beside a category or a group heading
 folds what is under it away, and what is folded is remembered between launches —
 a sidebar that forgets is worse than one that does not fold. A heading with
 nothing under it shows no triangle but still reserves its width, so the project
