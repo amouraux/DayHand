@@ -85,7 +85,8 @@ struct ContentView: View {
             NavigationSplitView(columnVisibility: $columns) {
                 FilterList(
                     categorySelection: $filterCategoryIDs.animation(.easeInOut(duration: 0.2)),
-                    projectSelection: $filterProjectIDs.animation(.easeInOut(duration: 0.2))
+                    projectSelection: $filterProjectIDs.animation(.easeInOut(duration: 0.2)),
+                    isSidebar: true
                 )
                 .navigationTitle("Filter")
                 // The system's own toggle sits at the far right of the sidebar

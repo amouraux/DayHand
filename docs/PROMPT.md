@@ -792,7 +792,19 @@ to do by accident from a list row: it says so and sends you to the ⓘ. The sing
 click still picks, and is declared after the double so the double wins; only
 these rows pay the wait that costs, not the cards.
 
-**Categories and groups fold**, with the rows sliding in and out rather than
+**Categories and groups fold in the sidebar, and only there.** On a phone this
+same view is a sheet that is opened, picked from and closed, not a list anyone
+lives in, and a triangle there is one more target crowding the checkbox. The
+sheet ignores the folded state rather than merely hiding the control: it is
+remembered per device, so a category folded in an iPad's sidebar would
+otherwise come up collapsed in that same iPad's compact sheet with nothing to
+expand it. The sidebar is **told** which it is, by the view that decided to
+show one — each column of a NavigationSplitView carries its own size class and
+the sidebar's is *compact*, so a view inside it that asks the environment
+concludes it is the phone, and the triangles and the tighter rows went missing
+from the one place they were for.
+
+**Folding**, with the rows sliding in and out rather than
 appearing. The triangle beside a heading **and the heading's own icon are one
 control**: the triangle alone was 18pt sitting 6pt from a 22pt checkbox, two
 targets inside the width of one fingertip, and on a phone the fold was nearly

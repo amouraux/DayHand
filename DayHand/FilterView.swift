@@ -57,14 +57,13 @@ struct FilterList: View {
         let cards: Int
     }
     @State private var pendingMove: PendingMove?
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-
-    /// The same test ContentView uses to decide on the sidebar. The sheet on a
-    /// phone is this very view, so anything tightened for a pointer has to
-    /// leave the touch target alone there.
-    private var isSidebar: Bool {
-        horizontalSizeClass == .regular && UIDevice.current.userInterfaceIdiom != .phone
-    }
+    /// Whether this is the sidebar rather than the phone's sheet. Told, not
+    /// worked out: each column of a NavigationSplitView carries its own size
+    /// class, and the sidebar's is *compact* — so a view sitting in it that
+    /// asks the environment decides it is the phone. It did, and the folding
+    /// triangles and the tighter rows were missing from the sidebar, which is
+    /// the one place they were for.
+    var isSidebar = false
 
     /// Which headings are folded away, keyed so the state survives a relaunch:
     /// a sidebar that forgets what you folded is worse than one that does not
@@ -73,7 +72,17 @@ struct FilterList: View {
     private var collapsed: Set<String> {
         Set(collapsedRaw.split(separator: "\n").map(String.init))
     }
-    private func isCollapsed(_ key: String) -> Bool { collapsed.contains(key) }
+    /// Folding belongs to the sidebar. On a phone this same view is a sheet
+    /// that is opened, picked from and closed, not a list anyone lives in, and
+    /// a triangle there is only a second target crowding the checkbox.
+    ///
+    /// The state is ignored rather than merely hidden: it is remembered per
+    /// device, so a category folded in an iPad's sidebar would otherwise come
+    /// up collapsed in that same iPad's compact sheet, with nothing to expand
+    /// it.
+    private func isCollapsed(_ key: String) -> Bool {
+        isSidebar && collapsed.contains(key)
+    }
     private func toggleCollapsed(_ key: String) {
         var keys = collapsed
         if keys.contains(key) { keys.remove(key) } else { keys.insert(key) }
@@ -386,7 +395,7 @@ struct FilterList: View {
             selectionBox(isOn: projectSelection.contains(project.id)) {
                 add(projects: [project.id])
             }
-            Color.clear.frame(width: 18, height: 1)
+            if isSidebar { Color.clear.frame(width: 18, height: 1) }
             if renamingInline == .project(project.id) {
                 renameField()
             } else {
@@ -546,19 +555,21 @@ struct FilterList: View {
     private func foldControl(_ folded: Bool, enabled: Bool, icon: String, tint: Color,
                              toggle: @escaping () -> Void) -> some View {
         let glyphs = HStack(spacing: 8) {
-            Image(systemName: "chevron.right")
-                .font(.caption.weight(.semibold))
-                // Kept in the layout when there is nothing to fold, so the
-                // icons below stay in one column.
-                .foregroundStyle(enabled ? AnyShapeStyle(Color.secondary) : AnyShapeStyle(.clear))
-                .rotationEffect(.degrees(folded ? 0 : 90))
-                .frame(width: 18)
+            if isSidebar {
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    // Kept in the layout when there is nothing to fold, so the
+                    // icons below stay in one column.
+                    .foregroundStyle(enabled ? AnyShapeStyle(Color.secondary) : AnyShapeStyle(.clear))
+                    .rotationEffect(.degrees(folded ? 0 : 90))
+                    .frame(width: 18)
+            }
             Image(systemName: icon)
                 .foregroundStyle(tint)
                 .frame(width: 22)
         }
 
-        if enabled {
+        if enabled && isSidebar {
             Button {
                 withAnimation(.snappy(duration: 0.28)) { toggle() }
             } label: {
