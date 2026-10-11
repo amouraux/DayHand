@@ -1353,43 +1353,29 @@ do {
     expect(ProjectToken.find(in: "a plain title") == nil, "no hash, no token")
 }
 
-// MARK: AI — a tag typed in front of a title that was already there
+// MARK: AI — a tag begun in front of a title that was already there
 do {
     let tail = "write the case for support"
 
-    // The keystroke that started it all: a bare `#` in front of the title.
-    // `find` reads that as the finished tag "write", which is how a project
-    // called `write` got made and the first word vanished off the card.
+    // The keystroke that started it all. `find` reads a bare `#` in front of
+    // the title as the finished tag "write", which is how a project called
+    // `write` got made and the first word vanished off the card.
     let carved = ProjectToken.find(in: "#" + tail)!
     expect(carved.query == "write" && carved.isFinished,
            "find alone cannot tell a typed tag from the title's own first word")
 
-    expect(ProjectToken.insertion(in: "#" + tail, before: tail)?.query == "",
-           "a `#` just typed begins a tag nobody has written yet")
-    expect(ProjectToken.insertion(in: "#" + tail, before: tail)?.isFinished == false,
-           "and the sentence's own spaces do not finish it")
+    expect(ProjectToken.startsTag("#" + tail, after: tail),
+           "a `#` put in front of the title begins a tag, not a word taken out of it")
+    expect(ProjectToken.startsTag("\u{FF03}" + tail, after: tail),
+           "and the same for the wide hash a Japanese keyboard types")
 
-    let typing = ProjectToken.insertion(in: "#GRANT" + tail, before: tail)!
-    expect(typing.query == "GRANT" && !typing.isFinished,
-           "the tag is whatever stands between the hash and the text it was put before")
-
-    let done = ProjectToken.insertion(in: "#GRANT " + tail, before: tail)!
-    expect(done.query == "GRANT" && done.isFinished && done.remainder == tail,
-           "the space the user types is the one that finishes it, and the title is given back whole")
-
-    // Typing on past the space, so the tag is no longer the only thing in
-    // front of the title: there is nothing left to separate.
-    expect(ProjectToken.insertion(in: "#two words " + tail, before: tail) == nil,
-           "a tag given up on halfway is not a tag")
-
-    // Editing the title itself while a tag is half-typed takes the text out
-    // from under the rule, and it says so rather than guessing.
-    expect(ProjectToken.insertion(in: "#GRANT write the case", before: tail) == nil,
-           "the text it was put in front of has to still be there")
-
-    expect(ProjectToken.insertion(in: tail, before: tail) == nil, "no hash, no tag")
-    expect(ProjectToken.insertion(in: "#TRIP ", before: "") == nil,
+    expect(!ProjectToken.startsTag("#GRANT " + tail, after: tail),
+           "a whole tag arriving at once was not typed one `#` at a time")
+    expect(!ProjectToken.startsTag("#" + tail, after: ""),
            "nothing was put in front of anything")
+    expect(!ProjectToken.startsTag("#TRIP", after: "#TRIP book flights"),
+           "a title that already carried a tag is not starting one")
+    expect(!ProjectToken.startsTag(tail, after: tail), "no hash, no tag")
 }
 
 // MARK: AI — what Tab completes a half-typed tag to

@@ -347,10 +347,11 @@ struct ProjectTitleField: View {
     /// The project taken from a word that is still being typed, so that typing
     /// on past a name that matched can give it back.
     @State private var adoptedID: UUID?
-    /// The title a `#` was typed in front of, while the tag that follows it is
-    /// still being written. Nil whenever the tag is not being typed into an
-    /// existing title — which is always, in the New Task sheet.
-    @State private var insertingBefore: String?
+    /// The rest of the title, held out of the field while a tag is written in
+    /// front of it. The caret follows a programmatic change to the end of the
+    /// text, so a tag can only be typed into a field holding nothing else —
+    /// the title goes back the moment the tag is finished or given up on.
+    @State private var heldTitle: String?
 
     var body: some View {
         // Top-aligned, not baseline-aligned: an empty vertical text field
@@ -367,6 +368,13 @@ struct ProjectTitleField: View {
             TextField(project.name == nil ? placeholder : "What needs doing?",
                       text: $title, axis: .vertical)
                 .lineLimit(1...5)
+                // While a tag is being written the field holds the tag alone
+                // and the title waits beside it, so the field is given just
+                // the width a code needs: left to itself it takes the row and
+                // pushes the waiting title off the end, and asked to fit its
+                // content it collapses to nothing — a text field has no
+                // content-shaped width to offer.
+                .frame(maxWidth: heldTitle != nil ? 132 : nil, alignment: .leading)
                 // The word itself turns the project's colour the moment it
                 // names one. Same signal the pill was giving, said once, under
                 // the cursor — and the coloured word becomes the coloured pill
@@ -381,14 +389,21 @@ struct ProjectTitleField: View {
             // a layout that puts £ there — which would undo the time a project
             // saves. One tap here starts one, and lists every project rather
             // than only the recent ones.
-            // Only on an empty field. The tag goes at the *start*, and the
-            // cursor follows a programmatic change to the end of the text —
-            // so on a field with a title already in it the hash would land in
-            // front and the typing would land behind, which is no use to
-            // anybody. With a title already typed, the chips below are the way
-            // to a project.
-            if project == .none && query == nil
-                && title.trimmingCharacters(in: .whitespaces).isEmpty {
+            // It works on a field that already has a title because the title
+            // is taken out and held while the tag is typed — the caret follows
+            // a programmatic change to the end of the text, so a hash put in
+            // front of a title would leave the typing behind it.
+            // The title that is waiting, so that taking a tag does not look
+            // like the name of the card has just been deleted.
+            if let heldTitle {
+                Text(heldTitle)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            if project == .none && query == nil {
                 Button { insertHash() } label: {
                     Image(systemName: "number")
                         .font(.body.weight(.semibold))
@@ -421,7 +436,8 @@ struct ProjectTitleField: View {
             return
         }
         // Not read back from `title`: the write above may not be visible yet.
-        title = token.remainder.isEmpty ? "" : token.remainder + " "
+        title = takeHeldTitle()
+            ?? (token.remainder.isEmpty ? "" : token.remainder + " ")
         query = nil
         adoptedID = nil
         choose(.existing(top))
@@ -430,11 +446,6 @@ struct ProjectTitleField: View {
     /// A `#word` with no space after it yet. Because a tag has to be the first
     /// word, this also means the field contains nothing else.
     private var typingTag: ProjectToken? {
-        if let insertingBefore {
-            guard let token = ProjectToken.insertion(in: title, before: insertingBefore),
-                  !token.isFinished else { return nil }
-            return token
-        }
         guard let token = ProjectToken.find(in: title), !token.isFinished else { return nil }
         return token
     }
@@ -525,7 +536,6 @@ struct ProjectTitleField: View {
     // MARK: - Reading the word being typed
 
     private func handle(_ entered: String, before previous: String) {
-
         // A Return typed into a field that wraps arrives as a line break, and
         // `onSubmit` never fires at all. A card's title is one line, so take
         // it for the submit it was meant to be. This lives here rather than at
@@ -553,38 +563,24 @@ struct ProjectTitleField: View {
         }
 
         // A `#` put in front of a title that is already there begins a tag
-        // nobody has typed yet. What it was put in front of is remembered, so
-        // the tag ends at the space the user types and not at the sentence's
-        // own — which is what made a project called `write` out of "write the
-        // case for support" on the single keystroke of a `#`.
-        if insertingBefore == nil, !previous.isEmpty,
-           ProjectToken.find(in: previous) == nil, entered == "#" + previous {
-            insertingBefore = previous
-        }
-
-        if let waiting = insertingBefore {
-            guard let token = ProjectToken.insertion(in: entered, before: waiting) else {
-                // The title underneath was edited, or the tag was given up on.
-                insertingBefore = nil
-                query = nil
-                release()
-                return
-            }
-            if token.isFinished {
-                adoptedID = nil
-                if let choice = resolve(token.query) { choose(choice) }
-                title = token.remainder
-                insertingBefore = nil
-                query = nil
-            } else {
-                query = token.query
-                adopt(token.query)
-            }
+        // nobody has typed yet. The title comes out of the field and is held,
+        // so that what is left is a tag on its own — the only shape a tag can
+        // be typed in, the caret going to the end of whatever is set here.
+        if heldTitle == nil, ProjectToken.startsTag(entered, after: previous) {
+            heldTitle = previous
+            title = "#"
             return
         }
 
         guard let token = ProjectToken.find(in: entered),
-              ProjectToken.isNewlyTyped(token, givenTitleBefore: titleBefore) else {
+              heldTitle != nil
+                || ProjectToken.isNewlyTyped(token, givenTitleBefore: titleBefore) else {
+            // Backing out over the `#` ends the tag, and the title it was
+            // being written in front of comes back.
+            if let held = heldTitle {
+                heldTitle = nil
+                title = held
+            }
             query = nil
             release()
             return
@@ -594,7 +590,8 @@ struct ProjectTitleField: View {
             // existing project if the name matches, otherwise a new one.
             adoptedID = nil
             if let choice = resolve(token.query) { choose(choice) }
-            title = token.remainder.isEmpty ? "" : token.remainder + " "
+            title = takeHeldTitle()
+                ?? (token.remainder.isEmpty ? "" : token.remainder + " ")
             query = nil
         } else {
             query = token.query
@@ -638,13 +635,29 @@ struct ProjectTitleField: View {
 
     /// A tapped chip: take its project and drop the `#word` it completed.
     private func pick(_ choice: ProjectChoice) {
-        if let token = ProjectToken.find(in: title) {
+        if let held = takeHeldTitle() {
+            title = held
+        } else if let token = ProjectToken.find(in: title) {
             title = token.remainder.isEmpty ? "" : token.remainder + " "
         }
         query = nil
         adoptedID = nil
         choose(choice)
         focused = true
+    }
+
+    /// Gives back the title that was held out of the field while a tag was
+    /// written in front of it. Nil when nothing was held, so a tag typed into
+    /// a title being written from scratch keeps its own rule — there the words
+    /// after the tag are still in the field and are what is left behind.
+    ///
+    /// Every way of finishing a tag goes through here: the space, Tab, and a
+    /// tapped chip are three separate paths, and a title given back by only
+    /// one of them is a title the other two lose.
+    private func takeHeldTitle() -> String? {
+        guard let held = heldTitle else { return nil }
+        heldTitle = nil
+        return held
     }
 
     private func choose(_ choice: ProjectChoice) {
@@ -655,7 +668,9 @@ struct ProjectTitleField: View {
     /// Starts a tag. The field is empty when this is offered, so the hash is
     /// both at the beginning and under the cursor.
     private func insertHash() {
+        if !title.trimmingCharacters(in: .whitespaces).isEmpty { heldTitle = title }
         title = "#"
+        focused = true
     }
 }
 /// What opens when a card is tapped: its name, editable in place, with the same
@@ -861,18 +876,13 @@ struct CardActionsSheet: View {
         // Finished, and typed just now. Without both, closing the editor on a
         // card called "fix issue #42" renamed it and made a project out of the
         // number — nobody having touched the field.
-        // A tag typed in front of the title the card already had is read the
-        // way the field reads it, or closing the sheet on a half-typed one
-        // would write the `#` and the title into the card as its name.
-        if let typed = ProjectToken.insertion(in: title, before: loadedTitle) {
-            guard typed.isFinished,
-                  let choice = ProjectTitleField.choice(for: typed.query, in: store.projects)
-            else {
-                title = loadedTitle      // never finished; give the title back
-                return true
-            }
-            title = typed.remainder
-            applyProject(choice, to: item)
+        // A tag left half-written is not a name. While one is being typed the
+        // card's own title is held out of the field, so a field holding
+        // nothing but an unfinished `#word` means the sheet closed in the
+        // middle of it — and the card keeps the name it came in with.
+        if let half = ProjectToken.find(in: title), !half.isFinished,
+           !loadedTitle.isEmpty {
+            title = loadedTitle
             return true
         }
 
