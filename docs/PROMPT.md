@@ -796,9 +796,13 @@ that group; dropped on a category row it lands in that category in no group,
 which is also how one is taken *out* of a group — drop it on the category it is
 already in. Moving between groups is a label and happens quietly; moving between
 categories takes every card in the project along, so that one says how many and
-asks first. On a Mac this is a click and a drag; on a touch screen the long
-press belongs to the context menu, which carries the same moves under **Move to
-Group**.
+asks first. On a Mac this is a click and a drag. **On a touch screen it is not
+reachable at all**: the long press belongs to the context menu, which wins it
+every time. So the menu carries the same two moves itself — **Move to Group**
+and **Move to Category** — and both go through the same rule the drop uses,
+including the question it asks before taking a project's cards to another
+category. A heading lights up while a drag is over it, so a drag that does
+nothing can be told from one that never started.
 
 **Double-clicking a project or a group name renames it in place.** Enter commits
 and so does clicking away, the way a Finder rename does — an untouched field

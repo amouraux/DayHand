@@ -57,6 +57,25 @@ struct FilterList: View {
         let cards: Int
     }
     @State private var pendingMove: PendingMove?
+
+    /// Which heading a drag is over. A category and a group are different
+    /// targets — dropping on a category means that category in *no* group — so
+    /// this is not the same set of things that can be renamed.
+    enum DropTarget: Equatable {
+        case category(UUID)
+        case group(UUID?, String)
+    }
+
+    /// Shown, because without it a drag that does nothing cannot be told from
+    /// a drag that never started, and those want different fixes.
+    @State private var aimedAt: DropTarget?
+
+    private func dropHighlight(_ aimed: Bool) -> some View {
+        RoundedRectangle(cornerRadius: 8)
+            .strokeBorder(Color.accentColor, lineWidth: aimed ? 2 : 0)
+            .padding(.horizontal, 4)
+            .opacity(aimed ? 1 : 0)
+    }
     /// Whether this is the sidebar rather than the phone's sheet. Told, not
     /// worked out: each column of a NavigationSplitView carries its own size
     /// class, and the sidebar's is *compact* — so a view sitting in it that
@@ -304,12 +323,17 @@ struct FilterList: View {
             }
             .buttonStyle(.plain)
         }
-        .listRowBackground(headingBand(category.color.prefixTint, strong: true))
+        .listRowBackground(
+            headingBand(category.color.prefixTint, strong: true)
+                .overlay(dropHighlight(aimedAt == .category(category.id)))
+        )
         // A project dropped on a category belongs to it, in no group — which
         // is also the way one is taken out of a group, by dropping it on the
         // category it is already in.
         .dropDestination(for: String.self) { payload, _ in
             drop(payload, into: nil, categoryID: category.id)
+        } isTargeted: { over in
+            aimedAt = over ? .category(category.id) : nil
         }
         .contextMenu { addToSelection(categories: [category.id]) }
     }
@@ -369,9 +393,14 @@ struct FilterList: View {
             .buttonStyle(.borderless)
             .accessibilityLabel("Rename Group…")
         }
-        .listRowBackground(headingBand(tint(forCategory: categoryID), strong: false))
+        .listRowBackground(
+            headingBand(tint(forCategory: categoryID), strong: false)
+                .overlay(dropHighlight(aimedAt == .group(categoryID, name)))
+        )
         .dropDestination(for: String.self) { payload, _ in
             drop(payload, into: name, categoryID: categoryID)
+        } isTargeted: { over in
+            aimedAt = over ? .group(categoryID, name) : nil
         }
         .contextMenu {
             addToSelection(projects: ids)
@@ -421,6 +450,13 @@ struct FilterList: View {
                     }
                     .onTapGesture { withAnimation { pick(projects: [project.id]) } }
                     .accessibilityAddTraits(.isButton)
+                    // On the name, and outside the taps. It was on the row's
+                    // HStack, where there was nothing left to grab: the
+                    // checkbox and the ⓘ are buttons, and the taps above —
+                    // with `contentShape` behind them — claim everything in
+                    // between. A drag needs somewhere its press is not already
+                    // spoken for.
+                    .draggable(project.id.uuidString)
             }
 
             // The row filters by the project; this opens it — the way a Wi-Fi
@@ -436,10 +472,6 @@ struct FilterList: View {
             .buttonStyle(.borderless)
             .accessibilityLabel("Edit \(project.name)")
         }
-        // Dropping it on a heading files it there. The payload is the id as
-        // text, because a Transferable of our own would have to live in the
-        // model layer, which imports Foundation and nothing else.
-        .draggable(project.id.uuidString)
         .contextMenu {
             addToSelection(projects: [project.id])
             moveMenu(project)
@@ -460,6 +492,19 @@ struct FilterList: View {
             ProjectGroupMenu(project: project) {
                 nameField = ""
                 newGroupFor = project
+            }
+        }
+        Section("Move \(project.name) to Category") {
+            ForEach(categories) { category in
+                Button {
+                    refile(project, categoryID: category.id, group: nil)
+                } label: {
+                    if category.id == project.categoryID {
+                        Label(category.label, systemImage: "checkmark")
+                    } else {
+                        Text(category.label)
+                    }
+                }
             }
         }
     }
@@ -483,8 +528,17 @@ struct FilterList: View {
     /// is also how a project is taken *out* of a group, by dropping it on the
     /// category it already belongs to.
     private func drop(_ payload: [String], into group: String?, categoryID: UUID?) -> Bool {
-        guard let project = dragged(payload),
-              let move = ProjectFiling.move(project, toCategory: categoryID,
+        guard let project = dragged(payload) else { return false }
+        return refile(project, categoryID: categoryID, group: group)
+    }
+
+    /// Where a project is being sent, however it was asked for — dropped on a
+    /// heading, or chosen from its menu. The menu matters because a drag is
+    /// not reachable everywhere: on a touch screen the long press belongs to
+    /// the context menu, so this is the way there on a phone.
+    @discardableResult
+    private func refile(_ project: Project, categoryID: UUID?, group: String?) -> Bool {
+        guard let move = ProjectFiling.move(project, toCategory: categoryID,
                                             group: group, cards: store.items)
         else { return false }
 
