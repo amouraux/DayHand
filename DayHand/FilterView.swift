@@ -280,11 +280,14 @@ struct FilterList: View {
             selectionBox(isOn: categorySelection.contains(category.id)) {
                 add(categories: [category.id])
             }
-            foldControl(folded, enabled: canFold) { toggleCollapsed(categoryKey(category.id)) }
+            foldControl(folded, enabled: canFold,
+                        icon: category.symbolName, tint: category.tint) {
+                toggleCollapsed(categoryKey(category.id))
+            }
             Button {
                 withAnimation { pick(categories: [category.id]) }
             } label: {
-                row(symbol: category.symbolName, tint: category.tint,
+                row(symbol: nil, tint: category.tint,
                     text: Text("All \(category.label)"),
                     count: categoryCounts[category.id] ?? 0,
                     selected: false, bold: false)
@@ -313,19 +316,14 @@ struct FilterList: View {
 
         return HStack(spacing: 6) {
             selectionBox(isOn: allSelected) { add(projects: ids) }
-            foldControl(folded, enabled: !projects.isEmpty) {
+            foldControl(folded, enabled: !projects.isEmpty,
+                        icon: "folder", tint: .secondary) {
                 toggleCollapsed(groupFoldKey(name, in: categoryID))
             }
             if renamingInline == .group(categoryID, name) {
-                Image(systemName: "folder")
-                    .foregroundStyle(.secondary)
-                    .frame(width: 22)
                 renameField()
             } else {
             HStack(spacing: 8) {
-                Image(systemName: "folder")
-                    .foregroundStyle(.secondary)
-                    .frame(width: 22)
                 // Primary, not secondary: a dimmed heading in a list reads as
                 // disabled, especially in dark mode.
                 Text(name)
@@ -536,26 +534,42 @@ struct FilterList: View {
             .onChange(of: inlineFocused) { _, focused in if !focused { commitRename() } }
     }
 
-    /// The fold triangle. A heading with nothing under it still reserves the
-    /// space, so the names below it stay in one column rather than stepping in
-    /// and out as groups empty and fill.
+    /// The triangle *and* the heading's own icon, as one control.
+    ///
+    /// The triangle alone was 18pt sitting 6pt from a 22pt checkbox — two
+    /// targets inside the width of one fingertip, and on a phone the fold was
+    /// nearly impossible to hit without toggling the filter instead. Taking
+    /// the icon into the same button makes it 48pt wide at no cost in width,
+    /// since the icon was already there. The name beside it still filters, the
+    /// way a row's name does in any outline.
     @ViewBuilder
-    private func foldControl(_ folded: Bool, enabled: Bool, toggle: @escaping () -> Void) -> some View {
+    private func foldControl(_ folded: Bool, enabled: Bool, icon: String, tint: Color,
+                             toggle: @escaping () -> Void) -> some View {
+        let glyphs = HStack(spacing: 8) {
+            Image(systemName: "chevron.right")
+                .font(.caption.weight(.semibold))
+                // Kept in the layout when there is nothing to fold, so the
+                // icons below stay in one column.
+                .foregroundStyle(enabled ? AnyShapeStyle(Color.secondary) : AnyShapeStyle(.clear))
+                .rotationEffect(.degrees(folded ? 0 : 90))
+                .frame(width: 18)
+            Image(systemName: icon)
+                .foregroundStyle(tint)
+                .frame(width: 22)
+        }
+
         if enabled {
             Button {
-                withAnimation(.easeInOut(duration: 0.2)) { toggle() }
+                withAnimation(.snappy(duration: 0.28)) { toggle() }
             } label: {
-                Image(systemName: "chevron.right")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.secondary)
-                    .rotationEffect(.degrees(folded ? 0 : 90))
-                    .frame(width: 18, height: 18)
+                glyphs
+                    .frame(maxHeight: .infinity)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.borderless)
             .accessibilityLabel(folded ? "Expand" : "Collapse")
         } else {
-            Color.clear.frame(width: 18, height: 1)
+            glyphs
         }
     }
 

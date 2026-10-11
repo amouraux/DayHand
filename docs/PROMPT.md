@@ -775,7 +775,13 @@ click still picks, and is declared after the double so the double wins; only
 these rows pay the wait that costs, not the cards.
 
 **Categories and groups fold**, with the rows sliding in and out rather than
-appearing. A triangle beside a category or a group heading
+appearing. The triangle beside a heading **and the heading's own icon are one
+control**: the triangle alone was 18pt sitting 6pt from a 22pt checkbox, two
+targets inside the width of one fingertip, and on a phone the fold was nearly
+impossible to hit without toggling the filter by mistake. Taking the icon into
+the same button makes it 48pt wide and costs nothing, since the icon was there
+anyway. The name beside it still filters, the way a row's name does in any
+outline. The triangle
 folds what is under it away, and what is folded is remembered between launches —
 a sidebar that forgets is worse than one that does not fold. A heading with
 nothing under it shows no triangle but still reserves its width, so the project
