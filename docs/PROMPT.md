@@ -728,6 +728,15 @@ everywhere in the interface; never "subproject" or "tag".
 There is no separate Projects screen. Everything about a project is reached from
 the Filter, which is the one place projects are listed at all.
 
+**Categories and groups fold.** A triangle beside a category or a group heading
+folds what is under it away, and what is folded is remembered between launches —
+a sidebar that forgets is worse than one that does not fold. A heading with
+nothing under it shows no triangle but still reserves its width, so the project
+names stay in one column instead of stepping in and out as groups fill and
+empty. The sidebar's rows are also tighter than the phone's: it is driven by a
+pointer, where the 44pt a finger needs turns a dozen projects into a scroll.
+The filter *sheet* on the phone is this same view and keeps the full target.
+
 Every project row carries a **visible ⓘ**: the row filters by the project, the ⓘ
 opens it — the way a Wi-Fi network is joined by its row and configured by its ⓘ.
 A hidden gesture is not acceptable as the only way in.

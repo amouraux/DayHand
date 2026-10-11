@@ -34,6 +34,32 @@ struct FilterList: View {
     /// merging and deleting all live there, reached from this list rather than
     /// from a second screen somewhere else.
     @State private var editingProject: Project?
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    /// The same test ContentView uses to decide on the sidebar. The sheet on a
+    /// phone is this very view, so anything tightened for a pointer has to
+    /// leave the touch target alone there.
+    private var isSidebar: Bool {
+        horizontalSizeClass == .regular && UIDevice.current.userInterfaceIdiom != .phone
+    }
+
+    /// Which headings are folded away, keyed so the state survives a relaunch:
+    /// a sidebar that forgets what you folded is worse than one that does not
+    /// fold at all. Stored as one string because AppStorage holds no sets.
+    @AppStorage("filterCollapsed") private var collapsedRaw = ""
+    private var collapsed: Set<String> {
+        Set(collapsedRaw.split(separator: "\n").map(String.init))
+    }
+    private func isCollapsed(_ key: String) -> Bool { collapsed.contains(key) }
+    private func toggleCollapsed(_ key: String) {
+        var keys = collapsed
+        if keys.contains(key) { keys.remove(key) } else { keys.insert(key) }
+        collapsedRaw = keys.sorted().joined(separator: "\n")
+    }
+    private func categoryKey(_ id: UUID) -> String { "c:\(id.uuidString)" }
+    private func groupFoldKey(_ name: String, in categoryID: UUID?) -> String {
+        "g:\(categoryID?.uuidString ?? "-"):\(Project.groupKey(for: name))"
+    }
 
     /// A group is identified by its category and its label.
     struct GroupRef: Identifiable {
@@ -100,10 +126,16 @@ struct FilterList: View {
 
             if search.isEmpty {
                 ForEach(categories) { category in
+                    let inside = layout(for: category)
+                    let folded = isCollapsed(categoryKey(category.id))
                     Section(category.label) {
-                        categoryRow(category)
-                        projectRows(layout(for: category), categoryID: category.id,
-                                    tint: category.color.prefixTint)
+                        categoryRow(category,
+                                    canFold: !inside.groups.isEmpty || !inside.ungrouped.isEmpty,
+                                    folded: folded)
+                        if !folded {
+                            projectRows(inside, categoryID: category.id,
+                                        tint: category.color.prefixTint)
+                        }
                     }
                 }
                 let loose = layout(for: nil)
@@ -122,6 +154,11 @@ struct FilterList: View {
             }
 
         }
+        // Airy, but not as airy as a touch list has to be: on the Mac and the
+        // iPad the sidebar is driven by a pointer, and the default 44pt row
+        // turns a dozen projects into a scroll. The phone's sheet is this same
+        // view and keeps the full target.
+        .environment(\.defaultMinListRowHeight, isSidebar ? 30 : 44)
         .searchable(text: $search, prompt: "Search projects")
         .sheet(item: $editingProject) { project in
             NavigationStack {
@@ -164,8 +201,12 @@ struct FilterList: View {
     @ViewBuilder
     private func projectRows(_ layout: ProjectGroups.Layout, categoryID: UUID?, tint: Color) -> some View {
         ForEach(layout.groups, id: \.name) { group in
-            groupRow(group.name, projects: group.projects, categoryID: categoryID)
-            ForEach(group.projects) { projectRow($0, tint: tint, indented: true) }
+            let folded = isCollapsed(groupFoldKey(group.name, in: categoryID))
+            groupRow(group.name, projects: group.projects,
+                     categoryID: categoryID, folded: folded)
+            if !folded {
+                ForEach(group.projects) { projectRow($0, tint: tint, indented: true) }
+            }
         }
         ForEach(layout.ungrouped) { projectRow($0, tint: tint, indented: false) }
     }
@@ -175,11 +216,13 @@ struct FilterList: View {
         return project.categoryID.flatMap { id in categories.first { $0.id == id } }?.color.prefixTint ?? .primary
     }
 
-    private func categoryRow(_ category: CardCategory) -> some View {
+    private func categoryRow(_ category: CardCategory,
+                             canFold: Bool = false, folded: Bool = false) -> some View {
         HStack(spacing: 10) {
             selectionBox(isOn: categorySelection.contains(category.id)) {
                 add(categories: [category.id])
             }
+            foldControl(folded, enabled: canFold) { toggleCollapsed(categoryKey(category.id)) }
             Button {
                 withAnimation { pick(categories: [category.id]) }
             } label: {
@@ -197,13 +240,17 @@ struct FilterList: View {
     /// A group heading. Tapping selects the whole group — or clears it, when all
     /// of it is already selected. It selects the projects in the group now; one
     /// moved in later is not picked up by a selection already made.
-    private func groupRow(_ name: String, projects: [Project], categoryID: UUID?) -> some View {
+    private func groupRow(_ name: String, projects: [Project],
+                          categoryID: UUID?, folded: Bool = false) -> some View {
         let ids = Set(projects.map(\.id))
         let allSelected = !ids.isEmpty && ids.isSubset(of: projectSelection)
         let open = FilterCounts.total(of: projects, in: openCounts)
 
         return HStack(spacing: 10) {
             selectionBox(isOn: allSelected) { add(projects: ids) }
+            foldControl(folded, enabled: !projects.isEmpty) {
+                toggleCollapsed(groupFoldKey(name, in: categoryID))
+            }
             Button {
                 withAnimation { pick(projects: ids) }
             } label: {
@@ -261,6 +308,7 @@ struct FilterList: View {
             selectionBox(isOn: projectSelection.contains(project.id)) {
                 add(projects: [project.id])
             }
+            Color.clear.frame(width: 18, height: 1)
             Button {
                 withAnimation { pick(projects: [project.id]) }
             } label: {
@@ -315,6 +363,29 @@ struct FilterList: View {
     /// no modifier key — ⇧-click cannot be read in a Catalyst app without a
     /// UIKit recogniser under every row — and it works the same on a phone,
     /// where a modifier does not exist at all.
+    /// The fold triangle. A heading with nothing under it still reserves the
+    /// space, so the names below it stay in one column rather than stepping in
+    /// and out as groups empty and fill.
+    @ViewBuilder
+    private func foldControl(_ folded: Bool, enabled: Bool, toggle: @escaping () -> Void) -> some View {
+        if enabled {
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) { toggle() }
+            } label: {
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+                    .rotationEffect(.degrees(folded ? 0 : 90))
+                    .frame(width: 18, height: 18)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.borderless)
+            .accessibilityLabel(folded ? "Expand" : "Collapse")
+        } else {
+            Color.clear.frame(width: 18, height: 1)
+        }
+    }
+
     private func selectionBox(isOn: Bool, toggle: @escaping () -> Void) -> some View {
         Button {
             withAnimation(.easeInOut(duration: 0.15)) { toggle() }
