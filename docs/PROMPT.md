@@ -814,8 +814,15 @@ deleted during sync makes the move a no-op. Category, group and affected cards
 are saved together with one edit timestamp, never as an intermediate move with
 no group.
 
-Builds and model tests do not verify a real pointer or touch drag; that still
-needs a manual check on a device, including cancellation and folded headings.
+A touch drag is verified: on the simulator, PAPER taken by its handle onto
+Grants, which went from 1 to 3 and left Manuscripts empty and gone. It works
+there because the context menu sits on the *name* — when the menu covered the
+whole row, the long press belonged to it and the drag was unreachable on touch
+altogether. The handle is also what makes it discoverable: there is no gesture
+to guess at.
+
+Builds and model tests verify neither. A pointer drag on a Mac, cancellation
+and folded headings still want a manual check.
 
 **Double-clicking a project or a group name renames it in place.** Enter commits
 and so does clicking away, the way a Finder rename does — an untouched field
