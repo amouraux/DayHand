@@ -408,7 +408,9 @@ final class TodoStore: ObservableObject {
             }
             return projects[index]
         }
-        var project = Project(name: name, categoryID: categoryID)
+        // Capitals on the way in only — an existing project was matched above
+        // and keeps whatever name it already had.
+        var project = Project(name: Project.canonicalName(name), categoryID: categoryID)
         project.group = group.flatMap(Project.cleanGroup).map { typed in
             ProjectGroups.existingName(for: typed, in: categoryID, projects: projects) ?? typed
         }
@@ -442,8 +444,9 @@ final class TodoStore: ObservableObject {
         if let other = projects.first(where: { $0.key == Project.key(for: name) && $0.id != project.id }) {
             return .collides(other)
         }
-        guard name != project.name else { return .unchanged }
-        updateProject(project.id) { $0.name = name }
+        let renamed = Project.canonicalName(name)
+        guard renamed != project.name else { return .unchanged }
+        updateProject(project.id) { $0.name = renamed }
         return .renamed
     }
 

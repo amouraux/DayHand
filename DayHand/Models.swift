@@ -269,6 +269,23 @@ struct Project: Identifiable, Codable, Equatable, Hashable {
     /// are one project, not three.
     var key: String { Project.key(for: name) }
 
+    /// The name a project is *created* under: the cleaned word, in capitals.
+    ///
+    /// A project is a code — one word, no spaces, which `clean` already
+    /// enforces — and groups are the phrases ("Bachelor courses"). Capitals
+    /// make that difference visible, and they cost nothing: names are matched
+    /// through `key`, which folds case anyway, so TRIP and trip were already
+    /// the same project.
+    ///
+    /// Only at creation. Cleaning does *not* capitalise, because
+    /// `ProjectConversion.looksLikeCode` asks whether a word has no lowercase
+    /// in it — capitalise first and every word in the language looks like a
+    /// code. And names already in the file are left as they are: nobody's
+    /// `Thesis` is renamed behind their back.
+    static func canonicalName(_ raw: String) -> String {
+        clean(raw).uppercased()
+    }
+
     static func key(for name: String) -> String {
         clean(name).folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
     }

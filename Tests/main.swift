@@ -34,6 +34,17 @@ do {
     expect(Project.key(for: "study2026") == Project.key(for: "#STUDY2026"), "case and # ignored when matching")
     expect(Project.key(for: "Résumé") == Project.key(for: "resume"), "accents ignored when matching")
     expect(Project.clean("  ") == "", "blank is no name")
+
+    // Capitals belong to creation, not to cleaning: `looksLikeCode` asks
+    // whether a word has no lowercase in it, so a clean that capitalised
+    // would make every word in the language look like a code.
+    expect(Project.clean("trip") == "trip", "cleaning leaves the case alone")
+    expect(Project.canonicalName("trip") == "TRIP", "a project is created in capitals")
+    expect(Project.canonicalName("#bio2140:") == "BIO2140", "and cleaned on the way")
+    expect(Project.key(for: "trip") == Project.key(for: "TRIP"),
+           "which changes no matching, because names were already folded")
+    expect(!ProjectConversion.looksLikeCode("trip"), "an ordinary word is not a code")
+    expect(ProjectConversion.looksLikeCode("TRIP"), "a word in capitals is")
 }
 
 // MARK: C — ranking suggestions

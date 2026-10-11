@@ -400,7 +400,11 @@ struct FilterList: View {
                 renameField()
             } else {
                 row(symbol: nil, tint: project.isArchived ? .secondary : tint,
-                    text: Text("#\(project.name)"),
+                    // No `#`. A card has never shown one — it writes the
+                    // project as a coloured word in front of the title — and
+                    // the sidebar was the only place that did. Colour says
+                    // what it is, here as there.
+                    text: Text(project.name),
                     count: openCounts[project.id] ?? 0,
                     selected: false, bold: true)
                     // None. The checkbox and the fold column already carry
