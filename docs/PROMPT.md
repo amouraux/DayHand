@@ -323,6 +323,19 @@ once the drag is more horizontal than vertical.
   plus Stack, Category, Project, Due date, Complete and Delete. Everything a
   card has, in one place.
 
+  **The editor holds its edits and writes them on Done.** It used to edit the
+  card live — every picker wrote straight through — which left Cancel nothing
+  to undo and made Escape a commit by another name. Everything the sheet can
+  change is held in one draft: title, stack, category, project, group and both
+  dates. Done writes only what differs from what the sheet opened on, so
+  opening the editor and closing it again still stamps nothing. A project named
+  but not yet created is held as a name and made on Done, so a cancelled sheet
+  leaves no project behind either. Escape takes the Cancel button's role.
+  Swiping the sheet down is the phone's Cancel, and when something has changed
+  it asks **Discard changes?** first rather than throwing an edit away in
+  silence. Complete writes the edit before completing, because it is an
+  explicit action; Delete does not, the card going with it.
+
   The name field **is the one New Task uses**, not a lookalike: the same `#`
   button, the same suggestion chips, the same pill, the same reading of a
   half-typed word. One view with two parents, because the gesture people learn

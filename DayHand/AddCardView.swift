@@ -696,10 +696,34 @@ struct CardActionsSheet: View {
     @EnvironmentObject private var store: TodoStore
     @Environment(\.dismiss) private var dismiss
 
-    @State private var title = ""
-    /// The title this sheet opened on. Committing compares against it, so
-    /// opening the editor and closing it again changes nothing at all.
-    @State private var loadedTitle = ""
+    /// Everything the sheet can change, held here rather than written to the
+    /// card as it is touched. The sheet used to edit the card live, which left
+    /// nothing for a Cancel to undo and made Escape a commit by another name.
+    ///
+    /// A project named but not yet created lives here as `.new`, so a
+    /// cancelled sheet leaves no project behind either.
+    struct Draft: Equatable {
+        var title = ""
+        var bucket: Bucket = .inbox
+        var categoryID: UUID?
+        var project: ProjectChoice = .none
+        /// The group the chosen project should end up in. A group belongs to
+        /// the project rather than the card, so this is written to the project
+        /// on Done like everything else.
+        var group: String?
+        var remindAt: Date?
+        var deadline: Date?
+    }
+
+    @State private var draft = Draft()
+    /// What the sheet opened on. Done writes only what differs from this, so
+    /// opening the editor and closing it again changes nothing at all — and
+    /// Cancel has something to mean.
+    @State private var original = Draft()
+    @State private var loaded = false
+    @State private var isDiscarding = false
+    private var isDirty: Bool { draft != original }
+
     @FocusState private var titleFocused: Bool
     @State private var isNamingProject = false
     @State private var isNamingGroup = false
@@ -717,52 +741,47 @@ struct CardActionsSheet: View {
                         // the button, the chips, the pill and the reading of a
                         // half-typed word are one view, not a lookalike.
                         ProjectTitleField(
-                            title: $title,
-                            project: projectBinding(item),
+                            title: $draft.title,
+                            project: projectBinding,
                             projects: store.projects,
                             lastUsed: store.projectLastUsed,
                             inUse: store.projectsInUse,
                             categories: store.categories,
-                            categoryID: item.categoryID,
+                            categoryID: draft.categoryID,
                             placeholder: "Title",
-                            titleBefore: loadedTitle,
+                            titleBefore: original.title,
                             focused: $titleFocused,
-                            onSubmit: {
-                                commitTitle(item)
-                                titleFocused = false
-                            }
+                            onSubmit: { titleFocused = false }
                         )
                     }
 
                     Section {
-                        projectRow(item)
+                        projectRow()
 
                         // Only when the card has a project: a group is a label
                         // projects carry, so there is nothing to put in one
-                        // until there is a project to put.
-                        if let project = store.project(for: item) {
+                        // until there is a project to put. A project only
+                        // named so far counts — it will exist on Done.
+                        if draft.project != .none {
                             ProjectGroupRow(
-                                names: store.groupNames(in: project.categoryID),
-                                selection: Binding(
-                                    get: { store.project(id: project.id)?.group },
-                                    set: { chosen in
-                                        withAnimation { store.setProjectGroup(project, to: chosen) }
-                                    }
-                                ),
-                                tint: store.category(for: item)?.color.prefixTint ?? Color.accentColor
+                                names: store.groupNames(in: draft.categoryID),
+                                selection: $draft.group,
+                                tint: store.categories
+                                    .first { $0.id == draft.categoryID }?.color.prefixTint
+                                    ?? Color.accentColor
                             ) {
                                 typedGroup = ""
                                 isNamingGroup = true
                             }
                         }
 
-                        if let split = firstWordProject(item) {
+                        if let split = firstWordProject() {
                             Button {
-                                if let project = store.ensureProject(named: split.word,
-                                                                     categoryID: item.categoryID) {
-                                    title = split.rest
-                                    store.rename(item, to: split.rest)
-                                    withAnimation { store.setProject(item, to: project.id) }
+                                withAnimation {
+                                    draft.title = split.rest
+                                    draft.project = ProjectTitleField
+                                        .choice(for: split.word, in: store.projects)
+                                        ?? .new(split.word)
                                 }
                             } label: {
                                 Label("Make \u{201C}\(split.word)\u{201D} a project",
@@ -770,7 +789,7 @@ struct CardActionsSheet: View {
                             }
                         }
 
-                        Picker(selection: stackBinding(item)) {
+                        Picker(selection: $draft.bucket) {
                             ForEach(Bucket.quickMoveTargets) { target in
                                 Label(target.title, systemImage: target.symbolName).tag(target)
                             }
@@ -779,7 +798,7 @@ struct CardActionsSheet: View {
                         }
                         .disabled(item.isCompleted)
 
-                        Picker(selection: categoryBinding(item)) {
+                        Picker(selection: $draft.categoryID) {
                             Text("None").tag(UUID?.none)
                             ForEach(store.categories) { category in
                                 Label(category.label, systemImage: category.symbolName)
@@ -790,11 +809,11 @@ struct CardActionsSheet: View {
                         }
                         .disabled(store.categories.isEmpty)
 
-                        Toggle(isOn: hasReminderBinding(item).animation(.easeInOut(duration: 0.2))) {
+                        Toggle(isOn: hasReminderBinding.animation(.easeInOut(duration: 0.2))) {
                             Label("Remind me", systemImage: "flag")
                         }
                         if item.remindAt != nil {
-                            DatePicker("Date", selection: reminderBinding(item),
+                            DatePicker("Date", selection: reminderBinding,
                                        displayedComponents: [.date])
                                 .datePickerStyle(.compact)
                         }
@@ -803,12 +822,12 @@ struct CardActionsSheet: View {
                         // the card already carries one, so a deadline left
                         // behind by clearing a reminder is never stranded
                         // somewhere it can be seen but not changed.
-                        if item.remindAt != nil || item.deadline != nil {
-                            Toggle(isOn: hasDeadlineBinding(item).animation(.easeInOut(duration: 0.2))) {
+                        if draft.remindAt != nil || draft.deadline != nil {
+                            Toggle(isOn: hasDeadlineBinding.animation(.easeInOut(duration: 0.2))) {
                                 Label("Deadline", systemImage: "flag.checkered")
                             }
-                            if item.deadline != nil {
-                                DatePicker("Due", selection: deadlineBinding(item),
+                            if draft.deadline != nil {
+                                DatePicker("Due", selection: deadlineBinding,
                                            displayedComponents: [.date])
                                     .datePickerStyle(.compact)
                             }
@@ -817,7 +836,9 @@ struct CardActionsSheet: View {
 
                     Section {
                         Button {
-                            commitTitle(item)
+                            // An explicit action, so the edit goes with it
+                            // rather than being quietly dropped.
+                            commit(item)
                             withAnimation { store.toggleCompleted(item) }
                             dismiss()
                         } label: {
@@ -839,26 +860,35 @@ struct CardActionsSheet: View {
                 .navigationTitle("Task")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
+                    // Escape picks the cancellation role, which is the whole
+                    // point: leaving by the keyboard must not write anything.
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") { close() }
+                    }
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Done") {
-                            commitTitle(item)
+                            commit(item)
                             dismiss()
                         }
                     }
                 }
-                .onAppear {
-                    title = item.title
-                    loadedTitle = item.title
+                // Only once: the sheet stays alive across edits, and reloading
+                // on every appearance would throw away what was typed.
+                .onAppear { if !loaded { load(item) } }
+                // Swiping down is the phone's Cancel, so an edit in progress
+                // is not thrown away without being asked about. Nothing
+                // changed, nothing to ask.
+                .interactiveDismissDisabled(isDirty)
+                .confirmationDialog("Discard changes?", isPresented: $isDiscarding) {
+                    Button("Discard Changes", role: .destructive) { dismiss() }
+                    Button("Keep Editing", role: .cancel) { }
                 }
-                // Typing then dismissing by swipe must not lose the edit.
-                .onDisappear { commitTitle(item) }
                 .alert("New Group", isPresented: $isNamingGroup) {
                     TextField("Grants", text: $typedGroup)
                         .autocorrectionDisabled()
                     Button("Add") {
-                        guard let name = Project.cleanGroup(typedGroup),
-                              let project = store.project(for: item) else { return }
-                        withAnimation { store.setProjectGroup(project, to: name) }
+                        guard let name = Project.cleanGroup(typedGroup) else { return }
+                        withAnimation { draft.group = name }
                     }
                     Button("Cancel", role: .cancel) { }
                 } message: {
@@ -869,8 +899,11 @@ struct CardActionsSheet: View {
                         .textInputAutocapitalization(.characters)
                         .autocorrectionDisabled()
                     Button("Add") {
-                        if let created = store.ensureProject(named: newProjectName, categoryID: item.categoryID) {
-                            withAnimation { store.setProject(item, to: created.id) }
+                        let name = Project.clean(newProjectName)
+                        guard !name.isEmpty else { return }
+                        withAnimation {
+                            draft.project = ProjectTitleField
+                                .choice(for: name, in: store.projects) ?? .new(name)
                         }
                     }
                     Button("Cancel", role: .cancel) { }
@@ -882,111 +915,153 @@ struct CardActionsSheet: View {
         .presentationDetents([.medium, .large])
     }
 
-    /// A `#word` left unfinished when the sheet closes still counts, exactly as
-    /// it does in New Task.
-    private func takeTypedProject(_ item: TodoItem) -> Bool {
-        // Finished, and typed just now. Without both, closing the editor on a
-        // card called "fix issue #42" renamed it and made a project out of the
-        // number — nobody having touched the field.
+    /// Leaving without Done. Asks first when there is something to lose, so
+    /// neither Escape nor a swipe can throw an edit away in silence.
+    private func close() {
+        if isDirty { isDiscarding = true } else { dismiss() }
+    }
+
+    /// The stack the picker shows: a completed card still belongs to the one
+    /// it was completed from.
+    private static func effectiveBucket(_ item: TodoItem) -> Bucket {
+        item.bucket == .completed ? (item.bucketBeforeCompletion ?? .inbox) : item.bucket
+    }
+
+    /// Reads the card into the draft. Done compares against this copy, so a
+    /// sheet opened and closed again writes nothing at all.
+    private func load(_ item: TodoItem) {
+        let project = store.project(for: item)
+        let start = Draft(title: item.title,
+                          bucket: Self.effectiveBucket(item),
+                          categoryID: item.categoryID,
+                          project: project.map(ProjectChoice.existing) ?? .none,
+                          group: project?.group,
+                          remindAt: item.remindAt,
+                          deadline: item.deadline)
+        draft = start
+        original = start
+        loaded = true
+    }
+
+    /// Writes the draft to the card, and only what actually differs: a card
+    /// whose edit date moved because its editor was opened would outrank a
+    /// real edit made on another device.
+    private func commit(_ item: TodoItem) {
+        guard loaded else { return }
+
         // A tag left half-written is not a name. While one is being typed the
-        // card's own title is held out of the field, so a field holding
-        // nothing but an unfinished `#word` means the sheet closed in the
-        // middle of it — and the card keeps the name it came in with.
-        if let half = ProjectToken.find(in: title), !half.isFinished,
-           !loadedTitle.isEmpty {
-            title = loadedTitle
-            return true
+        // title is held out of the field, so a field holding nothing but an
+        // unfinished `#word` means the sheet closed in the middle of it — and
+        // the card keeps the name it came in with.
+        var title = draft.title
+        if let half = ProjectToken.find(in: title), !half.isFinished {
+            title = original.title
+        }
+        if title != item.title { store.rename(item, to: title) }
+
+        // The project first: setting one moves the card's category to the
+        // project's, so the category has to be written after it to win.
+        let projectID: UUID?
+        switch draft.project {
+        case .none:
+            projectID = nil
+        case .existing(let project):
+            projectID = project.id
+        case .new(let name):
+            projectID = store.ensureProject(named: name, categoryID: draft.categoryID,
+                                            group: draft.group)?.id
+        }
+        if projectID != item.projectID { store.setProject(item, to: projectID) }
+
+        // A group belongs to the project, not to this card, so it is written
+        // only when it actually changed — otherwise opening the editor on one
+        // card would restamp a project every other card shares.
+        if let projectID, let project = store.project(id: projectID),
+           draft.group != project.group {
+            store.setProjectGroup(project, to: draft.group)
         }
 
-        guard let token = ProjectToken.find(in: title), token.isFinished,
-              ProjectToken.isNewlyTyped(token, givenTitleBefore: loadedTitle),
-              let choice = ProjectTitleField.choice(for: token.query, in: store.projects)
-        else { return false }
-
-        title = token.remainder
-        store.rename(item, to: token.remainder)
-        applyProject(choice, to: item)
-        return true
+        if draft.categoryID != store.items.first(where: { $0.id == item.id })?.categoryID {
+            store.setCategory(item, to: draft.categoryID)
+        }
+        if draft.remindAt != item.remindAt { store.setReminder(item, at: draft.remindAt) }
+        if draft.deadline != item.deadline {
+            if let deadline = draft.deadline { store.setDeadline(item, to: deadline) }
+            else { store.clearDeadline(item) }
+        }
+        if draft.bucket != Self.effectiveBucket(item) {
+            withAnimation { store.move(item, to: draft.bucket) }
+        }
     }
 
     /// The first word, when it reads like a code, is almost always the project
     /// the card belongs to — the same judgement the bulk conversion makes.
-    private func firstWordProject(_ item: TodoItem) -> (word: String, rest: String)? {
-        guard item.projectID == nil,
-              let split = ProjectConversion.split(title),
+    private func firstWordProject() -> (word: String, rest: String)? {
+        guard draft.project == .none,
+              let split = ProjectConversion.split(draft.title),
               ProjectConversion.looksLikeCode(split.word) else { return nil }
         return split
     }
 
-    /// The card *is* the project, so the field reads it off the card rather
-    /// than holding a copy. Held as state, the copy went stale the moment the
-    /// Project row below wrote to the store, and the pill kept offering a
-    /// project the card no longer carried — the row and the pill being two
-    /// views of one fact, only one of which was told when it changed.
-    private func projectBinding(_ item: TodoItem) -> Binding<ProjectChoice> {
+    /// The field and the Project row are two views of one fact, so neither
+    /// holds its own copy: both read the draft. Given a copy to show, the pill
+    /// went on offering a project the card no longer carried the moment the
+    /// row below was used.
+    private var projectBinding: Binding<ProjectChoice> {
         Binding(
-            get: { store.project(for: item).map(ProjectChoice.existing) ?? .none },
-            set: { choice in applyProject(choice, to: item) }
-        )
-    }
-
-    /// A project chosen in the field goes straight onto the card, which also
-    /// moves the card's category — the project is what says where the work
-    /// belongs. A new name is created only once it is actually chosen.
-    private func applyProject(_ choice: ProjectChoice, to item: TodoItem) {
-        switch choice {
-        case .none:
-            withAnimation { store.setProject(item, to: nil) }
-        case .existing(let project):
-            withAnimation { store.setProject(item, to: project.id) }
-        case .new(let name):
-            if let created = store.ensureProject(named: name, categoryID: item.categoryID) {
-                withAnimation { store.setProject(item, to: created.id) }
+            get: { draft.project },
+            set: { choice in
+                withAnimation(.easeOut(duration: 0.15)) {
+                    draft.project = choice
+                    // A project says where the work belongs, so it brings its
+                    // category with it — the same move the New Task sheet makes.
+                    if case .existing(let project) = choice {
+                        draft.categoryID = project.categoryID
+                        draft.group = project.group
+                    }
+                    if choice == .none { draft.group = nil }
+                }
             }
-        }
-    }
-
-    private func commitTitle(_ item: TodoItem) {
-        // Nothing typed, nothing to write. `onDisappear` fires for reasons
-        // other than the user having finished with the sheet, so a commit that
-        // runs unconditionally is a destructive edit waiting for a trigger.
-        guard title != loadedTitle else { return }
-
-        if takeTypedProject(item) {
-            loadedTitle = title
-            return
-        }
-        store.rename(item, to: title)
-        loadedTitle = title
+        )
     }
 
     // MARK: - Project
 
     /// A menu rather than a picker so it can also offer "New Project…". Setting
     /// a project brings its category, exactly as in the New Task sheet.
-    private func projectRow(_ item: TodoItem) -> some View {
-        let current = store.project(for: item)
+    private func projectRow() -> some View {
+        // Whatever the draft holds, which is not always a project that exists
+        // yet: one named in the field is created on Done.
+        let chosenID: UUID? = {
+            if case .existing(let project) = draft.project { return project.id }
+            return nil
+        }()
         // The one the card already carries is always listed, even if it is the
         // last card and the project would otherwise have dropped out.
         let inUse = store.projectsInUse
         let offered = store.projects
-            .filter { (!$0.isArchived && inUse.contains($0.id)) || $0.id == current?.id }
+            .filter { (!$0.isArchived && inUse.contains($0.id)) || $0.id == chosenID }
             .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
-        let tint = store.category(for: item)?.color.prefixTint ?? Color.accentColor
+        let tint = store.categories
+            .first { $0.id == draft.categoryID }?.color.prefixTint ?? Color.accentColor
 
         return LabeledContent {
             Menu {
                 Button {
-                    withAnimation { store.setProject(item, to: nil) }
+                    projectBinding.wrappedValue = .none
                 } label: {
-                    if current == nil { Label("None", systemImage: "checkmark") } else { Text("None") }
+                    if draft.project == .none {
+                        Label("None", systemImage: "checkmark")
+                    } else {
+                        Text("None")
+                    }
                 }
                 Divider()
                 ForEach(offered) { project in
                     Button {
-                        withAnimation { store.setProject(item, to: project.id) }
+                        projectBinding.wrappedValue = .existing(project)
                     } label: {
-                        if project.id == current?.id {
+                        if project.id == chosenID {
                             Label(project.name, systemImage: "checkmark")
                         } else {
                             Text(project.name)
@@ -1001,9 +1076,9 @@ struct CardActionsSheet: View {
                     Label("New Project…", systemImage: "plus")
                 }
             } label: {
-                Text(current?.name ?? "None")
-                    .fontWeight(current == nil ? .regular : .semibold)
-                    .foregroundStyle(current == nil ? Color.secondary : tint)
+                Text(draft.project.name ?? "None")
+                    .fontWeight(draft.project == .none ? .regular : .semibold)
+                    .foregroundStyle(draft.project == .none ? Color.secondary : tint)
             }
         } label: {
             Label("Project", systemImage: "number")
@@ -1012,53 +1087,37 @@ struct CardActionsSheet: View {
 
     // MARK: - Bindings that write straight through to the store
 
-    private func stackBinding(_ item: TodoItem) -> Binding<Bucket> {
-        Binding(
-            get: { item.bucket == .completed ? (item.bucketBeforeCompletion ?? .inbox) : item.bucket },
-            set: { newBucket in withAnimation { store.move(item, to: newBucket) } }
-        )
-    }
-
-    private func categoryBinding(_ item: TodoItem) -> Binding<UUID?> {
-        Binding(
-            get: { item.categoryID },
-            set: { store.setCategory(item, to: $0) }
-        )
-    }
-
     /// Opens on the day the card is to be started, not today: a finish line
     /// before the start is the one date that cannot be meant.
-    private func deadlineDefault(_ item: TodoItem) -> Date {
-        item.remindAt.map { Scheduler.calendar.startOfDay(for: $0) } ?? Scheduler.startOfToday()
+    private var deadlineDefault: Date {
+        draft.remindAt.map { Scheduler.calendar.startOfDay(for: $0) } ?? Scheduler.startOfToday()
     }
 
-    private func hasDeadlineBinding(_ item: TodoItem) -> Binding<Bool> {
+    private var hasDeadlineBinding: Binding<Bool> {
         Binding(
-            get: { item.deadline != nil },
-            set: { $0 ? store.setDeadline(item, to: deadlineDefault(item))
-                      : store.clearDeadline(item) }
+            get: { draft.deadline != nil },
+            set: { draft.deadline = $0 ? deadlineDefault : nil }
         )
     }
 
-    private func deadlineBinding(_ item: TodoItem) -> Binding<Date> {
+    private var deadlineBinding: Binding<Date> {
         Binding(
-            get: { item.deadline ?? deadlineDefault(item) },
-            set: { store.setDeadline(item, to: $0) }
+            get: { draft.deadline ?? deadlineDefault },
+            set: { draft.deadline = $0 }
         )
     }
 
-    private func hasReminderBinding(_ item: TodoItem) -> Binding<Bool> {
+    private var hasReminderBinding: Binding<Bool> {
         Binding(
-            get: { item.remindAt != nil },
-            set: { $0 ? store.setReminder(item, at: Scheduler.defaultReminderTime())
-                      : store.setReminder(item, at: nil) }
+            get: { draft.remindAt != nil },
+            set: { draft.remindAt = $0 ? Scheduler.defaultReminderTime() : nil }
         )
     }
 
-    private func reminderBinding(_ item: TodoItem) -> Binding<Date> {
+    private var reminderBinding: Binding<Date> {
         Binding(
-            get: { item.remindAt ?? Scheduler.defaultReminderTime() },
-            set: { store.setReminder(item, at: $0) }
+            get: { draft.remindAt ?? Scheduler.defaultReminderTime() },
+            set: { draft.remindAt = $0 }
         )
     }
 }
