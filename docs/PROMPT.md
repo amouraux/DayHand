@@ -655,6 +655,16 @@ everywhere in the interface; never "subproject" or "tag".
   the coloured word becomes the coloured pill when the space arrives, which
   reads as one movement rather than a stutter. Typing on past a match still
   gives the project back: the colour drops away instead of a pill vanishing.
+- **A `#` typed in front of a title that already exists** begins a tag nobody
+  has written yet, and the title it was put in front of is remembered so the
+  tag ends at the space the *user* types. Ending it at the first space is right
+  while a card is being written — everything after the `#` was typed just now,
+  so the first space is one the user typed — and wrong the moment the `#` goes
+  in front of a sentence, whose spaces are its own: a single `#` keystroke in
+  front of "write the case for support" made a project called `write` and left
+  the card named "the case for support". The same rule is applied once more
+  when the sheet closes, or a tag abandoned half-typed would be written into
+  the card as part of its name.
 - **Tab takes the first suggestion.** Only while a tag is being typed, and only
   onto a project that already exists — completing to something that does not
   exist is not completion, and a space already commits a new name.

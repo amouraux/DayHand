@@ -516,6 +516,37 @@ struct ProjectToken: Equatable {
         guard let had = find(in: before) else { return true }
         return Project.key(for: had.query) != Project.key(for: token.query)
     }
+
+    /// A tag being typed in front of words that were already in the title.
+    ///
+    /// `find` ends a tag at the first space, which is right while the title is
+    /// being written — everything after the `#` was typed just now, so the
+    /// first space is one the user typed. It is wrong the moment a `#` is put
+    /// in front of a title that already exists: the spaces are the sentence's
+    /// own, so "write the case for support" turned into the project `write`
+    /// and the title "the case for support" on the single keystroke of a `#`.
+    ///
+    /// Given what the `#` was put in front of, the tag is whatever lies
+    /// between them, and it ends at the space the user types before that text
+    /// — never at a space that was already there.
+    static func insertion(in text: String, before tail: String) -> ProjectToken? {
+        guard let first = text.first, first == "#" || first == "\u{FF03}" else { return nil }
+        guard !tail.isEmpty, text.count >= tail.count + 1,
+              text.hasSuffix(tail) else { return nil }
+
+        let typed = text.dropFirst().dropLast(tail.count)
+        // The space that separates the tag from the text it was put in front
+        // of is the one that finishes it.
+        guard let last = typed.last, last.isWhitespace else {
+            // Still being typed, and a space inside means the tag was given up
+            // on rather than finished — there is nothing to separate any more.
+            guard !typed.contains(where: \.isWhitespace) else { return nil }
+            return ProjectToken(query: String(typed), isFinished: false, remainder: tail)
+        }
+        let query = typed.dropLast()
+        guard !query.isEmpty, !query.contains(where: \.isWhitespace) else { return nil }
+        return ProjectToken(query: String(query), isFinished: true, remainder: tail)
+    }
 }
 
 /// Ranks projects for the suggestion chips: names that start with what was

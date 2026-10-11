@@ -1353,6 +1353,45 @@ do {
     expect(ProjectToken.find(in: "a plain title") == nil, "no hash, no token")
 }
 
+// MARK: AI — a tag typed in front of a title that was already there
+do {
+    let tail = "write the case for support"
+
+    // The keystroke that started it all: a bare `#` in front of the title.
+    // `find` reads that as the finished tag "write", which is how a project
+    // called `write` got made and the first word vanished off the card.
+    let carved = ProjectToken.find(in: "#" + tail)!
+    expect(carved.query == "write" && carved.isFinished,
+           "find alone cannot tell a typed tag from the title's own first word")
+
+    expect(ProjectToken.insertion(in: "#" + tail, before: tail)?.query == "",
+           "a `#` just typed begins a tag nobody has written yet")
+    expect(ProjectToken.insertion(in: "#" + tail, before: tail)?.isFinished == false,
+           "and the sentence's own spaces do not finish it")
+
+    let typing = ProjectToken.insertion(in: "#GRANT" + tail, before: tail)!
+    expect(typing.query == "GRANT" && !typing.isFinished,
+           "the tag is whatever stands between the hash and the text it was put before")
+
+    let done = ProjectToken.insertion(in: "#GRANT " + tail, before: tail)!
+    expect(done.query == "GRANT" && done.isFinished && done.remainder == tail,
+           "the space the user types is the one that finishes it, and the title is given back whole")
+
+    // Typing on past the space, so the tag is no longer the only thing in
+    // front of the title: there is nothing left to separate.
+    expect(ProjectToken.insertion(in: "#two words " + tail, before: tail) == nil,
+           "a tag given up on halfway is not a tag")
+
+    // Editing the title itself while a tag is half-typed takes the text out
+    // from under the rule, and it says so rather than guessing.
+    expect(ProjectToken.insertion(in: "#GRANT write the case", before: tail) == nil,
+           "the text it was put in front of has to still be there")
+
+    expect(ProjectToken.insertion(in: tail, before: tail) == nil, "no hash, no tag")
+    expect(ProjectToken.insertion(in: "#TRIP ", before: "") == nil,
+           "nothing was put in front of anything")
+}
+
 // MARK: AI — what Tab completes a half-typed tag to
 do {
     let cat = UUID()
