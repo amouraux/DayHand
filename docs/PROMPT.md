@@ -686,24 +686,34 @@ everywhere in the interface; never "subproject" or "tag".
   the coloured word becomes the coloured pill when the space arrives, which
   reads as one movement rather than a stutter. Typing on past a match still
   gives the project back: the colour drops away instead of a pill vanishing.
-- **A `#` put in front of a title that already exists** begins a tag nobody has
-  written yet, and the title comes *out of the field* while it is written: it
-  waits in grey beside the tag and goes back the moment the tag is finished or
-  given up on. Ending a tag at the first space is right while a card is being
-  written, where everything after the `#` was typed just now, and wrong the
-  moment a `#` goes in front of a sentence, whose spaces are its own — one
-  keystroke made a project called `write` out of "write the case for support"
-  and left the card named "the case for support". Holding the title is also the
-  only way the caret can be put after the `#`: it follows a programmatic change
-  to the end of the text, so a hash written into a title leaves the typing
-  behind it. Every way of finishing a tag gives the title back — the space, Tab
-  and a tapped chip are three code paths, and a title restored by one of them
-  is a title the other two lose. A tag abandoned half-written gives the title
-  back as the sheet closes, so the card can never be named `#BI`.
-- **The `#` button is offered whenever the card has no project**, on a title
-  already written as well as an empty one, because that is where reaching for a
-  `#` costs most: two layer-switches on an iPhone keyboard, three on a layout
-  that puts £ there.
+- **There is no `#`.** A project is made from the **first word of the title**,
+  because that was the only place one could ever be: `BIO2140 mark the problem
+  sets`. The hash was never doing anything but saying *this first word is a
+  project* — the position was already fixed — and it cost two keyboard layers
+  to reach, three on a layout that puts £ there.
+- **The first word is offered, never taken.** As it is typed, a word that names
+  an existing project brings that project up in the chips; a word that reads
+  like a code and names nothing offers **New project BIO2140**. Accepting is a
+  tap, or Tab for the first one. Only then does the word come out of the title
+  and become the pill — a card draws its project as a coloured prefix, so
+  leaving it would write the name twice. Typing a space used to commit a
+  project outright, which was the one place in the app where something was
+  written without being asked for.
+- **A chip takes the word out of the title only when it is the word that put it
+  there.** Choosing a recent project while typing "Buy milk" sets the project
+  and leaves the title alone.
+- **Only a code-like word is offered as a *new* project** — capitals, or a
+  digit in it. Every other first word would mean a chip under every title
+  anyone ever writes, and most first words are just words. A project whose name
+  is an ordinary word is made from the picker instead.
+- **The `#` button is now the picker.** There is no character to insert, so it
+  lists every project and offers **New Project…** — the way to a project the
+  first word will not offer, because it reads like a word or because it is not
+  what is being typed. One tap, from anywhere in the field.
+- **A `#` typed out of old habit still works**, quietly: `clean` strips it, so
+  `#BIO2140` finds the project `BIO2140` would. It is simply not required, and
+  not advertised. The CSV importer still reads a leading `#CODE`, which is a
+  file format rather than a gesture.
 - **Tab takes the first suggestion.** Only while a tag is being typed, and only
   onto a project that already exists — completing to something that does not
   exist is not completion, and a space already commits a new name.

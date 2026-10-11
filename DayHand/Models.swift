@@ -550,33 +550,6 @@ struct ProjectToken: Equatable {
             .joined(separator: " ")
         return ProjectToken(query: query, isFinished: true, remainder: remainder)
     }
-
-    /// Whether this `#word` is one the user has just made, rather than one the
-    /// title already carried before they started editing.
-    ///
-    /// A card called "fix issue #42" ends in a `#word` without anybody having
-    /// reached for a project. Treating it as one renames the card to "fix
-    /// issue" and invents a project called 42 — which is what used to happen
-    /// on merely opening the editor and closing it again.
-    static func isNewlyTyped(_ token: ProjectToken, givenTitleBefore before: String) -> Bool {
-        guard let had = find(in: before) else { return true }
-        return Project.key(for: had.query) != Project.key(for: token.query)
-    }
-
-    /// Whether this change is a `#` put at the front of a title that was
-    /// already there — the moment a tag begins in front of existing words.
-    ///
-    /// It has to be told apart, because `find` ends a tag at the first space.
-    /// That is right while a card is being written, where everything after the
-    /// `#` was typed just now and the first space is therefore one the user
-    /// typed. It is wrong the moment a `#` goes in front of a sentence, whose
-    /// spaces are its own: one keystroke turned "write the case for support"
-    /// into the project `write` and the title "the case for support".
-    static func startsTag(_ entered: String, after previous: String) -> Bool {
-        guard !previous.isEmpty, find(in: previous) == nil else { return false }
-        return entered == "#" + previous || entered == "\u{FF03}" + previous
-    }
-
 }
 
 /// Ranks projects for the suggestion chips: names that start with what was

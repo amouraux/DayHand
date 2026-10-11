@@ -91,7 +91,7 @@ struct SettingsView: View {
                         } label: {
                             Label {
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text("Convert Title Prefixes into #Projects…")
+                                    Text("Convert Title Prefixes into Projects…")
                                     Text("\(found.count) possible projects found in your titles")
                                         .font(.footnote)
                                         .foregroundStyle(.secondary)
@@ -109,7 +109,7 @@ struct SettingsView: View {
                         }
                     }
                 } footer: {
-                    Text("A #project groups cards that belong to the same piece of work \u{2014} a trip, a paper, a course, an assignment. Type # in a new task to use one. Rename, group and archive them in the Filter: tap \u{24D8} beside a project.")
+                    Text("A project groups cards that belong to the same piece of work \u{2014} a trip, a paper, a course, an assignment. Start a task with its name and it is offered below the field. Rename, group and archive them in the Filter: tap \u{24D8} beside a project.")
                 }
 
                 Section {

@@ -103,13 +103,14 @@ struct AddCardView: View {
     /// Set once the card has been filed, so it cannot be filed again.
     @State private var didAdd = false
 
-    /// The title as it will be saved: without a `#word` still being typed.
-    private var titleWithoutToken: String {
-        (ProjectToken.find(in: title)?.remainder ?? title)
-            .trimmingCharacters(in: .whitespacesAndNewlines)
+    /// The title as it will be saved. A first word that was going to be a
+    /// project has already been taken out of it, by the chip or the Tab that
+    /// accepted it — nothing is pending here any more.
+    private var savedTitle: String {
+        title.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    private var canAdd: Bool { !titleWithoutToken.isEmpty }
+    private var canAdd: Bool { !savedTitle.isEmpty }
 
 
 
@@ -300,17 +301,8 @@ struct AddCardView: View {
     /// twice.
     private func add() {
         guard canAdd, !didAdd else { return }
-        // A `#word` typed but not yet finished with a space still counts.
-        // Resolved into locals rather than written to state and read back.
-        var choice = project
-        var category = categoryID
-        if let token = ProjectToken.find(in: title),
-           let typed = ProjectTitleField.choice(for: token.query, in: projects) {
-            choice = typed
-            category = self.category(for: typed) ?? category
-        }
         didAdd = true
-        onAdd(titleWithoutToken, bucket, category, choice, newProjectGroup,
+        onAdd(savedTitle, bucket, categoryID, project, newProjectGroup,
               hasReminder ? remindAt : nil,
               hasReminder && hasDeadline ? deadline : nil)
         dismiss()
@@ -340,88 +332,103 @@ struct ProjectTitleField: View {
     /// The category the card carries, for tinting the pill before a project
     /// has been chosen.
     let categoryID: UUID?
-    var placeholder: LocalizedStringKey = "#project  What needs doing?"
-    /// The title as it stood before this edit began, so a `#word` already in
-    /// it is left alone. Empty in the New Task sheet, where everything in the
-    /// field was typed just now.
-    var titleBefore: String = ""
+    var placeholder: LocalizedStringKey = "What needs doing?"
     @FocusState.Binding var focused: Bool
     /// Return true to swallow the submit; New Task adds the card on Return.
     var onSubmit: () -> Void = {}
     /// The project changed — taken from a typed word, a chip, or given back.
     var onProjectChosen: (ProjectChoice) -> Void = { _ in }
 
-    /// What follows a `#` while it is still being typed, or nil.
-    @State private var query: String?
-    /// The project taken from a word that is still being typed, so that typing
-    /// on past a name that matched can give it back.
-    @State private var adoptedID: UUID?
-    /// The rest of the title, held out of the field while a tag is written in
-    /// front of it. The caret follows a programmatic change to the end of the
-    /// text, so a tag can only be typed into a field holding nothing else —
-    /// the title goes back the moment the tag is finished or given up on.
-    @State private var heldTitle: String?
+    @State private var isNaming = false
+    @State private var typedName = ""
+
+    /// The first word of the title — the only word a project can be made
+    /// from. A `#` typed out of old habit comes off in `clean`, so the reflex
+    /// still finds the project it used to.
+    ///
+    /// Nil once the card has a project: the word in front is then the title's
+    /// own, and offering to take it away would be wrong.
+    private func firstWord(of text: String) -> String? {
+        guard project == .none else { return nil }
+        let trimmed = text.trimmingCharacters(in: .whitespaces)
+        let word = Project.clean(String(trimmed.prefix { !$0.isWhitespace }))
+        return word.isEmpty ? nil : word
+    }
+
+    private var firstWord: String? { firstWord(of: title) }
+
+    /// The title with its first word taken off, for when that word has become
+    /// the project: a card draws its project as a coloured prefix, so leaving
+    /// the word in would write the name twice.
+    private func titleWithoutFirstWord(_ text: String) -> String {
+        let trimmed = text.trimmingCharacters(in: .whitespaces)
+        guard let space = trimmed.firstIndex(where: \.isWhitespace) else { return "" }
+        var rest = String(trimmed[space...]).trimmingCharacters(in: .whitespaces)
+        // "BIO2140 - mark the sets" leaves "mark the sets".
+        while let first = rest.first, "-\u{2013}\u{2014}:".contains(first) {
+            rest = String(rest.dropFirst()).trimmingCharacters(in: .whitespaces)
+        }
+        return rest
+    }
 
     var body: some View {
         // Top-aligned, not baseline-aligned: an empty vertical text field
         // reports its placeholder's baseline lower than typed text, so baseline
         // alignment made the pill jump as soon as typing began.
         HStack(alignment: .top, spacing: 8) {
-            // Not while the tag is still being typed. A tag must be the first
-            // word, so an unfinished one means the field holds nothing *but*
-            // the tag — and a pill beside it is the same name twice, which is
-            // what it looked like: "NOCIONS ×  #NOCIONS".
-            if let name = project.name, typingTag == nil {
+            if let name = project.name {
                 pill(name)
             }
             TextField(project.name == nil ? placeholder : "What needs doing?",
                       text: $title, axis: .vertical)
                 .lineLimit(1...5)
-                // While a tag is being written the field holds the tag alone
-                // and the title waits beside it, so the field is given just
-                // the width a code needs: left to itself it takes the row and
-                // pushes the waiting title off the end, and asked to fit its
-                // content it collapses to nothing — a text field has no
-                // content-shaped width to offer.
-                .frame(maxWidth: heldTitle != nil ? 132 : nil, alignment: .leading)
-                // The word itself turns the project's colour the moment it
-                // names one. Same signal the pill was giving, said once, under
-                // the cursor — and the coloured word becomes the coloured pill
-                // when the space lands, which reads as one movement.
-                .foregroundStyle(typedTint)
                 .focused($focused)
                 .submitLabel(.done)
                 .onSubmit(onSubmit)
-                .onChange(of: title) { before, entered in handle(entered, before: before) }
+                .onChange(of: title) { _, entered in handle(entered) }
 
-            // On the iPhone keyboard `#` is two layer-switches away — three on
-            // a layout that puts £ there — which would undo the time a project
-            // saves. One tap here starts one, and lists every project rather
-            // than only the recent ones.
-            // It works on a field that already has a title because the title
-            // is taken out and held while the tag is typed — the caret follows
-            // a programmatic change to the end of the text, so a hash put in
-            // front of a title would leave the typing behind it.
-            // The title that is waiting, so that taking a tag does not look
-            // like the name of the card has just been deleted.
-            if let heldTitle {
-                Text(heldTitle)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-
-            if project == .none && query == nil {
-                Button { insertHash() } label: {
+            // Not a character any more. A project is made from the first
+            // word of the title, so there is nothing to insert; what is left
+            // is the job the hash was standing in for — reaching a project
+            // the first word will not offer, either because it reads like a
+            // word rather than a code or because it is not what is being
+            // typed. On a phone keyboard `#` was two layer-switches away,
+            // three on a layout that puts £ there. This is one tap.
+            if project == .none {
+                Menu {
+                    ForEach(offered) { candidate in
+                        Button(candidate.name) { pick(.existing(candidate)) }
+                    }
+                    if !offered.isEmpty { Divider() }
+                    Button {
+                        typedName = firstWord ?? ""
+                        isNaming = true
+                    } label: {
+                        Label("New Project\u{2026}", systemImage: "plus")
+                    }
+                } label: {
                     Image(systemName: "number")
                         .font(.body.weight(.semibold))
                         .foregroundStyle(Color.accentColor)
                         .frame(width: 32, height: 22)
+                        .contentShape(Rectangle())
                 }
-                .buttonStyle(.borderless)
-                .accessibilityLabel("Add a project")
+                .accessibilityLabel("Choose a project")
             }
+        }
+        .alert("New Project", isPresented: $isNaming) {
+            TextField("TRIP", text: $typedName)
+                .textInputAutocapitalization(.characters)
+                .autocorrectionDisabled()
+            Button("Add") {
+                let name = Project.canonicalName(typedName)
+                guard !name.isEmpty else { return }
+                pick(Self.choice(for: name, in: projects) ?? .new(name),
+                     typedAs: firstWord)
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("A short one-word name for something you are working on.")
         }
 
         if !chips.isEmpty || createName != nil {
@@ -429,75 +436,68 @@ struct ProjectTitleField: View {
         }
     }
 
-    /// Tab takes the first suggestion, the way it does everywhere else.
-    ///
-    /// Only onto a project that already exists: completing to something that
-    /// does not exist is not completion, and a space already commits a new
-    /// name. With nothing to complete, the tab is simply dropped — it is not a
-    /// character a title has any use for.
-    private func completeTag(_ text: String) {
-        guard let token = ProjectToken.find(in: text), !token.isFinished,
-              !token.query.isEmpty,
-              let top = ProjectSuggestions.rank(projects, query: token.query,
-                                                lastUsed: lastUsed, inUse: inUse).first
-        else {
-            title = text
-            return
+    /// Tab takes the first thing offered, the way it does everywhere else.
+    private func complete(from text: String) {
+        let word = firstWord(of: text)
+        if let top = suggestions(for: text).first {
+            pick(.existing(top), typedAs: word)
+        } else if let name = newProjectName(for: text) {
+            pick(.new(name), typedAs: word)
         }
-        // Not read back from `title`: the write above may not be visible yet.
-        title = takeHeldTitle()
-            ?? (token.remainder.isEmpty ? "" : token.remainder + " ")
-        query = nil
-        adoptedID = nil
-        choose(.existing(top))
-    }
-
-    /// A `#word` with no space after it yet. Because a tag has to be the first
-    /// word, this also means the field contains nothing else.
-    private var typingTag: ProjectToken? {
-        guard let token = ProjectToken.find(in: title), !token.isFinished else { return nil }
-        return token
-    }
-
-    /// The colour of the text being typed: the project's, once the word names
-    /// one, and ordinary text otherwise.
-    private var typedTint: Color {
-        guard typingTag != nil, adoptedID != nil,
-              case .existing(let chosen) = project else { return .primary }
-        return tint(for: chosen)
     }
 
     // MARK: - Chips
 
-    private var chips: [Project] {
-        if let query {
-            return ProjectSuggestions.rank(projects, query: query,
-                                           lastUsed: lastUsed, inUse: inUse)
-        }
-        guard project == .none else { return [] }
-        return ProjectSuggestions.rank(projects, query: "", lastUsed: lastUsed,
-                                       inUse: inUse, limit: 5)
+    /// Every project that may be offered, for the picker.
+    private var offered: [Project] {
+        ProjectSuggestions.rank(projects, query: "", lastUsed: lastUsed,
+                                inUse: inUse, limit: .max)
     }
 
-    private var createName: String? {
-        guard let query else { return nil }
-        let name = Project.clean(query)
-        guard !name.isEmpty else { return nil }
-        return projects.contains { $0.key == Project.key(for: name) } ? nil : name
+    /// What the first word brings up. With nothing typed — or a first word
+    /// that names nothing — the recent projects, as before.
+    private func suggestions(for text: String) -> [Project] {
+        guard project == .none else { return [] }
+        guard let word = firstWord(of: text) else {
+            return ProjectSuggestions.rank(projects, query: "", lastUsed: lastUsed,
+                                           inUse: inUse, limit: 5)
+        }
+        let matches = ProjectSuggestions.rank(projects, query: word,
+                                              lastUsed: lastUsed, inUse: inUse)
+        return matches.isEmpty
+            ? ProjectSuggestions.rank(projects, query: "", lastUsed: lastUsed,
+                                      inUse: inUse, limit: 5)
+            : matches
     }
+
+    private var chips: [Project] { suggestions(for: title) }
+
+    /// A new project is offered for a first word that reads like a code —
+    /// capitals, or a digit in it. Any other word would put a chip under
+    /// every title anyone ever writes, and most first words are just words.
+    /// A name that is not code-like is still reachable, through the picker.
+    private func newProjectName(for text: String) -> String? {
+        guard project == .none, let word = firstWord(of: text),
+              ProjectConversion.looksLikeCode(word),
+              !projects.contains(where: { $0.key == Project.key(for: word) })
+        else { return nil }
+        return Project.canonicalName(word)
+    }
+
+    private var createName: String? { newProjectName(for: title) }
 
     private var chipRow: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
                 ForEach(chips) { candidate in
-                    Button { pick(.existing(candidate)) } label: {
+                    Button { pick(.existing(candidate), typedAs: firstWord) } label: {
                         chipLabel(candidate.name, tint: tint(for: candidate), filled: true)
                     }
                     .buttonStyle(.plain)
                 }
                 if let name = createName {
-                    Button { pick(.new(name)) } label: {
-                        chipLabel("Create #\(name)", tint: .secondary, filled: false)
+                    Button { pick(.new(name), typedAs: firstWord) } label: {
+                        chipLabel("New project \(name)", tint: .secondary, filled: false)
                     }
                     .buttonStyle(.plain)
                 }
@@ -546,7 +546,7 @@ struct ProjectTitleField: View {
 
     // MARK: - Reading the word being typed
 
-    private func handle(_ entered: String, before previous: String) {
+    private func handle(_ entered: String) {
         // A Return typed into a field that wraps arrives as a line break, and
         // `onSubmit` never fires at all. A card's title is one line, so take
         // it for the submit it was meant to be. This lives here rather than at
@@ -556,76 +556,24 @@ struct ProjectTitleField: View {
 
         // Tab arrives as a *character*, not as a key the view can intercept:
         // `onKeyPress(.tab)` never fires through a focused field, which was
-        // tried and does not work. Left in the text it is whitespace, and
-        // whitespace is what finishes a tag — so Tab on "#NOC" committed a
-        // project called NOC rather than completing it to NOCIONS.
+        // tried and does not work. Taken out of the text and read as the
+        // accept it was meant to be.
         if entered.contains("\t") {
-            completeTag(entered.replacingOccurrences(of: "\t", with: ""))
+            entered = entered.replacingOccurrences(of: "\t", with: "")
+            title = entered
+            complete(from: entered)
             return
         }
 
         if let typed = titleReturn(in: entered) {
-            entered = typed.cleaned
-            title = entered
-            if typed.isSubmit {
-                onSubmit()
-                return
-            }
+            title = typed.cleaned
+            if typed.isSubmit { onSubmit() }
         }
 
-        // A `#` put in front of a title that is already there begins a tag
-        // nobody has typed yet. The title comes out of the field and is held,
-        // so that what is left is a tag on its own — the only shape a tag can
-        // be typed in, the caret going to the end of whatever is set here.
-        if heldTitle == nil, ProjectToken.startsTag(entered, after: previous) {
-            heldTitle = previous
-            title = "#"
-            return
-        }
-
-        guard let token = ProjectToken.find(in: entered),
-              heldTitle != nil
-                || ProjectToken.isNewlyTyped(token, givenTitleBefore: titleBefore) else {
-            // Backing out over the `#` ends the tag, and the title it was
-            // being written in front of comes back.
-            if let held = heldTitle {
-                heldTitle = nil
-                title = held
-            }
-            query = nil
-            release()
-            return
-        }
-        if token.isFinished {
-            // A space ends the word, which is taken exactly as typed: an
-            // existing project if the name matches, otherwise a new one.
-            adoptedID = nil
-            if let choice = resolve(token.query) { choose(choice) }
-            title = takeHeldTitle()
-                ?? (token.remainder.isEmpty ? "" : token.remainder + " ")
-            query = nil
-        } else {
-            query = token.query
-            adopt(token.query)
-        }
-    }
-
-    /// Taking the project the moment the letters name one, rather than waiting
-    /// for a space: until then the sheet shows a category the card is not going
-    /// to get, which reads as the tag having done nothing.
-    private func adopt(_ typed: String) {
-        let name = Project.clean(typed)
-        let match = name.isEmpty ? nil : projects.first { $0.key == Project.key(for: name) }
-        guard let match else { return release() }
-        guard adoptedID != match.id else { return }
-        adoptedID = match.id
-        choose(.existing(match))
-    }
-
-    private func release() {
-        guard adoptedID != nil else { return }
-        adoptedID = nil
-        withAnimation(.easeOut(duration: 0.15)) { choose(.none) }
+        // And nothing else. A first word is *offered*, never taken: the chips
+        // below say what it could be and one of them has to be chosen. Typing
+        // a space used to commit a project, which was the one place in the app
+        // where something was written without being asked for.
     }
 
     /// The choice a typed word names: the project it matches, or a new one.
@@ -644,31 +592,21 @@ struct ProjectTitleField: View {
         Self.choice(for: raw, in: projects)
     }
 
-    /// A tapped chip: take its project and drop the `#word` it completed.
-    private func pick(_ choice: ProjectChoice) {
-        if let held = takeHeldTitle() {
-            title = held
-        } else if let token = ProjectToken.find(in: title) {
-            title = token.remainder.isEmpty ? "" : token.remainder + " "
-        }
-        query = nil
-        adoptedID = nil
+    /// Taking a project that was offered.
+    ///
+    /// - Parameter typedAs: the first word that put it on offer, when it did.
+    ///   The word comes out of the title only then — a card draws its project
+    ///   as a coloured prefix, so leaving it would write the name twice.
+    ///   Choosing from the recents while typing "Buy milk" is not that, and
+    ///   the title is left exactly as typed.
+    private func pick(_ choice: ProjectChoice, typedAs word: String? = nil) {
+        let cameFromTheTitle = {
+            guard let word, let name = choice.name else { return false }
+            return Project.key(for: name) == Project.key(for: word)
+        }()
+        if cameFromTheTitle { title = titleWithoutFirstWord(title) }
         choose(choice)
         focused = true
-    }
-
-    /// Gives back the title that was held out of the field while a tag was
-    /// written in front of it. Nil when nothing was held, so a tag typed into
-    /// a title being written from scratch keeps its own rule — there the words
-    /// after the tag are still in the field and are what is left behind.
-    ///
-    /// Every way of finishing a tag goes through here: the space, Tab, and a
-    /// tapped chip are three separate paths, and a title given back by only
-    /// one of them is a title the other two lose.
-    private func takeHeldTitle() -> String? {
-        guard let held = heldTitle else { return nil }
-        heldTitle = nil
-        return held
     }
 
     private func choose(_ choice: ProjectChoice) {
@@ -676,13 +614,6 @@ struct ProjectTitleField: View {
         onProjectChosen(choice)
     }
 
-    /// Starts a tag. The field is empty when this is offered, so the hash is
-    /// both at the beginning and under the cursor.
-    private func insertHash() {
-        if !title.trimmingCharacters(in: .whitespaces).isEmpty { heldTitle = title }
-        title = "#"
-        focused = true
-    }
 }
 /// What opens when a card is tapped: its name, editable in place, with the same
 /// controls the compose sheet uses so both read the same way.
@@ -749,7 +680,6 @@ struct CardActionsSheet: View {
                             categories: store.categories,
                             categoryID: draft.categoryID,
                             placeholder: "Title",
-                            titleBefore: original.title,
                             focused: $titleFocused,
                             onSubmit: { titleFocused = false }
                         )
@@ -772,20 +702,6 @@ struct CardActionsSheet: View {
                             ) {
                                 typedGroup = ""
                                 isNamingGroup = true
-                            }
-                        }
-
-                        if let split = firstWordProject() {
-                            Button {
-                                withAnimation {
-                                    draft.title = split.rest
-                                    draft.project = ProjectTitleField
-                                        .choice(for: split.word, in: store.projects)
-                                        ?? .new(split.word)
-                                }
-                            } label: {
-                                Label("Make \u{201C}\(split.word)\u{201D} a project",
-                                      systemImage: "wand.and.stars")
                             }
                         }
 
@@ -949,14 +865,9 @@ struct CardActionsSheet: View {
     private func commit(_ item: TodoItem) {
         guard loaded else { return }
 
-        // A tag left half-written is not a name. While one is being typed the
-        // title is held out of the field, so a field holding nothing but an
-        // unfinished `#word` means the sheet closed in the middle of it — and
-        // the card keeps the name it came in with.
-        var title = draft.title
-        if let half = ProjectToken.find(in: title), !half.isFinished {
-            title = original.title
-        }
+        // Nothing is ever half-typed now: a project is taken by a chip or by
+        // Tab, and until then the first word is only the title's first word.
+        let title = draft.title
         if title != item.title { store.rename(item, to: title) }
 
         // The project first: setting one moves the card's category to the
@@ -992,15 +903,6 @@ struct CardActionsSheet: View {
         if draft.bucket != Self.effectiveBucket(item) {
             withAnimation { store.move(item, to: draft.bucket) }
         }
-    }
-
-    /// The first word, when it reads like a code, is almost always the project
-    /// the card belongs to — the same judgement the bulk conversion makes.
-    private func firstWordProject() -> (word: String, rest: String)? {
-        guard draft.project == .none,
-              let split = ProjectConversion.split(draft.title),
-              ProjectConversion.looksLikeCode(split.word) else { return nil }
-        return split
     }
 
     /// The field and the Project row are two views of one fact, so neither

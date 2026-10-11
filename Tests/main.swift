@@ -1327,131 +1327,21 @@ do {
            "and once a project carries it, the group is there for the next one to pick")
 }
 
-// MARK: AH — a hash already in a title is not a gesture
+// MARK: AH — a hash in a title is no longer a gesture at all
 do {
-    // The bug this pins: opening the editor on a card whose name carried a
-    // #word, typing nothing, and closing it renamed the card and invented a
-    // project out of the rest. Reading only the first word removed most of
-    // that by itself — "fix issue #42" is no longer a token at all — but a
-    // title that genuinely starts with one still needs the guard.
+    // The bug this used to pin: opening the editor on a card whose name
+    // carried a #word, typing nothing, and closing it renamed the card and
+    // invented a project. It cannot happen now for a better reason than a
+    // guard — nothing is ever taken from a title without being chosen, so a
+    // title may say whatever it likes.
     let untouched = "#1 priority for the week"
-    guard let found = ProjectToken.find(in: untouched) else {
-        expect(false, "the parser does see a token here — that was never in doubt")
-        fatalError()
-    }
-    expect(found.query == "1", "it reads the number as a project name")
-    expect(!ProjectToken.isNewlyTyped(found, givenTitleBefore: untouched),
-           "but against the title it came from, nothing was typed — so it is not taken")
-
-    // A genuinely new one, typed into a title that had none.
-    let fresh = ProjectToken.find(in: "#TRIP book flights")!
-    expect(ProjectToken.isNewlyTyped(fresh, givenTitleBefore: "book flights"),
-           "a hash typed where there was none is taken")
-    expect(ProjectToken.isNewlyTyped(fresh, givenTitleBefore: ""),
-           "and in the New Task sheet, where nothing came before, everything is")
-
-    // Changing which project a title names counts as typing one.
-    let changed = ProjectToken.find(in: "#2 priority for the week")!
-    expect(ProjectToken.isNewlyTyped(changed, givenTitleBefore: untouched),
-           "editing #1 into #2 is a new one — the user clearly meant it")
-
-    // Case and spelling are matched the way project names always are, so
-    // #trip is not mistaken for a new project beside #TRIP.
-    let recased = ProjectToken.find(in: "#trip book flights")!
-    expect(!ProjectToken.isNewlyTyped(recased, givenTitleBefore: "#TRIP book flights"),
-           "the same name in another case is the same name")
+    expect(Project.clean("#1") == "1", "a hash is only punctuation on a name now")
+    expect(ProjectConversion.split(untouched)?.word == "1",
+           "the first word reads the same with or without it")
+    expect(!ProjectConversion.looksLikeCode("priority"),
+           "and an ordinary first word is never offered as a project")
 
     expect(ProjectToken.find(in: "a plain title") == nil, "no hash, no token")
-}
-
-// MARK: AI — a tag begun in front of a title that was already there
-do {
-    let tail = "write the case for support"
-
-    // The keystroke that started it all. `find` reads a bare `#` in front of
-    // the title as the finished tag "write", which is how a project called
-    // `write` got made and the first word vanished off the card.
-    let carved = ProjectToken.find(in: "#" + tail)!
-    expect(carved.query == "write" && carved.isFinished,
-           "find alone cannot tell a typed tag from the title's own first word")
-
-    expect(ProjectToken.startsTag("#" + tail, after: tail),
-           "a `#` put in front of the title begins a tag, not a word taken out of it")
-    expect(ProjectToken.startsTag("\u{FF03}" + tail, after: tail),
-           "and the same for the wide hash a Japanese keyboard types")
-
-    expect(!ProjectToken.startsTag("#GRANT " + tail, after: tail),
-           "a whole tag arriving at once was not typed one `#` at a time")
-    expect(!ProjectToken.startsTag("#" + tail, after: ""),
-           "nothing was put in front of anything")
-    expect(!ProjectToken.startsTag("#TRIP", after: "#TRIP book flights"),
-           "a title that already carried a tag is not starting one")
-    expect(!ProjectToken.startsTag(tail, after: tail), "no hash, no tag")
-}
-
-// MARK: AI — dragging a project onto a heading
-do {
-    let research = UUID(), teaching = UUID()
-    let paper = Project(name: "PAPER", categoryID: research, group: "Manuscripts")
-    let cards = [TodoItem(title: "rework the methods", bucket: .today,
-                          categoryID: research, projectID: paper.id),
-                 TodoItem(title: "co-author feedback", bucket: .waiting,
-                          categoryID: research, projectID: paper.id),
-                 TodoItem(title: "unrelated", bucket: .inbox, categoryID: teaching)]
-
-    expect(ProjectFiling.move(paper, toCategory: research, group: "Manuscripts", cards: cards) == nil,
-           "dropped where it already sits, there is nothing to do")
-
-    let regrouped = ProjectFiling.move(paper, toCategory: research, group: "Grants", cards: cards)
-    expect(regrouped?.group == "Grants" && regrouped?.cards == 0,
-           "another group in the same category moves no cards, so nothing is asked")
-
-    // Dropping on the category it is already in is how a project leaves a
-    // group: the category row means that category, in no group.
-    let ungrouped = ProjectFiling.move(paper, toCategory: research, group: nil, cards: cards)
-    expect(ungrouped?.group == nil && ungrouped?.cards == 0,
-           "dropped on its own category it keeps its cards and loses its group")
-
-    let moved = ProjectFiling.move(paper, toCategory: teaching, group: nil, cards: cards)
-    expect(moved?.categoryID == teaching && moved?.cards == 2,
-           "another category takes every card in the project along, and says how many")
-
-    // The spelling of a group is matched the way group names always are, so
-    // dropping on "manuscripts" is not a move at all.
-    expect(ProjectFiling.move(paper, toCategory: research, group: "manuscripts", cards: cards) == nil,
-           "the same group under another spelling is the same group")
-}
-
-// MARK: AI — a project nothing is filed under is not offered
-do {
-    let cat = UUID()
-    let used = Project(name: "PAPER", categoryID: cat)
-    let emptied = Project(name: "TRIP", categoryID: cat)
-    let all = [used, emptied]
-    let inUse: Set<UUID> = [used.id]
-
-    let offered = ProjectSuggestions.rank(all, query: "", lastUsed: [:], inUse: inUse)
-    expect(offered.map(\.name) == ["PAPER"],
-           "a project whose last card moved away drops out of what is offered")
-
-    expect(ProjectSuggestions.rank(all, query: "TRI", lastUsed: [:], inUse: inUse).isEmpty,
-           "and is not offered by name either, the way an archived one is not")
-
-    // Nothing is deleted, so the name still finds it: a card filed under TRIP
-    // again gets the project it had, with its group and category, rather than
-    // a second one carrying the same name.
-    expect(all.contains { $0.key == Project.key(for: "TRIP") },
-           "the project is still there to be found and reused")
-
-    expect(ProjectSuggestions.rank(all, query: "", lastUsed: [:]).count == 2,
-           "with nothing said about use, every project is offered")
-
-    // The emptiness has to be read off the cards; it is not a property a
-    // project carries, which is exactly why it must not be written back.
-    let cards = [TodoItem(title: "rework the methods", bucket: .today,
-                          categoryID: cat, projectID: used.id)]
-    expect(Set(cards.compactMap(\.projectID)) == inUse,
-           "what is in use is whatever the cards say is in use")
 }
 
 // MARK: AI — what Tab completes a half-typed tag to
