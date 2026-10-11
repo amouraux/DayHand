@@ -619,9 +619,13 @@ struct ProjectTitleField: View {
     ///   Choosing from the recents while typing "Buy milk" is not that, and
     ///   the title is left exactly as typed.
     private func pick(_ choice: ProjectChoice, typedAs word: String? = nil) {
+        // Not `==`. The word is what *brought this up*, which is as true of
+        // NOCIO offering NOCIONS as of a name typed in full — and leaving
+        // NOCIO behind as the title is exactly what equality did. The same
+        // test the chips are gathered by, so the two cannot disagree.
         let cameFromTheTitle = {
             guard let word, let name = choice.name else { return false }
-            return Project.key(for: name) == Project.key(for: word)
+            return ProjectSuggestions.matches(name: name, query: word)
         }()
         if cameFromTheTitle { title = titleWithoutFirstWord(title) }
         choose(choice)

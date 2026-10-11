@@ -1344,6 +1344,36 @@ do {
     expect(ProjectToken.find(in: "a plain title") == nil, "no hash, no token")
 }
 
+// MARK: AI — the word that brought a project up is the word that leaves
+do {
+    let cat = UUID()
+    let nocions = Project(name: "NOCIONS", categoryID: cat)
+    let grant = Project(name: "GRANT", categoryID: cat)
+
+    // The report: typing NOCIO and taking the NOCIONS it offered left NOCIO
+    // behind as the title. Equality said they were different words; they are
+    // not — one is why the other was on screen.
+    expect(ProjectSuggestions.matches(name: nocions.name, query: "NOCIO"),
+           "a half-typed name is why the whole one came up")
+    expect(ProjectSuggestions.matches(name: nocions.name, query: "nocions"),
+           "and the whole name matches itself, in any case")
+    expect(ProjectSuggestions.matches(name: nocions.name, query: "ION"),
+           "rank gathers on contains as well as prefix, and so does this")
+
+    // The guard this is really protecting: choosing a project from the recents
+    // while typing an ordinary title must not eat the first word.
+    expect(!ProjectSuggestions.matches(name: grant.name, query: "Buy"),
+           "a recent project picked while typing a title keeps that title")
+    expect(!ProjectSuggestions.matches(name: grant.name, query: ""),
+           "and nothing typed brings nothing up")
+
+    // Whatever `rank` offers for a query, `matches` agrees was offered for it.
+    let ranked = ProjectSuggestions.rank([nocions, grant], query: "NOCIO", lastUsed: [:])
+    expect(ranked.first?.name == "NOCIONS", "the half-typed name ranks its project first")
+    expect(ranked.allSatisfy { ProjectSuggestions.matches(name: $0.name, query: "NOCIO") },
+           "the two tests cannot drift: everything offered counts as offered")
+}
+
 // MARK: AI — what Tab completes a half-typed tag to
 do {
     let cat = UUID()

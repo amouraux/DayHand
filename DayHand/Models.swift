@@ -588,8 +588,22 @@ enum ProjectSuggestions {
         }
 
         let prefix = live.filter { $0.key.hasPrefix(wanted) }.sorted(by: byRecency)
-        let inside = live.filter { !$0.key.hasPrefix(wanted) && $0.key.contains(wanted) }.sorted(by: byRecency)
+        let inside = live.filter { !$0.key.hasPrefix(wanted) && matches(name: $0.name, query: query) }
+            .sorted(by: byRecency)
         return Array((prefix + inside).prefix(limit))
+    }
+
+    /// Whether a query brings this name up at all — the same test `rank`
+    /// gathers by.
+    ///
+    /// It is shared so that *"was this offered because of what I typed?"*
+    /// cannot drift from *"what is offered"*. Asking it with `==` instead was
+    /// the bug: typing NOCIO and taking the NOCIONS that came up left NOCIO
+    /// behind as the title, because the two names are not equal.
+    static func matches(name: String, query: String) -> Bool {
+        let wanted = Project.key(for: query)
+        guard !wanted.isEmpty else { return false }
+        return Project.key(for: name).contains(wanted)
     }
 }
 

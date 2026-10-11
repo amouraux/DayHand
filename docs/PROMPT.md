@@ -690,8 +690,12 @@ everywhere in the interface; never "subproject" or "tag".
   project outright, which was the one place in the app where something was
   written without being asked for.
 - **A chip takes the word out of the title only when it is the word that put it
-  there.** Choosing a recent project while typing "Buy milk" sets the project
-  and leaves the title alone.
+  there** — and *put there* is the test the chips are gathered by, not equality.
+  Typing NOCIO and taking the NOCIONS it offered left NOCIO behind as the
+  title, because the two names are not equal; one is why the other was on
+  screen. `ProjectSuggestions.matches` answers both questions so they cannot
+  drift. Choosing a recent project while typing "Buy milk" still sets the
+  project and leaves the title alone, which is what the test is protecting.
 - **Only a code-like word is offered as a *new* project** — capitals, or a
   digit in it. Every other first word would mean a chip under every title
   anyone ever writes, and most first words are just words. A project whose name
