@@ -79,7 +79,7 @@ struct StoreDocument: Codable, Equatable {
         var isNothing: Bool { arrived == 0 && changed == 0 && removed == 0 }
     }
 
-    /// Cards only. Renaming a category is real, but "3 cards came in" is what
+    /// Cards only. Renaming a category is real, but "3 tasks came in" is what
     /// someone pressing a sync button is asking about.
     func change(from previous: StoreDocument) -> Change {
         let before = Dictionary(previous.cards.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
@@ -230,7 +230,7 @@ extension StoreDocument {
         let home = categories[0].id, work = categories[1].id
         // Seeded, so `.distantPast` for the same reason as the categories: a
         // fresh install must never outrank a real edit made on another device.
-        let trip = Project(name: String(localized: "TRIP", comment: "Seeded project on the sample card"),
+        let trip = Project(name: String(localized: "TRIP", comment: "Seeded project on the sample task"),
                            categoryID: home, modifiedAt: .distantPast)
 
         func card(_ title: String, _ bucket: Bucket, category: UUID? = nil,
@@ -244,7 +244,7 @@ extension StoreDocument {
         let calendar = Calendar.current
         let inAWeek = calendar.date(byAdding: .day, value: 7, to: calendar.startOfDay(for: now))
 
-        var done = card(String(localized: "Read how this works", comment: "Starter card, already completed"), .completed, category: home)
+        var done = card(String(localized: "Read how this works", comment: "Starter task, already completed"), .completed, category: home)
         done.bucketBeforeCompletion = .today
         // Stamped, not `now`: the document stores milliseconds, and a raw Date
         // carries more, so saving and loading would alter what was just written.
@@ -253,12 +253,12 @@ extension StoreDocument {
         return StoreDocument(
             categories: categories,
             cards: [
-                card(String(localized: "Tap a card to move it to another stack", comment: "Starter card"), .today, category: home),
-                card(String(localized: "Swipe a card left to push it forward", comment: "Starter card"), .today, category: work),
-                card(String(localized: "Swipe right to edit, or to set a date", comment: "Starter card"), .tomorrow, category: work),
-                card(String(localized: "Nothing rolls over: cards stay where you put them", comment: "Starter card"), .tomorrow, category: home),
-                card(String(localized: "book flights", comment: "Starter card, tagged TRIP"), .later, category: home, project: trip.id, due: inAWeek),
-                card(String(localized: "Start a task with a code like BIO2140 to file it under one", comment: "Starter card"), .inbox, category: home),
+                card(String(localized: "Tap a task to move it to another stack", comment: "Starter task"), .today, category: home),
+                card(String(localized: "Swipe a task left to push it forward", comment: "Starter task"), .today, category: work),
+                card(String(localized: "Swipe right to edit, or to set a date", comment: "Starter task"), .tomorrow, category: work),
+                card(String(localized: "Nothing rolls over: tasks stay where you put them", comment: "Starter task"), .tomorrow, category: home),
+                card(String(localized: "book flights", comment: "Starter task, tagged TRIP"), .later, category: home, project: trip.id, due: inAWeek),
+                card(String(localized: "Start a task with a code like BIO2140 to file it under one", comment: "Starter task"), .inbox, category: home),
                 done
             ],
             projects: [trip]

@@ -247,7 +247,7 @@ struct FilterList: View {
             Button("Cancel", role: .cancel) { }
         } message: { move in
             let into = categories.first { $0.id == move.categoryID }?.label ?? "Other projects"
-            Text("\(move.project.name) and its \(move.cards) cards move to \(into).")
+            Text("\(move.project.name) and its \(move.cards) tasks move to \(into).")
         }
         .alert("Name Taken", isPresented: Binding(
             get: { collision != nil }, set: { if !$0 { collision = nil } }
@@ -414,7 +414,7 @@ struct FilterList: View {
         }
         .accessibilityLabel("Group \(name), \(projects.count) projects")
         .accessibilityValue("\(open)")
-        .accessibilityHint(allSelected ? "Shows every card again" : "Shows only this group")
+        .accessibilityHint(allSelected ? "Shows every task again" : "Shows only this group")
     }
 
     /// Every project row sits on the same column, the one a group's folder

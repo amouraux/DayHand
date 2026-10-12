@@ -1152,9 +1152,9 @@ enum Scheduler {
         // The dates stay calendar words even though the stacks no longer are,
         // and they are looked up like any other visible text — these three had
         // been shipping in English whatever the app was set to.
-        case 0:  return String(localized: "Today", comment: "A date on a card")
-        case 1:  return String(localized: "Tomorrow", comment: "A date on a card")
-        case -1: return String(localized: "Yesterday", comment: "A date on a card")
+        case 0:  return String(localized: "Today", comment: "A date on a task")
+        case 1:  return String(localized: "Tomorrow", comment: "A date on a task")
+        case -1: return String(localized: "Yesterday", comment: "A date on a task")
         default:
             let formatter = DateFormatter()
             formatter.locale = .current

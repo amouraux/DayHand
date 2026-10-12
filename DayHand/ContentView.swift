@@ -421,7 +421,7 @@ struct ContentView: View {
         }
         .buttonStyle(.plain)
         .keyboardShortcut("f", modifiers: .command)
-        .accessibilityLabel(isSearching ? "Close search" : "Search cards")
+        .accessibilityLabel(isSearching ? "Close search" : "Search tasks")
     }
 
     /// Above the stack rather than over it: the cards are the answer, and a bar
@@ -431,7 +431,7 @@ struct ContentView: View {
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass")
                     .foregroundStyle(.secondary)
-                TextField("Search cards", text: $query)
+                TextField("Search tasks", text: $query)
                     .textFieldStyle(.plain)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
@@ -584,7 +584,7 @@ struct ContentView: View {
                 }
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(attentionOnly ? "Show all cards" : "Show cards to address")
+        .accessibilityLabel(attentionOnly ? "Show all tasks" : "Show tasks to address")
     }
 
     private var settingsButton: some View {
@@ -714,9 +714,9 @@ struct ContentView: View {
         .overlay {
             if store.items.isEmpty {
                 ContentUnavailableView(
-                    "No cards yet",
+                    "No tasks yet",
                     systemImage: "tray",
-                    description: Text("Tap + to drop a card into your inbox.")
+                    description: Text("Tap + to drop a task into your inbox.")
                 )
             } else if isNarrowed,
                       Bucket.allCases.allSatisfy({ cards(in: $0).isEmpty }) {
@@ -736,7 +736,7 @@ struct ContentView: View {
                     // The query is the thing to correct, so it leads — even
                     // when a filter is also on, which the description says.
                     ContentUnavailableView(
-                        "No card matches \u{201C}\(query)\u{201D}",
+                        "No task matches \u{201C}\(query)\u{201D}",
                         systemImage: "magnifyingglass",
                         description: Text(isFiltered
                                           ? "Searching only within \(filterNames.joined(separator: ", "))."
@@ -900,7 +900,7 @@ struct ContentView: View {
         .buttonStyle(.plain)
         .padding(.trailing, 22)
         .padding(.bottom, 28)
-        .accessibilityLabel("Add card to inbox")
+        .accessibilityLabel("Add task to inbox")
     }
 }
 

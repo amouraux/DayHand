@@ -30,10 +30,10 @@ DayHand keeps them separate — because they are different things.
 
 | | |
 | --- | --- |
-| **Stacks** express intention | **Now** is what you are working on, **Next** what you mean to pick up after it, **Later** what you are keeping but consciously not doing yet. New cards land in **Inbox** until you decide. A card can sit in Now for a week; nothing says otherwise. |
+| **Stacks** express intention | **Now** is what you are working on, **Next** what you mean to pick up after it, **Later** what you are keeping but consciously not doing yet. New tasks land in **Inbox** until you decide. A task can sit in Now for a week; nothing says otherwise. |
 | **Waiting** holds what isn't yours | Sent for review, a quote not yet received, a reply owed to you. Still live, but you cannot advance it. It moves out of the way without being forgotten. |
 | **Reminders** ask for attention | *When should I think about this again?* A notification on the day you asked, and a coloured edge: orange within three days, red on the day and after. It decides nothing and moves nothing. |
-| **Deadlines** mark obligation | *When must this actually be finished?* Offered once a reminder exists, and shown on the card. Because it is only ever a real one, it means something. |
+| **Deadlines** mark obligation | *When must this actually be finished?* Offered once a reminder exists, and shown on the task. Because it is only ever a real one, it means something. |
 
 **Nothing moves behind your back.** Tomorrow arriving does not change what you
 intended to work on, and a reminder coming due tells you rather than files
@@ -69,25 +69,25 @@ overdue, that word still means something.
 | **Thursday** | They reply | → Now |
 | **Friday, 17:00** | You give the talk | Deadline |
 
-One card the whole week. The Friday deadline never changed, and the task was
+One task the whole week. The Friday deadline never changed, and the task was
 never recreated, split up or pushed to a new day.
 
 ## The rest of it
 
-**Projects.** A card can carry one project — a course code, a study, a trip.
-**Start the card with its name** and it is offered below the field: `BIO2140
+**Projects.** A task can carry one project — a course code, a study, a trip.
+**Start the task with its name** and it is offered below the field: `BIO2140
 mark the problem sets`. Take the offer and the word moves out of the title and
 becomes the project; ignore it and your title is your title. Nothing is filed
 because you typed a space. There is no symbol to learn, and the button beside
 the field lists every project for the times the first word is not the one you
-want. A project shows as a coloured prefix on the card, fills in the card's
+want. A project shows as a coloured prefix on the task, fills in the task's
 category, and can be renamed, merged or archived in one edit. Projects gather
 into groups such as Grants and Ongoing, all from the Filter.
 
 **What you finished.** Alongside the list of what you owe, DayHand shows what
 you got done — this week and last, grouped by the day you finished it.
 
-**Your cards stay yours.** Everything is kept on your own device. No account,
+**Your tasks stay yours.** Everything is kept on your own device. No account,
 no server, nothing to sign up for.
 
 ## Install it
@@ -143,7 +143,7 @@ Tests/run.sh
 
 It compiles `DayHand/Models.swift` and `DayHand/Sync.swift` with
 `Tests/main.swift` and runs them, in about a second. All fixtures are invented;
-nothing reads your own cards. To check that a real file still decodes, pass it
+nothing reads your own tasks. To check that a real file still decodes, pass it
 in:
 
 ```sh
@@ -154,13 +154,13 @@ Tests/run.sh path/to/cards.json
 
 | File | What lives there |
 | --- | --- |
-| `DayHand/Models.swift` | Cards, stacks, categories, projects, groups, the date rules. Foundation only — no UI, which is why it is testable on its own. |
+| `DayHand/Models.swift` | Tasks, stacks, categories, projects, groups, the date rules. Foundation only — no UI, which is why it is testable on its own. |
 | `DayHand/Sync.swift` | The document format, merging two copies, the shared file, backups, CSV. Foundation only, for the same reason. |
 | `DayHand/TodoStore.swift` | The observable store: every change to the data goes through here. |
 | `DayHand/DayHandApp.swift` | The app entry point. |
 | `DayHand/ContentView.swift` | The stacks, filtering, search and the floating buttons. |
-| `DayHand/CardRow.swift` | One card: its colours, swipes and context menu. |
-| `DayHand/AddCardView.swift` | New Task sheet and the card editor, including the project field they share. |
+| `DayHand/CardRow.swift` | One task: its colours, swipes and context menu. |
+| `DayHand/AddCardView.swift` | New Task sheet and the task editor, including the project field they share. |
 | `DayHand/FilterView.swift` | The filter: categories, groups and projects, as a sheet or a sidebar. |
 | `DayHand/ProjectEditor.swift` | One project — rename, category, group, archive, merge, delete — and the one-time conversion of title prefixes. |
 | `DayHand/ReminderScheduler.swift` | The only place that talks to the notification centre. |
@@ -170,14 +170,14 @@ Tests/run.sh path/to/cards.json
 
 ## Where the data lives
 
-One JSON file holding cards, categories, projects and tombstones, in the app's
+One JSON file holding tasks, categories, projects and tombstones, in the app's
 Application Support directory. On a sandboxed Mac build that is inside the app's
 container rather than `~/Library/Application Support`.
 
 **Syncing** is a file you pick yourself, typically in iCloud Drive, so no iCloud
 entitlement and no paid developer account are needed — access comes from your
 choosing the file. Every device reads and writes that one file, and edits are
-merged per card by their edit time, with deletions recorded as tombstones so a
+merged per task by their edit time, with deletions recorded as tombstones so a
 delete on one device is not undone by another. Settings says **Not syncing**
 when no file is chosen.
 
@@ -186,4 +186,4 @@ device wrote it: three taken automatically — yesterday, the day before, and on
 from about a week ago — plus any you take by hand, under their date. All of them
 can be restored or shared from Settings.
 
-**CSV** import and export cover cards, categories, projects and groups.
+**CSV** import and export cover tasks, categories, projects and groups.

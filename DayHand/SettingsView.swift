@@ -76,7 +76,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Categories")
                 } footer: {
-                    Text("Cards and projects are grouped by categories. Create your own \u{2014} cards show the icon alone, so the label names it here and for VoiceOver.")
+                    Text("Tasks and projects are grouped by categories. Create your own \u{2014} tasks show the icon alone, so the label names it here and for VoiceOver.")
                 }
 
                 // Projects are organised in the Filter, not here: one place to
@@ -109,7 +109,7 @@ struct SettingsView: View {
                         }
                     }
                 } footer: {
-                    Text("A project groups cards that belong to the same piece of work \u{2014} a trip, a paper, a course, an assignment. Start a task with its name and it is offered below the field. Rename, group and archive them in the Filter: tap \u{24D8} beside a project.")
+                    Text("A project groups tasks that belong to the same piece of work \u{2014} a trip, a paper, a course, an assignment. Start a task with its name and it is offered below the field. Rename, group and archive them in the Filter: tap \u{24D8} beside a project.")
                 }
 
                 Section {
@@ -127,9 +127,9 @@ struct SettingsView: View {
                     }
                     .disabled(store.categories.isEmpty)
                 } header: {
-                    Text("New cards")
+                    Text("New tasks")
                 } footer: {
-                    Text("New cards start with this category. You can still change it on the card.")
+                    Text("New tasks start with this category. You can still change it on the task.")
                 }
 
                 Section {
@@ -229,18 +229,18 @@ struct SettingsView: View {
                     Button {
                         isExporting = true
                     } label: {
-                        Label("Export Cards as CSV…", systemImage: "square.and.arrow.up")
+                        Label("Export Tasks as CSV…", systemImage: "square.and.arrow.up")
                     }
 
                     Button {
                         isChoosingImportMode = true
                     } label: {
-                        Label("Import Cards from CSV…", systemImage: "square.and.arrow.down")
+                        Label("Import Tasks from CSV…", systemImage: "square.and.arrow.down")
                     }
                 } header: {
-                    Text("Cards")
+                    Text("Tasks")
                 } footer: {
-                    Text("Importing can either add to what is here or replace it. Cards are matched by id; categories and projects by name.")
+                    Text("Importing can either add to what is here or replace it. Tasks are matched by id; categories and projects by name.")
                 }
 
                 Section {
@@ -267,7 +267,7 @@ struct SettingsView: View {
                                 pendingRestore = backup
                             } label: {
                                 LabeledContent {
-                                    Text("\(backup.cardCount) cards")
+                                    Text("\(backup.cardCount) tasks")
                                         .foregroundStyle(.secondary)
                                 } label: {
                                     Label {
@@ -318,11 +318,11 @@ struct SettingsView: View {
                     Button(role: .destructive) {
                         isConfirmingDeleteAll = true
                     } label: {
-                        Label("Delete All Cards", systemImage: "trash")
+                        Label("Delete All Tasks", systemImage: "trash")
                     }
                     .disabled(store.cardCount == 0)
                 } footer: {
-                    Text("Removes every card on this device. Categories are kept. If a sync file is in use, the deletion reaches your other devices too.")
+                    Text("Removes every task on this device. Categories are kept. If a sync file is in use, the deletion reaches your other devices too.")
                 }
             }
             .navigationTitle("More")
@@ -340,11 +340,11 @@ struct SettingsView: View {
                 isPresented: $isChoosingImportMode,
                 titleVisibility: .visible
             ) {
-                Button("Add to Existing Cards") { beginImport(replacing: false) }
-                Button("Replace All Cards", role: .destructive) { beginImport(replacing: true) }
+                Button("Add to Existing Tasks") { beginImport(replacing: false) }
+                Button("Replace All Tasks", role: .destructive) { beginImport(replacing: true) }
                 Button("Cancel", role: .cancel) { }
             } message: {
-                Text("Replacing removes the \(store.cardCount) cards here first.")
+                Text("Replacing removes the \(store.cardCount) tasks here first.")
             }
             .confirmationDialog(
                 "Use Existing Sync File",
@@ -352,10 +352,10 @@ struct SettingsView: View {
                 titleVisibility: .visible
             ) {
                 Button("Merge With This Device") { beginSyncFile(replacing: false) }
-                Button("Replace Cards on This Device", role: .destructive) { beginSyncFile(replacing: true) }
+                Button("Replace Tasks on This Device", role: .destructive) { beginSyncFile(replacing: true) }
                 Button("Cancel", role: .cancel) { }
             } message: {
-                Text("Merging keeps both sides. Replacing discards the \(store.cardCount) cards here and takes the file's.")
+                Text("Merging keeps both sides. Replacing discards the \(store.cardCount) tasks here and takes the file's.")
             }
             .alert(
                 "Restore this backup?",
@@ -372,25 +372,25 @@ struct SettingsView: View {
                     let when = Scheduler.relativeLabel(for: backup.takenAt)
                     let phrase = Scheduler.labelIsWord(for: backup.takenAt) ? when.lowercased() : when
                     reportTitle = "Restore"
-                    importReport = String(localized: "Restored \(count) cards from \(phrase).")
+                    importReport = String(localized: "Restored \(count) tasks from \(phrase).")
                 }
                 Button("Cancel", role: .cancel) { }
             } message: { backup in
-                Text("The \(store.cardCount) cards here will be replaced by the \(backup.cardCount) in this backup. Categories and projects come back too.")
+                Text("The \(store.cardCount) tasks here will be replaced by the \(backup.cardCount) in this backup. Categories and projects come back too.")
             }
-            .alert("Delete all cards?", isPresented: $isConfirmingDeleteAll) {
+            .alert("Delete all tasks?", isPresented: $isConfirmingDeleteAll) {
                 Button("Delete All", role: .destructive) {
                     withAnimation { store.deleteAllCards() }
                 }
                 Button("Cancel", role: .cancel) { }
             } message: {
-                Text("\(store.cardCount) cards will be removed. This cannot be undone.")
+                Text("\(store.cardCount) tasks will be removed. This cannot be undone.")
             }
             .fileExporter(
                 isPresented: $isCreatingSyncFile,
                 document: SyncFileDocument(data: store.documentData()),
                 contentType: .json,
-                defaultFilename: "DayHand Cards"
+                defaultFilename: "DayHand Tasks"
             ) { result in
                 adoptSyncFile(from: result, creating: true, replacing: false)
             }
@@ -419,7 +419,7 @@ struct SettingsView: View {
                 isPresented: $isExporting,
                 document: CSVFile(text: store.exportCSV()),
                 contentType: .commaSeparatedText,
-                defaultFilename: "DayHand Cards"
+                defaultFilename: "DayHand Tasks"
             ) { _ in }
             .fileImporter(
                 isPresented: $isImporting,
@@ -467,8 +467,8 @@ struct SettingsView: View {
                 let count = store.cardCount(using: category)
                 Text(
                     count == 0
-                        ? "“\(category.label)” isn’t used by any card."
-                        : String(localized: "\(count) cards will lose this category. The cards themselves are kept.")
+                        ? "“\(category.label)” isn’t used by any task."
+                        : String(localized: "\(count) tasks will lose this category. The tasks themselves are kept.")
                 )
             }
         }
@@ -501,9 +501,9 @@ struct SettingsView: View {
         if c.isNothing { return String(localized: "Already up to date") }
 
         var parts: [String] = []
-        if c.arrived > 0 { parts.append(String(localized: "\(c.arrived) cards arrived")) }
-        if c.changed > 0 { parts.append(String(localized: "\(c.changed) cards updated")) }
-        if c.removed > 0 { parts.append(String(localized: "\(c.removed) cards removed")) }
+        if c.arrived > 0 { parts.append(String(localized: "\(c.arrived) tasks arrived")) }
+        if c.changed > 0 { parts.append(String(localized: "\(c.changed) tasks updated")) }
+        if c.removed > 0 { parts.append(String(localized: "\(c.removed) tasks removed")) }
         return parts.joined(separator: ", ")
     }
 
@@ -551,9 +551,9 @@ struct SettingsView: View {
             if creating {
                 syncReport = "Now syncing through “\(name)”. Point your other device at the same file."
             } else if reallyReplace {
-                syncReport = "Now syncing through “\(name)”. This device's cards were replaced by the file's."
+                syncReport = "Now syncing through “\(name)”. This device's tasks were replaced by the file's."
             } else if replacing && !hasContent {
-                syncReport = "“\(name)” holds no cards, so nothing was replaced. Your cards are intact and now sync through it."
+                syncReport = "“\(name)” holds no tasks, so nothing was replaced. Your tasks are intact and now sync through it."
             } else {
                 syncReport = "Now syncing through “\(name)”. Anything it already held has been merged in."
             }
@@ -582,11 +582,11 @@ struct SettingsView: View {
                 store.importCSV(text, replacingExisting: replaceOnImport)
             }
             var lines: [String] = []
-            if summary.removed > 0 { lines.append("Removed \(summary.removed) existing card(s).") }
+            if summary.removed > 0 { lines.append("Removed \(summary.removed) existing task(s).") }
             lines.append("Added \(summary.added), updated \(summary.updated).")
             if summary.skipped > 0 { lines.append("\(summary.skipped) row(s) skipped.") }
             if replaceOnImport && summary.removed == 0 && summary.added == 0 {
-                lines = ["That file held no cards, so nothing was replaced."]
+                lines = ["That file held no tasks, so nothing was replaced."]
             }
             importReport = lines.joined(separator: "\n")
         }

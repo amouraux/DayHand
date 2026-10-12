@@ -281,15 +281,15 @@ struct AddCardView: View {
         switch bucket {
         // `Label` takes a plain String verbatim, so these have to be looked up
         // here or they ship in English however the app is set.
-        case .inbox:    return String(localized: "This card goes to your inbox.",
+        case .inbox:    return String(localized: "This task goes to your inbox.",
                                       comment: "Footer under the New Task sheet")
-        case .today:    return String(localized: "This card goes to Now.",
+        case .today:    return String(localized: "This task goes to Now.",
                                       comment: "Footer under the New Task sheet")
-        case .tomorrow: return String(localized: "This card goes to Next.",
+        case .tomorrow: return String(localized: "This task goes to Next.",
                                       comment: "Footer under the New Task sheet")
-        case .later:    return String(localized: "This card goes to Later.",
+        case .later:    return String(localized: "This task goes to Later.",
                                       comment: "Footer under the New Task sheet")
-        case .waiting:  return String(localized: "This card goes to Waiting.",
+        case .waiting:  return String(localized: "This task goes to Waiting.",
                                       comment: "Footer under the New Task sheet")
         case .completed: return ""
         }

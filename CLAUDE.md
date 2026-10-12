@@ -117,6 +117,24 @@ deletions. Two consequences:
   every key and would throw away the user's cards. New CSV columns go last, so
   header-less older exports still read by position.
 
+## Task in the app, card in the code
+
+What the user does is a **task**. The type is `TodoItem`, the row is `CardRow`,
+the file is `cards.json`, and the word all through the code is *card* — that is
+the storage format and it is not worth a migration. So: **task in anything a
+user reads, card in anything only a programmer reads.** A comment about cards is
+correct; a button about cards is not.
+
+The other three are **Project** (one per task, a code in capitals), **Group**
+(a set of projects) and **Category** (Research, Teaching, Home). Group was kept
+over "Folder" because a folder implies nesting and implies holding tasks;
+Category was kept over "Area" because someone will make one called Admin, and
+that is a category and not an area.
+
+Renaming the user-facing word means renaming the **keys** in
+`Localizable.xcstrings` too: the key *is* the English string, and six languages
+hang their translations off it.
+
 ## House style
 
 - Comments say **why**, not what. A comment that explains a non-obvious choice

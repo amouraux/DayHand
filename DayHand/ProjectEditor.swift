@@ -166,7 +166,7 @@ struct ProjectEditor: View {
         } message: {
             // Says what will happen to the cards, since that is the part the
             // user did not ask for.
-            Text("\(project.map { store.openCards(in: $0).count } ?? 0) cards are still to do. They are marked completed.")
+            Text("\(project.map { store.openCards(in: $0).count } ?? 0) tasks are still to do. They are marked completed.")
         }
     }
 
@@ -181,7 +181,7 @@ struct ProjectEditor: View {
             } header: {
                 Text("Name")
             } footer: {
-                Text("Renaming changes it on every card at once.")
+                Text("Renaming changes it on every task at once.")
             }
 
             Section {
@@ -208,7 +208,7 @@ struct ProjectEditor: View {
                 }
 
             } footer: {
-                Text("Every card in this project moves with it, and new ones start here too. Moving a project to another category also takes it out of its group.")
+                Text("Every task in this project moves with it, and new ones start here too. Moving a project to another category also takes it out of its group.")
             }
 
             // An action, not a setting: archiving has something to finish
@@ -233,7 +233,7 @@ struct ProjectEditor: View {
                 }
             } footer: {
                 if project.isArchived {
-                    Text("Archived. Its cards are still there, and it is left out of the project list until \u{201C}Include archived projects\u{201D} is on. Typing its name brings it back.")
+                    Text("Archived. Its tasks are still there, and it is left out of the project list until \u{201C}Include archived projects\u{201D} is on. Typing its name brings it back.")
                 } else if store.openCards(in: project).isEmpty {
                     Text("Nothing left to do, so this project can be put away.")
                 } else {
@@ -260,7 +260,7 @@ struct ProjectEditor: View {
                     Label("Delete Project", systemImage: "trash")
                 }
             } footer: {
-                Text("\(store.cardCount(using: project)) cards in this project.")
+                Text("\(store.cardCount(using: project)) tasks in this project.")
             }
         }
         .onAppear { name = project.name }
@@ -277,7 +277,7 @@ struct ProjectEditor: View {
             }
             Button("Keep \(project.name)", role: .cancel) { name = project.name }
         } message: { other in
-            Text("Its \(store.cardCount(using: project)) cards will move to \(other.name).")
+            Text("Its \(store.cardCount(using: project)) tasks will move to \(other.name).")
         }
         .confirmationDialog(
             "Merge into \(mergeTarget?.name ?? "")?",
@@ -291,7 +291,7 @@ struct ProjectEditor: View {
             }
             Button("Cancel", role: .cancel) { }
         } message: { target in
-            Text("\(project.name)\u{2019}s \(store.cardCount(using: project)) cards move to \(target.name), and \(project.name) is removed.")
+            Text("\(project.name)\u{2019}s \(store.cardCount(using: project)) tasks move to \(target.name), and \(project.name) is removed.")
         }
         .confirmationDialog(
             "Delete \(project.name)?",
@@ -304,7 +304,7 @@ struct ProjectEditor: View {
             }
             Button("Cancel", role: .cancel) { }
         } message: {
-            Text("Its cards are kept. They just no longer belong to a project.")
+            Text("Its tasks are kept. They just no longer belong to a project.")
         }
     }
 
@@ -368,7 +368,7 @@ struct ProjectConversionView: View {
                     row(candidate)
                 }
             } footer: {
-                Text("Each ticked word becomes a project and is removed from the start of those titles. A new project takes the category most of its cards have.")
+                Text("Each ticked word becomes a project and is removed from the start of those titles. A new project takes the category most of its tasks have.")
             }
         }
         .navigationTitle("Convert Prefixes")
@@ -407,7 +407,7 @@ struct ProjectConversionView: View {
                                 Text("existing").font(.caption).foregroundStyle(.secondary)
                             }
                             Spacer()
-                            Text("\(candidate.cardIDs.count) cards")
+                            Text("\(candidate.cardIDs.count) tasks")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }

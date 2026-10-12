@@ -3,7 +3,7 @@ import SwiftUI
 /// What you finished in a week, grouped by the day you finished it.
 ///
 /// The Completed stack already holds everything ever ticked off, newest first,
-/// which answers "where did that card go" but not "what did I actually get
+/// which answers "where did that task go" but not "what did I actually get
 /// done". This answers the second question, which is the one worth asking on a
 /// Friday afternoon.
 struct ReviewView: View {
@@ -24,7 +24,7 @@ struct ReviewView: View {
             if !days.isEmpty {
                 Section {
                     LabeledContent {
-                        Text("\(total) cards")
+                        Text("\(total) tasks")
                             .monospacedDigit()
                     } label: {
                         Label("Finished", systemImage: "checkmark.circle")
@@ -47,7 +47,7 @@ struct ReviewView: View {
                 ContentUnavailableView(
                     "Nothing finished",
                     systemImage: "checkmark.circle",
-                    description: Text("Cards you tick off appear here, grouped by the day you finished them.")
+                    description: Text("Tasks you tick off appear here, grouped by the day you finished them.")
                 )
             }
         }
