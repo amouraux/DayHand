@@ -696,6 +696,11 @@ everywhere in the interface; never "subproject" or "tag".
   screen. `ProjectSuggestions.matches` answers both questions so they cannot
   drift. Choosing a recent project while typing "Buy milk" still sets the
   project and leaves the title alone, which is what the test is protecting.
+- **The new-project chip comes first in the row.** A word that names nothing is
+  exactly when the suggestions fall back to the five most recent projects, so
+  the one chip answering what was typed sat behind all of them in a row that
+  scrolls sideways — off the edge of the screen, and indistinguishable from the
+  offer never being made.
 - **Only a code-like word is offered as a *new* project** — capitals, or a
   digit in it. Every other first word would mean a chip under every title
   anyone ever writes, and most first words are just words. A project whose name

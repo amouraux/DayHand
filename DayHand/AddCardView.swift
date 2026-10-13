@@ -508,15 +508,20 @@ struct ProjectTitleField: View {
     private var chipRow: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                ForEach(chips) { candidate in
-                    Button { pick(.existing(candidate), typedAs: firstWord) } label: {
-                        chipLabel(candidate.name, tint: tint(for: candidate), filled: true)
-                    }
-                    .buttonStyle(.plain)
-                }
+                // First, not last. A word that names nothing is exactly when
+                // the suggestions fall back to the five most recent — so the
+                // one chip that answers what was typed sat behind all of them
+                // in a row that scrolls, off the edge of the screen. It read
+                // as the offer never being made at all.
                 if let name = createName {
                     Button { pick(.new(name), typedAs: firstWord) } label: {
                         chipLabel("New project \(name)", tint: .secondary, filled: false)
+                    }
+                    .buttonStyle(.plain)
+                }
+                ForEach(chips) { candidate in
+                    Button { pick(.existing(candidate), typedAs: firstWord) } label: {
+                        chipLabel(candidate.name, tint: tint(for: candidate), filled: true)
                     }
                     .buttonStyle(.plain)
                 }
