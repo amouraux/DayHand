@@ -450,7 +450,7 @@ struct ProjectTitleField: View {
             Text("A short one-word name for something you are working on.")
         }
 
-        if !chips.isEmpty || createName != nil {
+        if !matches(for: title).isEmpty || createName != nil || !recents.isEmpty {
             chipRow
         }
     }
@@ -458,7 +458,7 @@ struct ProjectTitleField: View {
     /// Tab takes the first thing offered, the way it does everywhere else.
     private func complete(from text: String) {
         let word = firstWord(of: text)
-        if let top = suggestions(for: text).first {
+        if let top = matches(for: text).first {
             pick(.existing(top), typedAs: word)
         } else if let name = newProjectName(for: text) {
             pick(.new(name), typedAs: word)
@@ -473,31 +473,36 @@ struct ProjectTitleField: View {
                                 inUse: inUse, limit: .max)
     }
 
-    /// What the first word brings up. With nothing typed — or a first word
-    /// that names nothing — the recent projects, as before.
-    private func suggestions(for text: String) -> [Project] {
-        guard project == .none else { return [] }
-        guard let word = firstWord(of: text) else {
-            return ProjectSuggestions.rank(projects, query: "", lastUsed: lastUsed,
-                                           inUse: inUse, limit: 5)
-        }
-        let matches = ProjectSuggestions.rank(projects, query: word,
-                                              lastUsed: lastUsed, inUse: inUse)
-        return matches.isEmpty
-            ? ProjectSuggestions.rank(projects, query: "", lastUsed: lastUsed,
-                                      inUse: inUse, limit: 5)
-            : matches
+    /// The projects the typed first word names. Empty when nothing is typed,
+    /// and empty when the word names none of them — kept apart from the
+    /// recents below, because which of the two you are looking at decides
+    /// where the offer to make a new one belongs.
+    private func matches(for text: String) -> [Project] {
+        guard project == .none, let word = firstWord(of: text) else { return [] }
+        return ProjectSuggestions.rank(projects, query: word,
+                                       lastUsed: lastUsed, inUse: inUse)
     }
 
-    private var chips: [Project] { suggestions(for: title) }
+    /// The five most recent, for when the first word names nothing — or when
+    /// there is no first word yet.
+    private var recents: [Project] {
+        guard project == .none else { return [] }
+        return ProjectSuggestions.rank(projects, query: "", lastUsed: lastUsed,
+                                       inUse: inUse, limit: 5)
+    }
 
-    /// A new project is offered for a first word that reads like a code —
-    /// capitals, or a digit in it. Any other word would put a chip under
-    /// every title anyone ever writes, and most first words are just words.
-    /// A name that is not code-like is still reachable, through the picker.
+    /// A new project is offered for **any** first word of two characters or
+    /// more, not only one that reads like a code.
+    ///
+    /// Capitals were the signal, and they are a poor one on a phone: the field
+    /// capitalises the first letter of a sentence, so a code typed in lower
+    /// case arrives as "Trip" and was turned away, and reaching for the shift
+    /// key costs more than the project saves. Nothing is lost by offering
+    /// widely — it is an offer, it is ignored by doing nothing, and the name
+    /// it would make is capitalised anyway. The bulk conversion keeps the
+    /// strict test, because that one reads every title in the file unprompted.
     private func newProjectName(for text: String) -> String? {
-        guard project == .none, let word = firstWord(of: text),
-              ProjectConversion.looksLikeCode(word),
+        guard project == .none, let word = firstWord(of: text), word.count >= 2,
               !projects.contains(where: { $0.key == Project.key(for: word) })
         else { return nil }
         return Project.canonicalName(word)
@@ -508,22 +513,31 @@ struct ProjectTitleField: View {
     private var chipRow: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
-                // First, not last. A word that names nothing is exactly when
-                // the suggestions fall back to the five most recent — so the
-                // one chip that answers what was typed sat behind all of them
-                // in a row that scrolls, off the edge of the screen. It read
-                // as the offer never being made at all.
+                // What the word actually names comes first: typing BIO wants
+                // BIO2140 before it wants a new project called BIO. Then the
+                // offer, then the recents — which only appear when the word
+                // named nothing, and which must not bury the offer the way
+                // they did when it was last in a row that scrolls sideways.
+                let named = matches(for: title)
+                ForEach(named) { candidate in
+                    Button { pick(.existing(candidate), typedAs: firstWord) } label: {
+                        chipLabel(candidate.name, tint: tint(for: candidate), filled: true)
+                    }
+                    .buttonStyle(.plain)
+                }
                 if let name = createName {
                     Button { pick(.new(name), typedAs: firstWord) } label: {
                         chipLabel("New project \(name)", tint: .secondary, filled: false)
                     }
                     .buttonStyle(.plain)
                 }
-                ForEach(chips) { candidate in
-                    Button { pick(.existing(candidate), typedAs: firstWord) } label: {
-                        chipLabel(candidate.name, tint: tint(for: candidate), filled: true)
+                if named.isEmpty {
+                    ForEach(recents) { candidate in
+                        Button { pick(.existing(candidate), typedAs: firstWord) } label: {
+                            chipLabel(candidate.name, tint: tint(for: candidate), filled: true)
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
             }
             .padding(.vertical, 2)

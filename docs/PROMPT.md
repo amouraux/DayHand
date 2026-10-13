@@ -701,10 +701,18 @@ everywhere in the interface; never "subproject" or "tag".
   the one chip answering what was typed sat behind all of them in a row that
   scrolls sideways — off the edge of the screen, and indistinguishable from the
   offer never being made.
-- **Only a code-like word is offered as a *new* project** — capitals, or a
-  digit in it. Every other first word would mean a chip under every title
-  anyone ever writes, and most first words are just words. A project whose name
-  is an ordinary word is made from the picker instead.
+- **Any first word of two characters or more is offered as a new project**, not
+  only one that reads like a code. Capitals were the signal and they are a poor
+  one on a phone: the field capitalises the first letter of a sentence, so a
+  code typed in lower case arrives as "Trip" and was turned away, and reaching
+  for the shift key costs more than the project saves. Nothing is lost by
+  offering widely — it is an offer, it is ignored by doing nothing, and the name
+  it makes is capitalised anyway. The bulk conversion keeps the strict test,
+  because that one reads every title in the file unprompted.
+- **The row reads: what the word names, then the offer, then the recents.**
+  Typing `bio` wants BIO2140 before it wants a new project called BIO, and the
+  recents appear only when the word named nothing — where they must not bury
+  the offer, which is what put it off the edge of a row that scrolls sideways.
 - **A project's icon is a paperclip**, because that is what a project does:
   it holds tasks that belong together. It is the same glyph everywhere — the
   button beside the title field, the Project row, the filter bar, Settings, the
