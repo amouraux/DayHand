@@ -682,8 +682,8 @@ everywhere in the interface; never "subproject" or "tag".
   project* — the position was already fixed — and it cost two keyboard layers
   to reach, three on a layout that puts £ there.
 - **The first word is offered, never taken.** As it is typed, a word that names
-  an existing project brings that project up in the chips; a word that reads
-  like a code and names nothing offers **New project BIO2140**. Accepting is a
+  an existing project brings that project up in the chips; one that names none
+  of them offers **New project NOCIONS**, whatever case it was typed in. Accepting is a
   tap, or Tab for the first one. Only then does the word come out of the title
   and become the pill — a task draws its project as a coloured prefix, so
   leaving it would write the name twice. Typing a space used to commit a
@@ -757,11 +757,10 @@ everywhere in the interface; never "subproject" or "tag".
   one.
   Waiting means the sheet spends the whole time showing a category the task is
   not going to get. Tap a chip, or press Tab for the first one, to take the
-  word — and only then does it leave the title. An unknown word that reads like
-  a code offers "New project …". Before anything is typed, the five most recent
-  projects are already shown as chips, so the common case is one tap. The
-  button beside the field opens the rest, including a project whose name is an
-  ordinary word.
+  word — and only then does it leave the title. A word that names nothing
+  offers "New project …", in capitals, however it was typed. Before anything is
+  typed, the five most recent projects are already shown as chips, so the common
+  case is one tap. The button beside the field opens the rest.
   The chosen project sits as a pill before the title; tap
   it to remove it. A new project is only created when the task is added, so a
   cancelled sheet leaves nothing behind. Top-align the row: an empty vertical
