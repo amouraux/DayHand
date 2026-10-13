@@ -1144,7 +1144,12 @@ with different contents was *updated* — moving stack counts, it is the same ta
 an `NSFilePresenter` on the shared file — it fires as soon as another device (or
 iCloud finishing a download) writes to it — *and* poll its modification date
 every few seconds as a backstop, since a presenter does not catch every way a
-file can be replaced. The re-read must bail out when the file already matches
+file can be replaced. **Ten seconds while the window is frontmost, two minutes
+when it is not.** The energy a slow poll saves is all in the second case: a
+window somebody is looking at is on a Mac that is awake and in use anyway.
+Thirty seconds and a generous tolerance meant a task added on the phone could
+sit the best part of a minute before a Mac in front of you showed it, which
+reads as sync being broken and sends people to Sync Now. The re-read must bail out when the file already matches
 what is held in memory, or a write triggers a notification that triggers a
 write.
 

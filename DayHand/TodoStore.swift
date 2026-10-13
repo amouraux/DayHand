@@ -780,6 +780,14 @@ final class TodoStore: ObservableObject {
 
     /// The backstop's cadence, frontmost and away.
     ///
+    /// Frontmost is deliberately brisk. The saving was never there: a window
+    /// somebody is looking at is on a Mac that is awake and in use, and App
+    /// Nap is not waiting on it. Thirty seconds plus its slack meant a card
+    /// added on the phone could sit for the best part of a minute before a
+    /// Mac in front of you showed it, which reads as sync being broken and
+    /// sends people to Sync Now. The saving is in the window nobody is
+    /// looking at, and that one stays slow.
+    ///
     /// The file presenter is what makes a change from another device appear at
     /// once; this only catches the ways a file can be replaced without the
     /// presenter hearing — iCloud swapping in a downloaded copy among them —
@@ -787,7 +795,7 @@ final class TodoStore: ObservableObject {
     /// is some 900 wakeups an hour, each an uncached metadata read on a file
     /// in iCloud Drive: enough to keep a Mac out of App Nap all day for a
     /// backstop that almost never has anything to report.
-    private static let pollInterval: TimeInterval = 30
+    private static let pollInterval: TimeInterval = 10
     /// A window that is not frontmost is still showing cards, so this slows
     /// down rather than stopping — stopping it is what made a Mac window sit
     /// an hour behind the phone.
@@ -822,10 +830,11 @@ final class TodoStore: ObservableObject {
         let timer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] _ in
             Task { @MainActor in self?.pollSyncFile() }
         }
-        // Half the interval of slack, so the system can fire this alongside
-        // something it was waking for anyway rather than on its own account.
-        // A backstop has no business asking for a wakeup to itself.
-        timer.tolerance = interval / 2
+        // Slack, so the system can fire this alongside something it was waking
+        // for anyway rather than on its own account — but a fifth of it while
+        // frontmost, where the whole point is that the card appears. Half of
+        // thirty seconds was another fifteen on top of the wait.
+        timer.tolerance = frontmost ? interval / 5 : interval / 2
         pollTimer = timer
     }
 
