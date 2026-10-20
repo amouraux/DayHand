@@ -663,7 +663,13 @@ everywhere in the interface; never "subproject" or "tag".
   doing the work. The CSV importer still lifts a leading `#CODE`, because that
   is a file format rather than a gesture, and `clean` strips a hash anywhere a
   name is read, so an old habit costs nothing.
-- **Entry (New Task).** Typing `#` plus letters shows matching projects as chips
+- **A list narrowed to one project starts a new task in it.** The project is
+pre-selected, its category comes with it, and the pill carries its × for the
+times the task is not about it — a task written while looking at PAPER is
+almost always a PAPER task. Narrowed to two projects, or to a category alone,
+nothing is assumed: neither names one project.
+
+**Entry (New Task).** Typing `#` plus letters shows matching projects as chips
   under the field (prefix matches first, then contains; most recently *created*
   first — not last edited, because converting or merging touches every task).
   **The project is taken the moment the typed word names an existing one** —
@@ -767,6 +773,12 @@ everywhere in the interface; never "subproject" or "tag".
   text field reports its placeholder's baseline lower than typed text.
 - **Archived projects** are never suggested and drop out of the project list,
   so the list stays about what is still going on.
+- **Typing a project's name always offers it, used or not.** A project nothing
+  is filed under is kept out of the suggestions, which is right while browsing
+  and wrong while naming: asked for by name it was offered neither as a match,
+  being unused, nor as a new project, because it already exists. Moving a
+  project's last task away therefore put it out of reach of the field
+  altogether, leaving the Filter as the only way back to it.
 - **A project no task carries is not offered either.** The last task moving to
   another project leaves one behind that is still in the file but no longer a
   tag anybody is using, and it went on being suggested and listed in the

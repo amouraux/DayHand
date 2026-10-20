@@ -490,6 +490,14 @@ struct ContentView: View {
     /// checker will infer in one expression, and one more argument to the
     /// sheet below tipped it over — with the error landing on unrelated lines
     /// hundreds of lines away.
+    /// The project a new task starts with: the one the list is narrowed to,
+    /// when it is narrowed to exactly one. Two or more is not an answer, and
+    /// a category on its own does not name a project.
+    private var filteredProject: Project? {
+        guard filterProjectIDs.count == 1, let id = filterProjectIDs.first else { return nil }
+        return store.project(id: id)
+    }
+
     private var addCardSheet: some View {
         AddCardView(
             categories: store.categories,
@@ -497,6 +505,7 @@ struct ContentView: View {
             projectLastUsed: store.projectLastUsed,
             projectsInUse: store.projectsInUse,
             defaultCategoryID: store.defaultCategoryID,
+            defaultProject: filteredProject,
             onAdd: addCard
         )
         .environmentObject(store)

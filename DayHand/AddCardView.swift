@@ -76,6 +76,7 @@ struct AddCardView: View {
         projectLastUsed: [UUID: Date] = [:],
         projectsInUse: Set<UUID> = [],
         defaultCategoryID: UUID?,
+        defaultProject: Project? = nil,
         onAdd: @escaping (String, Bucket, UUID?, ProjectChoice, String?, Date?, Date?) -> Void
     ) {
         self.categories = categories
@@ -85,7 +86,14 @@ struct AddCardView: View {
         self.onAdd = onAdd
         // Pre-selected, not forced: it is an ordinary picker value the user can
         // change back to None before adding.
-        _categoryID = State(initialValue: defaultCategoryID)
+        //
+        // A project arrives the same way, from a list narrowed to one: a task
+        // written while looking at PAPER is almost always a PAPER task, and
+        // the pill carries its × for the times it is not. Its category comes
+        // with it, exactly as if it had been chosen in the sheet.
+        _project = State(initialValue: defaultProject.map(ProjectChoice.existing) ?? .none)
+        _categoryID = State(initialValue: defaultProject?.categoryID ?? defaultCategoryID)
+        _categoryBeforeProject = State(initialValue: defaultProject == nil ? nil : defaultCategoryID)
     }
 
     @State private var bucket: Bucket = .inbox
@@ -479,8 +487,22 @@ struct ProjectTitleField: View {
     /// where the offer to make a new one belongs.
     private func matches(for text: String) -> [Project] {
         guard project == .none, let word = firstWord(of: text) else { return [] }
-        return ProjectSuggestions.rank(projects, query: word,
-                                       lastUsed: lastUsed, inUse: inUse)
+        var found = ProjectSuggestions.rank(projects, query: word,
+                                            lastUsed: lastUsed, inUse: inUse)
+
+        // A project nothing is filed under is kept out of the suggestions,
+        // which is right while browsing and wrong while naming. Typing its
+        // name is asking for that one in particular — and it was offered
+        // neither as a match, being unused, nor as a new project, because it
+        // already exists. Emptying a project by moving its last task away
+        // therefore put it out of reach of the field entirely, leaving the
+        // Filter as the only way back to it.
+        let key = Project.key(for: word)
+        if !found.contains(where: { $0.key == key }),
+           let exact = projects.first(where: { $0.key == key && !$0.isArchived }) {
+            found.insert(exact, at: 0)
+        }
+        return found
     }
 
     /// The five most recent, for when the first word names nothing — or when
