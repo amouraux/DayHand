@@ -171,12 +171,22 @@ struct FilterList: View {
                 // and two of them side by side in the builder meant only the
                 // first was ever drawn — the drag line had never once been on
                 // screen.
+                // Written twice rather than once with a verb swapped in: the
+                // key of a string in the catalogue *is* its English text, so a
+                // sentence assembled from pieces cannot be translated as a
+                // sentence. A pointer clicks and a finger taps, and saying the
+                // wrong one is the kind of small lie that makes the rest of
+                // the help read as written for someone else's device.
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("Clicking a row picks that one; use the checkbox beside it to pick several. Tap \u{24D8} to rename a project or a group, or to put a project away.")
                     if isSidebar {
+                        Text("Clicking a row picks that one; use the checkbox beside it to pick several. Click \u{24D8} to rename a project or a group, or to put a project away.")
                         Text("Drag a project by its handle onto a group or an All category row to move it.")
                     } else {
-                        Text("Tap \u{24D8} on a project to move it to another group or category.")
+                        // One sentence, not two: with the handle gone, moving
+                        // a project is one more thing behind the same \u{24D8}
+                        // the line already names, and a second line repeating
+                        // "Tap \u{24D8}" read as a different control.
+                        Text("Tapping a row picks that one; use the checkbox beside it to pick several. Tap \u{24D8} to rename a project or a group, to move it to another group or category, or to put it away.")
                     }
                 }
             }

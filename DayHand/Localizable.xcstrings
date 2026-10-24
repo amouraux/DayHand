@@ -2577,43 +2577,43 @@
         }
       }
     },
-    "Clicking a row picks that one; use the checkbox beside it to pick several. Tap ⓘ to rename a project or a group, or to put a project away.": {
-      "comment": "Footer under Everything in the Filter",
+    "Clicking a row picks that one; use the checkbox beside it to pick several. Click ⓘ to rename a project or a group, or to put a project away.": {
+      "extractionState": "manual",
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ein Klick auf eine Zeile wählt diese eine; mit dem Kästchen daneben lassen sich mehrere wählen. Auf ⓘ tippen, um ein Projekt oder eine Gruppe umzubenennen oder ein Projekt wegzulegen."
+            "value": "Ein Klick auf eine Zeile wählt diese aus; mit dem Kästchen daneben wählst du mehrere. Klicke auf ⓘ, um ein Projekt oder eine Gruppe umzubenennen oder ein Projekt abzulegen."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Al hacer clic en una fila se elige solo esa; usa la casilla que hay al lado para elegir varias. Toca ⓘ para renombrar un proyecto o un grupo, o para guardar un proyecto."
+            "value": "Hacer clic en una fila selecciona esa; usa la casilla contigua para seleccionar varias. Haz clic en ⓘ para renombrar un proyecto o un grupo, o para archivar un proyecto."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cliquer sur une ligne n’en choisit qu’une ; la case à côté permet d’en choisir plusieurs. Touchez ⓘ pour renommer un projet ou un groupe, ou pour ranger un projet."
+            "value": "Cliquer sur une ligne sélectionne celle-ci ; utilisez la case à côté pour en sélectionner plusieurs. Cliquez sur ⓘ pour renommer un projet ou un groupe, ou pour ranger un projet."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Fare clic su una riga ne sceglie una sola; usa la casella accanto per sceglierne più di una. Tocca ⓘ per rinominare un progetto o un gruppo, o per riporre un progetto."
+            "value": "Fare clic su una riga seleziona quella; usa la casella accanto per selezionarne diverse. Fai clic su ⓘ per rinominare un progetto o un gruppo, o per archiviare un progetto."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Op een rij klikken kiest alleen die ene; gebruik het vakje ernaast om er meerdere te kiezen. Tik op ⓘ om een project of een groep te hernoemen, of om een project op te bergen."
+            "value": "Op een rij klikken kiest die ene; gebruik het vakje ernaast om er meerdere te kiezen. Klik op ⓘ om een project of groep te hernoemen, of om een project op te bergen."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Clicar numa linha escolhe apenas essa; use a caixa ao lado para escolher várias. Toque em ⓘ para renomear um projeto ou um grupo, ou para guardar um projeto."
+            "value": "Clicar numa linha seleciona essa; use a caixa ao lado para selecionar várias. Clique em ⓘ para mudar o nome de um projeto ou grupo, ou para arquivar um projeto."
           }
         }
       }
@@ -8791,43 +8791,43 @@
         }
       }
     },
-    "Tap ⓘ on a project to move it to another group or category.": {
+    "Tapping a row picks that one; use the checkbox beside it to pick several. Tap ⓘ to rename a project or a group, to move it to another group or category, or to put it away.": {
       "extractionState": "manual",
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tippe auf ⓘ bei einem Projekt, um es in eine andere Gruppe oder Kategorie zu verschieben."
+            "value": "Ein Tippen auf eine Zeile wählt diese aus; mit dem Kästchen daneben wählst du mehrere. Tippe auf ⓘ, um ein Projekt oder eine Gruppe umzubenennen, es in eine andere Gruppe oder Kategorie zu verschieben oder abzulegen."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Toca ⓘ en un proyecto para moverlo a otro grupo o categoría."
+            "value": "Tocar una fila selecciona esa; usa la casilla contigua para seleccionar varias. Toca ⓘ para renombrar un proyecto o un grupo, moverlo a otro grupo o categoría, o archivarlo."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Touchez ⓘ sur un projet pour le déplacer vers un autre groupe ou une autre catégorie."
+            "value": "Toucher une ligne sélectionne celle-ci ; utilisez la case à côté pour en sélectionner plusieurs. Touchez ⓘ pour renommer un projet ou un groupe, le déplacer vers un autre groupe ou une autre catégorie, ou le ranger."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tocca ⓘ su un progetto per spostarlo in un altro gruppo o categoria."
+            "value": "Toccare una riga seleziona quella; usa la casella accanto per selezionarne diverse. Tocca ⓘ per rinominare un progetto o un gruppo, spostarlo in un altro gruppo o categoria, o archiviarlo."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tik op ⓘ bij een project om het naar een andere groep of categorie te verplaatsen."
+            "value": "Op een rij tikken kiest die ene; gebruik het vakje ernaast om er meerdere te kiezen. Tik op ⓘ om een project of groep te hernoemen, het naar een andere groep of categorie te verplaatsen, of het op te bergen."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Toque em ⓘ num projeto para o mover para outro grupo ou categoria."
+            "value": "Tocar numa linha seleciona essa; use a caixa ao lado para selecionar várias. Toque em ⓘ para mudar o nome de um projeto ou grupo, movê-lo para outro grupo ou categoria, ou arquivá-lo."
           }
         }
       }

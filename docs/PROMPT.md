@@ -1066,6 +1066,13 @@ both gestures, where the eye already is rather than at the bottom of a list
 nobody scrolls to. The long-press menu keeps "Add to Selection" as an
 accelerator.
 
+**The footer is written twice, once per input**: a pointer clicks and a finger
+taps, and the sidebar's copy ends with the drag line while the phone's does
+not, because the phone has no handle to drag. It is two whole sentences rather
+than one with a verb substituted in, because a string's key in the catalogue
+*is* its English text — a sentence assembled from pieces cannot be translated
+as a sentence.
+
 **Every row carries the same tally: tasks still to do**, counted with the test
 the list itself applies — so a row offering one task always has one to show.
 That includes group headings, which count the tasks in their projects and not
