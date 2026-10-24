@@ -173,7 +173,11 @@ struct FilterList: View {
                 // screen.
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Clicking a row picks that one; use the checkbox beside it to pick several. Tap \u{24D8} to rename a project or a group, or to put a project away.")
-                    Text("Drag a project by its handle onto a group or an All category row to move it.")
+                    if isSidebar {
+                        Text("Drag a project by its handle onto a group or an All category row to move it.")
+                    } else {
+                        Text("Tap \u{24D8} on a project to move it to another group or category.")
+                    }
                 }
             }
 
@@ -452,9 +456,24 @@ struct FilterList: View {
             selectionBox(isOn: projectSelection.contains(project.id)) {
                 add(projects: [project.id])
             }
-            ProjectDragHandle(projectID: project.id, name: project.name)
-                .frame(width: 22, height: isSidebar ? 28 : 44)
-                .allowsHitTesting(renamingInline == nil)
+            // Dragging is a pointer gesture and stays in the sidebar. On a
+            // phone the grip was a 22pt target that had to be touched, held
+            // and then moved, carrying a preview of the grip icon rather than
+            // the project; a drop onto a group changes only a label, so it
+            // went through silently and the project left the ungrouped list
+            // for a group section with nothing to say it had. That reads as
+            // the project vanishing. The ⓘ and the long-press menu both move a
+            // project by naming where it goes, which is the whole of what the
+            // drag was for.
+            if isSidebar {
+                ProjectDragHandle(projectID: project.id, name: project.name)
+                    .frame(width: 22, height: 28)
+                    .allowsHitTesting(renamingInline == nil)
+            } else {
+                // Holds the column a group's folder icon sits in, which is
+                // what every name under a heading lines up on.
+                Color.clear.frame(width: 22, height: 44)
+            }
             if renamingInline == .project(project.id) {
                 renameField()
             } else {

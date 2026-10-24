@@ -8791,6 +8791,47 @@
         }
       }
     },
+    "Tap ⓘ on a project to move it to another group or category.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tippe auf ⓘ bei einem Projekt, um es in eine andere Gruppe oder Kategorie zu verschieben."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toca ⓘ en un proyecto para moverlo a otro grupo o categoría."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Touchez ⓘ sur un projet pour le déplacer vers un autre groupe ou une autre catégorie."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tocca ⓘ su un progetto per spostarlo in un altro gruppo o categoria."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tik op ⓘ bij een project om het naar een andere groep of categorie te verplaatsen."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toque em ⓘ num projeto para o mover para outro grupo ou categoria."
+          }
+        }
+      }
+    },
     "Task": {
       "localizations": {
         "de": {

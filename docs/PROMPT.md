@@ -827,7 +827,7 @@ that one says how many and asks first. Both go through one rule, so they cannot
 answer differently.
 
 **Drag a project by the handle beside its name onto a group or an “All
-[category]” row.** A group receives the project in that group's category;
+[category]” row — in the sidebar only.** A group receives the project in that group's category;
 a category receives it with no group, including when removing it from a group
 in the same category. Valid targets show an accent outline, including folded
 headings. A move across categories still asks before changing any tasks, using
@@ -844,15 +844,25 @@ deleted during sync makes the move a no-op. Category, group and affected tasks
 are saved together with one edit timestamp, never as an intermediate move with
 no group.
 
-A touch drag is verified: on the simulator, PAPER taken by its handle onto
-Grants, which went from 1 to 3 and left Manuscripts empty and gone. It works
-there because the context menu sits on the *name* — when the menu covered the
-whole row, the long press belonged to it and the drag was unreachable on touch
-altogether. The handle is also what makes it discoverable: there is no gesture
-to guess at.
+**The handle is not drawn on a phone**, where its column is held open by a
+clear spacer so names still line up under their group's folder icon. Dragging
+there asked for a 22pt target to be touched, held and then moved; what it
+carried was a preview of the grip icon rather than the project, and valid
+targets lit up only while hovered, so nothing on screen said what was being
+moved or where it could go. A drop onto a group changes only a label, so it
+also passed the "does this touch any tasks?" test that makes a category move
+ask first, and went through in silence — the project left the ungrouped list
+for a group section with nothing to say it had. Taken together that reads as
+the project vanishing, and a reorganisation nobody can see is worse than no
+reorganisation.
 
-Builds and model tests verify neither. A pointer drag on a Mac, cancellation
-and folded headings still want a manual check.
+The phone keeps two routes that move a project by naming where it goes: the ⓘ
+opens the project editor, which has both category and group, and a long press
+on the name gives the same Move menu. The hint under the first row says so
+rather than describing a handle that is not there.
+
+Builds and model tests verify none of this. A pointer drag on a Mac,
+cancellation and folded headings still want a manual check.
 
 **Double-clicking a project or a group name renames it in place.** Enter commits
 and so does clicking away, the way a Finder rename does — an untouched field
