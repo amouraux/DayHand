@@ -449,8 +449,10 @@ do {
 
 // MARK: O — finding a card by what it shows
 do {
-    func hit(_ query: String, _ title: String, _ project: String? = nil) -> Bool {
-        CardSearch.matches(title: title, project: project, terms: CardSearch.terms(in: query))
+    func hit(_ query: String, _ title: String, _ project: String? = nil,
+             group: String? = nil) -> Bool {
+        CardSearch.matches(title: title, project: project, group: group,
+                           terms: CardSearch.terms(in: query))
     }
 
     expect(hit("flight", "book flights"), "a word inside the title")
@@ -467,6 +469,20 @@ do {
     expect(hit("fria support", "write the case for support", "FRIA"), "across the project and the title")
     expect(!hit("fria", "write the case for support", "SPINEP"), "another project does not match")
     expect(!hit("fria", "write the case for support"), "nor does a card with no project")
+
+    // The group is the one part of the haystack the card does not print: it is
+    // how a project is remembered once there are enough of them.
+    expect(hit("grants", "write the case for support", "FRIA", group: "Grants"),
+           "the project's group is searched, though no card shows it")
+    expect(hit("grants support", "write the case for support", "FRIA", group: "Grants"),
+           "across the group and the title")
+    expect(hit("grants fria", "write the case for support", "FRIA", group: "Grants"),
+           "across the group and the project")
+    expect(!hit("grants", "write the case for support", "FRIA", group: "Manuscripts"),
+           "another group does not match")
+    expect(!hit("grants", "write the case for support", "FRIA"),
+           "nor does a project in no group")
+    expect(hit("GRANTS", "x", "FRIA", group: "Grants"), "a group matches whatever the case")
 
     // Whole-string matching would make a two-word query useless: the words are
     // separated by the project name or by other words.

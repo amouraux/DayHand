@@ -960,11 +960,25 @@ naming a task's project, not quietly refiling one that other tasks carry.
 
 Group headings sit inside the category section with the grouped projects
 indented beneath them, followed by ungrouped projects. Tapping a heading selects
-the group, and it carries the same **ⓘ** the projects under it do, opening the
-rename directly: renaming is all a group has, so a sheet with one row in it
-would be worse than the alert. Renaming onto another group's name joins them. Headings use primary, not secondary, text — dimmed rows read
-as disabled. Tasks, New Task chips and the editor's project menu are untouched
-by grouping.
+the group, and it carries the same **ⓘ** the projects under it do, opening an
+**Edit Group** alert rather than a sheet: a group has only two things that can
+be done to it, so a sheet would be a screen built around two buttons.
+
+Those two are **Rename**, which writes the new label on every project in the
+group — onto another group's name joins them — and **Ungroup**, which takes the
+label off them and keeps the projects, their tasks and their category. That is
+the whole of what ungrouping can mean, because a group is a label rather than a
+record; it is the only way to dissolve one in a single action, the alternative
+being to drag each project out in turn. It clears the label from **every**
+project carrying it, archived ones included: a group is dissolved entirely or
+not at all, never down to the part that happened to be on screen.
+
+Both also sit on the heading's long-press menu, but neither lives there alone.
+The ⓘ exists precisely because renaming and grouping used to need a long press,
+which is no way to reach the only place an operation lives.
+
+Headings use primary, not secondary, text — dimmed rows read as disabled. Tasks,
+New Task chips and the editor's project menu are untouched by grouping.
 
 ### Converting old titles
 
@@ -1098,9 +1112,13 @@ because a separate list of results would be a second place where tasks live.
 Closing the bar clears the query, so the list is never quietly narrowed by
 something no longer on screen.
 
-What is searched is what the task shows: its title, and the project name
-printed in front of it. Case and accents are ignored, so "creche" finds
-"crèche" without a French keyboard. Several words must all appear but in any
+What is searched is what the task shows — its title, and the project name
+printed in front of it — plus **the group that project belongs to**, which is
+the one part of the haystack no task displays. It earns its place because a
+group is how a project is remembered once there are enough of them: "grants
+case" should find the task whichever project under Grants it was filed in.
+Case and accents are ignored, so "creche" finds "crèche" without a French
+keyboard. Several words must all appear but in any
 order — "flight book" finds "book the flights" — because a query is a memory
 of a task, not its wording. Search and filter compose: a search runs inside
 whatever the filter has already chosen, and the empty state says so.

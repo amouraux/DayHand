@@ -282,16 +282,23 @@ struct FilterList: View {
         } message: { project in
             Text("A group for \(project.name) and others like it, such as Holidays or Clients.")
         }
-        .alert("Rename Group", isPresented: Binding(
+        // Both things a group can have done to it, in the one place the ⓘ
+        // leads to. Ungroup lived only in the context menu to begin with,
+        // which on a phone means a long press — the same way of reaching an
+        // operation that the ⓘ exists to replace.
+        .alert("Edit Group", isPresented: Binding(
             get: { renaming != nil }, set: { if !$0 { renaming = nil } }
         ), presenting: renaming) { group in
             TextField("Name", text: $nameField)
             Button("Rename") {
                 withAnimation { store.renameGroup(group.name, in: group.categoryID, to: nameField) }
             }
+            Button("Ungroup", role: .destructive) {
+                withAnimation { store.ungroup(group.name, in: group.categoryID) }
+            }
             Button("Cancel", role: .cancel) { }
         } message: { group in
-            Text("Renames \u{201C}\(group.name)\u{201D} on every project in it. Using another group\u{2019}s name joins the two.")
+            Text("Renames \u{201C}\(group.name)\u{201D} on every project in it; using another group\u{2019}s name joins the two. Ungroup takes the label off them and keeps the projects.")
         }
     }
 
@@ -411,7 +418,7 @@ struct FilterList: View {
                     .foregroundStyle(Color.accentColor)
             }
             .buttonStyle(.borderless)
-            .accessibilityLabel("Rename Group…")
+            .accessibilityLabel("Edit Group")
         }
         .listRowBackground(
             headingBand(tint(forCategory: categoryID), strong: false)
@@ -425,6 +432,11 @@ struct FilterList: View {
                 renaming = GroupRef(categoryID: categoryID, name: name)
             } label: {
                 Label("Rename Group…", systemImage: "pencil")
+            }
+            Button(role: .destructive) {
+                withAnimation { store.ungroup(name, in: categoryID) }
+            } label: {
+                Label("Ungroup", systemImage: "folder.badge.minus")
             }
         }
         .accessibilityLabel("Group \(name), \(projects.count) projects")

@@ -522,6 +522,23 @@ final class TodoStore: ObservableObject {
         if changed { save() }
     }
 
+    /// Dissolve a group: its label is cleared from every project in it. The
+    /// projects stay where they are and keep their tasks — a group is only a
+    /// label, so losing it is the whole of what "ungroup" can mean.
+    func ungroup(_ name: String, in categoryID: UUID?) {
+        let key = Project.groupKey(for: name)
+        let stamp = Date.stamp()
+        var changed = false
+        for index in projects.indices
+        where projects[index].categoryID == categoryID
+            && projects[index].group.map(Project.groupKey) == key {
+            projects[index].group = nil
+            projects[index].modifiedAt = stamp
+            changed = true
+        }
+        if changed { save() }
+    }
+
     func setProjectArchived(_ project: Project, _ archived: Bool) {
         updateProject(project.id) { $0.isArchived = archived }
     }

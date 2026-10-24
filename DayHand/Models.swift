@@ -502,12 +502,17 @@ enum Archiving {
 
 /// Finding a card by what it shows.
 ///
-/// The text searched is the text on the card: its title, with the project name
-/// that is printed in front of it. Case and accents are ignored, so "creche"
-/// finds "crèche" and a French keyboard is never required to find a card typed
-/// on one. Several words all have to appear, in any order — "flight book"
-/// finds "book the flights" — because a query is a memory of a card, not its
-/// wording.
+/// The text searched is the text on the card — its title, with the project name
+/// that is printed in front of it — plus the **group** that project belongs to,
+/// which is the one part of the haystack the card does not display. It earns
+/// its place because a group is how a project is remembered once there are
+/// enough of them: "grants case" should find the card whichever project under
+/// Grants it was filed in.
+///
+/// Case and accents are ignored, so "creche" finds "crèche" and a French
+/// keyboard is never required to find a card typed on one. Several words all
+/// have to appear, in any order — "flight book" finds "book the flights" —
+/// because a query is a memory of a card, not its wording.
 enum CardSearch {
     static func normalised(_ text: String) -> String {
         text.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
@@ -518,9 +523,10 @@ enum CardSearch {
     }
 
     /// A blank query matches everything, so an empty search bar hides nothing.
-    static func matches(title: String, project: String?, terms: [String]) -> Bool {
+    static func matches(title: String, project: String?, group: String? = nil,
+                        terms: [String]) -> Bool {
         guard !terms.isEmpty else { return true }
-        let haystack = normalised([project, title].compactMap { $0 }.joined(separator: " "))
+        let haystack = normalised([group, project, title].compactMap { $0 }.joined(separator: " "))
         return terms.allSatisfy { haystack.contains($0) }
     }
 }

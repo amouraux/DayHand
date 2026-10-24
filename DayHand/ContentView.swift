@@ -310,7 +310,9 @@ struct ContentView: View {
         let terms = searchTerms
         guard !terms.isEmpty else { return all }
         return all.filter {
-            CardSearch.matches(title: $0.title, project: store.project(for: $0)?.name, terms: terms)
+            let project = store.project(for: $0)
+            return CardSearch.matches(title: $0.title, project: project?.name,
+                                      group: project?.group, terms: terms)
         }
     }
 
