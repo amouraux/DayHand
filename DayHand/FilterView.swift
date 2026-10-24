@@ -679,8 +679,13 @@ struct FilterList: View {
             Button {
                 withAnimation(.snappy(duration: 0.28)) { toggle() }
             } label: {
+                // No `maxHeight: .infinity` here. Asking for infinite height
+                // inside a list row laid the glyphs out to nothing: the row
+                // still reserved their width, so a sidebar category showed an
+                // empty gap where its chevron and icon belong and there was
+                // nothing left to say it could be folded at all. The row is
+                // short enough that filling it bought very little.
                 glyphs
-                    .frame(maxHeight: .infinity)
                     .contentShape(Rectangle())
             }
             .buttonStyle(.borderless)
