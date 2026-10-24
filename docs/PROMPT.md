@@ -626,6 +626,11 @@ More lets the user add, edit, reorder and delete categories. Deleting one strips
 it from every task that used it — the tasks themselves are kept — and the
 confirmation says how many tasks are affected.
 
+**The Edit control sits in the Categories heading, not in the navigation bar.**
+More is sync, backups, CSV and language as well, and a button at the top right
+of all that reads as editing the sheet itself rather than the one list it
+reorders.
+
 Offer a palette of category colours **disjoint from the stack colours** (so not
 gray, blue, orange or green) and from red: indigo, purple, teal, pink, brown and
 yellow work. A category icon has to stay legible sitting on a stack-coloured
@@ -1082,7 +1087,7 @@ whatever the filter has already chosen, and the empty state says so.
 ## More
 
 The sheet behind the ellipsis, in order: **Completed** (the weekly review
-above), **Categories**, **Convert Title Prefixes into #Projects…** when there is
+above), **Categories**, **Convert Title Prefixes into Projects…** when there is
 something to convert, **New tasks** (the default category), **Language**,
 **Sync**, **CSV**, and **Backups**.
 

@@ -7,6 +7,9 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var editing: CardCategory?
+    /// Reordering and deleting categories, driven by the button in that
+    /// section's own header rather than one in the navigation bar.
+    @State private var categoryEdit: EditMode = .inactive
     @State private var isAdding = false
     @State private var pendingDeletion: CardCategory?
     @State private var isExporting = false
@@ -74,7 +77,27 @@ struct SettingsView: View {
                         Label("Add Category", systemImage: "plus.circle.fill")
                     }
                 } header: {
-                    Text("Categories")
+                    // Beside the thing it edits. In the navigation bar it read
+                    // as editing More itself, which is sync, backups, CSV and
+                    // language as well — none of which it touches.
+                    HStack {
+                        Text("Categories")
+                        Spacer()
+                        // Not an `EditButton`: that one reaches for an
+                        // `editMode` binding the navigation stack provides,
+                        // and whether it still finds it from inside a section
+                        // header is exactly the kind of thing that works until
+                        // it quietly does not. The state is held here and
+                        // handed to the list below, so there is nothing to
+                        // propagate.
+                        Button(categoryEdit.isEditing ? "Done" : "Edit") {
+                            withAnimation {
+                                categoryEdit = categoryEdit.isEditing ? .inactive : .active
+                            }
+                        }
+                        .disabled(store.categories.isEmpty)
+                        .textCase(nil)
+                    }
                 } footer: {
                     Text("Tasks and projects are grouped by categories. Create your own \u{2014} tasks show the icon alone, so the label names it here and for VoiceOver.")
                 }
@@ -325,14 +348,12 @@ struct SettingsView: View {
                     Text("Removes every task on this device. Categories are kept. If a sync file is in use, the deletion reaches your other devices too.")
                 }
             }
+            .environment(\.editMode, $categoryEdit)
             .navigationTitle("More")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") { dismiss() }
-                }
-                ToolbarItem(placement: .primaryAction) {
-                    EditButton().disabled(store.categories.isEmpty)
                 }
             }
             .confirmationDialog(
