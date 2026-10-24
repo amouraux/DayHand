@@ -319,6 +319,46 @@ struct Project: Identifiable, Codable, Equatable, Hashable {
     static let edgePunctuation = CharacterSet(charactersIn: ":;,.-–—()[]{}\"'/")
 }
 
+// MARK: - Which projects the filter shows
+
+/// The filter list shows one of four slices of the project list. This replaced
+/// a single "include archived" switch, which could only ever mix the put-away
+/// projects in among the live ones — so the way to find one was to read past
+/// everything else.
+///
+/// Two of the four are about being finished and two about being put away,
+/// which are different things: a project whose tasks are all done is still
+/// open, and is simply not where work is waiting.
+enum ProjectScope: String, CaseIterable, Codable, Sendable {
+    /// Not archived, and something still to do.
+    case unfinished
+    /// Not archived. The default, and what the list has always shown.
+    case active
+    /// Both, for finding a project without first remembering which it is.
+    case all
+    /// Only the put-away ones.
+    case archived
+
+    /// `openCards` is how many unfinished tasks a project holds. `pinned` are
+    /// the projects currently filtering the card list: those show whatever the
+    /// scope says, because a project must never vanish from under the
+    /// selection that named it — the cards on screen would have no visible
+    /// reason to be the ones on screen.
+    func select(_ projects: [Project],
+                openCards: (Project) -> Int,
+                pinned: Set<UUID> = []) -> [Project] {
+        projects.filter { project in
+            if pinned.contains(project.id) { return true }
+            switch self {
+            case .unfinished: return !project.isArchived && openCards(project) > 0
+            case .active:     return !project.isArchived
+            case .all:        return true
+            case .archived:   return project.isArchived
+            }
+        }
+    }
+}
+
 // MARK: - Groups of projects
 
 /// Groups are read off the projects rather than stored: a category's groups are

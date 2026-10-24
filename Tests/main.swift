@@ -1497,5 +1497,37 @@ do {
     expect(cards == beforeRegroup, "a same-category regroup never edits card timestamps")
 }
 
+// MARK: — which projects the filter shows
+do {
+    let live = Project(name: "LIVE")
+    let done = Project(name: "DONE")
+    let put = Project(name: "PUT", isArchived: true)
+    let all = [live, done, put]
+    // DONE is open but has nothing left to do; PUT is archived.
+    let open = [live.id: 3, done.id: 0, put.id: 2]
+    func names(_ scope: ProjectScope, pinned: Set<UUID> = []) -> [String] {
+        scope.select(all, openCards: { open[$0.id] ?? 0 }, pinned: pinned).map(\.name).sorted()
+    }
+
+    expect(names(.unfinished) == ["LIVE"],
+           "with open tasks leaves out the archived one and the finished one")
+    expect(names(.active) == ["DONE", "LIVE"],
+           "not archived keeps a project whose tasks are all done")
+    expect(names(.all) == ["DONE", "LIVE", "PUT"], "all projects shows every one")
+    expect(names(.archived) == ["PUT"], "archived shows only the put-away ones")
+
+    // A project filtering the card list must stay on screen whatever the
+    // scope says, or the cards shown would have no visible reason to be.
+    expect(names(.unfinished, pinned: [put.id]) == ["LIVE", "PUT"],
+           "a selected archived project survives a scope that excludes it")
+    expect(names(.archived, pinned: [done.id]) == ["DONE", "PUT"],
+           "a selected finished project survives the archived scope")
+    expect(names(.unfinished, pinned: [live.id]) == ["LIVE"],
+           "pinning a project the scope already shows does not duplicate it")
+
+    expect(ProjectScope(rawValue: "active") == .active,
+           "the stored scope decodes, so a remembered choice survives a launch")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

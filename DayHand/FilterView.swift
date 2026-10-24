@@ -22,9 +22,11 @@ struct FilterList: View {
 
     @EnvironmentObject private var store: TodoStore
     @State private var search = ""
-    /// Off by default, and on every opening: an archived project is one that is
-    /// over, and the list is about what is still going on.
-    @State private var showArchived = false
+    /// Which slice of the project list is on show. Remembered, because it is a
+    /// way of working rather than a one-off look — except `.archived`, which
+    /// `onAppear` undoes: coming back next week to a list holding only the
+    /// projects you had put away reads as having lost the others.
+    @AppStorage("projectScope") private var scope: ProjectScope = .active
 
     /// A project waiting for the name of a new group to go into.
     @State private var newGroupFor: Project?
@@ -125,16 +127,19 @@ struct FilterList: View {
     private var categoryCounts: [UUID: Int] { store.openCategoryCounts }
     private var isEverything: Bool { categorySelection.isEmpty && projectSelection.isEmpty }
 
-    /// Archived projects are left out until they are asked for — except one
-    /// that is currently filtering the list, which must never vanish from
-    /// under the selection that named it.
+    /// Archived projects are left out until they are asked for — and so, in
+    /// one scope, are finished ones. A project currently filtering the card
+    /// list is kept whatever the scope says; see `ProjectScope.select`.
     private var visibleProjects: [Project] {
-        store.projects
-            .filter { !$0.isArchived || showArchived || projectSelection.contains($0.id) }
+        // Read once. `openCardCounts` walks every task, and reading it from
+        // inside the per-project closure would walk them all again for each
+        // project in the list.
+        let counts = openCounts
+        return scope.select(store.projects,
+                            openCards: { counts[$0.id] ?? 0 },
+                            pinned: projectSelection)
             .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
     }
-
-    private var hasArchived: Bool { store.projects.contains { $0.isArchived } }
 
     /// Projects whose category no longer exists are shown with the loose ones.
     private func scope(of project: Project) -> UUID? {
@@ -174,14 +179,20 @@ struct FilterList: View {
 
             // Above the categories, not below them: on a phone the search field
             // is pinned to the bottom of the sheet, and a list short enough not
-            // to scroll would leave this row stranded underneath it. Only worth
-            // a row at all once there is something to include.
-            if hasArchived {
-                Section {
-                    Toggle(isOn: $showArchived.animation(.easeInOut(duration: 0.2))) {
-                        Label("Include archived projects", systemImage: "archivebox")
-                    }
+            // to scroll would leave this row stranded underneath it.
+            Section {
+                Picker(selection: $scope.animation(.easeInOut(duration: 0.2))) {
+                    Text("With open tasks").tag(ProjectScope.unfinished)
+                    Text("Not archived").tag(ProjectScope.active)
+                    Text("All projects").tag(ProjectScope.all)
+                    // Apart, because it is the only one that looks away from
+                    // what is going on rather than narrowing it.
+                    Divider()
+                    Text("Archived").tag(ProjectScope.archived)
+                } label: {
+                    Label("Show", systemImage: "line.3.horizontal.decrease.circle")
                 }
+                .pickerStyle(.menu)
             }
 
             if search.isEmpty {
@@ -224,6 +235,10 @@ struct FilterList: View {
         // hung off the stored value itself.
         .animation(.snappy(duration: 0.28), value: collapsedRaw)
         .searchable(text: $search, prompt: "Search projects")
+        .onAppear {
+            // Going to look in the cupboard is not a way to leave the list.
+            if scope == .archived { scope = .active }
+        }
         .sheet(item: $editingProject) { project in
             NavigationStack {
                 ProjectEditor(projectID: project.id)
@@ -436,7 +451,10 @@ struct FilterList: View {
                     // project as a coloured word in front of the title — and
                     // the sidebar was the only place that did. Colour says
                     // what it is, here as there.
-                    text: Text(project.name),
+                    // Italic as well as grey: in the scopes that mix the two,
+                    // colour alone is the same cue the category tints already
+                    // use, and a grey project reads as one with no category.
+                    text: project.isArchived ? Text(project.name).italic() : Text(project.name),
                     count: openCounts[project.id] ?? 0,
                     selected: false, bold: true)
                     // None. The checkbox and the fold column already carry

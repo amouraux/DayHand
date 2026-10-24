@@ -776,8 +776,9 @@ nothing is assumed: neither names one project.
   it to remove it. A new project is only created when the task is added, so a
   cancelled sheet leaves nothing behind. Top-align the row: an empty vertical
   text field reports its placeholder's baseline lower than typed text.
-- **Archived projects** are never suggested and drop out of the project list,
-  so the list stays about what is still going on.
+- **Archived projects** are never suggested and drop out of the project list
+  unless the filter's Show row asks for them, so the list stays about what is
+  still going on.
 - **Typing a project's name always offers it, used or not.** A project nothing
   is filed under is kept out of the suggestions, which is right while browsing
   and wrong while naming: asked for by name it was offered neither as a match,
@@ -1047,12 +1048,32 @@ That includes group headings, which count the tasks in their projects and not
 the projects themselves. A row may read 0 and turn up completed tasks, which is
 the harmless direction: you are shown more than was promised, never less.
 
-**"Include archived projects"** brings archived ones back into the list, off by
-default and on every opening. It sits above the categories, because the search
-field is pinned to the bottom of the sheet and a short list would leave a row
-below it stranded underneath. An archived project shown that way is greyed, and
-one that is currently filtering the list is never hidden from under its own
-selection.
+**A "Show" row picks which slice of the project list is on screen**, in four
+scopes: **With open tasks** (not archived, something still to do), **Not
+archived** (the default, and what the list has always shown), **All projects**,
+and, set apart below a divider, **Archived**. It sits above the categories,
+because the search field is pinned to the bottom of the sheet and a short list
+would leave a row below it stranded underneath.
+
+Two of the four are about being finished and two about being put away, which
+are different things: a project whose tasks are all done is still open, and is
+simply not where work is waiting. The fourth scope is the only way to look at
+the archive on its own — mixing archived projects in among the live ones, which
+is all the single "include archived" switch could ever do, means reading past
+everything else to find one.
+
+The choice is **remembered**, because it is a way of working rather than a
+one-off look — except **Archived, which is undone on every opening**: coming
+back next week to a list holding only the projects you had put away reads as
+having lost the others. An archived project is **greyed and italic**, because in
+the scopes that mix the two, colour alone is the cue the category tints already
+use and a grey project reads as one with no category. A project that is
+currently filtering the list is never hidden from under its own selection,
+whatever the scope says.
+
+Groups need no scope of their own. A group is a label its projects carry rather
+than a record, so it is drawn exactly when the scope leaves something in it, and
+disappears with its last visible project.
 
 The filter button reflects the state: the plain filter glyph when nothing is
 chosen, the category's own icon and colour when exactly one is, and a **count**
