@@ -823,7 +823,7 @@ nothing is assumed: neither names one project.
   and wrong while naming: asked for by name it was offered neither as a match,
   being unused, nor as a new project, because it already exists. Moving a
   project's last task away therefore put it out of reach of the field
-  altogether, leaving the Filter as the only way back to it.
+  altogether, leaving Organise as the only way back to it.
 - **A project no task carries is not offered either.** The last task moving to
   another project leaves one behind that is still in the file but no longer a
   tag anybody is using, and it went on being suggested and listed in the
@@ -836,13 +836,13 @@ nothing is assumed: neither names one project.
   not. So the project stays, stops being offered, and comes back by itself the
   moment a task carries it again — keeping the id, group and category it had.
   A name typed in full still matches it, so it is reused rather than made a
-  second time, and the Filter still lists it, which is where it can be renamed,
+  second time, and Organise still lists it, which is where it can be renamed,
   merged or deleted deliberately.
 
-### Organising them — all in the Filter
+### Organising them — all in Organise
 
 There is no separate Projects screen. Everything about a project is reached from
-the Filter, which is the one place projects are listed at all.
+Organise, which is the one place projects are listed at all.
 
 **A project row carries no `#` of its own**; the hash is joined to the name,
 `#GRANT`. A separate glyph cost a 24pt frame and the gap beside it — 36pt of a
@@ -990,7 +990,7 @@ project**, where the row is not drawn.
 changed**, because that sheet promises that cancelling leaves nothing behind
 and a global edit surviving Cancel is the opposite of that. A greyed row with
 no reason beside it reads as broken, so it carries its own line: *"Set on the
-project. Change it from its ⓘ in the Filter."* A project being named for the
+project. Change it from its ⓘ in Organise."* A project being named for the
 first time is settable there, since nothing exists yet to be edited.
 
 ### Groups of projects
@@ -1010,7 +1010,7 @@ to another category clears its group.
 **A group can be chosen where a project is**, in the New Task sheet and in the
 task editor: one row under the project, naming the group and offering the ones
 the category already has, plus **New Group…**. A group is easiest to set at the
-moment the project is first named, and having to find the Filter afterwards is
+moment the project is first named, and having to find Organise afterwards is
 how projects end up ungrouped for good.
 
 That row appears **only when there is a project**. A group is a label projects
@@ -1072,7 +1072,7 @@ into the one with the lowest id, remap tasks to it without stamping them, and
 tombstone the others at their own `modifiedAt` — so every device independently
 makes the same choice and writes the same tombstone.
 
-## Filtering
+## Organise
 
 The filter narrows the list to any mix of categories and projects: a task shows
 if it matches any of them. Selecting nothing means everything. An uncategorised
@@ -1111,6 +1111,38 @@ filtered.
 On a phone the sheet opens at the **large** detent. The list is categories,
 groups and every project, and `.searchable` floats its field at the bottom of
 the sheet, where at the medium detent it sits on top of the last rows.
+
+**The panel is called Organise, not Filter.** Every row in it is still a filter
+row — tapping one narrows the task list — but it is also the only place
+projects, groups and categories are arranged at all, and on the Mac and the
+iPad it is a permanent sidebar rather than something opened to perform one
+action. "Filter" named a verb; a sidebar is a place. The floating button that
+opens it on a phone keeps its filter glyph and its state, because what the
+button does is still filter.
+
+It is not called "Projects". Categories are a **peer axis**, not a container
+for projects: `FilterCounts.matches` answers true for any task carrying a
+category whether or not it has a project, so "All Research" includes tasks with
+no project at all. A name that covered only the projects would hide the half of
+the panel that is not about them.
+
+**New Project…** sits under the Show row, and makes a project from nothing
+rather than from a task. Every other route starts by typing a first word into a
+task, which is right when capturing and wrong when setting up, where the point
+is to lay out categories and projects first and add work to them afterwards. It
+asks for name, category and group together, because a project created with no
+category lands in "Other projects" and has to be moved immediately — the
+opposite of what setting up is for. A project with nothing in it is a real row:
+projects are removed only by merge or delete, so it waits under *Active
+projects* and is correctly hidden by *With open tasks*, where nothing is
+waiting yet.
+
+**A category carries the same ⓘ a project and a group do**, opening the editor
+for its name, icon and colour. It was the one row without one, so recolouring a
+category meant leaving the panel the category is actually looked at from.
+Adding, reordering and deleting categories stay in **More**: those are about the
+*set* of categories, and reordering needs a list in edit mode. The ⓘ is about
+the one in front of you.
 
 **Clicking a row picks that one and drops the rest.** Filtering is normally a
 question about one project, and a list that accumulates selections answers a

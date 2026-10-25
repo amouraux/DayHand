@@ -156,7 +156,7 @@ struct AddCardView: View {
                             // A greyed row with no reason beside it reads as
                             // broken rather than as deliberate.
                             note: isExistingProject
-                                ? String(localized: "Set on the project. Change it from its \u{24D8} in the Filter.")
+                                ? String(localized: "Set on the project. Change it from its \u{24D8} in Organise.")
                                 : nil
                         ) {
                             typedGroup = ""

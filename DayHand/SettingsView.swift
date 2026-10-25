@@ -115,7 +115,7 @@ struct SettingsView: View {
                     Text("Tasks and projects are grouped by categories. Create your own \u{2014} tasks show the icon alone, so the label names it here and for VoiceOver.")
                 }
 
-                // Projects are organised in the Filter, not here: one place to
+                // Projects are organised in Organise, not here: one place to
                 // rename, group, archive and merge them. What is left is the
                 // one-time conversion, which is housekeeping rather than
                 // organisation, and only appears while there is work for it.
@@ -145,7 +145,7 @@ struct SettingsView: View {
                         }
                     }
                 } footer: {
-                    Text("A project groups tasks that belong to the same piece of work \u{2014} a trip, a paper, a course, an assignment. Start a task with its name and it is offered below the field. Rename, group and archive them in the Filter: tap \u{24D8} beside a project.")
+                    Text("A project groups tasks that belong to the same piece of work \u{2014} a trip, a paper, a course, an assignment. Start a task with its name and it is offered below the field. Rename, group and archive them in Organise: tap \u{24D8} beside a project.")
                 }
 
                 Section {
@@ -671,7 +671,10 @@ struct SettingsView: View {
 }
 
 /// Create or edit one category.
-private struct CategoryEditor: View {
+/// Naming, picking an icon for and colouring one category. Used from More,
+/// where categories are added and reordered, and from Organise, where one is
+/// looked at in place.
+struct CategoryEditor: View {
     let category: CardCategory?
     let onSave: (String, String, CategoryColor) -> Void
 

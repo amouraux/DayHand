@@ -37,6 +37,10 @@ struct FilterList: View {
     /// merging and deleting all live there, reached from this list rather than
     /// from a second screen somewhere else.
     @State private var editingProject: Project?
+    /// The category whose name, icon and colour are being changed.
+    @State private var editingCategory: CardCategory?
+    /// Set while a project is being made from nothing rather than from a task.
+    @State private var isAddingProject = false
 
     /// What is being renamed in place, if anything.
     enum Renaming: Equatable {
@@ -179,14 +183,14 @@ struct FilterList: View {
                 // the help read as written for someone else's device.
                 VStack(alignment: .leading, spacing: 6) {
                     if isSidebar {
-                        Text("Clicking a row picks that one; use the checkbox beside it to pick several. Click \u{24D8} to rename a project or a group, or to put a project away.")
+                        Text("Clicking a row picks that one; use the checkbox beside it to pick several. Click \u{24D8} to rename a project, a group or a category, to move a project, or to put one away.")
                         Text("Drag a project by its handle onto a group or an All category row to move it.")
                     } else {
                         // One sentence, not two: with the handle gone, moving
                         // a project is one more thing behind the same \u{24D8}
                         // the line already names, and a second line repeating
                         // "Tap \u{24D8}" read as a different control.
-                        Text("Tapping a row picks that one; use the checkbox beside it to pick several. Tap \u{24D8} to rename a project or a group, to move it to another group or category, or to put it away.")
+                        Text("Tapping a row picks that one; use the checkbox beside it to pick several. Tap \u{24D8} to rename a project, a group or a category, to move a project, or to put one away.")
                     }
                 }
             }
@@ -207,6 +211,17 @@ struct FilterList: View {
                     Label("Show", systemImage: "line.3.horizontal.decrease.circle")
                 }
                 .pickerStyle(.menu)
+
+                // Setting up is the case this is for: a project with nothing
+                // in it yet, made before there is a task to put in it. It
+                // sits here rather than at the foot of each category because
+                // one row is cheaper than one per category, and the sheet
+                // asks which category anyway.
+                Button {
+                    isAddingProject = true
+                } label: {
+                    Label("New Project…", systemImage: "plus.circle")
+                }
             }
 
             if search.isEmpty {
@@ -252,6 +267,16 @@ struct FilterList: View {
         .onAppear {
             // Going to look in the cupboard is not a way to leave the list.
             if scope == .archived { scope = .active }
+        }
+        .sheet(item: $editingCategory) { category in
+            CategoryEditor(category: category) { label, symbol, color in
+                store.updateCategory(
+                    CardCategory(id: category.id, label: label, symbolName: symbol, color: color)
+                )
+            }
+        }
+        .sheet(isPresented: $isAddingProject) {
+            NewProjectSheet().environmentObject(store)
         }
         .sheet(item: $editingProject) { project in
             NavigationStack {
@@ -367,6 +392,20 @@ struct FilterList: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+
+            // The same ⓘ a project and a group carry. Categories were the one
+            // row without one, so renaming or recolouring meant leaving the
+            // panel the category is actually looked at from. Reordering and
+            // the default for new tasks stay in More: they are about the set
+            // of categories, not about the one in front of you.
+            Button {
+                editingCategory = category
+            } label: {
+                Image(systemName: "info.circle")
+                    .foregroundStyle(Color.accentColor)
+            }
+            .buttonStyle(.borderless)
+            .accessibilityLabel("Edit Category…")
         }
         .listRowBackground(
             headingBand(category.color.prefixTint, strong: true)
@@ -376,7 +415,14 @@ struct FilterList: View {
         // is also the way one is taken out of a group, by dropping it on the
         // category it is already in.
         .background(projectDropTarget(.category(category.id), categoryID: category.id, group: nil))
-        .contextMenu { addToSelection(categories: [category.id]) }
+        .contextMenu {
+            addToSelection(categories: [category.id])
+            Button {
+                editingCategory = category
+            } label: {
+                Label("Edit Category…", systemImage: "pencil")
+            }
+        }
     }
 
     /// A group heading. Tapping selects the whole group — or clears it, when all
@@ -818,7 +864,7 @@ struct FilterSheet: View {
     var body: some View {
         NavigationStack {
             FilterList(categorySelection: $categorySelection, projectSelection: $projectSelection)
-                .navigationTitle("Filter")
+                .navigationTitle("Organise")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .confirmationAction) {

@@ -85,7 +85,7 @@ because you typed a space. There is no symbol to learn, and the button beside
 the field lists every project for the times the first word is not the one you
 want. A project shows as a coloured prefix on the task, fills in the task's
 category, and can be renamed, merged or archived in one edit. Projects gather
-into groups such as Grants and Ongoing, all from the Filter.
+into groups such as Grants and Ongoing, all from Organise.
 
 **What you finished.** Alongside the list of what you owe, DayHand shows what
 you got done — this week and last, grouped by the day you finished it.
@@ -164,7 +164,7 @@ Tests/run.sh path/to/cards.json
 | `DayHand/ContentView.swift` | The stacks, filtering, search and the floating buttons. |
 | `DayHand/CardRow.swift` | One task: its colours, swipes and context menu. |
 | `DayHand/AddCardView.swift` | New Task sheet and the task editor, including the project field they share. |
-| `DayHand/FilterView.swift` | The filter: categories, groups and projects, as a sheet or a sidebar. |
+| `DayHand/FilterView.swift` | Organise: categories, groups and projects, as a sheet or a sidebar. |
 | `DayHand/ProjectEditor.swift` | One project — rename, category, group, archive, merge, delete — and the one-time conversion of title prefixes. |
 | `DayHand/ReminderScheduler.swift` | The only place that talks to the notification centre. |
 | `DayHand/ReviewView.swift` | What you finished in a week, grouped by day. |

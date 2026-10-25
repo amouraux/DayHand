@@ -88,7 +88,7 @@ struct ContentView: View {
                     projectSelection: $filterProjectIDs.animation(.easeInOut(duration: 0.2)),
                     isSidebar: true
                 )
-                .navigationTitle("Filter")
+                .navigationTitle("Organise")
                 // The system's own toggle sits at the far right of the sidebar
                 // header, and floats over the first card when the sidebar is
                 // closed. The filter button already opens and closes it, from
