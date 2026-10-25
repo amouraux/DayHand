@@ -191,26 +191,27 @@ device wrote it: three taken automatically — yesterday, the day before, and on
 from about a week ago — plus any you take by hand, under their date. All of them
 can be restored or shared from Settings.
 
-**CSV** import and export cover tasks, categories, projects, groups and notes.
+**CSV** import and export cover tasks, categories, projects and groups.
 
 **Apple Reminders** can be copied once from More → Tasks. Choose lists,
 their categories or projects, and a destination stack, then review the tasks
-before importing. Due dates can become reminders at 9 a.m.; original details
-remain in editable Notes. A backup is saved first. Apple Reminders is never
+before importing. Due dates can become reminders at 9 a.m. Unsupported details
+are shown in the preview but are not saved. A backup is saved first. Apple Reminders is never
 modified and there is no continuous sync. Recurring reminders are skipped;
 subtask relationships, tags, attachments and smart-list rules are not preserved.
 Repeat-import protection uses device-local identifiers, so importing on another
 device or after an account reset can create duplicates. Update all DayHand
-devices before relying on Notes and import history across sync.
+devices before relying on import history across sync.
 
 
 **Todoist** project CSVs can be imported from More → Tasks → Import from Todoist.
 Select one or more exported files, map each to a category or project, choose a
-stack and review the tasks before adding them. Descriptions, comments, section
-and parent context, labels and other exported details are kept in Notes.
+stack and review the tasks before adding them. Descriptions, comments and other
+unsupported details are shown in the preview but are not saved. Subtasks become
+separate tasks; sections and parent relationships are not recreated.
 Recognised task dates become reminders at 9 a.m.; explicit deadlines remain
 deadlines. Dates written in words, including recurring dates, require an
-explicit opt-in and remain in Notes. Completed tasks are absent from Todoist's
+explicit opt-in and are not saved. Completed tasks are absent from Todoist's
 project exports. Reimporting the same unchanged file with the same name skips
 previously imported rows; edited or renamed exports can create duplicates. A
 backup is required before import. No Todoist account connection is needed.

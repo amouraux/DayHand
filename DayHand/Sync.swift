@@ -6,7 +6,8 @@ struct TaskImportRecord: Identifiable, Equatable {
     var id: String
     var listID: String
     var title: String
-    var notes = ""
+    /// Transient source context for the preview; never copied into TodoItem.
+    var omittedDetails = ""
     var dueDate: Date?
     var deadlineDate: Date?
     var createdAt: Date?
@@ -111,7 +112,6 @@ enum TaskImport {
             let bucket = options.bucket == .completed ? Bucket.inbox : options.bucket
             var card = TodoItem(title: record.title, bucket: record.isCompleted ? .completed : bucket,
                                 categoryID: categoryID, projectID: projectID)
-            card.notes = record.notes
             card.createdAt = record.createdAt ?? now
             card.modifiedAt = now
             if options.importDates, let date = record.dueDate {
@@ -250,18 +250,18 @@ enum TodoistCSV {
                 let comment = [raw("CONTENT"), raw("DESCRIPTION"), metadata(excluding: ["TYPE", "CONTENT", "DESCRIPTION"])]
                     .filter { !$0.isEmpty }.joined(separator: "\n")
                 if !comment.isEmpty {
-                    result.records[lastTask].notes += "\n\n" + String(localized: "Comment") + ":\n" + comment
+                    result.records[lastTask].omittedDetails += "\n\n" + String(localized: "Comment") + ":\n" + comment
                 }
             case "task":
                 lastTask = nil
                 let level = max(1, Int(field("INDENT")) ?? 1)
                 while let last = ancestors.last, last.level >= level { ancestors.removeLast() }
                 guard !field("CONTENT").isEmpty else { result.ignoredRows += 1; continue }
-                var notes = [raw("DESCRIPTION"), String(localized: "Source file") + ": " + name]
-                if !section.isEmpty { notes.append(String(localized: "Section") + ": " + section) }
-                if !sectionDescription.isEmpty { notes.append(sectionDescription) }
-                if !ancestors.isEmpty { notes.append(String(localized: "Parent task") + ": " + ancestors.map(\.title).joined(separator: " › ")) }
-                notes.append(metadata(excluding: ["TYPE", "CONTENT", "DESCRIPTION"]))
+                var details = [raw("DESCRIPTION"), String(localized: "Source file") + ": " + name]
+                if !section.isEmpty { details.append(String(localized: "Section") + ": " + section) }
+                if !sectionDescription.isEmpty { details.append(sectionDescription) }
+                if !ancestors.isEmpty { details.append(String(localized: "Parent task") + ": " + ancestors.map(\.title).joined(separator: " › ")) }
+                details.append(metadata(excluding: ["TYPE", "CONTENT", "DESCRIPTION"]))
                 let scheduled = date(field("DATE"), timeZone: field("TIMEZONE"), calendar: calendar)
                 // Deadlines are civil days, not instants in the task's time zone.
                 let deadline = date(field("DEADLINE"), calendar: calendar)
@@ -270,7 +270,7 @@ enum TodoistCSV {
                     result.unparsedDateIDs.insert(id)
                 }
                 result.records.append(TaskImportRecord(id: id, listID: fileID, title: raw("CONTENT"),
-                    notes: notes.filter { !$0.isEmpty }.joined(separator: "\n\n"), dueDate: scheduled, deadlineDate: deadline))
+                    omittedDetails: details.filter { !$0.isEmpty }.joined(separator: "\n\n"), dueDate: scheduled, deadlineDate: deadline))
                 ancestors.append((level, raw("CONTENT")))
                 lastTask = result.records.count - 1
             default:
@@ -1079,7 +1079,7 @@ enum CardCSV {
     /// does. An older export's `reminds` column is simply ignored: what it
     /// recorded no longer exists, and a reminder is silenced by clearing it.
     static let header = ["id", "title", "stack", "category", "deadline", "completed", "created",
-                         "project", "group", "remind", "notes"]
+                         "project", "group", "remind"]
 
     private static let dayFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -1166,8 +1166,7 @@ enum CardCSV {
                 stampFormatter.string(from: card.createdAt),
                 card.projectID.flatMap { names[$0] } ?? "",
                 card.projectID.flatMap { groups[$0] } ?? "",
-                card.remindAt.map { stampFormatter.string(from: $0) } ?? "",
-                card.notes
+                card.remindAt.map { stampFormatter.string(from: $0) } ?? ""
             ].map(escape).joined(separator: ","))
         }
         return rows.joined(separator: "\n") + "\n"
@@ -1222,8 +1221,6 @@ enum CardCSV {
         for row in rows {
             func field(_ name: String) -> String {
                 guard let index = columns[name], index < row.count else { return "" }
-                // Notes can contain intentional indentation and spacing.
-                if name == "notes" { return row[index] }
                 return row[index].trimmingCharacters(in: .whitespaces)
             }
 
@@ -1246,7 +1243,6 @@ enum CardCSV {
 
             var card = TodoItem(title: cardTitle)
             card.dateSemanticsVersion = legacyDate ? 0 : 1
-            card.notes = field("notes")
             if let id = UUID(uuidString: field("id")) { card.id = id }
             if !projectName.isEmpty {
                 result.projectNames[card.id] = projectName
@@ -1279,7 +1275,6 @@ enum CardCSV {
     /// Names accepted for each column, so a file written by hand or by another
     /// tool still lands in the right places.
     private static let synonyms: [String: Set<String>] = [
-        "notes":     ["notes", "note", "description"],
         "id":        ["id", "uuid", "identifier"],
         "title":     ["title", "name", "task", "card", "todo"],
         "stack":     ["stack", "bucket", "list", "status", "column"],

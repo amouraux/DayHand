@@ -773,8 +773,6 @@ enum ProjectConversion {
 struct TodoItem: Identifiable, Codable, Equatable {
     var id: UUID = UUID()
     var title: String
-    /// Kept separately from the title, including text carried in by an import.
-    var notes: String = ""
     /// Missing in old documents, whose lone date still needs migrating. An
     /// explicit modern deadline must survive reload without becoming a reminder.
     var dateSemanticsVersion = 1
@@ -823,7 +821,6 @@ struct TodoItem: Identifiable, Codable, Equatable {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         id = try c.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
         title = try c.decode(String.self, forKey: .title)
-        notes = try c.decodeIfPresent(String.self, forKey: .notes) ?? ""
         dateSemanticsVersion = try c.decodeIfPresent(Int.self, forKey: .dateSemanticsVersion) ?? 0
         bucket = try c.decodeIfPresent(Bucket.self, forKey: .bucket) ?? .inbox
         // A date written by a version that filed cards is read as a deadline

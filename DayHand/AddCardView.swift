@@ -704,7 +704,6 @@ struct CardActionsSheet: View {
     /// cancelled sheet leaves no project behind either.
     struct Draft: Equatable {
         var title = ""
-        var notes = ""
         var bucket: Bucket = .inbox
         var categoryID: UUID?
         var project: ProjectChoice = .none
@@ -839,12 +838,6 @@ struct CardActionsSheet: View {
                         }
                     }
 
-                    Section("Notes") {
-                        TextEditor(text: $draft.notes)
-                            .frame(minHeight: 100)
-                            .accessibilityLabel("Notes")
-                    }
-
                     Section {
                         Button {
                             // An explicit action, so the edit goes with it
@@ -943,7 +936,6 @@ struct CardActionsSheet: View {
     private func load(_ item: TodoItem) {
         let project = store.project(for: item)
         let start = Draft(title: item.title,
-                          notes: item.notes,
                           bucket: Self.effectiveBucket(item),
                           categoryID: item.categoryID,
                           project: project.map(ProjectChoice.existing) ?? .none,
@@ -965,7 +957,6 @@ struct CardActionsSheet: View {
         // Tab, and until then the first word is only the title's first word.
         let title = draft.title
         if title != item.title { store.rename(item, to: title) }
-        if draft.notes != item.notes { store.setNotes(item, to: draft.notes) }
 
         // The project first: setting one moves the card's category to the
         // project's, so the category has to be written after it to win.

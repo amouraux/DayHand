@@ -177,7 +177,7 @@ do {
     let p = Project(name: "ABC1234", categoryID: cat.id)
     var card = TodoItem(title: "slides, part 2", categoryID: cat.id); card.projectID = p.id
     let text = CardCSV.export(cards: [card], categories: [cat], projects: [p])
-    expect(text.hasPrefix("id,title,stack,category,deadline,completed,created,project,group,remind,notes\n"),
+    expect(text.hasPrefix("id,title,stack,category,deadline,completed,created,project,group,remind\n"),
            "the deadline keeps the old date column's place; new ones go last")
     let back = CardCSV.parse(text, categories: [cat])
     expect(back.cards.first?.title == "slides, part 2", "title round-trips")
@@ -249,7 +249,7 @@ do {
     let text = CardCSV.export(cards: [c1, c2, c3], categories: [cat], projects: [grant, loose])
     let lines = text.split(separator: "\n").map(String.init)
     // Every new column goes last, so an older export still reads by position.
-    expect(lines[0].hasSuffix(",project,group,remind,notes"),
+    expect(lines[0].hasSuffix(",project,group,remind"),
            "the newest columns are the last ones — got \(lines[0])")
     expect(lines[1].contains(",BETA,Grants,"), "a grouped project's cards carry its group")
     expect(lines[2].contains(",DELTA,,"), "no group: empty column")
@@ -1692,14 +1692,14 @@ do {
     let existing = Project(name: "HOUSE", categoryID: category.id)
     let doc = StoreDocument(categories: [category], cards: [original], projects: [existing])
     let record = TaskImportRecord(id: "r1", listID: "l1", title: "#Keep title literally",
-                                     notes: "  Notes, with a \"quote\"\nand a second line.  ",
+                                     omittedDetails: "  Notes, with a \"quote\"\nand a second line.  ",
                                      dueDate: due, createdAt: now.addingTimeInterval(-86400))
     var options = TaskImport.Options(destinations: ["l1": .init(projectID: existing.id)])
     let plan = try! TaskImport.plan(records: [record], options: options, document: doc, now: now, calendar: cal)
     let card = plan.document.cards.last!
     expect(plan.added == 1 && plan.document.cards.count == 2, "import adds without replacing existing tasks")
     expect(plan.document.cards.first == original && doc.cards == [original], "planning does not edit existing tasks or its input")
-    expect(card.title == record.title && card.notes == record.notes, "source titles and multiline notes are preserved literally")
+    expect(card.title == record.title && !record.omittedDetails.isEmpty, "source titles stay literal and unsupported details are available for preview")
     expect(card.projectID == existing.id && card.categoryID == category.id, "an explicit project brings its category")
     expect(card.bucket == .inbox, "import defaults to Inbox")
     expect(card.remindAt == Scheduler.reminderTime(on: due, calendar: cal) && card.deadline == nil,
@@ -1742,8 +1742,8 @@ do {
     expect(datedFinished.document.cards.last?.completedAt == completed.completedAt, "a known completion date survives")
     options.importDates = false
     let noDates = try! TaskImport.plan(records: [record], options: options, document: doc, now: now)
-    expect(noDates.document.cards.last?.remindAt == nil && noDates.document.cards.last?.notes == record.notes,
-           "dates can stay only in notes")
+    expect(noDates.document.cards.last?.remindAt == nil && noDates.document.cards.last?.title == record.title,
+           "turning dates off omits them without adding source details to the title")
     options.importDates = true
     var past = record; past.dueDate = now.addingTimeInterval(-86400)
     let pastPlan = try! TaskImport.plan(records: [past], options: options, document: doc, now: now)
@@ -1779,16 +1779,21 @@ do {
     } catch { expect(error is TaskImportFailure, "a stale category is rejected") }
     let roundTrip = try! DocumentCoding.makeDecoder().decode(StoreDocument.self,
         from: DocumentCoding.makeEncoder().encode(plan.document))
-    expect(roundTrip == plan.document, "import notes and identifiers survive document save/load")
+    expect(roundTrip == plan.document, "imported tasks and identifiers survive document save/load")
     let merged = deleted.merged(with: doc)
     expect(merged.importedReminderIDs == deleted.importedReminderIDs, "sync with an older document retains import history")
     var remote = doc; remote.importedReminderIDs.insert("apple-reminders:remote")
     expect(deleted.merged(with: remote).importedReminderIDs == ["apple-reminders:r1", "apple-reminders:remote"],
            "import history merges by union")
     let old = try! DocumentCoding.makeDecoder().decode(StoreDocument.self, from: Data("{\"cards\":[{\"title\":\"old\"}]}".utf8))
-    expect(old.cards.first?.notes == "" && old.importedReminderIDs.isEmpty, "old documents decode without notes or import history")
+    expect(old.cards.first?.title == "old" && old.importedReminderIDs.isEmpty, "old documents still decode without import history")
     let csv = CardCSV.export(cards: [card], categories: [category], projects: [existing])
-    expect(CardCSV.parse(csv, categories: [category]).cards.first?.notes == record.notes, "multiline quoted notes survive CSV export/import")
+    expect(CardCSV.header.count == 10 && CardCSV.header.last == "remind" && !csv.contains(record.omittedDetails),
+           "CSV keeps the original ten-column schema and never exports unsupported source details")
+    let encoded = try! JSONSerialization.jsonObject(with: DocumentCoding.makeEncoder().encode(plan.document)) as! [String: Any]
+    let saved = (encoded["cards"] as! [[String: Any]]).last!
+    expect(saved["notes"] == nil && saved["omittedDetails"] == nil,
+           "imported tasks contain no persistent Notes or preview-details fields")
     var losAngeles = Calendar(identifier: .gregorian)
     losAngeles.timeZone = TimeZone(identifier: "America/Los_Angeles")!
     let allDay = DateComponents(year: 2026, month: 10, day: 25)
@@ -1814,9 +1819,9 @@ do {
     let file = try! TodoistCSV.parse(fixture, fileID: "official", name: "Example.csv", calendar: cal)
     expect(file.records.count == 4 && file.ignoredRows == 0, "Todoist's official CSV template yields four tasks without importing metadata as tasks")
     expect(file.unparsedDateIDs.count == 3, "relative and recurring expressions in the official template need review")
-    expect(file.records[0].notes.contains("Only available on Tuesdays and Thursdays"), "comment rows attach to the preceding task")
+    expect(file.records[0].omittedDetails.contains("Only available on Tuesdays and Thursdays"), "comment rows attach to the preceding task")
     expect(file.records[1].deadlineDate != nil && file.records[1].dueDate == nil, "the official template has a real deadline without a reminder")
-    expect(file.records[2].notes.contains("Parent task: **Household chores**:"), "subtask parent context is retained in Notes")
+    expect(file.records[2].omittedDetails.contains("Parent task: **Household chores**:"), "subtask parent context is available in the preview only")
     let options = TaskImport.Options(destinations: [file.id: TaskImportDestination()], bucket: .later)
     let baseline = StoreDocument(cards: [TodoItem(title: "Existing")])
     let safe = try! TodoistCSV.plan(files: [file], options: options, includeUnparsedDates: false,
@@ -1835,7 +1840,11 @@ do {
                                   document: baseline, now: now, calendar: cal)
     expect(all.added == 4 && all.document.cards.filter { $0.remindAt != nil }.isEmpty,
            "opting in imports unsupported date expressions once without inventing schedules")
-    expect(all.document.cards.contains { $0.notes.contains("every Friday") }, "recurring source text is preserved literally")
+    expect(file.records.contains { $0.omittedDetails.contains("every Friday") }, "recurring source text is available for preview")
+    let savedText = String(data: try! DocumentCoding.makeEncoder().encode(all.document), encoding: .utf8)!
+    let savedCSV = CardCSV.export(cards: all.document.cards, categories: [])
+    expect(!savedText.contains("every Friday") && !savedText.contains("Only available on Tuesdays") && !savedCSV.contains("Only available on Tuesdays"),
+           "unsupported Todoist dates and comments are never persisted in JSON or exported CSV")
     let repeatPlan = try! TodoistCSV.plan(files: [file], options: options, includeUnparsedDates: true,
                                          document: all.document, now: now, calendar: cal)
     expect(repeatPlan.added == 0 && repeatPlan.duplicates == 4, "unchanged files do not import their tasks twice")
@@ -1853,7 +1862,7 @@ do {
     let without = try! TodoistCSV.plan(files: [file], options: noDates, includeUnparsedDates: true,
                                       document: baseline, now: now, calendar: cal)
     expect(without.document.cards.allSatisfy { $0.remindAt == nil && $0.deadline == nil },
-           "turning dates off omits both reminders and deadlines while retaining source text")
+           "turning dates off omits both reminders and deadlines")
     var excluded = options; excluded.excludedIDs.insert(file.records[1].id)
     let subset = try! TodoistCSV.plan(files: [file], options: excluded, includeUnparsedDates: true,
                                      document: baseline, now: now, calendar: cal)
@@ -1864,7 +1873,7 @@ do {
     expect(unselected.document == baseline, "unselected files change nothing")
     let quoted = "\u{FEFF}DESCRIPTION,CONTENT,TYPE,INDENT,DATE,DEADLINE,TIMEZONE\r\n\"Line one\nLine two, \"\"quoted\"\"\",@keep label,task,1,2026-10-26 10:30,2026-10-29,Europe/Brussels\r\n"
     let parsed = try! TodoistCSV.parse(quoted, fileID: "quoted", name: "Quoted.csv", calendar: cal)
-    expect(parsed.records.count == 1 && parsed.records[0].notes.contains("Line two, \"quoted\""),
+    expect(parsed.records.count == 1 && parsed.records[0].omittedDetails.contains("Line two, \"quoted\""),
            "BOM, reordered headers, CRLF, multiline fields, commas and escaped quotes parse correctly")
     expect(parsed.records[0].title == "@keep label", "labels and original titles are not stripped or reinterpreted")
     expect(parsed.unparsedDateIDs.isEmpty && parsed.records[0].dueDate != nil && parsed.records[0].deadlineDate != nil,
@@ -1878,13 +1887,13 @@ do {
            "a recognised deadline retains its civil day")
     let hierarchy = "TYPE,CONTENT,INDENT,DESCRIPTION\ntask,Root,1,\ntask,Child,2,\ntask,Grandchild,3,\nnote,First comment,,\ntask,Sibling,2,\nsection,New section,,Section description\nnote,Orphan comment,,\ntask,Next root,1,\nunknown,Unsupported,,\nnote,Another orphan,,\n"
     let tree = try! TodoistCSV.parse(hierarchy, fileID: "tree", name: "Tree.csv")
-    expect(tree.records[2].notes.contains("Root › Child") && tree.records[2].notes.contains("First comment"),
+    expect(tree.records[2].omittedDetails.contains("Root › Child") && tree.records[2].omittedDetails.contains("First comment"),
            "nested parents and comments follow CSV order")
-    expect(tree.records[3].notes.contains("Parent task: Root") && !tree.records[3].notes.contains("Root › Child"),
+    expect(tree.records[3].omittedDetails.contains("Parent task: Root") && !tree.records[3].omittedDetails.contains("Root › Child"),
            "a sibling is attached to the correct parent")
-    expect(tree.records[4].notes.contains("Section: New section") && tree.records[4].notes.contains("Section description"),
+    expect(tree.records[4].omittedDetails.contains("Section: New section") && tree.records[4].omittedDetails.contains("Section description"),
            "section context and its description are preserved")
-    expect(!tree.records[4].notes.contains("Parent task:") && !tree.records[4].notes.contains("Orphan"),
+    expect(!tree.records[4].omittedDetails.contains("Parent task:") && !tree.records[4].omittedDetails.contains("Orphan"),
            "section boundaries reset hierarchy and orphan comments never attach to another task")
     expect(tree.ignoredRows == 3, "unsupported and orphan note rows are counted explicitly")
     let badDates = try! TodoistCSV.parse("TYPE,CONTENT,DATE,DEADLINE,TIMEZONE\ntask,Impossible,2026-02-30,,\ntask,French,demain,,\ntask,Bad zone,2026-10-26,,Invalid/Zone\n", fileID: "bad", name: "Dates.csv")

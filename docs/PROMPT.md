@@ -1610,8 +1610,9 @@ Subtask relationships, tags, attachments and smart-list rules are not preserved.
 
 Due dates optionally become DayHand reminders at 9 a.m. on the corresponding
 local day. They never become deadlines or move tasks between stacks. Original
-due/start dates and times, notes, links, locations and priority values are kept
-in the task's Notes. Original alerts are not transferred. Past reminders arrive
+due/start dates and times, notes, links, locations and priority values are shown
+only in the import preview and are not saved. The preview explicitly warns
+which details are not retained. Original alerts are not transferred. Past reminders arrive
 answered; their dates can still make them appear in Attention. Future reminders
 may notify in both apps because Apple Reminders is left unchanged. All these
 limits are shown before import.
@@ -1630,12 +1631,14 @@ may change after account resets or source reorganisation: importing from
 another device or after such changes can produce duplicates. There is no
 heuristic merging by task title.
 
-Tasks now carry an optional-on-disk `notes` string, defaulting to empty for
-older documents. It is editable in the task editor with Done/Cancel semantics,
-and round-trips through a new final `notes` CSV column. Existing CSV column
-positions and old JSON decoding remain compatible. Devices running older
-builds do not understand these new fields; update all devices before relying
-on Notes or import history across sync.
+Tasks remain title-only: there is no Notes property, editor section or CSV
+column. Source details are transient `omittedDetails` on the import snapshot,
+shown in a disclosure group outside the task-selection toggle, and never
+copied into `TodoItem`, JSON or exported CSV. The CSV remains the original ten
+columns. Neither the task title nor the card layout is extended to hold source
+details. Older prototype files carrying a `notes` key still decode, but the
+unsupported field is not retained on save. Import history is the only new
+persistence needed by this importer; update devices before relying on it.
 
 Model tests cover mapping, idempotency, deletion history, new-project conflicts,
 completion, date-only/time-zone/DST handling, and JSON/CSV compatibility without
@@ -1666,24 +1669,29 @@ extra fields are rejected before import. UTF-8 and a 20 MB per-file limit are
 checked by the file reader off the main actor. A failed file load does not
 partially replace the current selection.
 
-Task titles and labels remain literal. Descriptions and comment rows are kept
-in Notes, with comments attached to the preceding task. Sections, section
-descriptions, parent-task paths, assignees, priorities, original date strings,
-date languages, time zones, durations and other nonempty exported fields are
-retained as text. Subtasks become independent tasks with their parent context
-in Notes. Orphan comments and unsupported row types are counted as ignored CSV
-rows in the preview. Metadata describing view layout is not imported as a task.
-Attachment links present in text are retained; files are not downloaded.
+Task titles, including label text already in them, remain literal. Only titles,
+chosen organisation and supported dates are imported. Descriptions, comments,
+sections, section descriptions, parent-task paths, assignees, priorities,
+original date strings, date languages, time zones, durations and other source
+details are transient `omittedDetails` in the import snapshot. They can be read
+in disclosure groups outside the selection toggles and are explicitly marked
+as preview-only. None are copied into task titles, JSON, sync, backups or CSV.
+The existing task editor and card layouts gain no Notes or comments feature.
+Subtasks become independent tasks; section and parent relationships are not
+recreated. Orphan comments and unsupported row types are counted as ignored CSV
+rows. Attachment links are available only as source text in the preview;
+attachments are not downloaded.
 
 Only unambiguous absolute dates are parsed: ISO civil days, ISO timestamps with
 offsets, and year-month-day times with the exported time zone. Localized,
 relative, recurring, invalid or otherwise unrecognised date expressions are
 never guessed. Affected tasks are excluded until the user explicitly enables
 “Include tasks with unrecognised dates”. Then they are imported once with
-unrecognised dates kept only in Notes; recurring schedules are never recreated.
+unrecognised dates omitted; recurring schedules are never recreated. The UI
+explicitly warns that these dates will not be saved.
 Recognised task dates become reminders at 9 a.m. on the local day. Recognised
 deadlines remain deadlines, including when there is no reminder. “Import dates”
-can be turned off to keep all dates only in Notes. Dates never move tasks.
+can be turned off to omit all dates. Dates never move tasks.
 Todoist project CSVs do not include completed tasks; the importer says so.
 
 The preview shows mappings, tasks, exclusions, counts, ignored rows and date
@@ -1709,7 +1717,7 @@ version 1. It never stamps `modifiedAt`. Explicit modern standalone deadlines
 therefore survive reload, sync and clearing a reminder. DayHand CSV headers
 naming `deadline` are modern; old `due` headers and headerless legacy files keep
 the legacy migration. Update all devices before relying on the new marker,
-Notes or either import history across sync: older builds ignore these fields.
+or either import history across sync: older builds ignore these fields.
 
 ### Verification and remaining runtime checks
 
@@ -1723,6 +1731,7 @@ Tests/Fixtures/README.md.
 Simulator runtime access remains unavailable in this session. Before release,
 use dummy exports to check the file picker on iPhone/iPad, cancellation,
 UTF-8/error messages, multiple files, all project/category mappings, preview
-exclusions, the date-review opt-in, import, the backup, reload, notes editing,
+exclusions, the date-review opt-in, preview-only source details, import, the
+backup, reload,
 repeat import after editing/deleting a task, and the Mac layout. Do not launch
 the installed Mac app or use its real data to perform these checks.
