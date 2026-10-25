@@ -1596,5 +1596,87 @@ do {
            "but to different days")
 }
 
+// MARK: — reading a stamp without a formatter
+do {
+    // The fast path must agree with Foundation exactly, or not answer at all.
+    let precise: ISO8601DateFormatter = {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return f
+    }()
+    let whole: ISO8601DateFormatter = {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime]
+        return f
+    }()
+    func foundation(_ text: String) -> Date? { precise.date(from: text) ?? whole.date(from: text) }
+
+    // Every month against every day 1...31, across a leap year and a century
+    // that is not one, with and without the fractional part. This is where
+    // 30 February is settled: Foundation rolls it into March rather than
+    // refusing it, so the arithmetic has to roll it the same way.
+    var compared = 0, disagreed = 0, declined = 0
+    for year in [1583, 1600, 1970, 1999, 2000, 2024, 2026, 2100] {
+        for month in 1...12 {
+            for day in 1...31 {
+                for suffix in [".123Z", "Z", ".000Z", ".999Z"] {
+                    let text = String(format: "%04d-%02d-%02dT13:45:07", year, month, day) + suffix
+                    compared += 1
+                    guard let fast = DocumentCoding.stamp(from: text) else { declined += 1; continue }
+                    if fast != foundation(text) { disagreed += 1 }
+                }
+            }
+        }
+    }
+    expect(compared > 8_000, "the sweep is wide enough to mean something")
+    expect(declined == 0, "every well-formed stamp is answered by the fast path")
+    expect(disagreed == 0, "and answered with exactly what Foundation would have said")
+
+    // Midnight, the last second of a day, and the epoch itself.
+    for text in ["1970-01-01T00:00:00.000Z", "2026-12-31T23:59:59.999Z", "2024-02-29T00:00:00.000Z"] {
+        expect(DocumentCoding.stamp(from: text) == foundation(text), "boundary stamp \(text)")
+    }
+
+    // Anything else is handed back for the formatters to answer, not guessed at.
+    for text in ["2026-09-26T09:15:00.123+02:00",   // an offset rather than Z
+                 "2026-13-01T09:15:00.123Z",        // month 13
+                 "2026-09-26T25:15:00.123Z",        // hour 25
+                 "2026-09-26T09:60:00.123Z",        // minute 60
+                 "2026-09-26T09:15:60.123Z",        // second 60
+                 "2026-09-00T09:15:00.123Z",        // day 0
+                 "2026-09-26T09:15:00.1234Z",       // too many digits
+                 "2026-09-26T09:15:00.12Z",         // too few
+                 "2026-09-26 09:15:00.123Z",        // a space for the T
+                 "2026-09-26T09:15:00.123z",        // lower case
+                 "0001-01-01T00:00:00.000Z",        // before the Gregorian reform
+                 "1582-10-04T00:00:00.000Z",        // the day before it
+                 "202X-09-26T09:15:00.123Z",        // not a number
+                 "", "Z", "not a date at all"] {
+        expect(DocumentCoding.stamp(from: text) == nil, "declines \(text.isEmpty ? "an empty string" : text)")
+    }
+
+    // `.distantPast` stamps every seeded row, and the encoder writes it as
+    // 0001-01-01. Foundation reads that back through the Julian cutover, two
+    // days from where proleptic arithmetic would put it, so the fast path has
+    // to stand aside and let it — or a merge would stop seeing seeded data as
+    // older than every real edit.
+    expect(DocumentCoding.stamp(from: "0001-01-01T00:00:00.000Z") == nil,
+           "the fast path declines a pre-Gregorian date rather than disagreeing about it")
+    let seeded = StoreDocument(cards: [], projects: [])
+    let seededBack = try! DocumentCoding.makeDecoder()
+        .decode(StoreDocument.self, from: DocumentCoding.makeEncoder().encode(seeded))
+    expect(seededBack.defaultCategoryChangedAt == seeded.defaultCategoryChangedAt,
+           "so .distantPast still survives save and load exactly")
+
+    // What matters in the end: a document still survives save and load.
+    var card = TodoItem(title: "round trip")
+    card.completedAt = Date(timeIntervalSince1970: 1_767_000_000.123)
+    card.remindAt = Date(timeIntervalSince1970: 1_767_086_400)
+    let doc = StoreDocument(cards: [card])
+    let coded = try! DocumentCoding.makeDecoder()
+        .decode(StoreDocument.self, from: DocumentCoding.makeEncoder().encode(doc))
+    expect(coded == doc, "a document still survives save and load through the fast path")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

@@ -28,10 +28,86 @@ enum DocumentCoding {
         return encoder
     }
 
+    /// Reads the one stamp shape this app writes, without a formatter.
+    ///
+    /// `ISO8601DateFormatter.date(from:)` costs about 70µs a call, and a task
+    /// carries up to five dates, so at ten thousand tasks parsing them was
+    /// around 1.75s of a 1.9s load — and that load is not only the launch: a
+    /// write from another device decodes the whole file again, on the main
+    /// thread. Reading the bytes at fixed offsets instead is some forty times
+    /// faster and turns the whole question of file size back into a
+    /// non-question for years.
+    ///
+    /// It is a fast path, never the only one. Anything that is not exactly
+    /// `2026-09-26T09:15:00.123Z` or `2026-09-26T09:15:00Z` — an offset
+    /// instead of Z, a different width, a month of 13 — returns nil and the
+    /// formatters answer it as before.
+    ///
+    /// The day of the month is deliberately **not** checked. Foundation reads
+    /// 30 February as 2 March rather than refusing it, and this has to agree
+    /// with Foundation rather than be stricter than it: the arithmetic below
+    /// rolls over the same way. `Tests/main.swift` compares the two across
+    /// every month and every day from 1 to 31 for exactly this reason.
+    static func stamp(from text: String) -> Date? {
+        var u = [UInt8](); u.reserveCapacity(24)
+        for b in text.utf8 { u.append(b); if u.count > 24 { return nil } }
+        guard u.count == 20 || u.count == 24,
+              u[4] == 45, u[7] == 45, u[10] == 84, u[13] == 58, u[16] == 58,
+              u[u.count - 1] == 90
+        else { return nil }
+        if u.count == 24 && u[19] != 46 { return nil }
+
+        func number(_ from: Int, _ to: Int) -> Int? {
+            var value = 0
+            for i in from..<to {
+                let digit = Int(u[i]) &- 48
+                guard digit >= 0, digit <= 9 else { return nil }
+                value = value * 10 + digit
+            }
+            return value
+        }
+        guard let year = number(0, 4), let month = number(5, 7), let day = number(8, 10),
+              let hour = number(11, 13), let minute = number(14, 16), let second = number(17, 19),
+              // Only after the Gregorian reform. Foundation reads an older
+              // date through the Julian cutover, so `0001-01-01` comes back
+              // two days from where the arithmetic below would put it — and
+              // that is not a curiosity, because `.distantPast` is what every
+              // seeded row is stamped with and the encoder writes it as
+              // exactly that. Before 1583 the formatter answers, as it always
+              // did; nothing a user can enter lands there.
+              year >= 1583,
+              (1...12).contains(month), (1...31).contains(day),
+              hour <= 23, minute <= 59, second <= 59
+        else { return nil }
+        var milli = 0
+        if u.count == 24 {
+            guard let value = number(20, 23) else { return nil }
+            milli = value
+        }
+
+        // Days from civil (Howard Hinnant): no calendar, no table, and it
+        // carries February and the leap rules by construction.
+        let shifted = year - (month <= 2 ? 1 : 0)
+        let era = (shifted >= 0 ? shifted : shifted - 399) / 400
+        let yearOfEra = shifted - era * 400
+        let dayOfYear = (153 * (month + (month > 2 ? -3 : 9)) + 2) / 5 + day - 1
+        let dayOfEra = yearOfEra * 365 + yearOfEra / 4 - yearOfEra / 100 + dayOfYear
+        let days = era * 146_097 + dayOfEra - 719_468
+
+        // Whole milliseconds, divided once — the same arithmetic as
+        // `Date.stamp()`, which is what wrote the file. Adding
+        // `milli / 1000` to a seconds-sized Double instead lands a bit away
+        // from it often enough to break a save-and-load round trip, which is
+        // how this was caught.
+        let milliseconds = (days * 86_400 + hour * 3_600 + minute * 60 + second) * 1_000 + milli
+        return Date(timeIntervalSince1970: Double(milliseconds) / 1000)
+    }
+
     static func makeDecoder() -> JSONDecoder {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom { decoder in
             let text = try decoder.singleValueContainer().decode(String.self)
+            if let date = stamp(from: text) { return date }
             // Files written before this change have no fractional part.
             if let date = precise.date(from: text) ?? whole.date(from: text) {
                 return date
