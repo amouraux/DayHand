@@ -773,6 +773,8 @@ enum ProjectConversion {
 struct TodoItem: Identifiable, Codable, Equatable {
     var id: UUID = UUID()
     var title: String
+    /// Kept separately from the title, including text carried in by an import.
+    var notes: String = ""
     var bucket: Bucket = .inbox
     /// Optional category, independent of `bucket` and `dueDate`. Holds the id
     /// of a `CardCategory` the user has defined.
@@ -819,6 +821,7 @@ struct TodoItem: Identifiable, Codable, Equatable {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         id = try c.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
         title = try c.decode(String.self, forKey: .title)
+        notes = try c.decodeIfPresent(String.self, forKey: .notes) ?? ""
         bucket = try c.decodeIfPresent(Bucket.self, forKey: .bucket) ?? .inbox
         // A date written by a version that filed cards is read as a deadline
         // here and promoted to a reminder by

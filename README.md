@@ -169,6 +169,7 @@ Tests/run.sh path/to/cards.json
 | `DayHand/ReminderScheduler.swift` | The only place that talks to the notification centre. |
 | `DayHand/ReviewView.swift` | What you finished in a week, grouped by day. |
 | `DayHand/SettingsView.swift` | Categories, sync, CSV, backups. |
+| `DayHand/RemindersImportView.swift` | EventKit read-only adapter and the Apple Reminders import flow. |
 | `docs/PROMPT.md` | The full specification: enough to rebuild the app from nothing. |
 
 ## Where the data lives
@@ -189,4 +190,14 @@ device wrote it: three taken automatically — yesterday, the day before, and on
 from about a week ago — plus any you take by hand, under their date. All of them
 can be restored or shared from Settings.
 
-**CSV** import and export cover tasks, categories, projects and groups.
+**CSV** import and export cover tasks, categories, projects, groups and notes.
+
+**Apple Reminders** can be copied once from More → Tasks. Choose lists,
+their categories or projects, and a destination stack, then review the tasks
+before importing. Due dates can become reminders at 9 a.m.; original details
+remain in editable Notes. A backup is saved first. Apple Reminders is never
+modified and there is no continuous sync. Recurring reminders are skipped;
+subtask relationships, tags, attachments and smart-list rules are not preserved.
+Repeat-import protection uses device-local identifiers, so importing on another
+device or after an account reset can create duplicates. Update all DayHand
+devices before relying on Notes and import history across sync.

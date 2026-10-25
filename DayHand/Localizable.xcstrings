@@ -5131,46 +5131,6 @@
         }
       }
     },
-    "Importing can either add to what is here or replace it. Tasks are matched by id; categories and projects by name.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Der Import kann ergänzen oder ersetzen. Aufgaben werden per ID erkannt, Kategorien und Projekte per Name."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "La importación puede añadir a lo que hay o reemplazarlo. Las tareas se reconocen por identificador; las categorías y los proyectos por nombre."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "L’import peut compléter ce qui est ici ou le remplacer. Les tâches sont reconnues par identifiant ; les catégories et les projets par nom."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "L’importazione può aggiungersi a ciò che c’è o sostituirlo. Le attività sono riconosciute dall’identificativo; categorie e progetti dal nome."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Importeren kan aanvullen of vervangen. Taken worden op id herkend; categorieën en projecten op naam."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "A importação pode juntar-se ao que existe ou substituí-lo. As tarefas são reconhecidas pelo id; categorias e projetos pelo nome."
-          }
-        }
-      }
-    },
     "Inbox": {
       "comment": "Stack name",
       "localizations": {
@@ -11107,6 +11067,1846 @@
           "stringUnit": {
             "state": "translated",
             "value": "estava em %@"
+          }
+        }
+      }
+    },
+    "Notes": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notes"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notes"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notities"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notizen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notas"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Note"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notas"
+          }
+        }
+      }
+    },
+    "Back": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retour"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terug"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zurück"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atrás"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Indietro"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voltar"
+          }
+        }
+      }
+    },
+    "Try again": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try again"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réessayer"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opnieuw proberen"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erneut versuchen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volver a intentar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Riprova"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tentar novamente"
+          }
+        }
+      }
+    },
+    "Import": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importer"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importeren"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importieren"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importa"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importar"
+          }
+        }
+      }
+    },
+    "Import complete": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import complete"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import terminé"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import voltooid"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import abgeschlossen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importación completada"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importazione completata"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importação concluída"
+          }
+        }
+      }
+    },
+    "Import from Apple Reminders": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import from Apple Reminders"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importer depuis Rappels d’Apple"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importeren uit Apple Herinneringen"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus Apple Erinnerungen importieren"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importar desde Recordatorios de Apple"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importa da Promemoria Apple"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importar dos Lembretes da Apple"
+          }
+        }
+      }
+    },
+    "Import from Apple Reminders…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import from Apple Reminders…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importer depuis Rappels d’Apple…"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importeren uit Apple Herinneringen…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus Apple Erinnerungen importieren…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importar desde Recordatorios de Apple…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importa da Promemoria Apple…"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importar dos Lembretes da Apple…"
+          }
+        }
+      }
+    },
+    "Review import": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Review import"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifier l’import"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import controleren"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import prüfen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revisar importación"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rivedi importazione"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rever importação"
+          }
+        }
+      }
+    },
+    "Choose lists…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose lists…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisir des listes…"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lijsten kiezen…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listen auswählen…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elegir listas…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scegli elenchi…"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolher listas…"
+          }
+        }
+      }
+    },
+    "Already imported": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Already imported"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déjà importé"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Al geïmporteerd"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bereits importiert"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ya importado"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Già importato"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Já importado"
+          }
+        }
+      }
+    },
+    "Include completed tasks": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Include completed tasks"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inclure les tâches terminées"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voltooide taken opnemen"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erledigte Aufgaben einschließen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Incluir tareas completadas"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Includi attività completate"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Incluir tarefas concluídas"
+          }
+        }
+      }
+    },
+    "Use due dates as reminders": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use due dates as reminders"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Utiliser les échéances comme rappels"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vervaldatums als herinneringen gebruiken"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fälligkeitstage als Erinnerungen verwenden"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usar fechas de vencimiento como recordatorios"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usa le scadenze come promemoria"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usar datas de vencimento como lembretes"
+          }
+        }
+      }
+    },
+    "Location": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Location"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lieu"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locatie"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ort"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ubicación"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Luogo"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Localização"
+          }
+        }
+      }
+    },
+    "Source list": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Source list"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Liste d’origine"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bronlijst"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ursprungsliste"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lista de origen"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elenco di origine"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lista de origem"
+          }
+        }
+      }
+    },
+    "Original due date": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Original due date"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Échéance d’origine"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oorspronkelijke vervaldatum"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ursprüngliches Fälligkeitsdatum"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fecha de vencimiento original"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scadenza originale"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data de vencimento original"
+          }
+        }
+      }
+    },
+    "Original start date": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Original start date"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date de début d’origine"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oorspronkelijke begindatum"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ursprüngliches Startdatum"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fecha de inicio original"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data di inizio originale"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data de início original"
+          }
+        }
+      }
+    },
+    "Original priority": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Original priority"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Priorité d’origine"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oorspronkelijke prioriteit"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ursprüngliche Priorität"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prioridad original"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Priorità originale"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prioridade original"
+          }
+        }
+      }
+    },
+    "Original alerts are not transferred.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Original alerts are not transferred."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les alertes d’origine ne sont pas transférées."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oorspronkelijke meldingen worden niet overgezet."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ursprüngliche Hinweise werden nicht übertragen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las alertas originales no se transfieren."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gli avvisi originali non vengono trasferiti."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os alertas originais não são transferidos."
+          }
+        }
+      }
+    },
+    "Preview": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preview"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aperçu"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voorbeeld"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vorschau"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vista previa"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anteprima"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pré-visualização"
+          }
+        }
+      }
+    },
+    "Project name": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Project name"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom du projet"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Projectnaam"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Projektname"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nombre del proyecto"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nome del progetto"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nome do projeto"
+          }
+        }
+      }
+    },
+    "Reading reminders…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reading reminders…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lecture des rappels…"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Herinneringen lezen…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erinnerungen werden gelesen…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leyendo recordatorios…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lettura dei promemoria…"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A ler lembretes…"
+          }
+        }
+      }
+    },
+    "Skipped": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skipped"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignorés"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overgeslagen"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übersprungen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Omitidas"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignorate"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignoradas"
+          }
+        }
+      }
+    },
+    "Tasks to add": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tasks to add"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tâches à ajouter"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toe te voegen taken"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hinzuzufügende Aufgaben"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tareas que añadir"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attività da aggiungere"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tarefas a adicionar"
+          }
+        }
+      }
+    },
+    "New projects": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New projects"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouveaux projets"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nieuwe projecten"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue Projekte"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proyectos nuevos"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nuovi progetti"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Novos projetos"
+          }
+        }
+      }
+    },
+    "Open Settings": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Settings"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir les réglages"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instellingen openen"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einstellungen öffnen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir ajustes"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apri Impostazioni"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir Definições"
+          }
+        }
+      }
+    },
+    "No Reminders lists are available on this device.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Reminders lists are available on this device."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune liste Rappels n’est disponible sur cet appareil."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Er zijn geen Herinneringen-lijsten beschikbaar op dit apparaat."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf diesem Gerät sind keine Erinnerungslisten verfügbar."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay listas de Recordatorios disponibles en este dispositivo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non sono disponibili elenchi di Promemoria su questo dispositivo."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não há listas de Lembretes disponíveis neste dispositivo."
+          }
+        }
+      }
+    },
+    "Allow Reminders access in system settings, then try again.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow Reminders access in system settings, then try again."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autorisez l’accès aux rappels dans les réglages système, puis réessayez."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sta toegang tot Herinneringen toe in de systeeminstellingen en probeer het opnieuw."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erlaube den Zugriff auf Erinnerungen in den Systemeinstellungen und versuche es erneut."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permite el acceso a Recordatorios en los ajustes del sistema y vuelve a intentarlo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Consenti l’accesso ai promemoria nelle impostazioni di sistema, poi riprova."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permita o acesso aos Lembretes nas definições do sistema e tente novamente."
+          }
+        }
+      }
+    },
+    "Reminders could not be read. Please try again.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reminders could not be read. Please try again."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les rappels n’ont pas pu être lus. Réessayez."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De herinneringen konden niet worden gelezen. Probeer het opnieuw."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Erinnerungen konnten nicht gelesen werden. Versuche es erneut."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudieron leer los recordatorios. Vuelve a intentarlo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossibile leggere i promemoria. Riprova."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível ler os lembretes. Tente novamente."
+          }
+        }
+      }
+    },
+    "This is a one-time copy. Later changes in either app are independent.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This is a one-time copy. Later changes in either app are independent."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il s’agit d’une copie unique. Les modifications ultérieures dans chaque app sont indépendantes."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dit is een eenmalige kopie. Latere wijzigingen in beide apps staan los van elkaar."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dies ist eine einmalige Kopie. Spätere Änderungen in den beiden Apps sind unabhängig voneinander."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es una copia única. Los cambios posteriores en cada app son independientes."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "È una copia unica. Le modifiche successive nelle due app sono indipendenti."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta é uma cópia única. As alterações posteriores em cada app são independentes."
+          }
+        }
+      }
+    },
+    "An import destination changed. Go back and choose it again.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "An import destination changed. Go back and choose it again."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une destination d’import a changé. Revenez en arrière et choisissez-la à nouveau."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Een importbestemming is gewijzigd. Ga terug en kies deze opnieuw."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Importziel wurde geändert. Gehe zurück und wähle es erneut aus."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ha cambiado un destino de importación. Vuelve atrás y elígelo de nuevo."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Una destinazione di importazione è cambiata. Torna indietro e sceglila di nuovo."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um destino de importação foi alterado. Volte atrás e escolha-o novamente."
+          }
+        }
+      }
+    },
+    "A project with that name already exists. Choose it explicitly or use another name.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A project with that name already exists. Choose it explicitly or use another name."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un projet porte déjà ce nom. Sélectionnez-le explicitement ou utilisez un autre nom."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Er bestaat al een project met die naam. Kies het expliciet of gebruik een andere naam."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Projekt mit diesem Namen existiert bereits. Wähle es ausdrücklich aus oder verwende einen anderen Namen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ya existe un proyecto con ese nombre. Selecciónalo expresamente o usa otro nombre."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esiste già un progetto con questo nome. Selezionalo esplicitamente o usa un altro nome."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Já existe um projeto com esse nome. Selecione-o explicitamente ou use outro nome."
+          }
+        }
+      }
+    },
+    "A backup could not be saved. Nothing was imported.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A backup could not be saved. Nothing was imported."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La sauvegarde n’a pas pu être enregistrée. Rien n’a été importé."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Er kon geen reservekopie worden opgeslagen. Er is niets geïmporteerd."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es konnte kein Backup gespeichert werden. Es wurde nichts importiert."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo guardar una copia de seguridad. No se importó nada."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossibile salvare un backup. Nessuna attività è stata importata."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível guardar uma cópia de segurança. Nada foi importado."
+          }
+        }
+      }
+    },
+    "The imported tasks could not be saved. Nothing was imported.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The imported tasks could not be saved. Nothing was imported."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les tâches importées n’ont pas pu être enregistrées. Rien n’a été importé."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De geïmporteerde taken konden niet worden opgeslagen. Er is niets geïmporteerd."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die importierten Aufgaben konnten nicht gespeichert werden. Es wurde nichts importiert."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudieron guardar las tareas importadas. No se importó nada."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossibile salvare le attività importate. Nessuna attività è stata importata."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível guardar as tarefas importadas. Nada foi importado."
+          }
+        }
+      }
+    },
+    "Choose which lists to copy into DayHand. Apple requires full Reminders access to read them. DayHand only reads your reminders and never changes them.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose which lists to copy into DayHand. Apple requires full Reminders access to read them. DayHand only reads your reminders and never changes them."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez les listes à copier dans DayHand. Apple exige un accès complet aux rappels pour les lire. DayHand les lit uniquement et ne les modifie jamais."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kies welke lijsten je naar DayHand wilt kopiëren. Apple vereist volledige toegang om herinneringen te lezen. DayHand leest je herinneringen alleen en wijzigt ze nooit."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle die Listen aus, die du nach DayHand kopieren möchtest. Apple verlangt zum Lesen vollen Zugriff auf Erinnerungen. DayHand liest sie nur und ändert sie niemals."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elige las listas que quieres copiar a DayHand. Apple exige acceso completo a Recordatorios para leerlas. DayHand solo lee tus recordatorios y nunca los modifica."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scegli gli elenchi da copiare in DayHand. Apple richiede l’accesso completo ai promemoria per leggerli. DayHand li legge soltanto e non li modifica mai."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolha as listas a copiar para o DayHand. A Apple exige acesso total aos Lembretes para os ler. O DayHand apenas lê os seus lembretes e nunca os altera."
+          }
+        }
+      }
+    },
+    "Due dates become reminders at 9 a.m. on that day, not deadlines. Original dates and times stay in Notes even when this is off. Dates never move tasks between stacks.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Due dates become reminders at 9 a.m. on that day, not deadlines. Original dates and times stay in Notes even when this is off. Dates never move tasks between stacks."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les échéances deviennent des rappels à 9 h ce jour-là, et non des dates limites. Les dates et heures d’origine restent dans Notes même si cette option est désactivée. Les dates ne déplacent jamais les tâches entre piles."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vervaldatums worden herinneringen om 9 uur die dag, geen deadlines. Oorspronkelijke datums en tijden blijven in Notities staan, ook als deze optie uitstaat. Datums verplaatsen taken nooit tussen stapels."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fälligkeitstage werden zu Erinnerungen um 9 Uhr an diesem Tag, nicht zu Fristen. Ursprüngliche Daten und Uhrzeiten bleiben auch bei deaktivierter Option in den Notizen. Daten verschieben niemals Aufgaben zwischen Stapeln."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las fechas de vencimiento se convierten en recordatorios a las 9 de ese día, no en fechas límite. Las fechas y horas originales permanecen en Notas aunque desactives esta opción. Las fechas nunca mueven tareas entre pilas."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le scadenze diventano promemoria alle 9 di quel giorno, non termini di consegna. Date e orari originali restano nelle Note anche disattivando questa opzione. Le date non spostano mai le attività tra le pile."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As datas de vencimento tornam-se lembretes às 9 h desse dia, não prazos. As datas e horas originais ficam nas Notas mesmo com esta opção desativada. As datas nunca movem tarefas entre pilhas."
+          }
+        }
+      }
+    },
+    "Recurring reminders are skipped. Subtasks, tags, attachments and smart-list rules are not preserved. Notes, links, dates, locations and priority values are kept as text in Notes.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recurring reminders are skipped. Subtasks, tags, attachments and smart-list rules are not preserved. Notes, links, dates, locations and priority values are kept as text in Notes."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les rappels récurrents sont ignorés. Les sous-tâches, étiquettes, pièces jointes et règles des listes intelligentes ne sont pas conservés. Notes, liens, dates, lieux et priorités sont conservés comme texte dans Notes."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terugkerende herinneringen worden overgeslagen. Subtaken, tags, bijlagen en regels voor slimme lijsten blijven niet behouden. Notities, links, datums, locaties en prioriteiten worden als tekst bewaard in Notities."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiederkehrende Erinnerungen werden übersprungen. Unteraufgaben, Tags, Anhänge und Regeln intelligenter Listen werden nicht beibehalten. Notizen, Links, Daten, Orte und Prioritätswerte bleiben als Text in den Notizen erhalten."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se omiten los recordatorios recurrentes. No se conservan subtareas, etiquetas, adjuntos ni reglas de listas inteligentes. Las notas, enlaces, fechas, ubicaciones y prioridades se guardan como texto en Notas."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I promemoria ricorrenti vengono ignorati. Sottoattività, tag, allegati e regole degli elenchi smart non vengono mantenuti. Note, link, date, luoghi e priorità vengono conservati come testo nelle Note."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os lembretes recorrentes são ignorados. Subtarefas, etiquetas, anexos e regras de listas inteligentes não são preservados. Notas, ligações, datas, locais e prioridades ficam como texto nas Notas."
+          }
+        }
+      }
+    },
+    "A backup is saved before import. Existing DayHand tasks are kept. Repeat imports skip tasks already imported on this device, including ones you deleted. Importing again on another device or after an account reset can create duplicates.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A backup is saved before import. Existing DayHand tasks are kept. Repeat imports skip tasks already imported on this device, including ones you deleted. Importing again on another device or after an account reset can create duplicates."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une sauvegarde est créée avant l’import. Les tâches DayHand existantes sont conservées. Les imports suivants ignorent les tâches déjà importées sur cet appareil, même supprimées. Un import sur un autre appareil ou après réinitialisation du compte peut créer des doublons."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voor de import wordt een reservekopie opgeslagen. Bestaande DayHand-taken blijven behouden. Herhaalde imports slaan taken over die al op dit apparaat zijn geïmporteerd, ook verwijderde taken. Importeren op een ander apparaat of na het opnieuw instellen van een account kan duplicaten maken."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vor dem Import wird ein Backup gespeichert. Bestehende DayHand-Aufgaben bleiben erhalten. Wiederholte Importe überspringen bereits auf diesem Gerät importierte Aufgaben, auch gelöschte. Ein Import auf einem anderen Gerät oder nach dem Zurücksetzen eines Accounts kann Duplikate erzeugen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se guarda una copia de seguridad antes de importar. Las tareas existentes de DayHand se conservan. Las importaciones repetidas omiten las tareas ya importadas en este dispositivo, incluso las eliminadas. Importar en otro dispositivo o tras restablecer una cuenta puede crear duplicados."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prima dell’importazione viene salvato un backup. Le attività esistenti di DayHand vengono mantenute. Le importazioni ripetute ignorano le attività già importate su questo dispositivo, anche se eliminate. Importare da un altro dispositivo o dopo il ripristino dell’account può creare duplicati."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "É guardada uma cópia de segurança antes da importação. As tarefas existentes do DayHand são mantidas. Importações repetidas ignoram tarefas já importadas neste dispositivo, incluindo as eliminadas. Importar noutro dispositivo ou após repor uma conta pode criar duplicados."
+          }
+        }
+      }
+    },
+    "Apple Reminders keeps its own alerts. Imported future reminders can also notify you in DayHand. Past dates are marked as answered; their tasks can still appear in Attention.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Reminders keeps its own alerts. Imported future reminders can also notify you in DayHand. Past dates are marked as answered; their tasks can still appear in Attention."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rappels d’Apple conserve ses propres alertes. Les rappels futurs importés peuvent aussi vous avertir dans DayHand. Les dates passées sont marquées comme traitées ; leurs tâches peuvent encore apparaître dans Attention."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Herinneringen behoudt zijn eigen meldingen. Geïmporteerde toekomstige herinneringen kunnen ook in DayHand meldingen geven. Verstreken datums worden als afgehandeld gemarkeerd; de taken kunnen nog in Aandacht verschijnen."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Erinnerungen behält seine eigenen Hinweise. Importierte zukünftige Erinnerungen können auch in DayHand benachrichtigen. Vergangene Daten werden als beantwortet markiert; ihre Aufgaben können weiterhin unter Aufmerksamkeit erscheinen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recordatorios de Apple conserva sus alertas. Los recordatorios futuros importados también pueden avisarte en DayHand. Las fechas pasadas se marcan como atendidas; sus tareas pueden seguir apareciendo en Atención."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Promemoria Apple mantiene i propri avvisi. I promemoria futuri importati possono avvisarti anche in DayHand. Le date passate vengono segnate come gestite; le relative attività possono ancora comparire in Attenzione."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os Lembretes da Apple mantêm os seus alertas. Os lembretes futuros importados também podem notificar no DayHand. As datas passadas são marcadas como tratadas; as tarefas podem continuar a aparecer em Atenção."
+          }
+        }
+      }
+    },
+    "Added %lld tasks. Skipped %lld already imported and %lld other tasks. Your Apple Reminders were left unchanged.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Added %lld tasks. Skipped %lld already imported and %lld other tasks. Your Apple Reminders were left unchanged."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld tâches ajoutées. %lld déjà importées et %lld autres tâches ignorées. Vos rappels Apple n’ont pas été modifiés."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld taken toegevoegd. %lld al geïmporteerde en %lld andere taken overgeslagen. Je Apple Herinneringen zijn niet gewijzigd."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Aufgaben hinzugefügt. %lld bereits importierte und %lld andere Aufgaben übersprungen. Deine Apple Erinnerungen wurden nicht geändert."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se añadieron %lld tareas. Se omitieron %lld ya importadas y %lld otras tareas. Tus recordatorios de Apple no se modificaron."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiunte %lld attività. Ignorate %lld già importate e %lld altre attività. I tuoi promemoria Apple non sono stati modificati."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adicionadas %lld tarefas. Ignoradas %lld já importadas e %lld outras tarefas. Os seus Lembretes da Apple não foram alterados."
+          }
+        }
+      }
+    },
+    "CSV import can either add to what is here or replace it. Tasks are matched by id; categories and projects by name.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CSV import can either add to what is here or replace it. Tasks are matched by id; categories and projects by name."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’import CSV peut compléter ce qui est ici ou le remplacer. Les tâches sont reconnues par identifiant ; les catégories et les projets par nom."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CSV-import kan bestaande taken aanvullen of vervangen. Taken worden herkend op id; categorieën en projecten op naam."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der CSV-Import kann vorhandene Aufgaben ergänzen oder ersetzen. Aufgaben werden per ID erkannt, Kategorien und Projekte per Name."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La importación CSV puede añadir a lo que hay o reemplazarlo. Las tareas se reconocen por identificador; las categorías y los proyectos por nombre."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’importazione CSV può aggiungere alle attività esistenti o sostituirle. Le attività vengono riconosciute per ID; categorie e progetti per nome."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A importação CSV pode acrescentar ao que existe ou substituí-lo. As tarefas são reconhecidas por ID; categorias e projetos por nome."
           }
         }
       }

@@ -1,5 +1,142 @@
 import Foundation
 
+// MARK: - One-time Apple Reminders import (no EventKit dependency)
+
+struct ReminderImportRecord: Identifiable, Equatable {
+    var id: String
+    var listID: String
+    var title: String
+    var notes = ""
+    var dueDate: Date?
+    var createdAt: Date?
+    var isCompleted = false
+    var completedAt: Date?
+    var isRecurring = false
+}
+
+struct ReminderImportDestination: Equatable {
+    var categoryID: UUID?
+    var projectID: UUID?
+    var newProjectName = ""
+}
+
+enum ReminderImportFailure: LocalizedError {
+    case changedDestination, conflictingProject, backup, save
+
+    var errorDescription: String? {
+        switch self {
+        case .changedDestination:
+            return String(localized: "An import destination changed. Go back and choose it again.")
+        case .conflictingProject:
+            return String(localized: "A project with that name already exists. Choose it explicitly or use another name.")
+        case .backup:
+            return String(localized: "A backup could not be saved. Nothing was imported.")
+        case .save:
+            return String(localized: "The imported tasks could not be saved. Nothing was imported.")
+        }
+    }
+}
+
+enum ReminderImport {
+    struct Options {
+        var destinations: [String: ReminderImportDestination] = [:]
+        var bucket: Bucket = .inbox
+        var includeCompleted = false
+        var importDates = true
+        var excludedIDs: Set<String> = []
+    }
+
+    struct Plan {
+        var document: StoreDocument
+        var added = 0
+        var duplicates = 0
+        var skipped = 0
+        var projectsCreated = 0
+    }
+
+    /// Recomputed against the live document on confirmation. Nothing in a
+    /// preview can overwrite an edit made while its sheet was open.
+    static func plan(records: [ReminderImportRecord], options: Options,
+                     document: StoreDocument, now: Date = .stamp(),
+                     calendar: Calendar = .current) throws -> Plan {
+        var result = Plan(document: document)
+        var resolved: [String: (UUID?, UUID?)] = [:]
+        for record in records {
+            guard let destination = options.destinations[record.listID] else { continue }
+            guard !options.excludedIDs.contains(record.id), !record.isRecurring,
+                  options.includeCompleted || !record.isCompleted,
+                  !record.id.isEmpty,
+                  !record.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            else { result.skipped += 1; continue }
+            let key = "apple-reminders:" + record.id
+            guard !result.document.importedReminderIDs.contains(key) else {
+                result.duplicates += 1
+                continue
+            }
+            if resolved[record.listID] == nil {
+                var categoryID = destination.categoryID
+                var projectID = destination.projectID
+                if let id = projectID {
+                    guard let project = result.document.projects.first(where: { $0.id == id }),
+                          !project.isArchived else { throw ReminderImportFailure.changedDestination }
+                    categoryID = project.categoryID
+                } else if !destination.newProjectName.isEmpty {
+                    let name = Project.canonicalName(destination.newProjectName)
+                    guard !name.isEmpty else { throw ReminderImportFailure.changedDestination }
+                    if let project = result.document.projects.first(where: { $0.key == Project.key(for: name) }) {
+                        // Two selected lists may intentionally share a *new*
+                        // project. Existing projects require an explicit choice.
+                        guard !document.projects.contains(where: { $0.id == project.id }),
+                              project.categoryID == categoryID else { throw ReminderImportFailure.conflictingProject }
+                        projectID = project.id
+                    } else {
+                        let project = Project(name: name, categoryID: categoryID, modifiedAt: now)
+                        result.document.projects.append(project)
+                        projectID = project.id
+                        result.projectsCreated += 1
+                    }
+                }
+                if let id = categoryID, !document.categories.contains(where: { $0.id == id }) {
+                    throw ReminderImportFailure.changedDestination
+                }
+                resolved[record.listID] = (categoryID, projectID)
+            }
+            let (categoryID, projectID) = resolved[record.listID]!
+            let bucket = options.bucket == .completed ? Bucket.inbox : options.bucket
+            var card = TodoItem(title: record.title, bucket: record.isCompleted ? .completed : bucket,
+                                categoryID: categoryID, projectID: projectID)
+            card.notes = record.notes
+            card.createdAt = record.createdAt ?? now
+            card.modifiedAt = now
+            if options.importDates, let date = record.dueDate {
+                let at = Scheduler.reminderTime(on: date, calendar: calendar)
+                card.remindAt = at
+                if at <= now || record.isCompleted { card.reminderAnsweredAt = at }
+            }
+            if record.isCompleted {
+                card.bucketBeforeCompletion = bucket
+                // An unknown completion date is not a completion today.
+                card.completedAt = record.completedAt
+            }
+            result.document.cards.append(card)
+            result.document.importedReminderIDs.insert(key)
+            result.added += 1
+        }
+        return result
+    }
+
+    /// EventKit can give date-only or floating components. Interpreting a
+    /// date-only value in UTC shifts it to the previous day in some regions.
+    static func date(from components: DateComponents?, calendar: Calendar = .current) -> Date? {
+        guard var components, components.year != nil, components.month != nil,
+              components.day != nil else { return nil }
+        var source = components.calendar ?? Calendar(identifier: .gregorian)
+        source.timeZone = components.timeZone ?? calendar.timeZone
+        components.calendar = source
+        return source.date(from: components)
+    }
+}
+
 // MARK: - Dates on disk
 
 /// Timestamps decide which device's edit wins, so they are written with
@@ -128,6 +265,10 @@ enum DocumentCoding {
 /// them, deleting a card on the phone and then merging with a Mac that still
 /// has it would silently resurrect the card.
 struct StoreDocument: Codable, Equatable {
+    /// Local EventKit identifiers already imported. Survives deleting a task,
+    /// so importing the same list again cannot resurrect it. These identifiers
+    /// are device-local; importing on another device may produce duplicates.
+    var importedReminderIDs: Set<String> = []
     var categories: [CardCategory] = []
     var cards: [TodoItem] = []
     /// Card id (as a string, so the JSON stays readable) -> when it was deleted.
@@ -197,6 +338,7 @@ struct StoreDocument: Codable, Equatable {
     /// existed would fail outright and take the user's cards with it.
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
+        importedReminderIDs = try c.decodeIfPresent(Set<String>.self, forKey: .importedReminderIDs) ?? []
         categories = try c.decodeIfPresent([CardCategory].self, forKey: .categories) ?? []
         cards = try c.decodeIfPresent([TodoItem].self, forKey: .cards) ?? []
         deletedCards = try c.decodeIfPresent([String: Date].self, forKey: .deletedCards) ?? [:]
@@ -218,6 +360,7 @@ extension StoreDocument {
     /// that edit.
     func merged(with other: StoreDocument) -> StoreDocument {
         var result = StoreDocument()
+        result.importedReminderIDs = importedReminderIDs.union(other.importedReminderIDs)
 
         result.deletedCards = StoreDocument.mergeTombstones(deletedCards, other.deletedCards)
         result.deletedCategories = StoreDocument.mergeTombstones(deletedCategories, other.deletedCategories)
@@ -684,29 +827,36 @@ final class DocumentStorage {
         }
     }
 
-    func write(_ document: StoreDocument) {
-        guard let data = DocumentStorage.encode(document) else { return }
+    @discardableResult
+    func write(_ document: StoreDocument) -> Bool {
+        guard let data = DocumentStorage.encode(document) else { return false }
 
         // Always keep the local copy current too, so the app still works if the
         // picked file goes away or the user signs out of iCloud later.
-        try? data.write(to: localURL, options: .atomic)
+        do { try data.write(to: localURL, options: .atomic) }
+        catch { return false }
 
         if let target = syncURL {
             withAccess(target) { url in
                 var coordinationError: NSError?
+                var didWrite = false
                 NSFileCoordinator().coordinate(writingItemAt: url, options: .forReplacing, error: &coordinationError) { writeURL in
                     try? FileManager.default.createDirectory(
                         at: writeURL.deletingLastPathComponent(), withIntermediateDirectories: true
                     )
-                    try? data.write(to: writeURL, options: .atomic)
+                    do {
+                        try data.write(to: writeURL, options: .atomic)
+                        didWrite = true
+                    } catch { }
                 }
 
-                if coordinationError == nil, pendingConflictURL == url {
+                if didWrite, coordinationError == nil, pendingConflictURL == url {
                     DocumentStorage.markConflictsResolved(at: url)
                     pendingConflictURL = nil
                 }
             }
         }
+        return true
     }
 
 
@@ -744,7 +894,7 @@ enum CardCSV {
     /// does. An older export's `reminds` column is simply ignored: what it
     /// recorded no longer exists, and a reminder is silenced by clearing it.
     static let header = ["id", "title", "stack", "category", "deadline", "completed", "created",
-                         "project", "group", "remind"]
+                         "project", "group", "remind", "notes"]
 
     private static let dayFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -831,7 +981,8 @@ enum CardCSV {
                 stampFormatter.string(from: card.createdAt),
                 card.projectID.flatMap { names[$0] } ?? "",
                 card.projectID.flatMap { groups[$0] } ?? "",
-                card.remindAt.map { stampFormatter.string(from: $0) } ?? ""
+                card.remindAt.map { stampFormatter.string(from: $0) } ?? "",
+                card.notes
             ].map(escape).joined(separator: ","))
         }
         return rows.joined(separator: "\n") + "\n"
@@ -885,6 +1036,8 @@ enum CardCSV {
         for row in rows {
             func field(_ name: String) -> String {
                 guard let index = columns[name], index < row.count else { return "" }
+                // Notes can contain intentional indentation and spacing.
+                if name == "notes" { return row[index] }
                 return row[index].trimmingCharacters(in: .whitespaces)
             }
 
@@ -906,6 +1059,7 @@ enum CardCSV {
             }
 
             var card = TodoItem(title: cardTitle)
+            card.notes = field("notes")
             if let id = UUID(uuidString: field("id")) { card.id = id }
             if !projectName.isEmpty {
                 result.projectNames[card.id] = projectName
@@ -938,6 +1092,7 @@ enum CardCSV {
     /// Names accepted for each column, so a file written by hand or by another
     /// tool still lands in the right places.
     private static let synonyms: [String: Set<String>] = [
+        "notes":     ["notes", "note", "description"],
         "id":        ["id", "uuid", "identifier"],
         "title":     ["title", "name", "task", "card", "todo"],
         "stack":     ["stack", "bucket", "list", "status", "column"],
