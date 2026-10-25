@@ -106,6 +106,7 @@
   }
   .idea h3 { margin: 0 0 8px; font-size: 18.5px; letter-spacing: -.012em; }
   .idea p  { margin: 0; color: var(--ink-soft); font-size: 15.5px; line-height: 1.55; }
+  .i-inbox    { --accent: var(--ink-soft); }
   .i-today    { --accent: var(--today); }
   .i-tomorrow { --accent: var(--tomorrow); }
   .i-later    { --accent: var(--later); }
@@ -217,7 +218,11 @@
     of things to reschedule. So you move the dates, or chop up the task, to
     make the app agree with reality.
   </p>
-  <p class="sub">DayHand lets a task simply stay active for as long as it takes.</p>
+  <p class="sub">
+    DayHand lets a task simply stay active for as long as it takes. Work that
+    spans several days is still work in progress — leaving it unticked tonight
+    does not mean you have failed to finish today’s list.
+  </p>
   <div class="cta">
     <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">
       Join the beta<small>iPhone &amp; iPad · TestFlight</small>
@@ -233,38 +238,72 @@
   <h2 id="how-heading">A place for every task</h2>
   <p class="section-intro">
     Inspired by Kanban, DayHand adapts the simplicity of cards and stacks to
-    managing your life and work. Start in <b>Inbox</b>, then give each task a
-    place that reflects what you intend to do.
+    managing your life and work. A stack reflects where a task belongs in
+    your life right now, rather than a day on the calendar.
   </p>
   <div class="ideas">
+    <div class="idea i-inbox wide-idea">
+      <h3>Inbox</h3>
+      <p>Capture a task before deciding what to do with it. New tasks normally
+         land here, ready to sort when you have a moment. If you already know
+         where a task belongs, choose a different stack as you add it.</p>
+    </div>
     <div class="idea i-today">
-      <h3>Now and Next</h3>
-      <p><b>Now</b> is what you’re working on. <b>Next</b> is what you want to
-         tackle next. A task can stay in Now for a week if that is how long
-         the work takes.</p>
+      <h3>Now</h3>
+      <p>What you’re actively working on. A task can stay here for several
+         days or weeks while you move it forward. Now means in progress;
+         it is not a promise to finish everything today.</p>
+    </div>
+    <div class="idea i-tomorrow">
+      <h3>Next</h3>
+      <p>What you intend to pick up next, once you have room to take it on.
+         Keep your next steps in view without assigning them to tomorrow
+         or making them compete with the work already in progress.</p>
+    </div>
+    <div class="idea i-later">
+      <h3>Later</h3>
+      <p>Ideas, plans and tasks you want to keep for the future. You’re
+         choosing not to take them on yet, but they have a place to live
+         until you are ready.</p>
     </div>
     <div class="idea i-waiting">
-      <h3>Later and Waiting</h3>
-      <p><b>Later</b> holds ideas and tasks you’re keeping for the future.
-         <b>Waiting</b> holds work you cannot move forward until a reply, a
-         delivery, someone’s feedback, or something else arrives.</p>
-    </div>
-    <div class="idea i-flag">
-      <h3>Reminders ask for attention</h3>
-      <p><em>When should I think about this again?</em> Set a reminder for the
-         day you want a task brought back to your attention. A notification
-         and a coloured edge help you notice it; you decide what happens next.</p>
-    </div>
-    <div class="idea i-night">
-      <h3>Deadlines mark commitments</h3>
-      <p><em>When must this actually be finished?</em> Add an optional deadline
-         alongside a reminder to record a genuine finish date. It stays
-         visible on the task, wherever you put it.</p>
+      <h3>Waiting</h3>
+      <p>Work you cannot move forward until a reply, a delivery, someone’s
+         feedback, or something else arrives. Keep it out of your active
+         work, then decide where it belongs when you can act again.</p>
     </div>
   </div>
   <p class="section-note">
-    Your tasks stay where you put them. No daily rollover, and neither a
-    reminder nor a deadline moves a task for you.
+    You decide when a task moves. Time passing changes nothing about its stack.
+    Tick it off when the work is finished, and it goes to Completed.
+  </p>
+</section>
+
+<section class="wrap" id="dates" aria-labelledby="dates-heading">
+  <h2 id="dates-heading">Dates with a purpose</h2>
+  <p class="section-intro">
+    Most tasks do not need a date. When a date matters, distinguish when you
+    want to think about the task from when it really must be finished.
+  </p>
+  <div class="ideas">
+    <div class="idea i-flag">
+      <h3>Reminders: when to think about it</h3>
+      <p>Choose a day to bring a task back to your attention — to start work,
+         reconsider an idea, or follow up on something in Waiting. A
+         notification and a coloured edge help you notice it. Snooze or clear
+         the reminder when your plans change; the task stays where you put it.</p>
+    </div>
+    <div class="idea i-night">
+      <h3>Deadlines: when it must be finished</h3>
+      <p>Add an optional deadline alongside a reminder for a real commitment:
+         a submission, a renewal, a delivery. It is shown on the task as a
+         finish date. The reminder handles notifications and the coloured edge;
+         the deadline does not send a separate alert or move the task.</p>
+    </div>
+  </div>
+  <p class="section-note">
+    Neither date chooses a stack, moves a task or marks it completed. A task
+    can stay in Now all week, with a reminder on Monday and a deadline on Friday.
   </p>
 </section>
 
