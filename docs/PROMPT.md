@@ -1384,6 +1384,42 @@ Two traps, both of which cause silent data loss:
   while `Date()` carries more. Stamp times at millisecond resolution so what is
   written is exactly what is read back.
 
+**Stamps are read without a formatter.** `ISO8601DateFormatter.date(from:)`
+costs about 70µs a call, and a task carries up to five dates, so parsing them
+was roughly 93% of the time spent loading the file — and not only at launch,
+because a write from another device decodes the whole file again, on the main
+thread. `DocumentCoding.stamp(from:)` reads the bytes at fixed offsets instead.
+At ten thousand tasks a load went from 1.9s to 74ms, which is what takes the
+size of the file back out of the question for years.
+
+It is a fast path and never the only one. Anything that is not exactly
+`2026-09-26T09:15:00.123Z`, or the older form with no fractional part, is handed
+back to the formatters and answered as it always was.
+
+Three things decide whether it is safe, and all three were found by running it
+against Foundation rather than by reasoning about it:
+
+- **It stops at 1583.** Foundation reads an older date through the Julian
+  cutover, so `0001-01-01` comes back two days from where proleptic Gregorian
+  arithmetic puts it. That is not a curiosity: `.distantPast` is what every
+  seeded row is stamped with, and the encoder writes it as exactly that string.
+  Disagreeing there would stop a merge seeing seeded data as older than every
+  real edit — which is the whole point of the sentinel, and the bug that
+  renamed "Research" back to "Home" on 26 September.
+- **The millisecond is carried as whole milliseconds, divided once** — the same
+  arithmetic as `Date.stamp()`, which wrote the file. Adding `milli / 1000` to a
+  seconds-sized `Double` lands a bit away from it often enough to break a save
+  and load, which is how the first version was caught.
+- **Agreeing with Foundation matters more than being right.** Foundation reads
+  30 February as 2 March rather than refusing it, so the day of the month is
+  deliberately not validated and the arithmetic rolls over the same way. The
+  tests compare the two across every month and every day from 1 to 31 for
+  exactly this reason.
+
+The encoder is left alone deliberately: formatting costs 15ms per ten thousand
+dates against 666ms to parse them, so the time in a save is the JSON and not the
+stamps.
+
 Decode defensively throughout: missing keys and unknown enum values degrade
 gracefully (an unknown category becomes none) rather than throwing away the
 file, and an untimestamped task reads as `.distantPast` so any real edit wins.
