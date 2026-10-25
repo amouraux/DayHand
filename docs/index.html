@@ -151,20 +151,24 @@
   }
   .task .btn { display: inline-flex; }
 
-  /* One task, one week: the sequence that makes the model click. */
+  /* One task’s journey, including the pauses and changes of priority. */
   .walk {
     list-style: none; margin: 0 auto; padding: 0; max-width: 560px;
     display: grid; gap: 10px;
   }
   .walk li {
-    display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px;
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 6px 10px;
     background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
     padding: 14px 18px; box-shadow: var(--shadow);
     color: var(--ink-soft); font-size: 15.5px;
   }
   .walk b { color: var(--ink); min-width: 92px; }
-  .walk .to { margin-left: auto; font-weight: 600; color: var(--accent, var(--today)); }
+  .walk .step { grid-column: 1 / -1; grid-row: 2; }
+  .walk .to { grid-column: 2; grid-row: 1; font-weight: 600; color: var(--accent, var(--today)); }
+  .walk .w-inbox   { --accent: var(--ink-soft); }
   .walk .w-now     { --accent: var(--today); }
+  .walk .w-later   { --accent: var(--later); }
+  .walk .w-done    { --accent: var(--later); }
   .walk .w-waiting { --accent: var(--waiting); }
   .walk .w-due     { --accent: var(--night); }
   .walk-note {
@@ -308,20 +312,38 @@
 </section>
 
 <section class="wrap" id="one-task" aria-labelledby="week-heading">
-  <h2 id="week-heading">One task, one week</h2>
+  <h2 id="week-heading">The journey of a task</h2>
+  <p class="section-intro">
+    You’re asked to prepare a presentation for Friday. It is one task,
+    even when priorities change and the work takes several days.
+  </p>
   <ol class="walk">
-    <li><b>Monday</b> You start on the conference talk.
+    <li><b>Monday</b><span class="step">Capture “Prepare the presentation”, with a reminder to
+        start Tuesday and a deadline of Friday.</span>
+        <span class="to w-inbox">Inbox</span></li>
+    <li><b>Tuesday</b><span class="step">The reminder brings it back to your attention.
+        You decide to start and move it to Now.</span>
         <span class="to w-now">Now</span></li>
-    <li><b>Wednesday</b> Draft sent to a colleague.
+    <li><b>Later that day</b><span class="step">Something more urgent needs your attention.
+        Put the presentation aside and set a reminder for Wednesday.</span>
+        <span class="to w-later">Later</span></li>
+    <li><b>Wednesday</b><span class="step">The reminder prompts you to pick it up again.
+        Move it back to Now and continue the same task.</span>
+        <span class="to w-now">Now</span></li>
+    <li><b>Thursday</b><span class="step">Send the draft to a colleague. You need their feedback
+        before you can finish; set a reminder to follow up on Friday.</span>
         <span class="to w-waiting">Waiting</span></li>
-    <li><b>Thursday</b> They reply; you pick it up again.
+    <li><b>Friday</b><span class="step">Follow up when reminded. The feedback arrives,
+        and you move the task to Now for the final changes.</span>
         <span class="to w-now">Now</span></li>
-    <li><b>Friday</b> You give the talk.
-        <span class="to w-due">Deadline</span></li>
+    <li><b>Finished</b><span class="step">Deliver the presentation on Friday and tick off the task.
+        The deadline is met.</span>
+        <span class="to w-done">Completed</span></li>
   </ol>
   <p class="walk-note">
-    One task the whole week. You move it when the situation changes;
-    the Friday deadline stays the same.
+    One task throughout. Its Friday deadline never changed. Reminders brought
+    it back to your attention; you chose when to move it. The pauses and the
+    unticked days were part of getting the work done.
   </p>
 </section>
 
