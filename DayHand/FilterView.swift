@@ -275,7 +275,11 @@ struct FilterList: View {
                     // way out that is not the keyboard.
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
+                            // Escape has nothing to pick on a sheet whose
+                            // only way out is the confirming action, so it is
+                            // bound here by hand.
                             Button("Done") { editingProject = nil }
+                                .keyboardShortcut(.cancelAction)
                         }
                     }
             }
@@ -850,7 +854,11 @@ struct FilterSheet: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .confirmationAction) {
+                        // The same: Done is the only way out, so Escape is
+                        // bound to it rather than to a cancellation role that
+                        // this sheet does not have.
                         Button("Done") { dismiss() }
+                            .keyboardShortcut(.cancelAction)
                     }
                 }
         }

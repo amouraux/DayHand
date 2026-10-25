@@ -1314,6 +1314,29 @@ joining it.
 **Edit is on every surface, always.** A menu that will move a task but not open
 it reads as broken — Finder puts Open in both places for the same reason.
 
+## The keyboard
+
+Four shortcuts, and each belongs to the control that does the thing rather than
+to a menu, so there is only ever one of each:
+
+| | |
+|---|---|
+| **⌘N** | a new task — on the + button |
+| **⌘F** | search — on the magnifying glass |
+| **⌘Z** | undo — the one exception, in `.commands`, because it has to replace the system's own Undo item rather than sit greyed out beside it |
+| **Escape** | leave the search bar, or the sheet in front of you |
+
+**Escape mostly worked already, and that is worth knowing before adding it
+anywhere.** A toolbar button placed as the `.cancellationAction` is what
+Escape picks, so every sheet with a Cancel — and More, whose Done is placed
+there too — already closed on Escape. That is also how leaving the task editor
+by keyboard came to discard rather than commit.
+
+Two sheets did not: Organise and the project editor, whose only way out is a
+**Done** placed as the *confirming* action, leaving no cancellation role for
+Escape to find. Those two bind it by hand. The search bar's Cancel is a plain
+button rather than a toolbar item, so it binds it too.
+
 ## Searching
 
 A magnifying glass beside the filter opens a bar above the stack, and ⌘F does

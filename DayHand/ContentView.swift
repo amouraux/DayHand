@@ -435,6 +435,9 @@ struct ContentView: View {
             }
             .buttonStyle(.plain)
             .foregroundStyle(Color.accentColor)
+            // Escape leaves the search, the way it leaves a sheet. ⌘F opened
+            // it; this is the other half of that pair.
+            .keyboardShortcut(.cancelAction)
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 8)
@@ -913,6 +916,10 @@ struct ContentView: View {
         // style draws its own rounded rect behind the label — invisible on
         // iOS, a grey square around the circle on the Mac.
         .buttonStyle(.plain)
+        // On the button rather than in the menu bar, the way ⌘F is: the
+        // shortcut belongs to the control that does the thing, and there is
+        // then only one of each.
+        .keyboardShortcut("n", modifiers: .command)
         .padding(.trailing, 22)
         .padding(.bottom, 28)
         .accessibilityLabel("Add task to inbox")
