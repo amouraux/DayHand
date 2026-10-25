@@ -680,10 +680,6 @@ final class TodoStore: ObservableObject {
         save()
     }
 
-    func setNotes(_ item: TodoItem, to notes: String) {
-        update(item) { $0.notes = notes }
-    }
-
     func previewReminders(_ records: [ReminderImportRecord], options: ReminderImport.Options) throws -> ReminderImport.Plan {
         try ReminderImport.plan(records: records, options: options, document: document)
     }

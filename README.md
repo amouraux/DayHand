@@ -190,14 +190,14 @@ device wrote it: three taken automatically — yesterday, the day before, and on
 from about a week ago — plus any you take by hand, under their date. All of them
 can be restored or shared from Settings.
 
-**CSV** import and export cover tasks, categories, projects, groups and notes.
+**CSV** import and export cover tasks, categories, projects and groups.
 
 **Apple Reminders** can be copied once from More → Tasks. Choose lists,
 their categories or projects, and a destination stack, then review the tasks
-before importing. Due dates can become reminders at 9 a.m.; original details
-remain in editable Notes. A backup is saved first. Apple Reminders is never
+before importing. Due dates can become reminders at 9 a.m. Unsupported details
+are shown in the preview but are not saved. A backup is saved first. Apple Reminders is never
 modified and there is no continuous sync. Recurring reminders are skipped;
 subtask relationships, tags, attachments and smart-list rules are not preserved.
 Repeat-import protection uses device-local identifiers, so importing on another
 device or after an account reset can create duplicates. Update all DayHand
-devices before relying on Notes and import history across sync.
+devices before relying on import history across sync.

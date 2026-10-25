@@ -6,7 +6,8 @@ struct ReminderImportRecord: Identifiable, Equatable {
     var id: String
     var listID: String
     var title: String
-    var notes = ""
+    /// Transient source context for the preview; never copied into TodoItem.
+    var omittedDetails = ""
     var dueDate: Date?
     var createdAt: Date?
     var isCompleted = false
@@ -105,7 +106,6 @@ enum ReminderImport {
             let bucket = options.bucket == .completed ? Bucket.inbox : options.bucket
             var card = TodoItem(title: record.title, bucket: record.isCompleted ? .completed : bucket,
                                 categoryID: categoryID, projectID: projectID)
-            card.notes = record.notes
             card.createdAt = record.createdAt ?? now
             card.modifiedAt = now
             if options.importDates, let date = record.dueDate {
@@ -894,7 +894,7 @@ enum CardCSV {
     /// does. An older export's `reminds` column is simply ignored: what it
     /// recorded no longer exists, and a reminder is silenced by clearing it.
     static let header = ["id", "title", "stack", "category", "deadline", "completed", "created",
-                         "project", "group", "remind", "notes"]
+                         "project", "group", "remind"]
 
     private static let dayFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -981,8 +981,7 @@ enum CardCSV {
                 stampFormatter.string(from: card.createdAt),
                 card.projectID.flatMap { names[$0] } ?? "",
                 card.projectID.flatMap { groups[$0] } ?? "",
-                card.remindAt.map { stampFormatter.string(from: $0) } ?? "",
-                card.notes
+                card.remindAt.map { stampFormatter.string(from: $0) } ?? ""
             ].map(escape).joined(separator: ","))
         }
         return rows.joined(separator: "\n") + "\n"
@@ -1036,8 +1035,6 @@ enum CardCSV {
         for row in rows {
             func field(_ name: String) -> String {
                 guard let index = columns[name], index < row.count else { return "" }
-                // Notes can contain intentional indentation and spacing.
-                if name == "notes" { return row[index] }
                 return row[index].trimmingCharacters(in: .whitespaces)
             }
 
@@ -1059,7 +1056,6 @@ enum CardCSV {
             }
 
             var card = TodoItem(title: cardTitle)
-            card.notes = field("notes")
             if let id = UUID(uuidString: field("id")) { card.id = id }
             if !projectName.isEmpty {
                 result.projectNames[card.id] = projectName
@@ -1092,7 +1088,6 @@ enum CardCSV {
     /// Names accepted for each column, so a file written by hand or by another
     /// tool still lands in the right places.
     private static let synonyms: [String: Set<String>] = [
-        "notes":     ["notes", "note", "description"],
         "id":        ["id", "uuid", "identifier"],
         "title":     ["title", "name", "task", "card", "todo"],
         "stack":     ["stack", "bucket", "list", "status", "column"],

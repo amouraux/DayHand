@@ -1610,8 +1610,9 @@ Subtask relationships, tags, attachments and smart-list rules are not preserved.
 
 Due dates optionally become DayHand reminders at 9 a.m. on the corresponding
 local day. They never become deadlines or move tasks between stacks. Original
-due/start dates and times, notes, links, locations and priority values are kept
-in the task's Notes. Original alerts are not transferred. Past reminders arrive
+due/start dates and times, notes, links, locations and priority values are shown
+only in the import preview and are not saved. The preview explicitly warns
+which details are not retained. Original alerts are not transferred. Past reminders arrive
 answered; their dates can still make them appear in Attention. Future reminders
 may notify in both apps because Apple Reminders is left unchanged. All these
 limits are shown before import.
@@ -1630,12 +1631,14 @@ may change after account resets or source reorganisation: importing from
 another device or after such changes can produce duplicates. There is no
 heuristic merging by task title.
 
-Tasks now carry an optional-on-disk `notes` string, defaulting to empty for
-older documents. It is editable in the task editor with Done/Cancel semantics,
-and round-trips through a new final `notes` CSV column. Existing CSV column
-positions and old JSON decoding remain compatible. Devices running older
-builds do not understand these new fields; update all devices before relying
-on Notes or import history across sync.
+Tasks remain title-only: there is no Notes property, editor section or CSV
+column. Source details are transient `omittedDetails` on the import snapshot,
+shown in a disclosure group outside the task-selection toggle, and never
+copied into `TodoItem`, JSON or exported CSV. The CSV remains the original ten
+columns. Neither the task title nor the card layout is extended to hold source
+details. Older prototype files carrying a `notes` key still decode, but the
+unsupported field is not retained on save. Import history is the only new
+persistence needed by this importer; update devices before relying on it.
 
 Model tests cover mapping, idempotency, deletion history, new-project conflicts,
 completion, date-only/time-zone/DST handling, and JSON/CSV compatibility without

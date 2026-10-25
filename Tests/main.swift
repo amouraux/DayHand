@@ -177,7 +177,7 @@ do {
     let p = Project(name: "ABC1234", categoryID: cat.id)
     var card = TodoItem(title: "slides, part 2", categoryID: cat.id); card.projectID = p.id
     let text = CardCSV.export(cards: [card], categories: [cat], projects: [p])
-    expect(text.hasPrefix("id,title,stack,category,deadline,completed,created,project,group,remind,notes\n"),
+    expect(text.hasPrefix("id,title,stack,category,deadline,completed,created,project,group,remind\n"),
            "the deadline keeps the old date column's place; new ones go last")
     let back = CardCSV.parse(text, categories: [cat])
     expect(back.cards.first?.title == "slides, part 2", "title round-trips")
@@ -249,7 +249,7 @@ do {
     let text = CardCSV.export(cards: [c1, c2, c3], categories: [cat], projects: [grant, loose])
     let lines = text.split(separator: "\n").map(String.init)
     // Every new column goes last, so an older export still reads by position.
-    expect(lines[0].hasSuffix(",project,group,remind,notes"),
+    expect(lines[0].hasSuffix(",project,group,remind"),
            "the newest columns are the last ones — got \(lines[0])")
     expect(lines[1].contains(",BETA,Grants,"), "a grouped project's cards carry its group")
     expect(lines[2].contains(",DELTA,,"), "no group: empty column")
@@ -1690,14 +1690,14 @@ do {
     let existing = Project(name: "HOUSE", categoryID: category.id)
     let doc = StoreDocument(categories: [category], cards: [original], projects: [existing])
     let record = ReminderImportRecord(id: "r1", listID: "l1", title: "#Keep title literally",
-                                     notes: "  Notes, with a \"quote\"\nand a second line.  ",
+                                     omittedDetails: "  Notes, with a \"quote\"\nand a second line.  ",
                                      dueDate: due, createdAt: now.addingTimeInterval(-86400))
     var options = ReminderImport.Options(destinations: ["l1": .init(projectID: existing.id)])
     let plan = try! ReminderImport.plan(records: [record], options: options, document: doc, now: now, calendar: cal)
     let card = plan.document.cards.last!
     expect(plan.added == 1 && plan.document.cards.count == 2, "import adds without replacing existing tasks")
     expect(plan.document.cards.first == original && doc.cards == [original], "planning does not edit existing tasks or its input")
-    expect(card.title == record.title && card.notes == record.notes, "source titles and multiline notes are preserved literally")
+    expect(card.title == record.title && !record.omittedDetails.isEmpty, "source titles stay literal and unsupported details are available for preview")
     expect(card.projectID == existing.id && card.categoryID == category.id, "an explicit project brings its category")
     expect(card.bucket == .inbox, "import defaults to Inbox")
     expect(card.remindAt == Scheduler.reminderTime(on: due, calendar: cal) && card.deadline == nil,
@@ -1740,8 +1740,8 @@ do {
     expect(datedFinished.document.cards.last?.completedAt == completed.completedAt, "a known completion date survives")
     options.importDates = false
     let noDates = try! ReminderImport.plan(records: [record], options: options, document: doc, now: now)
-    expect(noDates.document.cards.last?.remindAt == nil && noDates.document.cards.last?.notes == record.notes,
-           "dates can stay only in notes")
+    expect(noDates.document.cards.last?.remindAt == nil && noDates.document.cards.last?.title == record.title,
+           "turning dates off omits them without adding source details to the title")
     options.importDates = true
     var past = record; past.dueDate = now.addingTimeInterval(-86400)
     let pastPlan = try! ReminderImport.plan(records: [past], options: options, document: doc, now: now)
@@ -1777,16 +1777,21 @@ do {
     } catch { expect(error is ReminderImportFailure, "a stale category is rejected") }
     let roundTrip = try! DocumentCoding.makeDecoder().decode(StoreDocument.self,
         from: DocumentCoding.makeEncoder().encode(plan.document))
-    expect(roundTrip == plan.document, "import notes and identifiers survive document save/load")
+    expect(roundTrip == plan.document, "imported tasks and identifiers survive document save/load")
     let merged = deleted.merged(with: doc)
     expect(merged.importedReminderIDs == deleted.importedReminderIDs, "sync with an older document retains import history")
     var remote = doc; remote.importedReminderIDs.insert("apple-reminders:remote")
     expect(deleted.merged(with: remote).importedReminderIDs == ["apple-reminders:r1", "apple-reminders:remote"],
            "import history merges by union")
     let old = try! DocumentCoding.makeDecoder().decode(StoreDocument.self, from: Data("{\"cards\":[{\"title\":\"old\"}]}".utf8))
-    expect(old.cards.first?.notes == "" && old.importedReminderIDs.isEmpty, "old documents decode without notes or import history")
+    expect(old.cards.first?.title == "old" && old.importedReminderIDs.isEmpty, "old documents still decode without import history")
     let csv = CardCSV.export(cards: [card], categories: [category], projects: [existing])
-    expect(CardCSV.parse(csv, categories: [category]).cards.first?.notes == record.notes, "multiline quoted notes survive CSV export/import")
+    expect(CardCSV.header.count == 10 && CardCSV.header.last == "remind" && !csv.contains(record.omittedDetails),
+           "CSV keeps the original ten-column schema and never exports unsupported source details")
+    let encoded = try! JSONSerialization.jsonObject(with: DocumentCoding.makeEncoder().encode(plan.document)) as! [String: Any]
+    let saved = (encoded["cards"] as! [[String: Any]]).last!
+    expect(saved["notes"] == nil && saved["omittedDetails"] == nil,
+           "imported tasks contain no persistent Notes or preview-details fields")
     var losAngeles = Calendar(identifier: .gregorian)
     losAngeles.timeZone = TimeZone(identifier: "America/Los_Angeles")!
     let allDay = DateComponents(year: 2026, month: 10, day: 25)
