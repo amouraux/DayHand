@@ -20,7 +20,7 @@ in App Store Connect before editing them.
 | Field | Proposed value / action |
 | --- | --- |
 | Name | `DayHand` — 7 characters; limit 30 |
-| Subtitle | `Tasks for your life and work` — 27 characters; limit 30 |
+| Subtitle | `Tasks for your life and work` — 28 characters; limit 30 |
 | Primary language | English; **TO CONFIRM** the existing App Store Connect locale |
 | Primary category | Productivity; matches the Mac category declared in the project |
 | Secondary category | **OWNER DECISION:** leave unset unless another category genuinely fits |
