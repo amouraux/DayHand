@@ -5,6 +5,8 @@ longer than a day.
 
 **<https://amouraux.github.io/DayHand/>** · [join the TestFlight beta](https://testflight.apple.com/join/37FbdQp6)
 
+[TestFlight field text and submission notes](docs/TESTFLIGHT.md).
+
 ## A task is not a date
 
 Most real tasks aren't things you start and finish on a single day. They stay
