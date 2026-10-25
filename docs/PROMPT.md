@@ -1442,6 +1442,18 @@ with the app unopened should still rotate exactly once.
 on the same day replaces the first, so pressing the button is never a way to
 fill the disk.
 
+**One swipe action per edge**: share on the trailing edge, delete on the
+leading one. They were both on the trailing edge to begin with, where a full
+swipe runs the first and the second is reachable only by stopping halfway,
+which is no way to find it.
+
+**Delete is offered only for the ones taken by hand.** The automatic three
+rotate, so removing one buys nothing and the next opening puts it back; a
+hand-made copy is the only kind whose going is permanent, and so the only kind
+worth a button. Its edge sets `allowsFullSwipe` to false, because the file is
+removed rather than trashed: a full swipe is too easy a way to lose the copy
+someone made on purpose, and the tap is the confirmation.
+
 ### The name is the backup
 
 Each copy is its own file, named for what it is and which device wrote it:

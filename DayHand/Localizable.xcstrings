@@ -440,13 +440,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld Karte"
+                  "value": "%lld Aufgabe"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld Karten"
+                  "value": "%lld Aufgaben"
                 }
               }
             }
@@ -458,13 +458,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld card"
+                  "value": "%lld task"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cards"
+                  "value": "%lld tasks"
                 }
               }
             }
@@ -476,13 +476,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld tarjeta"
+                  "value": "%lld tarea"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld tarjetas"
+                  "value": "%lld tareas"
                 }
               }
             }
@@ -494,13 +494,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carte"
+                  "value": "%lld tâche"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cartes"
+                  "value": "%lld tâches"
                 }
               }
             }
@@ -512,13 +512,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carta"
+                  "value": "%lld attività"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carte"
+                  "value": "%lld attività"
                 }
               }
             }
@@ -530,13 +530,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld kaart"
+                  "value": "%lld taak"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld kaarten"
+                  "value": "%lld taken"
                 }
               }
             }
@@ -548,13 +548,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cartão"
+                  "value": "%lld tarefa"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cartões"
+                  "value": "%lld tarefas"
                 }
               }
             }
@@ -571,13 +571,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld Karte ist noch offen. Sie wird als erledigt markiert."
+                  "value": "%lld Aufgabe ist noch offen. Sie wird als erledigt markiert."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld Karten sind noch offen. Sie werden als erledigt markiert."
+                  "value": "%lld Aufgaben sind noch offen. Sie werden als erledigt markiert."
                 }
               }
             }
@@ -589,13 +589,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld card is still to do. It is marked completed."
+                  "value": "%lld task is still to do. It is marked completed."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cards are still to do. They are marked completed."
+                  "value": "%lld tasks are still to do. They are marked completed."
                 }
               }
             }
@@ -607,13 +607,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Queda %lld tarjeta por hacer. Se marcará como completada."
+                  "value": "Queda %lld tarea por hacer. Se marcará como completada."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Quedan %lld tarjetas por hacer. Se marcarán como completadas."
+                  "value": "Quedan %lld tareas por hacer. Se marcarán como completadas."
                 }
               }
             }
@@ -625,13 +625,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carte reste à faire. Elle sera marquée comme terminée."
+                  "value": "%lld tâche reste à faire. Elle sera marquée comme terminée."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cartes restent à faire. Elles seront marquées comme terminées."
+                  "value": "%lld tâches restent à faire. Elles seront marquées comme terminées."
                 }
               }
             }
@@ -643,13 +643,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carta è ancora da fare. Verrà contrassegnata come completata."
+                  "value": "%lld attività è ancora da fare. Verrà contrassegnata come completata."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carte sono ancora da fare. Verranno contrassegnate come completate."
+                  "value": "%lld attività sono ancora da fare. Verranno contrassegnate come completate."
                 }
               }
             }
@@ -661,13 +661,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Er staat nog %lld kaart open. Die wordt als voltooid gemarkeerd."
+                  "value": "Er staat nog %lld taak open. Die wordt als voltooid gemarkeerd."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Er staan nog %lld kaarten open. Die worden als voltooid gemarkeerd."
+                  "value": "Er staan nog %lld taken open. Die worden als voltooid gemarkeerd."
                 }
               }
             }
@@ -679,13 +679,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Falta %lld cartão. Será marcado como concluído."
+                  "value": "Falta %lld tarefa. Será marcada como concluída."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Faltam %lld cartões. Serão marcados como concluídos."
+                  "value": "Faltam %lld tarefas. Serão marcadas como concluídas."
                 }
               }
             }
@@ -702,13 +702,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld Karte ist eingegangen"
+                  "value": "%lld Aufgabe ist eingegangen"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld Karten sind eingegangen"
+                  "value": "%lld Aufgaben sind eingegangen"
                 }
               }
             }
@@ -720,13 +720,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld card arrived"
+                  "value": "%lld task arrived"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cards arrived"
+                  "value": "%lld tasks arrived"
                 }
               }
             }
@@ -738,13 +738,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Ha llegado %lld tarjeta"
+                  "value": "Ha llegado %lld tarea"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Han llegado %lld tarjetas"
+                  "value": "Han llegado %lld tareas"
                 }
               }
             }
@@ -756,13 +756,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carte est arrivée"
+                  "value": "%lld tâche est arrivée"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cartes sont arrivées"
+                  "value": "%lld tâches sont arrivées"
                 }
               }
             }
@@ -774,13 +774,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "È arrivata %lld carta"
+                  "value": "È arrivata %lld attività"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Sono arrivate %lld carte"
+                  "value": "Sono arrivate %lld attività"
                 }
               }
             }
@@ -792,13 +792,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Er is %lld kaart binnengekomen"
+                  "value": "Er is %lld taak binnengekomen"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Er zijn %lld kaarten binnengekomen"
+                  "value": "Er zijn %lld taken binnengekomen"
                 }
               }
             }
@@ -810,13 +810,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Chegou %lld cartão"
+                  "value": "Chegou %lld tarefa"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Chegaram %lld cartões"
+                  "value": "Chegaram %lld tarefas"
                 }
               }
             }
@@ -832,13 +832,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld Karte in diesem Projekt."
+                  "value": "%lld Aufgabe in diesem Projekt."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld Karten in diesem Projekt."
+                  "value": "%lld Aufgaben in diesem Projekt."
                 }
               }
             }
@@ -850,13 +850,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld card in this project."
+                  "value": "%lld task in this project."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cards in this project."
+                  "value": "%lld tasks in this project."
                 }
               }
             }
@@ -868,13 +868,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld tarjeta en este proyecto."
+                  "value": "%lld tarea en este proyecto."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld tarjetas en este proyecto."
+                  "value": "%lld tareas en este proyecto."
                 }
               }
             }
@@ -886,13 +886,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carte dans ce projet."
+                  "value": "%lld tâche dans ce projet."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cartes dans ce projet."
+                  "value": "%lld tâches dans ce projet."
                 }
               }
             }
@@ -904,13 +904,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carta in questo progetto."
+                  "value": "%lld attività in questo progetto."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carte in questo progetto."
+                  "value": "%lld attività in questo progetto."
                 }
               }
             }
@@ -922,13 +922,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld kaart in dit project."
+                  "value": "%lld taak in dit project."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld kaarten in dit project."
+                  "value": "%lld taken in dit project."
                 }
               }
             }
@@ -940,13 +940,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cartão neste projeto."
+                  "value": "%lld tarefa neste projeto."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cartões neste projeto."
+                  "value": "%lld tarefas neste projeto."
                 }
               }
             }
@@ -963,13 +963,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld Karte entfernt"
+                  "value": "%lld Aufgabe entfernt"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld Karten entfernt"
+                  "value": "%lld Aufgaben entfernt"
                 }
               }
             }
@@ -981,13 +981,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld card removed"
+                  "value": "%lld task removed"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cards removed"
+                  "value": "%lld tasks removed"
                 }
               }
             }
@@ -999,13 +999,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld tarjeta eliminada"
+                  "value": "%lld tarea eliminada"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld tarjetas eliminadas"
+                  "value": "%lld tareas eliminadas"
                 }
               }
             }
@@ -1017,13 +1017,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carte supprimée"
+                  "value": "%lld tâche supprimée"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cartes supprimées"
+                  "value": "%lld tâches supprimées"
                 }
               }
             }
@@ -1035,13 +1035,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carta rimossa"
+                  "value": "%lld attività rimossa"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carte rimosse"
+                  "value": "%lld attività rimosse"
                 }
               }
             }
@@ -1053,13 +1053,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld kaart verwijderd"
+                  "value": "%lld taak verwijderd"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld kaarten verwijderd"
+                  "value": "%lld taken verwijderd"
                 }
               }
             }
@@ -1071,13 +1071,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cartão removido"
+                  "value": "%lld tarefa removida"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cartões removidos"
+                  "value": "%lld tarefas removidas"
                 }
               }
             }
@@ -1094,13 +1094,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld Karte aktualisiert"
+                  "value": "%lld Aufgabe aktualisiert"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld Karten aktualisiert"
+                  "value": "%lld Aufgaben aktualisiert"
                 }
               }
             }
@@ -1112,13 +1112,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld card updated"
+                  "value": "%lld task updated"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cards updated"
+                  "value": "%lld tasks updated"
                 }
               }
             }
@@ -1130,13 +1130,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld tarjeta actualizada"
+                  "value": "%lld tarea actualizada"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld tarjetas actualizadas"
+                  "value": "%lld tareas actualizadas"
                 }
               }
             }
@@ -1148,13 +1148,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carte mise à jour"
+                  "value": "%lld tâche mise à jour"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cartes mises à jour"
+                  "value": "%lld tâches mises à jour"
                 }
               }
             }
@@ -1166,13 +1166,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carta aggiornata"
+                  "value": "%lld attività aggiornata"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carte aggiornate"
+                  "value": "%lld attività aggiornate"
                 }
               }
             }
@@ -1184,13 +1184,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld kaart bijgewerkt"
+                  "value": "%lld taak bijgewerkt"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld kaarten bijgewerkt"
+                  "value": "%lld taken bijgewerkt"
                 }
               }
             }
@@ -1202,13 +1202,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cartão atualizado"
+                  "value": "%lld tarefa atualizada"
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cartões atualizados"
+                  "value": "%lld tarefas atualizadas"
                 }
               }
             }
@@ -1224,13 +1224,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld Karte wird gelöscht. Das lässt sich nicht rückgängig machen."
+                  "value": "%lld Aufgabe wird gelöscht. Das lässt sich nicht rückgängig machen."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld Karten werden gelöscht. Das lässt sich nicht rückgängig machen."
+                  "value": "%lld Aufgaben werden gelöscht. Das lässt sich nicht rückgängig machen."
                 }
               }
             }
@@ -1242,13 +1242,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld card will be removed. This cannot be undone."
+                  "value": "%lld task will be removed. This cannot be undone."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cards will be removed. This cannot be undone."
+                  "value": "%lld tasks will be removed. This cannot be undone."
                 }
               }
             }
@@ -1260,13 +1260,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Se eliminará %lld tarjeta. No se puede deshacer."
+                  "value": "Se eliminará %lld tarea. No se puede deshacer."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Se eliminarán %lld tarjetas. No se puede deshacer."
+                  "value": "Se eliminarán %lld tareas. No se puede deshacer."
                 }
               }
             }
@@ -1278,13 +1278,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carte sera supprimée. C’est irréversible."
+                  "value": "%lld tâche sera supprimée. C’est irréversible."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cartes seront supprimées. C’est irréversible."
+                  "value": "%lld tâches seront supprimées. C’est irréversible."
                 }
               }
             }
@@ -1296,13 +1296,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carta sarà eliminata. L’operazione è irreversibile."
+                  "value": "%lld attività sarà eliminata. L’operazione è irreversibile."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carte saranno eliminate. L’operazione è irreversibile."
+                  "value": "%lld attività saranno eliminate. L’operazione è irreversibile."
                 }
               }
             }
@@ -1314,13 +1314,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld kaart wordt verwijderd. Dit kan niet ongedaan worden gemaakt."
+                  "value": "%lld taak wordt verwijderd. Dit kan niet ongedaan worden gemaakt."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld kaarten worden verwijderd. Dit kan niet ongedaan worden gemaakt."
+                  "value": "%lld taken worden verwijderd. Dit kan niet ongedaan worden gemaakt."
                 }
               }
             }
@@ -1332,13 +1332,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cartão será eliminado. Isto não pode ser anulado."
+                  "value": "%lld tarefa será eliminada. Isto não pode ser anulado."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cartões serão eliminados. Isto não pode ser anulado."
+                  "value": "%lld tarefas serão eliminadas. Isto não pode ser anulado."
                 }
               }
             }
@@ -5010,13 +5010,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Seine %lld Karte wandert zu %@."
+                  "value": "Seine %lld Aufgabe wandert zu %@."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Seine %lld Karten wandern zu %@."
+                  "value": "Seine %lld Aufgaben wandern zu %@."
                 }
               }
             }
@@ -5028,13 +5028,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Its %lld card will move to %@."
+                  "value": "Its %lld task will move to %@."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Its %lld cards will move to %@."
+                  "value": "Its %lld tasks will move to %@."
                 }
               }
             }
@@ -5046,13 +5046,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Su %lld tarjeta pasará a %@."
+                  "value": "Su %lld tarea pasará a %@."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Sus %lld tarjetas pasarán a %@."
+                  "value": "Sus %lld tareas pasarán a %@."
                 }
               }
             }
@@ -5064,13 +5064,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Sa %lld carte passera dans %@."
+                  "value": "Sa %lld tâche passera dans %@."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Ses %lld cartes passeront dans %@."
+                  "value": "Ses %lld tâches passeront dans %@."
                 }
               }
             }
@@ -5082,13 +5082,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "La sua %lld carta passerà a %@."
+                  "value": "La sua %lld attività passerà a %@."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Le sue %lld carte passeranno a %@."
+                  "value": "Le sue %lld attività passeranno a %@."
                 }
               }
             }
@@ -5100,13 +5100,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "De %lld kaart gaat naar %@."
+                  "value": "De %lld taak gaat naar %@."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "De %lld kaarten gaan naar %@."
+                  "value": "De %lld taken gaan naar %@."
                 }
               }
             }
@@ -5118,13 +5118,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "O seu %lld cartão passará para %@."
+                  "value": "A sua %lld tarefa passará para %@."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Os seus %lld cartões passarão para %@."
+                  "value": "As suas %lld tarefas passarão para %@."
                 }
               }
             }
@@ -8047,13 +8047,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld Karte aus %@ wiederhergestellt."
+                  "value": "%lld Aufgabe aus %@ wiederhergestellt."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld Karten aus %@ wiederhergestellt."
+                  "value": "%lld Aufgaben aus %@ wiederhergestellt."
                 }
               }
             }
@@ -8065,13 +8065,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Restored %lld card from %@."
+                  "value": "Restored %lld task from %@."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "Restored %lld cards from %@."
+                  "value": "Restored %lld tasks from %@."
                 }
               }
             }
@@ -8083,13 +8083,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld tarjeta restaurada desde %@."
+                  "value": "%lld tarea restaurada desde %@."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld tarjetas restauradas desde %@."
+                  "value": "%lld tareas restauradas desde %@."
                 }
               }
             }
@@ -8101,13 +8101,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carte restaurée depuis %@."
+                  "value": "%lld tâche restaurée depuis %@."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cartes restaurées depuis %@."
+                  "value": "%lld tâches restaurées depuis %@."
                 }
               }
             }
@@ -8119,13 +8119,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carta ripristinata da %@."
+                  "value": "%lld attività ripristinata da %@."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld carte ripristinate da %@."
+                  "value": "%lld attività ripristinate da %@."
                 }
               }
             }
@@ -8137,13 +8137,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld kaart hersteld uit %@."
+                  "value": "%lld taak hersteld uit %@."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld kaarten hersteld uit %@."
+                  "value": "%lld taken hersteld uit %@."
                 }
               }
             }
@@ -8155,13 +8155,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cartão restaurado de %@."
+                  "value": "%lld tarefa restaurada de %@."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld cartões restaurados de %@."
+                  "value": "%lld tarefas restauradas de %@."
                 }
               }
             }
@@ -9886,43 +9886,43 @@
         }
       }
     },
-    "Three are kept automatically — yesterday, the day before, and about a week ago — and every one you take by hand, under its date. Each file is named for this device (%@), so copies from two devices can sit side by side. Tap one to restore it; swipe to share it somewhere safer.": {
+    "Three are kept automatically — yesterday, the day before, and about a week ago — and every one you take by hand, under its date. Each file is named for this device (%@), so copies from two devices can sit side by side. Tap one to restore it, swipe left to share it somewhere safer, or swipe right to delete one you took by hand.": {
       "comment": "Footer under the Backups section",
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Drei werden automatisch aufbewahrt — gestern, vorgestern und eine von vor etwa einer Woche — und jede, die Sie selbst anlegen, unter ihrem Datum. Jede Datei trägt den Namen dieses Geräts (%@), damit Kopien von zwei Geräten nebeneinander liegen können. Tippen Sie eine an, um sie wiederherzustellen; streichen Sie, um sie an einen sichereren Ort zu teilen."
+            "value": "Drei werden automatisch aufbewahrt — gestern, vorgestern und etwa vor einer Woche — und jede, die Sie von Hand anlegen, unter ihrem Datum. Jede Datei trägt den Namen dieses Geräts (%@), damit Kopien von zwei Geräten nebeneinander liegen können. Tippen Sie auf eine, um sie wiederherzustellen, wischen Sie nach links, um sie sicherer abzulegen, oder nach rechts, um eine von Hand angelegte zu löschen."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Se guardan tres automáticamente —ayer, anteayer y una de hace aproximadamente una semana— y todas las que hagas tú, con su fecha. Cada archivo lleva el nombre de este dispositivo (%@), para que las copias de dos dispositivos puedan convivir. Toca una para restaurarla; desliza para compartirla en un sitio más seguro."
+            "value": "Se conservan tres automáticamente — ayer, anteayer y hace una semana aproximadamente — y todas las que hagas a mano, bajo su fecha. Cada archivo lleva el nombre de este dispositivo (%@), para que las copias de dos dispositivos puedan convivir. Toca una para restaurarla, desliza a la izquierda para compartirla en un lugar más seguro o a la derecha para eliminar una que hayas hecho a mano."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Trois sont conservées automatiquement — hier, avant-hier et une d’il y a environ une semaine — ainsi que chacune de celles que vous faites vous-même, à sa date. Chaque fichier porte le nom de cet appareil (%@), pour que les copies de deux appareils puissent coexister. Touchez-en une pour la restaurer ; balayez pour la partager en lieu plus sûr."
+            "value": "Trois sont conservées automatiquement — hier, avant-hier et il y a environ une semaine — ainsi que chacune de celles que vous faites à la main, à sa date. Chaque fichier porte le nom de cet appareil (%@), pour que les copies de deux appareils puissent coexister. Touchez-en une pour la restaurer, glissez vers la gauche pour la mettre à l’abri ailleurs, ou vers la droite pour supprimer une copie faite à la main."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tre vengono conservate automaticamente — ieri, l’altroieri e una di circa una settimana fa — e ognuna di quelle che fai tu, con la sua data. Ogni file porta il nome di questo dispositivo (%@), così le copie di due dispositivi possono stare l’una accanto all’altra. Toccane una per ripristinarla; scorri per condividerla in un posto più sicuro."
+            "value": "Tre vengono conservate automaticamente — ieri, l’altro ieri e circa una settimana fa — e ognuna di quelle che fai a mano, alla sua data. Ogni file porta il nome di questo dispositivo (%@), così le copie di due dispositivi possono stare affiancate. Tocca una copia per ripristinarla, scorri verso sinistra per metterla al sicuro altrove, o verso destra per eliminarne una fatta a mano."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Er worden er drie automatisch bewaard — gisteren, eergisteren en een van ongeveer een week geleden — en elke die u zelf maakt, onder de datum. Elk bestand draagt de naam van dit apparaat (%@), zodat kopieën van twee apparaten naast elkaar kunnen staan. Tik op een om die terug te zetten; veeg om die ergens veiliger te delen."
+            "value": "Er worden er automatisch drie bewaard — gisteren, eergisteren en ongeveer een week geleden — en elke die je met de hand maakt, op zijn datum. Elk bestand draagt de naam van dit apparaat (%@), zodat kopieën van twee apparaten naast elkaar kunnen staan. Tik op een kopie om die terug te zetten, veeg naar links om hem elders veilig te stellen, of naar rechts om er een te verwijderen die je zelf hebt gemaakt."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "São guardadas três automaticamente — ontem, anteontem e uma de há cerca de uma semana — e todas as que fizer à mão, com a sua data. Cada ficheiro tem o nome deste dispositivo (%@), para que as cópias de dois dispositivos possam coexistir. Toque numa para a restaurar; deslize para a partilhar num sítio mais seguro."
+            "value": "Três são mantidas automaticamente — ontem, anteontem e há cerca de uma semana — e todas as que fizer à mão, na sua data. Cada ficheiro tem o nome deste dispositivo (%@), para que as cópias de dois dispositivos possam ficar lado a lado. Toque numa para a restaurar, deslize para a esquerda para a guardar noutro local mais seguro, ou para a direita para eliminar uma que tenha feito à mão."
           }
         }
       }

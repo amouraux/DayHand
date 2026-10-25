@@ -321,6 +321,21 @@ struct SettingsView: View {
                                     Label("Share", systemImage: "square.and.arrow.up")
                                 }
                                 .tint(.accentColor)
+                            }
+                            // Delete on the other edge rather than behind
+                            // Share. Two actions on one edge mean a full swipe
+                            // runs the first and the second is reachable only
+                            // by stopping halfway, which is no way to find it.
+                            //
+                            // Only the ones taken by hand: the automatic three
+                            // rotate, so removing one buys nothing and the next
+                            // open puts it back.
+                            //
+                            // `allowsFullSwipe` is off because the file is
+                            // removed, not trashed. A full swipe is too easy a
+                            // way to lose the copy someone made on purpose,
+                            // and the tap is the confirmation.
+                            .swipeActions(edge: .leading, allowsFullSwipe: false) {
                                 if backup.kind.isManual {
                                     Button(role: .destructive) {
                                         withAnimation { store.deleteBackup(backup) }
@@ -334,7 +349,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Backups")
                 } footer: {
-                    Text("Three are kept automatically — yesterday, the day before, and about a week ago — and every one you take by hand, under its date. Each file is named for this device (\(store.backupDeviceName)), so copies from two devices can sit side by side. Tap one to restore it; swipe to share it somewhere safer.")
+                    Text("Three are kept automatically — yesterday, the day before, and about a week ago — and every one you take by hand, under its date. Each file is named for this device (\(store.backupDeviceName)), so copies from two devices can sit side by side. Tap one to restore it, swipe left to share it somewhere safer, or swipe right to delete one you took by hand.")
                 }
 
                 Section {
