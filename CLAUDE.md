@@ -80,9 +80,11 @@ Two migrations, and they run in different places. `dueDate` is read once by
 stopping a version that still files cards from doing it again: it would ignore
 any flag it did not recognise, but it cannot file a date it cannot see. Then
 `StoreDocument.promotingOrphanDeadlines` — in the document, where a clock is
-available — moves a deadline with no reminder into `remindAt` at 9am. It is
-derived, so it stamps nothing; a moment already past arrives answered, or a
-year of old dates lands in the review as a backlog.
+available — moves a legacy deadline with no reminder into `remindAt` at 9am.
+`dateSemanticsVersion` is 0 when absent from old JSON and 1 for modern tasks;
+the pass marks legacy tasks as migrated without stamping edits. Explicit modern
+deadlines, including imported Todoist deadlines, must survive without a reminder.
+A moment already past arrives answered, so old dates do not create a backlog.
 
 A reminder stops asking when the user answers it, and **dealing with the card
 is an answer**: `TodoStore.move` stamps `reminderAnsweredAt` while keeping

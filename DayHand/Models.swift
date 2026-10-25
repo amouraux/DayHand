@@ -775,6 +775,9 @@ struct TodoItem: Identifiable, Codable, Equatable {
     var title: String
     /// Kept separately from the title, including text carried in by an import.
     var notes: String = ""
+    /// Missing in old documents, whose lone date still needs migrating. An
+    /// explicit modern deadline must survive reload without becoming a reminder.
+    var dateSemanticsVersion = 1
     var bucket: Bucket = .inbox
     /// Optional category, independent of `bucket` and `dueDate`. Holds the id
     /// of a `CardCategory` the user has defined.
@@ -791,9 +794,8 @@ struct TodoItem: Identifiable, Codable, Equatable {
     /// question a list can actually help with. When to finish is `deadline`.
     var remindAt: Date?
     /// When the work must be done, for a job that takes more than a day.
-    /// Optional, and only offered once a reminder exists: a finish with no
-    /// start is a date the app can do nothing with. It is shown on the card
-    /// and nothing more — it colours nothing and fires nothing.
+    /// Normally offered once a reminder exists. An imported deadline can
+    /// stand alone and remains editable. It colours nothing and fires nothing.
     var deadline: Date?
     /// When the reminder was answered in the review. A notification that was
     /// merely swiped away is not an answer — only choosing what to do with the
@@ -822,6 +824,7 @@ struct TodoItem: Identifiable, Codable, Equatable {
         id = try c.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
         title = try c.decode(String.self, forKey: .title)
         notes = try c.decodeIfPresent(String.self, forKey: .notes) ?? ""
+        dateSemanticsVersion = try c.decodeIfPresent(Int.self, forKey: .dateSemanticsVersion) ?? 0
         bucket = try c.decodeIfPresent(Bucket.self, forKey: .bucket) ?? .inbox
         // A date written by a version that filed cards is read as a deadline
         // here and promoted to a reminder by

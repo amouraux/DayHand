@@ -12865,48 +12865,1152 @@
         }
       }
     },
-    "CSV import can either add to what is here or replace it. Tasks are matched by id; categories and projects by name.": {
+    "Import from Todoist": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "CSV import can either add to what is here or replace it. Tasks are matched by id; categories and projects by name."
+            "value": "Import from Todoist"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "L’import CSV peut compléter ce qui est ici ou le remplacer. Les tâches sont reconnues par identifiant ; les catégories et les projets par nom."
+            "value": "Importer depuis Todoist"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "CSV-import kan bestaande taken aanvullen of vervangen. Taken worden herkend op id; categorieën en projecten op naam."
+            "value": "Importeren uit Todoist"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Der CSV-Import kann vorhandene Aufgaben ergänzen oder ersetzen. Aufgaben werden per ID erkannt, Kategorien und Projekte per Name."
+            "value": "Aus Todoist importieren"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "La importación CSV puede añadir a lo que hay o reemplazarlo. Las tareas se reconocen por identificador; las categorías y los proyectos por nombre."
+            "value": "Importar desde Todoist"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "L’importazione CSV può aggiungere alle attività esistenti o sostituirle. Le attività vengono riconosciute per ID; categorie e progetti per nome."
+            "value": "Importa da Todoist"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "A importação CSV pode acrescentar ao que existe ou substituí-lo. As tarefas são reconhecidas por ID; categorias e projetos por nome."
+            "value": "Importar do Todoist"
+          }
+        }
+      }
+    },
+    "Import from Todoist…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import from Todoist…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importer depuis Todoist…"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importeren uit Todoist…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aus Todoist importieren…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importar desde Todoist…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importa da Todoist…"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importar do Todoist…"
+          }
+        }
+      }
+    },
+    "Choose Todoist CSV files…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose Todoist CSV files…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisir des fichiers CSV Todoist…"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todoist-CSV-bestanden kiezen…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todoist-CSV-Dateien auswählen…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elegir archivos CSV de Todoist…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scegli file CSV di Todoist…"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolher ficheiros CSV do Todoist…"
+          }
+        }
+      }
+    },
+    "Date needs review": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date needs review"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date à vérifier"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datum controleren"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datum prüfen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revisar fecha"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data da verificare"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Data a rever"
+          }
+        }
+      }
+    },
+    "Dates needing review": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dates needing review"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dates à vérifier"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Te controleren datums"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zu prüfende Daten"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fechas por revisar"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date da verificare"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datas a rever"
+          }
+        }
+      }
+    },
+    "Ignored CSV rows": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignored CSV rows"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lignes CSV ignorées"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Genegeerde CSV-rijen"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignorierte CSV-Zeilen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filas CSV ignoradas"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Righe CSV ignorate"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Linhas CSV ignoradas"
+          }
+        }
+      }
+    },
+    "Import dates": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import dates"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importer les dates"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Datums importeren"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Daten importieren"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importar fechas"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importa date"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importar datas"
+          }
+        }
+      }
+    },
+    "Import this file": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import this file"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importer ce fichier"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dit bestand importeren"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Datei importieren"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importar este archivo"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importa questo file"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importar este ficheiro"
+          }
+        }
+      }
+    },
+    "Include tasks with unrecognised dates": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Include tasks with unrecognised dates"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inclure les tâches dont la date n’est pas reconnue"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taken met niet-herkende datums opnemen"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aufgaben mit nicht erkannten Daten einschließen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Incluir tareas con fechas no reconocidas"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Includi attività con date non riconosciute"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Incluir tarefas com datas não reconhecidas"
+          }
+        }
+      }
+    },
+    "Reading files…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reading files…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lecture des fichiers…"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bestanden lezen…"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dateien werden gelesen…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leyendo archivos…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lettura dei file…"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A ler ficheiros…"
+          }
+        }
+      }
+    },
+    "Choose CSV files smaller than 20 MB each.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose CSV files smaller than 20 MB each."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez des fichiers CSV de moins de 20 Mo chacun."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kies CSV-bestanden kleiner dan 20 MB per bestand."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wähle CSV-Dateien mit jeweils weniger als 20 MB aus."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elige archivos CSV de menos de 20 MB cada uno."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scegli file CSV inferiori a 20 MB ciascuno."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolha ficheiros CSV com menos de 20 MB cada."
+          }
+        }
+      }
+    },
+    "Comment": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comment"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commentaire"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opmerking"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kommentar"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comentario"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commento"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comentário"
+          }
+        }
+      }
+    },
+    "Parent task": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parent task"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tâche parente"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bovenliggende taak"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Übergeordnete Aufgabe"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tarea principal"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attività principale"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tarefa principal"
+          }
+        }
+      }
+    },
+    "Section": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Section"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Section"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sectie"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abschnitt"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sección"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sezione"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Secção"
+          }
+        }
+      }
+    },
+    "Source file": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Source file"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fichier d’origine"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bronbestand"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ursprungsdatei"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archivo de origen"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File di origine"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ficheiro de origem"
+          }
+        }
+      }
+    },
+    "The CSV file must use UTF-8 text encoding.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The CSV file must use UTF-8 text encoding."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le fichier CSV doit utiliser l’encodage UTF-8."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Het CSV-bestand moet UTF-8-tekstcodering gebruiken."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die CSV-Datei muss die Textkodierung UTF-8 verwenden."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El archivo CSV debe usar codificación UTF-8."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il file CSV deve usare la codifica UTF-8."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O ficheiro CSV deve usar a codificação UTF-8."
+          }
+        }
+      }
+    },
+    "This is not a valid Todoist project CSV. Export a project from Todoist and choose its CSV file.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This is not a valid Todoist project CSV. Export a project from Todoist and choose its CSV file."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce n’est pas un CSV de projet Todoist valide. Exportez un projet depuis Todoist et choisissez son fichier CSV."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dit is geen geldig Todoist-project-CSV-bestand. Exporteer een project uit Todoist en kies het CSV-bestand."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dies ist keine gültige Todoist-Projekt-CSV. Exportiere ein Projekt aus Todoist und wähle seine CSV-Datei aus."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No es un CSV de proyecto de Todoist válido. Exporta un proyecto desde Todoist y elige su archivo CSV."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non è un CSV di progetto Todoist valido. Esporta un progetto da Todoist e scegli il suo file CSV."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este não é um CSV de projeto Todoist válido. Exporte um projeto do Todoist e escolha o respetivo ficheiro CSV."
+          }
+        }
+      }
+    },
+    "In Todoist, open a project, choose Manage data, then Export as CSV. Select one or more exported CSV files here.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In Todoist, open a project, choose Manage data, then Export as CSV. Select one or more exported CSV files here."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dans Todoist, ouvrez un projet, choisissez Gérer les données, puis Exporter au format CSV. Sélectionnez ici un ou plusieurs fichiers CSV exportés."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open een project in Todoist, kies Gegevens beheren en vervolgens Exporteren als CSV. Selecteer hier een of meer geëxporteerde CSV-bestanden."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffne in Todoist ein Projekt, wähle Daten verwalten und dann Als CSV exportieren. Wähle hier eine oder mehrere exportierte CSV-Dateien aus."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En Todoist, abre un proyecto, elige Gestionar datos y luego Exportar como CSV. Selecciona aquí uno o varios archivos CSV exportados."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In Todoist, apri un progetto, scegli Gestisci dati e poi Esporta come CSV. Seleziona qui uno o più file CSV esportati."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Todoist, abra um projeto, escolha Gerir dados e depois Exportar como CSV. Selecione aqui um ou mais ficheiros CSV exportados."
+          }
+        }
+      }
+    },
+    "Todoist keeps its own alerts. Imported reminders may also notify you in DayHand.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todoist keeps its own alerts. Imported reminders may also notify you in DayHand."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todoist conserve ses propres alertes. Les rappels importés peuvent aussi vous avertir dans DayHand."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todoist behoudt zijn eigen meldingen. Geïmporteerde herinneringen kunnen ook in DayHand meldingen geven."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todoist behält seine eigenen Hinweise. Importierte Erinnerungen können auch in DayHand benachrichtigen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todoist conserva sus alertas. Los recordatorios importados también pueden avisarte en DayHand."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todoist mantiene i propri avvisi. I promemoria importati possono avvisarti anche in DayHand."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Todoist mantém os seus alertas. Os lembretes importados também podem notificar no DayHand."
+          }
+        }
+      }
+    },
+    "Including unrecognised dates imports those tasks once. Their unrecognised dates stay only in Notes; recurring schedules are not recreated.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Including unrecognised dates imports those tasks once. Their unrecognised dates stay only in Notes; recurring schedules are not recreated."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inclure les dates non reconnues importe ces tâches une seule fois. Ces dates restent uniquement dans Notes ; les récurrences ne sont pas recréées."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bij het opnemen van niet-herkende datums worden die taken eenmalig geïmporteerd. De niet-herkende datums blijven alleen in Notities staan; terugkerende schema’s worden niet opnieuw gemaakt."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Aufgaben werden einmalig importiert, wenn du nicht erkannte Daten einschließt. Diese Daten bleiben nur in den Notizen; Wiederholungen werden nicht neu erstellt."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Al incluir fechas no reconocidas, esas tareas se importan una sola vez. Sus fechas no reconocidas quedan solo en Notas; no se recrean las programaciones recurrentes."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Includendo le date non riconosciute, queste attività vengono importate una sola volta. Le date non riconosciute restano solo nelle Note; le ricorrenze non vengono ricreate."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ao incluir datas não reconhecidas, essas tarefas são importadas uma única vez. As datas não reconhecidas ficam apenas nas Notas; as repetições não são recriadas."
+          }
+        }
+      }
+    },
+    "Recognised task dates become reminders at 9 a.m.; recognised deadlines stay deadlines. Dates never move tasks. Original date text stays in Notes. Dates written in words, including recurring dates, need review.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recognised task dates become reminders at 9 a.m.; recognised deadlines stay deadlines. Dates never move tasks. Original date text stays in Notes. Dates written in words, including recurring dates, need review."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les dates de tâche reconnues deviennent des rappels à 9 h ; les dates limites reconnues restent des dates limites. Les dates ne déplacent jamais les tâches. Le texte d’origine reste dans Notes. Les dates écrites en toutes lettres, y compris récurrentes, sont à vérifier."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Herkende taakdatums worden herinneringen om 9 uur; herkende deadlines blijven deadlines. Datums verplaatsen taken nooit. De oorspronkelijke datumtekst blijft in Notities. Datums in woorden, waaronder terugkerende datums, moeten worden gecontroleerd."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Erkannte Aufgabendaten werden zu Erinnerungen um 9 Uhr; erkannte Fristen bleiben Fristen. Daten verschieben niemals Aufgaben. Der ursprüngliche Datumstext bleibt in den Notizen. Ausgeschriebene Daten, auch wiederkehrende, müssen geprüft werden."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las fechas de tarea reconocidas se convierten en recordatorios a las 9; las fechas límite reconocidas se conservan. Las fechas nunca mueven tareas. El texto original queda en Notas. Hay que revisar las fechas escritas con palabras, incluidas las recurrentes."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le date delle attività riconosciute diventano promemoria alle 9; i termini riconosciuti restano termini di consegna. Le date non spostano mai le attività. Il testo originale resta nelle Note. Le date scritte a parole, incluse quelle ricorrenti, vanno verificate."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As datas de tarefas reconhecidas tornam-se lembretes às 9 h; os prazos reconhecidos mantêm-se como prazos. As datas nunca movem tarefas. O texto original fica nas Notas. As datas escritas por extenso, incluindo as recorrentes, precisam de revisão."
+          }
+        }
+      }
+    },
+    "Todoist project CSVs exclude completed tasks. Sections, parent tasks, comments, labels and other exported details are kept as text in Notes. Subtasks become separate tasks; attachments are not downloaded.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todoist project CSVs exclude completed tasks. Sections, parent tasks, comments, labels and other exported details are kept as text in Notes. Subtasks become separate tasks; attachments are not downloaded."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les CSV de projet Todoist excluent les tâches terminées. Sections, tâches parentes, commentaires, étiquettes et autres détails exportés restent comme texte dans Notes. Les sous-tâches deviennent des tâches distinctes ; les pièces jointes ne sont pas téléchargées."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todoist-project-CSV’s bevatten geen voltooide taken. Secties, bovenliggende taken, opmerkingen, labels en andere geëxporteerde gegevens worden als tekst in Notities bewaard. Subtaken worden aparte taken; bijlagen worden niet gedownload."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todoist-Projekt-CSV-Dateien enthalten keine erledigten Aufgaben. Abschnitte, übergeordnete Aufgaben, Kommentare, Etiketten und andere exportierte Details bleiben als Text in den Notizen erhalten. Unteraufgaben werden eigene Aufgaben; Anhänge werden nicht heruntergeladen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los CSV de proyectos de Todoist excluyen las tareas completadas. Las secciones, tareas principales, comentarios, etiquetas y otros detalles exportados quedan como texto en Notas. Las subtareas pasan a ser tareas separadas; los adjuntos no se descargan."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I CSV dei progetti Todoist escludono le attività completate. Sezioni, attività principali, commenti, etichette e altri dettagli esportati vengono conservati come testo nelle Note. Le sottoattività diventano attività separate; gli allegati non vengono scaricati."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os CSV de projetos do Todoist excluem tarefas concluídas. Secções, tarefas principais, comentários, etiquetas e outros detalhes exportados ficam como texto nas Notas. As subtarefas tornam-se tarefas separadas; os anexos não são descarregados."
+          }
+        }
+      }
+    },
+    "A backup is saved before import. Existing tasks are kept. Reimporting the same unchanged file with the same name skips previously imported rows, including deleted tasks. Edited or renamed exports can create duplicates.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A backup is saved before import. Existing tasks are kept. Reimporting the same unchanged file with the same name skips previously imported rows, including deleted tasks. Edited or renamed exports can create duplicates."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une sauvegarde est créée avant l’import. Les tâches existantes sont conservées. Réimporter le même fichier inchangé sous le même nom ignore les lignes déjà importées, même les tâches supprimées. Des exports modifiés ou renommés peuvent créer des doublons."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voor de import wordt een reservekopie opgeslagen. Bestaande taken blijven behouden. Het opnieuw importeren van hetzelfde ongewijzigde bestand met dezelfde naam slaat eerder geïmporteerde rijen over, ook verwijderde taken. Bewerkte of hernoemde exports kunnen duplicaten maken."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vor dem Import wird ein Backup gespeichert. Bestehende Aufgaben bleiben erhalten. Beim erneuten Import derselben unveränderten Datei mit demselben Namen werden bereits importierte Zeilen übersprungen, auch gelöschte Aufgaben. Bearbeitete oder umbenannte Exporte können Duplikate erzeugen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se guarda una copia de seguridad antes de importar. Las tareas existentes se conservan. Reimportar el mismo archivo sin cambios y con el mismo nombre omite las filas ya importadas, incluidas las tareas eliminadas. Los archivos editados o renombrados pueden crear duplicados."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prima dell’importazione viene salvato un backup. Le attività esistenti vengono mantenute. Reimportare lo stesso file invariato con lo stesso nome ignora le righe già importate, anche le attività eliminate. Esportazioni modificate o rinominate possono creare duplicati."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "É guardada uma cópia de segurança antes da importação. As tarefas existentes são mantidas. Reimportar o mesmo ficheiro inalterado com o mesmo nome ignora as linhas já importadas, incluindo tarefas eliminadas. Exportações editadas ou renomeadas podem criar duplicados."
+          }
+        }
+      }
+    },
+    "Added %lld tasks. Skipped %lld already imported and %lld other tasks. Todoist was left unchanged.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Added %lld tasks. Skipped %lld already imported and %lld other tasks. Todoist was left unchanged."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld tâches ajoutées. %lld déjà importées et %lld autres tâches ignorées. Todoist n’a pas été modifié."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld taken toegevoegd. %lld al geïmporteerde en %lld andere taken overgeslagen. Todoist is niet gewijzigd."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld Aufgaben hinzugefügt. %lld bereits importierte und %lld andere Aufgaben übersprungen. Todoist wurde nicht geändert."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se añadieron %lld tareas. Se omitieron %lld ya importadas y %lld otras tareas. Todoist no se modificó."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aggiunte %lld attività. Ignorate %lld già importate e %lld altre attività. Todoist non è stato modificato."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adicionadas %lld tarefas. Ignoradas %lld já importadas e %lld outras tarefas. O Todoist não foi alterado."
+          }
+        }
+      }
+    },
+    "DayHand CSV import can either add to what is here or replace it. Tasks are matched by id; categories and projects by name.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand CSV import can either add to what is here or replace it. Tasks are matched by id; categories and projects by name."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’import CSV DayHand peut compléter ce qui est ici ou le remplacer. Les tâches sont reconnues par identifiant ; les catégories et les projets par nom."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand-CSV-import kan bestaande taken aanvullen of vervangen. Taken worden herkend op id; categorieën en projecten op naam."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der DayHand-CSV-Import kann vorhandene Aufgaben ergänzen oder ersetzen. Aufgaben werden per ID erkannt, Kategorien und Projekte per Name."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La importación CSV de DayHand puede añadir a lo que hay o reemplazarlo. Las tareas se reconocen por identificador; las categorías y los proyectos por nombre."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’importazione CSV di DayHand può aggiungere alle attività esistenti o sostituirle. Le attività vengono riconosciute per ID; categorie e progetti per nome."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A importação CSV do DayHand pode acrescentar ao que existe ou substituí-lo. As tarefas são reconhecidas por ID; categorias e projetos por nome."
           }
         }
       }

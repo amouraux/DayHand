@@ -73,7 +73,7 @@ exists to protect. There is one date, and optionally its far end:
   than a day. Shown on the task and nothing else: it colours nothing and fires
   nothing.
 
-**The deadline is only offered once a reminder exists.** A finish line with no
+**A new deadline is normally offered once a reminder exists.** A finish line with no
 start is a date the app can do nothing with — it cannot ask about it, cannot
 colour by it, and cannot tell you when to begin. Asking "when is it due?"
 before "when will you start?" is what made the earlier version of this confusing.
@@ -87,8 +87,8 @@ Moving a task by hand keeps both dates. There is nothing for a stack and a date
 to disagree about, so there is no rule dropping one to satisfy the other, and a
 task in Later may be started tomorrow and stay in Later.
 
-A deadline can outlive its reminder — answering a reminder clears it, and the
-job still has a day it must be done by — so the editor also shows the deadline
+A deadline can outlive its reminder — clearing a reminder keeps its deadline —
+so the editor also shows the deadline
 whenever a task already carries one. A date that can be seen but not changed is
 worse than one that was never offered.
 
@@ -1643,3 +1643,86 @@ constructing TodoStore or opening live app data. Simulator verification still
 needs permission denial/retry, list loading, all mapping choices, preview
 exclusion, import, reopen, repeat import, cancellation, and a sample recurring
 reminder. Use dummy data only; do not launch the Mac app against live data.
+
+
+## One-time import from Todoist project CSVs
+
+More → Tasks → Import from Todoist opens a separate one-time file importer.
+Use Todoist's project menu → Manage data → Export as CSV, then select one or
+more UTF-8 CSV files. No account token, OAuth connection, server or continuous
+sync is involved. The selected files and the Todoist account are never modified.
+
+Each selected file can go to a category, an explicitly chosen active project,
+or a new project. The common `TaskImportDestinationFields` is shared with Apple
+Reminders, and existing projects always supply their category. New project
+names follow the app's existing uppercase, no-spaces rule. Empty files and
+excluded tasks create no projects. Inbox is the default destination stack.
+
+`TodoistCSV` is Foundation-only and parses the documented TYPE/CONTENT format.
+It supports task, section, note and meta rows, reordered columns, a UTF-8 BOM,
+quoted multiline fields, escaped quotes, CRLF, and older files missing optional
+columns. Malformed quoting, duplicate headers, missing required headers and
+extra fields are rejected before import. UTF-8 and a 20 MB per-file limit are
+checked by the file reader off the main actor. A failed file load does not
+partially replace the current selection.
+
+Task titles and labels remain literal. Descriptions and comment rows are kept
+in Notes, with comments attached to the preceding task. Sections, section
+descriptions, parent-task paths, assignees, priorities, original date strings,
+date languages, time zones, durations and other nonempty exported fields are
+retained as text. Subtasks become independent tasks with their parent context
+in Notes. Orphan comments and unsupported row types are counted as ignored CSV
+rows in the preview. Metadata describing view layout is not imported as a task.
+Attachment links present in text are retained; files are not downloaded.
+
+Only unambiguous absolute dates are parsed: ISO civil days, ISO timestamps with
+offsets, and year-month-day times with the exported time zone. Localized,
+relative, recurring, invalid or otherwise unrecognised date expressions are
+never guessed. Affected tasks are excluded until the user explicitly enables
+“Include tasks with unrecognised dates”. Then they are imported once with
+unrecognised dates kept only in Notes; recurring schedules are never recreated.
+Recognised task dates become reminders at 9 a.m. on the local day. Recognised
+deadlines remain deadlines, including when there is no reminder. “Import dates”
+can be turned off to keep all dates only in Notes. Dates never move tasks.
+Todoist project CSVs do not include completed tasks; the importer says so.
+
+The preview shows mappings, tasks, exclusions, counts, ignored rows and date
+warnings. Confirming recomputes the plan against the current document and uses
+the same backed-up single-write commit as the Apple importer. No import
+replaces or updates existing tasks by title.
+
+Todoist project CSVs have no stable task ids. `TodoistFileReader` uses SHA-256 of
+the filename plus file bytes, and the parser identifies each row within that
+file. `StoreDocument.importedTodoistIDs` is a separate union-merged history set
+that survives deletion. The exact same unchanged file with the same name is
+skipped on repeat import. Edited or renamed exports can produce duplicates;
+this limitation is shown before import. Two differently named projects with
+identical CSV content remain distinct. No content-based task-title guessing is
+used. Source paths are not stored.
+
+### Explicit modern deadlines and the legacy date migration
+
+`TodoItem.dateSemanticsVersion` defaults to 1 for new tasks and to 0 when absent
+from old JSON. The legacy migration only visits version-0 tasks, promoting old
+standalone deadlines into reminders as before and marking all visited tasks as
+version 1. It never stamps `modifiedAt`. Explicit modern standalone deadlines
+therefore survive reload, sync and clearing a reminder. DayHand CSV headers
+naming `deadline` are modern; old `due` headers and headerless legacy files keep
+the legacy migration. Update all devices before relying on the new marker,
+Notes or either import history across sync: older builds ignore these fields.
+
+### Verification and remaining runtime checks
+
+The model tests include Todoist's official CSV template (downloaded from its
+Help Center on 25 October 2026), quoted fields, hierarchy and comment association,
+invalid files, conservative date parsing, opt-in handling, exclusions, repeated
+imports, deletion history, history merging and deadline migration. They never
+construct TodoStore or read live app data. The fixture source is documented in
+Tests/Fixtures/README.md.
+
+Simulator runtime access remains unavailable in this session. Before release,
+use dummy exports to check the file picker on iPhone/iPad, cancellation,
+UTF-8/error messages, multiple files, all project/category mappings, preview
+exclusions, the date-review opt-in, import, the backup, reload, notes editing,
+repeat import after editing/deleting a task, and the Mac layout. Do not launch
+the installed Mac app or use its real data to perform these checks.

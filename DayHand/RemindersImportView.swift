@@ -12,7 +12,7 @@ final class AppleRemindersReader: ObservableObject {
     }
 
     @Published private(set) var lists: [ListInfo] = []
-    @Published private(set) var records: [ReminderImportRecord] = []
+    @Published private(set) var records: [TaskImportRecord] = []
     @Published private(set) var isLoading = false
     @Published private(set) var isLoaded = false
     @Published private(set) var error: String?
@@ -57,13 +57,13 @@ final class AppleRemindersReader: ObservableObject {
                 if let location = reminder.location, !location.isEmpty {
                     notes.append(String(localized: "Location") + ": " + location)
                 }
-                let due = ReminderImport.date(from: reminder.dueDateComponents)
+                let due = TaskImport.date(from: reminder.dueDateComponents)
                 if let due {
                     let hasTime = reminder.dueDateComponents?.hour != nil
                     notes.append(String(localized: "Original due date") + ": " +
                                  due.formatted(date: .abbreviated, time: hasTime ? .shortened : .omitted))
                 }
-                if let start = ReminderImport.date(from: reminder.startDateComponents) {
+                if let start = TaskImport.date(from: reminder.startDateComponents) {
                     notes.append(String(localized: "Original start date") + ": " + start.formatted())
                 }
                 if reminder.priority > 0 {
@@ -72,7 +72,7 @@ final class AppleRemindersReader: ObservableObject {
                 if reminder.hasAlarms {
                     notes.append(String(localized: "Original alerts are not transferred."))
                 }
-                return ReminderImportRecord(
+                return TaskImportRecord(
                     id: reminder.calendarItemIdentifier,
                     listID: reminder.calendar.calendarIdentifier,
                     title: reminder.title ?? "",
@@ -94,13 +94,13 @@ struct RemindersImportView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
     @StateObject private var reader = AppleRemindersReader()
-    @State private var options = ReminderImport.Options()
+    @State private var options = TaskImport.Options()
     @State private var projectChoices: [String: String] = [:]
-    @State private var preview: ReminderImport.Plan?
+    @State private var preview: TaskImport.Plan?
     @State private var report: String?
     @State private var didImport = false
 
-    private var previewRecords: [ReminderImportRecord] {
+    private var previewRecords: [TaskImportRecord] {
         reader.records.filter {
             options.destinations[$0.listID] != nil && !$0.isRecurring &&
             (options.includeCompleted || !$0.isCompleted) &&
@@ -214,7 +214,7 @@ struct RemindersImportView: View {
     private func selected(_ id: String) -> Binding<Bool> {
         Binding(get: { options.destinations[id] != nil }, set: { selected in
             if selected {
-                options.destinations[id] = ReminderImportDestination(categoryID: store.defaultCategoryID)
+                options.destinations[id] = TaskImportDestination(categoryID: store.defaultCategoryID)
                 projectChoices[id] = "none"
             } else {
                 options.destinations.removeValue(forKey: id)
@@ -223,38 +223,17 @@ struct RemindersImportView: View {
         })
     }
 
-    @ViewBuilder private func destinationRows(_ list: AppleRemindersReader.ListInfo) -> some View {
-        Picker("Project", selection: Binding(get: { projectChoices[list.id] ?? "none" }, set: { value in
-            projectChoices[list.id] = value
-            options.destinations[list.id]?.projectID = UUID(uuidString: value)
-            options.destinations[list.id]?.newProjectName = value == "new" ? Project.canonicalName(list.title) : ""
-        })) {
-            Text("None").tag("none")
-            Text("New Project…").tag("new")
-            ForEach(store.projects.filter { !$0.isArchived }) { project in
-                Text(project.name).tag(project.id.uuidString)
-            }
-        }
-        if projectChoices[list.id] == "new" {
-            TextField("Project name", text: Binding(
-                get: { options.destinations[list.id]?.newProjectName ?? "" },
-                set: { options.destinations[list.id]?.newProjectName = Project.canonicalName($0) }
-            ))
-        }
-        if let id = options.destinations[list.id]?.projectID, let project = store.project(id: id) {
-            LabeledContent("Category", value: store.categories.first { $0.id == project.categoryID }?.label ?? String(localized: "None"))
-        } else {
-            Picker("Category", selection: Binding(
-                get: { options.destinations[list.id]?.categoryID },
-                set: { options.destinations[list.id]?.categoryID = $0 }
-            )) {
-                Text("None").tag(UUID?.none)
-                ForEach(store.categories) { Text($0.label).tag(UUID?.some($0.id)) }
-            }
-        }
+    private func destinationRows(_ list: AppleRemindersReader.ListInfo) -> some View {
+        TaskImportDestinationFields(
+            suggestedName: list.title,
+            destination: Binding(get: { options.destinations[list.id] ?? TaskImportDestination() },
+                                 set: { options.destinations[list.id] = $0 }),
+            projectChoice: Binding(get: { projectChoices[list.id] ?? "none" },
+                                   set: { projectChoices[list.id] = $0 })
+        )
     }
 
-    @ViewBuilder private func previewSections(_ plan: ReminderImport.Plan) -> some View {
+    @ViewBuilder private func previewSections(_ plan: TaskImport.Plan) -> some View {
         Section {
             LabeledContent("Stack", value: options.bucket.title)
             LabeledContent("Tasks to add", value: "\(plan.added)")

@@ -875,10 +875,12 @@ do {
 
     var past = TodoItem(title: "renew the passports", bucket: .later)
     past.deadline = at("2026-09-20 00:00")
+    past.dateSemanticsVersion = 0
     let edited = past.modifiedAt
 
     var future = TodoItem(title: "book the hall", bucket: .inbox)
     future.deadline = at("2026-10-20 00:00")
+    future.dateSemanticsVersion = 0
 
     // Already has both: written by this version, so nothing to promote.
     let whole = TodoItem(title: "write the case", bucket: .today,
@@ -1689,11 +1691,11 @@ do {
     let category = CardCategory(label: "Home", symbolName: "house", color: .teal)
     let existing = Project(name: "HOUSE", categoryID: category.id)
     let doc = StoreDocument(categories: [category], cards: [original], projects: [existing])
-    let record = ReminderImportRecord(id: "r1", listID: "l1", title: "#Keep title literally",
+    let record = TaskImportRecord(id: "r1", listID: "l1", title: "#Keep title literally",
                                      notes: "  Notes, with a \"quote\"\nand a second line.  ",
                                      dueDate: due, createdAt: now.addingTimeInterval(-86400))
-    var options = ReminderImport.Options(destinations: ["l1": .init(projectID: existing.id)])
-    let plan = try! ReminderImport.plan(records: [record], options: options, document: doc, now: now, calendar: cal)
+    var options = TaskImport.Options(destinations: ["l1": .init(projectID: existing.id)])
+    let plan = try! TaskImport.plan(records: [record], options: options, document: doc, now: now, calendar: cal)
     let card = plan.document.cards.last!
     expect(plan.added == 1 && plan.document.cards.count == 2, "import adds without replacing existing tasks")
     expect(plan.document.cards.first == original && doc.cards == [original], "planning does not edit existing tasks or its input")
@@ -1705,76 +1707,76 @@ do {
     expect(card.reminderAnsweredAt == nil, "a future reminder remains unanswered")
     expect(card.createdAt == record.createdAt && card.modifiedAt == now, "creation is preserved while import is a new edit")
     expect(plan.document.importedReminderIDs.contains("apple-reminders:r1"), "the successful import records its source identifier")
-    let again = try! ReminderImport.plan(records: [record, record], options: options, document: plan.document, now: now, calendar: cal)
+    let again = try! TaskImport.plan(records: [record, record], options: options, document: plan.document, now: now, calendar: cal)
     expect(again.added == 0 && again.duplicates == 2, "reimport skips already imported identifiers")
     var deleted = plan.document
     deleted.cards.removeLast()
     deleted.deletedCards[card.id.uuidString] = now
-    let afterDelete = try! ReminderImport.plan(records: [record], options: options, document: deleted, now: now)
+    let afterDelete = try! TaskImport.plan(records: [record], options: options, document: deleted, now: now)
     expect(afterDelete.added == 0 && afterDelete.document.cards == [original], "reimport does not resurrect a deleted imported task")
-    let twice = try! ReminderImport.plan(records: [record, record], options: options, document: doc, now: now)
+    let twice = try! TaskImport.plan(records: [record, record], options: options, document: doc, now: now)
     expect(twice.added == 1 && twice.duplicates == 1, "duplicate identifiers within a batch only import once")
     var sameTitle = record; sameTitle.id = "r2"
-    let separate = try! ReminderImport.plan(records: [record, sameTitle], options: options, document: doc, now: now)
+    let separate = try! TaskImport.plan(records: [record, sameTitle], options: options, document: doc, now: now)
     expect(separate.added == 2, "equal titles with different source identifiers remain separate tasks")
-    let unselected = try! ReminderImport.plan(records: [record], options: .init(), document: doc, now: now)
+    let unselected = try! TaskImport.plan(records: [record], options: .init(), document: doc, now: now)
     expect(unselected.document == doc && unselected.added == 0, "an unselected list changes nothing")
     options.excludedIDs.insert(record.id)
-    let excluded = try! ReminderImport.plan(records: [record], options: options, document: doc, now: now)
+    let excluded = try! TaskImport.plan(records: [record], options: options, document: doc, now: now)
     expect(excluded.added == 0 && excluded.skipped == 1 && excluded.document == doc, "excluded records leave no import marker or empty project")
     options.excludedIDs = []
     var recurring = record; recurring.isRecurring = true
-    let recurrence = try! ReminderImport.plan(records: [recurring], options: options, document: doc, now: now)
+    let recurrence = try! TaskImport.plan(records: [recurring], options: options, document: doc, now: now)
     expect(recurrence.added == 0 && recurrence.skipped == 1, "recurring reminders are not silently converted to one-off tasks")
     var completed = record; completed.isCompleted = true
-    let finishedOff = try! ReminderImport.plan(records: [completed], options: options, document: doc, now: now)
+    let finishedOff = try! TaskImport.plan(records: [completed], options: options, document: doc, now: now)
     expect(finishedOff.added == 0, "completed tasks require an explicit opt-in")
     options.includeCompleted = true
     options.bucket = .waiting
-    let finished = try! ReminderImport.plan(records: [completed], options: options, document: doc, now: now)
+    let finished = try! TaskImport.plan(records: [completed], options: options, document: doc, now: now)
     expect(finished.document.cards.last?.bucket == .completed && finished.document.cards.last?.completedAt == nil,
            "an unknown completion time is not fabricated")
     expect(finished.document.cards.last?.bucketBeforeCompletion == .waiting, "reopening imported completed tasks restores the chosen stack")
     completed.completedAt = now.addingTimeInterval(-3600)
-    let datedFinished = try! ReminderImport.plan(records: [completed], options: options, document: doc, now: now)
+    let datedFinished = try! TaskImport.plan(records: [completed], options: options, document: doc, now: now)
     expect(datedFinished.document.cards.last?.completedAt == completed.completedAt, "a known completion date survives")
     options.importDates = false
-    let noDates = try! ReminderImport.plan(records: [record], options: options, document: doc, now: now)
+    let noDates = try! TaskImport.plan(records: [record], options: options, document: doc, now: now)
     expect(noDates.document.cards.last?.remindAt == nil && noDates.document.cards.last?.notes == record.notes,
            "dates can stay only in notes")
     options.importDates = true
     var past = record; past.dueDate = now.addingTimeInterval(-86400)
-    let pastPlan = try! ReminderImport.plan(records: [past], options: options, document: doc, now: now)
+    let pastPlan = try! TaskImport.plan(records: [past], options: options, document: doc, now: now)
     expect(pastPlan.document.cards.last?.reminderAnsweredAt == pastPlan.document.cards.last?.remindAt,
            "past imported reminders arrive answered instead of generating a notification backlog")
     var blank = record; blank.title = " \n "
-    let blankPlan = try! ReminderImport.plan(records: [blank], options: options, document: doc, now: now)
+    let blankPlan = try! TaskImport.plan(records: [blank], options: options, document: doc, now: now)
     expect(blankPlan.added == 0 && blankPlan.skipped == 1, "empty titles are reported and skipped")
     options.destinations = ["l1": .init(categoryID: category.id, newProjectName: "Garden work")]
-    let newProject = try! ReminderImport.plan(records: [record], options: options, document: doc, now: now)
+    let newProject = try! TaskImport.plan(records: [record], options: options, document: doc, now: now)
     expect(newProject.projectsCreated == 1 && newProject.document.projects.last?.name == "GARDENWORK",
            "new projects use DayHand's canonical names")
     expect(newProject.document.projects.last?.modifiedAt == now && newProject.document.cards.last?.categoryID == category.id,
            "a new project's category and edit stamp are explicit")
     var otherList = sameTitle; otherList.listID = "l2"
     options.destinations["l2"] = options.destinations["l1"]
-    let shared = try! ReminderImport.plan(records: [record, otherList], options: options, document: doc, now: now)
+    let shared = try! TaskImport.plan(records: [record, otherList], options: options, document: doc, now: now)
     expect(shared.projectsCreated == 1 && shared.added == 2, "two lists can intentionally share a newly named project")
     options.destinations = ["l1": .init(newProjectName: "house")]
     do {
-        _ = try ReminderImport.plan(records: [record], options: options, document: doc, now: now)
+        _ = try TaskImport.plan(records: [record], options: options, document: doc, now: now)
         expect(false, "a new-project name collision must be explicit")
-    } catch { expect(error is ReminderImportFailure, "name collision is reported without modifying an existing project") }
+    } catch { expect(error is TaskImportFailure, "name collision is reported without modifying an existing project") }
     options.destinations = ["l1": .init(projectID: UUID())]
     do {
-        _ = try ReminderImport.plan(records: [record], options: options, document: doc, now: now)
+        _ = try TaskImport.plan(records: [record], options: options, document: doc, now: now)
         expect(false, "a disappeared project cannot be imported into")
-    } catch { expect(error is ReminderImportFailure, "a stale destination is rejected") }
+    } catch { expect(error is TaskImportFailure, "a stale destination is rejected") }
     options.destinations = ["l1": .init(categoryID: UUID())]
     do {
-        _ = try ReminderImport.plan(records: [record], options: options, document: doc, now: now)
+        _ = try TaskImport.plan(records: [record], options: options, document: doc, now: now)
         expect(false, "a disappeared category cannot be imported into")
-    } catch { expect(error is ReminderImportFailure, "a stale category is rejected") }
+    } catch { expect(error is TaskImportFailure, "a stale category is rejected") }
     let roundTrip = try! DocumentCoding.makeDecoder().decode(StoreDocument.self,
         from: DocumentCoding.makeEncoder().encode(plan.document))
     expect(roundTrip == plan.document, "import notes and identifiers survive document save/load")
@@ -1790,14 +1792,124 @@ do {
     var losAngeles = Calendar(identifier: .gregorian)
     losAngeles.timeZone = TimeZone(identifier: "America/Los_Angeles")!
     let allDay = DateComponents(year: 2026, month: 10, day: 25)
-    let local = ReminderImport.date(from: allDay, calendar: losAngeles)!
+    let local = TaskImport.date(from: allDay, calendar: losAngeles)!
     expect(losAngeles.component(.day, from: local) == 25 && losAngeles.component(.hour, from: local) == 0,
            "floating date-only reminders stay on the source day west of UTC")
-    let dstDay = ReminderImport.date(from: allDay, calendar: cal)!
+    let dstDay = TaskImport.date(from: allDay, calendar: cal)!
     expect(cal.component(.day, from: dstDay) == 25 && cal.component(.hour, from: Scheduler.reminderTime(on: dstDay, calendar: cal)) == 9,
            "date-only reminders still become 9am on a daylight-saving transition")
-    expect(ReminderImport.date(from: nil) == nil && ReminderImport.date(from: DateComponents(hour: 9)) == nil,
+    expect(TaskImport.date(from: nil) == nil && TaskImport.date(from: DateComponents(hour: 9)) == nil,
            "missing or partial dates stay absent")
+}
+
+
+// MARK: Todoist CSV imports — documented export format and the official template
+do {
+    var cal = Calendar(identifier: .gregorian)
+    cal.timeZone = TimeZone(identifier: "Europe/Brussels")!
+    let now = cal.date(from: DateComponents(year: 2026, month: 10, day: 25, hour: 12))!
+    let fixtureURL = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+        .appendingPathComponent("Fixtures/todoist-official-template.csv")
+    let fixture = try! String(contentsOf: fixtureURL, encoding: .utf8)
+    let file = try! TodoistCSV.parse(fixture, fileID: "official", name: "Example.csv", calendar: cal)
+    expect(file.records.count == 4 && file.ignoredRows == 0, "Todoist's official CSV template yields four tasks without importing metadata as tasks")
+    expect(file.unparsedDateIDs.count == 3, "relative and recurring expressions in the official template need review")
+    expect(file.records[0].notes.contains("Only available on Tuesdays and Thursdays"), "comment rows attach to the preceding task")
+    expect(file.records[1].deadlineDate != nil && file.records[1].dueDate == nil, "the official template has a real deadline without a reminder")
+    expect(file.records[2].notes.contains("Parent task: **Household chores**:"), "subtask parent context is retained in Notes")
+    let options = TaskImport.Options(destinations: [file.id: TaskImportDestination()], bucket: .later)
+    let baseline = StoreDocument(cards: [TodoItem(title: "Existing")])
+    let safe = try! TodoistCSV.plan(files: [file], options: options, includeUnparsedDates: false,
+                                   document: baseline, now: now, calendar: cal)
+    expect(safe.added == 1 && safe.skipped == 3, "unrecognised and recurring dates are excluded until opted in")
+    expect(safe.document.cards.last?.bucket == .later && safe.document.cards.first == baseline.cards.first,
+           "Todoist import respects the selected stack and leaves existing tasks unchanged")
+    expect(safe.document.cards.last?.deadline != nil && safe.document.cards.last?.remindAt == nil,
+           "an explicit deadline imports as a deadline without inventing a reminder")
+    let reloaded = try! DocumentCoding.makeDecoder().decode(StoreDocument.self,
+        from: DocumentCoding.makeEncoder().encode(safe.document)).promotingOrphanDeadlines(now: now, calendar: cal)
+    expect(reloaded == safe.document, "explicit modern deadlines and import history survive reload and legacy migration")
+    expect(safe.document.importedReminderIDs.isEmpty && safe.document.importedTodoistIDs.count == 1,
+           "Todoist history is separate from Apple Reminders history")
+    let all = try! TodoistCSV.plan(files: [file], options: options, includeUnparsedDates: true,
+                                  document: baseline, now: now, calendar: cal)
+    expect(all.added == 4 && all.document.cards.filter { $0.remindAt != nil }.isEmpty,
+           "opting in imports unsupported date expressions once without inventing schedules")
+    expect(all.document.cards.contains { $0.notes.contains("every Friday") }, "recurring source text is preserved literally")
+    let repeatPlan = try! TodoistCSV.plan(files: [file], options: options, includeUnparsedDates: true,
+                                         document: all.document, now: now, calendar: cal)
+    expect(repeatPlan.added == 0 && repeatPlan.duplicates == 4, "unchanged files do not import their tasks twice")
+    var deleted = all.document
+    deleted.cards.removeLast()
+    let afterDelete = try! TodoistCSV.plan(files: [file], options: options, includeUnparsedDates: true,
+                                         document: deleted, now: now, calendar: cal)
+    expect(afterDelete.added == 0 && afterDelete.document.cards == deleted.cards, "deleted imported tasks are not resurrected by repeat imports")
+    expect(all.document.merged(with: baseline).importedTodoistIDs == all.document.importedTodoistIDs,
+           "Todoist import history survives merging an older document")
+    var otherHistory = baseline; otherHistory.importedTodoistIDs.insert("remote:1")
+    expect(all.document.merged(with: otherHistory).importedTodoistIDs.count == 5,
+           "Todoist import history merges by union")
+    var noDates = options; noDates.importDates = false
+    let without = try! TodoistCSV.plan(files: [file], options: noDates, includeUnparsedDates: true,
+                                      document: baseline, now: now, calendar: cal)
+    expect(without.document.cards.allSatisfy { $0.remindAt == nil && $0.deadline == nil },
+           "turning dates off omits both reminders and deadlines while retaining source text")
+    var excluded = options; excluded.excludedIDs.insert(file.records[1].id)
+    let subset = try! TodoistCSV.plan(files: [file], options: excluded, includeUnparsedDates: true,
+                                     document: baseline, now: now, calendar: cal)
+    expect(subset.added == 3 && !subset.document.importedTodoistIDs.contains("todoist-csv:" + file.records[1].id),
+           "individual exclusions do not get recorded as imported")
+    let unselected = try! TodoistCSV.plan(files: [file], options: .init(), includeUnparsedDates: true,
+                                         document: baseline, now: now, calendar: cal)
+    expect(unselected.document == baseline, "unselected files change nothing")
+    let quoted = "\u{FEFF}DESCRIPTION,CONTENT,TYPE,INDENT,DATE,DEADLINE,TIMEZONE\r\n\"Line one\nLine two, \"\"quoted\"\"\",@keep label,task,1,2026-10-26 10:30,2026-10-29,Europe/Brussels\r\n"
+    let parsed = try! TodoistCSV.parse(quoted, fileID: "quoted", name: "Quoted.csv", calendar: cal)
+    expect(parsed.records.count == 1 && parsed.records[0].notes.contains("Line two, \"quoted\""),
+           "BOM, reordered headers, CRLF, multiline fields, commas and escaped quotes parse correctly")
+    expect(parsed.records[0].title == "@keep label", "labels and original titles are not stripped or reinterpreted")
+    expect(parsed.unparsedDateIDs.isEmpty && parsed.records[0].dueDate != nil && parsed.records[0].deadlineDate != nil,
+           "absolute dates and time zones are recognised independently from deadlines")
+    let mappedOptions = TaskImport.Options(destinations: [parsed.id: .init()])
+    let mapped = try! TodoistCSV.plan(files: [parsed], options: mappedOptions, includeUnparsedDates: false,
+                                     document: .empty, now: now, calendar: cal)
+    expect(cal.component(.hour, from: mapped.document.cards[0].remindAt!) == 9,
+           "recognised task times map to DayHand's standard 9am reminder")
+    expect(mapped.document.cards[0].deadline == cal.date(from: DateComponents(year: 2026, month: 10, day: 29)),
+           "a recognised deadline retains its civil day")
+    let hierarchy = "TYPE,CONTENT,INDENT,DESCRIPTION\ntask,Root,1,\ntask,Child,2,\ntask,Grandchild,3,\nnote,First comment,,\ntask,Sibling,2,\nsection,New section,,Section description\nnote,Orphan comment,,\ntask,Next root,1,\nunknown,Unsupported,,\nnote,Another orphan,,\n"
+    let tree = try! TodoistCSV.parse(hierarchy, fileID: "tree", name: "Tree.csv")
+    expect(tree.records[2].notes.contains("Root › Child") && tree.records[2].notes.contains("First comment"),
+           "nested parents and comments follow CSV order")
+    expect(tree.records[3].notes.contains("Parent task: Root") && !tree.records[3].notes.contains("Root › Child"),
+           "a sibling is attached to the correct parent")
+    expect(tree.records[4].notes.contains("Section: New section") && tree.records[4].notes.contains("Section description"),
+           "section context and its description are preserved")
+    expect(!tree.records[4].notes.contains("Parent task:") && !tree.records[4].notes.contains("Orphan"),
+           "section boundaries reset hierarchy and orphan comments never attach to another task")
+    expect(tree.ignoredRows == 3, "unsupported and orphan note rows are counted explicitly")
+    let badDates = try! TodoistCSV.parse("TYPE,CONTENT,DATE,DEADLINE,TIMEZONE\ntask,Impossible,2026-02-30,,\ntask,French,demain,,\ntask,Bad zone,2026-10-26,,Invalid/Zone\n", fileID: "bad", name: "Dates.csv")
+    expect(badDates.unparsedDateIDs.count == 3, "invalid dates, natural-language dates and unknown time zones need explicit review")
+    expect(TodoistCSV.date("2026-10-25T13:30:00Z") != nil && TodoistCSV.date("2026-10-25T13:30:00.123+02:00") != nil,
+           "ISO timestamps with offsets and fractional seconds are accepted")
+    expect(TodoistCSV.date("25/10/2026") == nil && TodoistCSV.date("2026-10-25 tomorrow") == nil,
+           "ambiguous or partially parsed dates are never guessed")
+    expect(TodoistCSV.date("2026-02-30T13:00:00Z") == nil,
+           "invalid ISO civil dates are not silently rolled into the following month")
+    for bad in ["", "title,notes\nOther format,Note", "TYPE,CONTENT,CONTENT\ntask,A,A", "TYPE,CONTENT\ntask,\"unterminated", "TYPE,CONTENT\ntask,\"closed\"junk", "TYPE,CONTENT\ntask,a\"b", "TYPE,CONTENT\ntask,A,unexpected"] {
+        do { _ = try TodoistCSV.parse(bad, fileID: "bad", name: "Bad.csv"); expect(false, "invalid Todoist CSV must be rejected") }
+        catch { expect(error is TodoistCSV.Failure, "malformed CSV is rejected before any import") }
+    }
+    let empty = try! TodoistCSV.parse("TYPE,CONTENT\nmeta,view_style=list\nsection,Empty\n", fileID: "empty", name: "Empty.csv")
+    expect(empty.records.isEmpty, "empty projects have no invented tasks")
+    let emptyPlan = try! TodoistCSV.plan(files: [empty], options: .init(destinations: [empty.id: .init(newProjectName: "EMPTY")]),
+        includeUnparsedDates: true, document: baseline)
+    expect(emptyPlan.document == baseline && emptyPlan.projectsCreated == 0, "empty projects create no destination and make no changes")
+    let legacy = CardCSV.parse("title,due\nOld,2026-10-26\n", categories: [])
+    let modern = CardCSV.parse("title,deadline\nNew,2026-10-26\n", categories: [])
+    expect(StoreDocument(cards: legacy.cards).promotingOrphanDeadlines().cards[0].remindAt != nil,
+           "old due-column CSV dates still migrate to reminders")
+    expect(StoreDocument(cards: modern.cards).promotingOrphanDeadlines().cards[0].remindAt == nil,
+           "explicit modern CSV deadlines survive migration")
 }
 
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")

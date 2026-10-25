@@ -170,6 +170,7 @@ Tests/run.sh path/to/cards.json
 | `DayHand/ReviewView.swift` | What you finished in a week, grouped by day. |
 | `DayHand/SettingsView.swift` | Categories, sync, CSV, backups. |
 | `DayHand/RemindersImportView.swift` | EventKit read-only adapter and the Apple Reminders import flow. |
+| `DayHand/TodoistImportView.swift` | Todoist CSV file reader, import preview and shared destination controls. |
 | `docs/PROMPT.md` | The full specification: enough to rebuild the app from nothing. |
 
 ## Where the data lives
@@ -201,3 +202,15 @@ subtask relationships, tags, attachments and smart-list rules are not preserved.
 Repeat-import protection uses device-local identifiers, so importing on another
 device or after an account reset can create duplicates. Update all DayHand
 devices before relying on Notes and import history across sync.
+
+
+**Todoist** project CSVs can be imported from More → Tasks → Import from Todoist.
+Select one or more exported files, map each to a category or project, choose a
+stack and review the tasks before adding them. Descriptions, comments, section
+and parent context, labels and other exported details are kept in Notes.
+Recognised task dates become reminders at 9 a.m.; explicit deadlines remain
+deadlines. Dates written in words, including recurring dates, require an
+explicit opt-in and remain in Notes. Completed tasks are absent from Todoist's
+project exports. Reimporting the same unchanged file with the same name skips
+previously imported rows; edited or renamed exports can create duplicates. A
+backup is required before import. No Todoist account connection is needed.
