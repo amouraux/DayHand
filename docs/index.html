@@ -3,12 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DayHand</title>
+<title>DayHand — Tasks for your life and work</title>
 <meta name="description" content="Organise your tasks around your life and your objectives, not the calendar. Kanban-inspired task management for iPhone, iPad and Mac, with reminders, deadlines and no daily rollover.">
 <link rel="icon" href="icon.png">
-<meta property="og:title" content="DayHand">
+<meta property="og:title" content="DayHand — Tasks for your life and work">
 <meta property="og:description" content="Organise your tasks around your life and your objectives, not the calendar. Inspired by Kanban, DayHand adapts the simplicity of cards and stacks to managing your life and work.">
-<meta property="og:image" content="icon.png">
+<meta property="og:image" content="https://amouraux.github.io/DayHand/icon.png">
+<meta property="og:url" content="https://amouraux.github.io/DayHand/">
+<link rel="canonical" href="https://amouraux.github.io/DayHand/">
 <style>
   :root {
     --bg:        #f2f2f7;
@@ -184,214 +186,266 @@
   footer a { color: var(--today); text-decoration: none; }
   footer a:hover { text-decoration: underline; }
   footer p { margin: 6px 0; }
+  .section-intro {
+    max-width: 62ch; margin: -12px auto 28px; text-align: center;
+    color: var(--ink-soft); font-size: 16px;
+  }
+  .section-note {
+    max-width: 62ch; margin: 22px auto 0; text-align: center;
+    color: var(--ink-soft); font-size: 15px;
+  }
+  details.notice { text-align: left; }
+  details.notice summary { cursor: pointer; color: var(--ink); font-weight: 600; }
+  details.notice p { margin: 12px 0 0; }
+  a:focus-visible, summary:focus-visible { outline: 3px solid var(--today); outline-offset: 4px; }
+  @media (max-width: 480px) {
+    header.wrap { padding-top: 42px; }
+    section.wrap { padding-top: 42px; padding-bottom: 42px; }
+  }
 </style>
 </head>
 <body>
 
 <header class="wrap">
-  <img class="icon" src="icon.png" alt="DayHand">
+  <img class="icon" src="icon.png" alt="DayHand" width="132" height="132">
   <h1>DayHand</h1>
   <p class="tagline">Organise your tasks around your life and your objectives, not the calendar.</p>
   <p class="sub">
     Preparing a talk, writing a manuscript, building a feature, renovating a
     room — most real work is not created and finished on one particular day.
-    Date-led to-do lists make you pick a day anyway, then call the task overdue
-    when that day passes. So you reschedule it, or chop it up, to make the app
-    agree with reality.
+    When you plan everything around a day, unfinished work can become a list
+    of things to reschedule. So you move the dates, or chop up the task, to
+    make the app agree with reality.
   </p>
-  <p class="sub">
-    DayHand lets a task simply stay active for as long as it takes.
-  </p>
-
+  <p class="sub">DayHand lets a task simply stay active for as long as it takes.</p>
   <div class="cta">
     <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">
       Join the beta<small>iPhone &amp; iPad · TestFlight</small>
     </a>
     <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">
-      Get it on Mac<small>macOS · TestFlight</small>
+      Join the Mac beta<small>macOS · TestFlight</small>
     </a>
   </div>
 </header>
 
-<section class="wrap">
-  <h2>Intention. Attention. Obligation.</h2>
-  <p class="walk-note" style="margin: -16px auto 28px;">
+<main>
+<section class="wrap" id="how-it-works" aria-labelledby="how-heading">
+  <h2 id="how-heading">A place for every task</h2>
+  <p class="section-intro">
     Inspired by Kanban, DayHand adapts the simplicity of cards and stacks to
-    managing your life and work. Stacks, reminders and deadlines each have
-    their own purpose.
+    managing your life and work. Start in <b>Inbox</b>, then give each task a
+    place that reflects what you intend to do.
   </p>
   <div class="ideas">
     <div class="idea i-today">
-      <h3>Stacks express intention</h3>
+      <h3>Now and Next</h3>
       <p><b>Now</b> is what you’re working on. <b>Next</b> is what you want to
-         tackle next. <b>Later</b> is for ideas and tasks you’re keeping for the
-         future. New tasks land in <b>Inbox</b> until you decide. A task can sit
-         in Now for a week — there is nothing wrong with that, and nothing
-         says otherwise.</p>
+         tackle next. A task can stay in Now for a week if that is how long
+         the work takes.</p>
     </div>
     <div class="idea i-waiting">
-      <h3>Waiting is work you cannot move forward yet</h3>
-      <p>A reply, a delivery, someone’s feedback — <b>Waiting</b> is for work
-         held up by something you need before you can continue. The task is
-         still live, but you cannot advance it. When you can act again, you
-         decide whether to move it to Now, Next or Later.</p>
+      <h3>Later and Waiting</h3>
+      <p><b>Later</b> holds ideas and tasks you’re keeping for the future.
+         <b>Waiting</b> holds work you cannot move forward until a reply, a
+         delivery, someone’s feedback, or something else arrives.</p>
     </div>
     <div class="idea i-flag">
       <h3>Reminders ask for attention</h3>
-      <p><em>When should I think about this again?</em> A reminder brings a task
-         back to your attention on the day you asked — a notification, and a
-         coloured edge: orange within three days, red on the day and after. It
-         does not decide where the task belongs, and it moves nothing.</p>
+      <p><em>When should I think about this again?</em> Set a reminder for the
+         day you want a task brought back to your attention. A notification
+         and a coloured edge help you notice it; you decide what happens next.</p>
     </div>
     <div class="idea i-night">
-      <h3>Deadlines mark obligation</h3>
-      <p><em>When must this actually be finished?</em> Added once a reminder
-         exists, and shown on the task. Because a deadline is only ever a real
-         one, it means something — a task can sit in Now all week and keep the
-         same genuine Friday deadline.</p>
-    </div>
-    <div class="idea i-later wide-idea">
-      <h3>Nothing moves behind your back</h3>
-      <p>A task stays where you put it until you decide otherwise. There’s no
-         daily rollover and no need to keep rescheduling unfinished work.
-         Reminders bring tasks back to your attention; deadlines mark when
-         they really must be finished. Neither changes where a task belongs.
-         From everyday errands to ongoing projects, keep a clear picture of
-         what’s happening — and look back at what you’ve accomplished.</p>
+      <h3>Deadlines mark commitments</h3>
+      <p><em>When must this actually be finished?</em> Add an optional deadline
+         alongside a reminder to record a genuine finish date. It stays
+         visible on the task, wherever you put it.</p>
     </div>
   </div>
+  <p class="section-note">
+    Your tasks stay where you put them. No daily rollover, and neither a
+    reminder nor a deadline moves a task for you.
+  </p>
 </section>
 
-<section class="wrap">
-  <h2>On every screen</h2>
-  <div class="shots">
-    <figure class="phone">
-      <img src="screenshots/iphone.png" alt="DayHand on iPhone, showing tasks stacked under Now and Next"
-           onerror="this.closest('figure').remove()">
-      <figcaption><b>iPhone</b> — Now, Next, Later and Waiting, with a project in front of each task.</figcaption>
-    </figure>
-    <figure>
-      <img src="screenshots/ipad.png" alt="DayHand on iPad, with the filter sidebar open beside the tasks"
-           onerror="this.closest('figure').remove()">
-      <figcaption><b>iPad and Mac</b> — the filter opens as a sidebar, so choosing a project and seeing the tasks change are the same moment.</figcaption>
-    </figure>
-    <figure class="wide">
-      <img src="screenshots/mac.png" alt="DayHand on the Mac"
-           onerror="this.closest('figure').remove()">
-      <figcaption><b>Mac</b> — the same app, in a window you can size.</figcaption>
-    </figure>
-  </div>
-</section>
-
-<section class="wrap">
-  <h2>How DayHand fits real work</h2>
-  <div class="ideas">
-    <div class="idea i-later">
-      <h3>Architect</h3>
-      <p>A project runs for weeks. Drawings in progress sit in Now, the next
-         revision in Next, future ideas in Later. Once a set goes to the client
-         for approval it moves to Waiting, with a reminder to follow up — and a
-         deadline only on the actual submission date.</p>
-    </div>
-    <div class="idea i-tomorrow">
-      <h3>Plumber</h3>
-      <p>Jobs depend on customers, parts and other trades. Today's jobs in Now,
-         this week's in Next, the rest in Later. A job held up by a valve on
-         order or a customer who has not confirmed goes to Waiting, with a
-         reminder to chase — without pretending the job was due today.</p>
-    </div>
-    <div class="idea i-review">
-      <h3>Student</h3>
-      <p>"Write the thesis" is not a Tuesday task. The chapter you are writing
-         stays in Now for as long as it takes, the next one in Next, later
-         chapters in Later. It goes to Waiting while your supervisor has it.
-         Deadlines are the real submission dates, and only those.</p>
-    </div>
-    <div class="idea i-keep">
-      <h3>Researcher</h3>
-      <p>An analysis or a manuscript stays in Now while it is actually moving.
-         Upcoming experiments in Next, longer-term ideas in Later. A manuscript
-         with co-authors, equipment on order or an experiment awaiting data all
-         go to Waiting. Grant and journal dates are genuine deadlines.</p>
-    </div>
-    <div class="idea i-today">
-      <h3>Web developer</h3>
-      <p>A feature takes several days. The one you are building sits in Now, the
-         next in Next, the backlog in Later. When it depends on an API key,
-         client feedback or a pull request someone else has to review, it moves
-         to Waiting. The reminder says when to follow up; the deadline says when
-         the release actually has to ship.</p>
-    </div>
-    <div class="idea i-night">
-      <h3>Home and family</h3>
-      <p>Everyday responsibilities sit alongside longer plans. Sorting out
-         insurance goes in Now, booking a check-up in Next, ideas for the next
-         holiday in Later. A repair awaiting a tradesperson’s quote goes to
-         Waiting, with a reminder to follow up. A deadline is the actual
-         renewal date, not an invented date for getting started.</p>
-    </div>
-  </div>
-</section>
-
-<section class="wrap">
-  <h2>One task, one week</h2>
+<section class="wrap" id="one-task" aria-labelledby="week-heading">
+  <h2 id="week-heading">One task, one week</h2>
   <ol class="walk">
     <li><b>Monday</b> You start on the conference talk.
         <span class="to w-now">Now</span></li>
     <li><b>Wednesday</b> Draft sent to a colleague.
         <span class="to w-waiting">Waiting</span></li>
-    <li><b>Thursday</b> They reply.
+    <li><b>Thursday</b> They reply; you pick it up again.
         <span class="to w-now">Now</span></li>
-    <li><b>Friday, 17:00</b> You give the talk.
+    <li><b>Friday</b> You give the talk.
         <span class="to w-due">Deadline</span></li>
   </ol>
   <p class="walk-note">
-    One task the whole week. The Friday deadline never changed, and the task was
-    never recreated, split up or pushed to a new day.
+    One task the whole week. You move it when the situation changes;
+    the Friday deadline stays the same.
   </p>
 </section>
 
-<section class="wrap">
-  <h2>And the rest of it</h2>
+<section class="wrap" id="organisation" aria-labelledby="organisation-heading">
+  <h2 id="organisation-heading">Keep related work together</h2>
   <div class="ideas">
     <div class="idea i-night">
-      <h3>Keep related work together</h3>
-      <p>Start a task with a code — <code>BIO2140 mark the problem sets</code> —
-         and that project is offered under the field. Take it and the word
-         steps out of the title; leave it and nothing happens. No symbol to
-         remember, and nothing filed because you typed a space. The project
-         becomes a coloured prefix, fills in the category, and can be renamed
-         on every task at once. Projects gather into groups, and the filter
-         narrows the list to any of them without complicating the main view.</p>
+      <h3>Projects for a shared purpose</h3>
+      <p>Keep the tasks for a trip, a course, a client or a piece of work
+         together. Start a task with a name such as <b>HOLIDAY</b> and accept
+         the project offered below the field, or choose one from the project
+         button. Each task can have one project, shown as a coloured prefix.</p>
     </div>
     <div class="idea i-keep">
-      <h3>Your tasks stay yours</h3>
-      <p>For iPhone, iPad, and Mac. No account required. Your tasks stay on your
-         devices, with optional syncing through a file you choose in iCloud
-         Drive. Import and export as CSV, and a backup is taken automatically
-         each day, plus any you take by hand.</p>
+      <h3>Categories for the parts of your life</h3>
+      <p>Separate broad areas such as Work, Home and Courses with your own
+         labels, icons and colours. A project supplies a starting category
+         for its tasks; you can also give a task a category without assigning
+         it to a project.</p>
     </div>
-    <div class="idea i-review wide-idea">
-      <h3>See what you have accomplished</h3>
-      <p>Any to-do app can show what you owe. DayHand also shows what you got
-         done — this week and last, grouped by the day you finished it. The
-         counterweight to a list that otherwise only ever looks forward:
-         progress measured as what you finished.</p>
+    <div class="idea i-later">
+      <h3>Groups for related projects</h3>
+      <p>Gather projects into groups such as Clients, Courses or Holidays.
+         Rename and reorganise them from the Filter. When a project is
+         finished, archive it and keep its tasks available for reference.</p>
+    </div>
+    <div class="idea i-tomorrow">
+      <h3>Find your focus</h3>
+      <p>Search task titles, project names and group names. Filter by any mix
+         of categories and projects, or pick a whole group. Show projects
+         with open tasks, all active projects, or archived ones when you
+         want to look back.</p>
     </div>
   </div>
 </section>
 
-<section class="wrap">
-  <h2>Getting it</h2>
+<section class="wrap" id="history" aria-labelledby="history-heading">
+  <h2 id="history-heading">See what you’ve accomplished, over time</h2>
+  <p class="section-intro">
+    A list of things to do is only part of the picture. DayHand also keeps
+    a record of the work you finish.
+  </p>
+  <div class="ideas">
+    <div class="idea i-review">
+      <h3>This week, and last week</h3>
+      <p>Review completed tasks grouped by the day you finished them. See
+         what you got done this week, or look back at last week before
+         deciding what comes next.</p>
+    </div>
+    <div class="idea i-night">
+      <h3>The longer view</h3>
+      <p>Browse your all-time completion timeline by month and day, or open
+         a project’s History to see its finished work. Daily counts and
+         simple bars make the pattern of completions easy to see.</p>
+    </div>
+  </div>
+  <p class="section-note">
+    Completed tasks remain in the Completed stack, so you can find them again
+    or reopen work that needs another pass.
+  </p>
+</section>
+
+<section class="wrap" id="screens" aria-labelledby="screens-heading">
+  <h2 id="screens-heading">On iPhone, iPad and Mac</h2>
+  <div class="shots">
+    <figure class="phone">
+      <img src="screenshots/iphone.png" alt="Illustrative DayHand iPhone beta screen with tasks organised into stacks"
+           loading="lazy" width="1206" height="2622">
+      <figcaption><b>iPhone</b> — tasks in stacks, with optional project labels.</figcaption>
+    </figure>
+    <figure>
+      <img src="screenshots/ipad.png" alt="Illustrative DayHand iPad beta screen with the project filter sidebar beside the task list"
+           loading="lazy" width="2064" height="2752">
+      <figcaption><b>iPad</b> — a sidebar keeps projects beside your tasks. Mac uses the same layout in a resizable window.</figcaption>
+    </figure>
+  </div>
+  <p class="section-note">Illustrative beta screens; layout and controls may differ in current builds.</p>
+</section>
+
+<section class="wrap" id="use-cases" aria-labelledby="use-cases-heading">
+  <h2 id="use-cases-heading">For your life and your work</h2>
+  <div class="ideas">
+    <div class="idea i-later">
+      <h3>Architect</h3>
+      <p>Drawings in progress in Now, the next revision in Next, future ideas
+         in Later. A set sent to the client goes to Waiting until feedback
+         arrives. Keep a reminder to follow up and a deadline for the actual
+         submission.</p>
+    </div>
+    <div class="idea i-tomorrow">
+      <h3>Plumber</h3>
+      <p>Keep jobs you’re working on in Now, upcoming visits in Next, and
+         future work in Later. A job held up by a part or a customer’s
+         confirmation goes to Waiting, with a reminder to chase it up.</p>
+    </div>
+    <div class="idea i-review">
+      <h3>Student</h3>
+      <p>Balance assignments, revision and everyday responsibilities. Keep
+         each course’s tasks in its own project, focus on the work in Now,
+         and use real submission dates as deadlines. Group work awaiting
+         a teammate’s contribution goes to Waiting.</p>
+    </div>
+    <div class="idea i-keep">
+      <h3>Researcher</h3>
+      <p>Keep analysis and writing in Now while manuscripts with co-authors
+         or experiments awaiting data sit in Waiting. Group related studies
+         and grants, and use project history to look back at what you
+         finished over the course of the work.</p>
+    </div>
+    <div class="idea i-today">
+      <h3>Web developer</h3>
+      <p>A feature can stay in Now for several days, with the next one in
+         Next and the backlog in Later. Move work blocked by an API key or
+         client feedback to Waiting. Keep the release deadline without
+         repeatedly rescheduling the task.</p>
+    </div>
+    <div class="idea i-night">
+      <h3>Home and family</h3>
+      <p>Sorting out insurance in Now, booking a check-up in Next, holiday
+         ideas in Later. A repair awaiting a tradesperson’s quote goes to
+         Waiting. Set a reminder to follow up and keep the actual renewal
+         date as the deadline.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="your-data" aria-labelledby="data-heading">
+  <h2 id="data-heading">Your tasks stay yours</h2>
+  <div class="ideas">
+    <div class="idea i-keep">
+      <h3>No account required</h3>
+      <p>Your tasks are stored on your device. There is no DayHand account
+         to create, and you can use the app on one device without setting
+         up sync.</p>
+    </div>
+    <div class="idea i-night">
+      <h3>Optional sync through your own file</h3>
+      <p>Choose a shared file in iCloud Drive and select that same file on
+         each device. iCloud Drive carries the file between them; DayHand
+         merges changes when it reads it. Sync is optional and needs a
+         one-time setup on each device.</p>
+    </div>
+    <div class="idea i-review wide-idea">
+      <h3>Backups and a way out</h3>
+      <p>Automatic backups are taken on days you open the app, with three
+         rotating copies kept. Take extra backups by hand, restore an earlier
+         copy, or share one somewhere safer. CSV import and export let you
+         bring tasks in or take them with you.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="get-dayhand" aria-labelledby="install-heading">
+  <h2 id="install-heading">Try the DayHand beta</h2>
+  <p class="section-intro">Available through Apple’s TestFlight for iPhone, iPad and Mac.</p>
   <div class="install">
     <div class="task">
       <h3>iPhone and iPad</h3>
-      <p class="req">iOS 17 or later</p>
+      <p class="req">iOS / iPadOS 17 or later</p>
       <ol class="steps">
-        <li>Install Apple's <b>TestFlight</b> from the App Store.</li>
-        <li>Open the link below <em>on the device</em>. It hands over to
-            TestFlight.</li>
-        <li>Tap <b>Accept</b>, then <b>Install</b>.</li>
+        <li>Install Apple’s <b>TestFlight</b> from the App Store.</li>
+        <li>Open the beta link below on your iPhone or iPad.</li>
+        <li>Accept the invitation and install DayHand.</li>
       </ol>
       <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">Join the beta</a>
     </div>
@@ -399,41 +453,28 @@
       <h3>Mac</h3>
       <p class="req">macOS 14 or later</p>
       <ol class="steps">
-        <li>Install <b>TestFlight</b> from the <b>Mac</b> App Store — it is a
-            separate app from the iPhone one, and the same Apple Account has to
-            be signed in.</li>
-        <li>Open the same link below <em>on the Mac</em>. Safari hands it to
-            TestFlight.</li>
-        <li>Click <b>Accept</b>, then <b>Install</b>. It lands in your
-            Applications folder like any other app.</li>
+        <li>Install <b>TestFlight</b> from the Mac App Store.</li>
+        <li>Open the same beta link below on your Mac.</li>
+        <li>Accept the invitation and install DayHand.</li>
       </ol>
-      <p class="aside">One link for both — it is one app and one target, not a
-         separate Mac version. If the link opens the App Store instead of
-         TestFlight, TestFlight is not installed on that Mac yet.</p>
-      <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Get it on Mac</a>
+      <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Join the Mac beta</a>
     </div>
   </div>
-
-  <!-- The Mac build has to be sandboxed for App Store Connect to take it, and
-       the sandbox moves where its data lives. Anyone who had been running a
-       build straight from Xcode opens this one to an empty list, which looks
-       exactly like losing everything. Nothing is lost, and saying so here is
-       cheaper than saying it afterwards. -->
-  <p class="notice">
-    <b>Already running DayHand on your Mac from a build you made yourself?</b>
-    The TestFlight build is sandboxed — App Store Connect will not take one that
-    is not — and a sandboxed app keeps its data somewhere else. It will open
-    with no tasks, which looks alarming and is not: your old file is untouched
-    where it always was. If you sync through iCloud Drive, open
-    <b>More → Use Existing Sync File…</b> and pick the same file again, and
-    everything comes back.
-  </p>
+  <details class="notice">
+    <summary>Moving from an older self-built Mac version?</summary>
+    <p>The TestFlight app stores its data in a different location. If it opens
+       with no tasks, your old file is still where it was. If you were syncing
+       through iCloud Drive, open <b>More → Use Existing Sync File…</b> and
+       choose the same file again to bring your tasks back.</p>
+  </details>
 </section>
+</main>
 
 <footer class="wrap">
-  <p>Built in SwiftUI. One target for iPhone, iPad and Mac, and no third-party dependencies.</p>
+  <p>Questions or a problem? Send beta feedback in TestFlight, or
+     <a href="https://github.com/amouraux/DayHand/issues/new">report an issue on GitHub</a>.</p>
   <p>In English, French, Dutch, German, Spanish, Italian and Portuguese.</p>
-  <p><a href="https://github.com/amouraux/DayHand">Source on GitHub</a></p>
+  <p>Built in SwiftUI · <a href="https://github.com/amouraux/DayHand">Source on GitHub</a></p>
 </footer>
 
 </body>
