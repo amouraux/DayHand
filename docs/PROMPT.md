@@ -1229,6 +1229,46 @@ and on the Mac so does right-clicking it; while any filter is on, that item
 becomes "Show All" on every task, since a category filter also shows tasks
 carrying no project.
 
+### Undo
+
+**Deleting, completing, reopening and moving a task are undoable**, and each
+says so: a bar at the bottom of the screen naming what just happened, with
+**Undo** beside it and a way to dismiss it. It goes on its own after a few
+seconds. **⌘Z keeps working after it has gone** — the bar is the offer, not the
+only route, and the last twenty changes are kept.
+
+The stack is deliberately shallow. Undo here is for the slip you just made, not
+a history to walk back through: on a document two devices are both editing, a
+deep stack would let someone undo their way into a state neither device ever
+held.
+
+**Putting a task back is `StoreDocument.restoring`**, and two rules in it are
+what make an undo safe to sync. Both are easy to leave out and neither shows up
+on one device:
+
+- The restored task is stamped **now**, not with the time it used to carry. A
+  deletion beats an edit only if it happened after it, so a task put back with
+  its old timestamp would leave the tombstone newer and the other device would
+  delete it again.
+- Its **tombstone is dropped**. Keeping it would mean this device still held a
+  record saying the task was deleted, and the next merge would hand that to
+  everyone else.
+
+And a third that only a test found: the stamp must be **strictly after** the
+tombstone, not merely `now`. A merge gives a tie to the deletion
+(`deletedAt >= modified`), so a task deleted and put back inside the same
+millisecond would come back on this device and stay dead everywhere else.
+Stamps carry milliseconds, so one is the smallest step that settles it.
+
+**Delete sits on the task's own menu**, last and in red. It is safe there
+rather than behind a confirmation precisely because it is undoable. The
+confirmations that remain are the ones no single step puts back: emptying the
+whole list, restoring a backup over it, completing an entire project.
+
+The bar goes through the same `FloatingChrome` as the round buttons, as a wide
+capsule rather than a disc — one `#available(iOS 26, *)` fork, as that modifier
+has always promised.
+
 ### One list, three surfaces
 
 What a task offers is **one list** — `CardMenu.actions(for:isFiltered:hasProject:)`

@@ -1689,7 +1689,11 @@ do {
     expect(!moves.contains(.tomorrow), "the stack a card is already in is not offered")
     expect(moves == Bucket.quickMoveTargets.filter { $0 != .tomorrow },
            "the others are offered in their usual order, and first")
-    expect(menu(plain).last == .edit, "with nothing to filter by, Edit is the end of it")
+    expect(menu(plain).last == .delete, "Delete is last wherever the menu is shown")
+    expect(menu(plain, filtered: true, project: true).last == .delete, "and stays last")
+    expect(menu(plain).dropLast().last == .edit,
+           "with nothing to filter by, Edit is the last of the ordinary actions")
+    expect(menu(plain).filter { $0 == .delete }.count == 1, "and is offered once, not twice")
 
     // Reminders add two, and only when they apply.
     expect(!menu(plain).contains(.snooze), "no reminder, nothing to snooze")
@@ -1720,6 +1724,57 @@ do {
                    "Edit is offered whatever else is")
         }
     }
+}
+
+// MARK: — putting tasks back
+do {
+    let then = Date(timeIntervalSince1970: 1_700_000_000)
+    let now  = Date(timeIntervalSince1970: 1_800_000_000)
+
+    var card = TodoItem(title: "book the flights", bucket: .today)
+    card.modifiedAt = then
+
+    // Undoing an edit: the task is still there, so it is overwritten.
+    var edited = card
+    edited.bucket = .completed
+    edited.completedAt = now
+    edited.modifiedAt = now
+    let afterEdit = StoreDocument(cards: [edited])
+    let undone = afterEdit.restoring(Restoration(cards: [card]), now: now)
+    expect(undone.cards.count == 1, "undoing an edit does not add a second copy")
+    expect(undone.cards[0].bucket == .today, "the task is back in the stack it came from")
+    expect(undone.cards[0].completedAt == nil, "and is no longer completed")
+    expect(undone.cards[0].modifiedAt == now,
+           "stamped now, not with the time it used to carry, or the other device wins")
+
+    // Undoing a delete: the task is gone and its tombstone is standing.
+    var afterDelete = StoreDocument(cards: [])
+    afterDelete.deletedCards[card.id.uuidString] = now
+    let revived = afterDelete.restoring(Restoration(cards: [card]), now: now)
+    expect(revived.cards.map(\.id) == [card.id], "a deleted task comes back")
+    expect(revived.deletedCards[card.id.uuidString] == nil,
+           "and its tombstone goes, or this device hands the deletion back to everyone else")
+    expect(revived.cards[0].modifiedAt > now,
+           "stamped past the tombstone, because a merge gives a tie to the deletion")
+
+    // The restored copy must beat the tombstone by the app's own merge rule.
+    var tombstoned = StoreDocument(cards: [])
+    tombstoned.deletedCards[card.id.uuidString] = now
+    let merged = revived.merged(with: tombstoned)
+    expect(merged.cards.map(\.id) == [card.id],
+           "and survives a merge against a device that still thinks it was deleted")
+
+    // Several at once, and a mix of present and absent.
+    var other = TodoItem(title: "pack", bucket: .later)
+    other.modifiedAt = then
+    var doc = StoreDocument(cards: [other])
+    doc.deletedCards[card.id.uuidString] = now
+    let both = doc.restoring(Restoration(cards: [card, other]), now: now)
+    expect(both.cards.count == 2, "one re-added and one overwritten, not duplicated")
+
+    expect(StoreDocument.empty.restoring(Restoration(cards: []), now: now) == StoreDocument.empty,
+           "restoring nothing changes nothing")
+    expect(Restoration(cards: []).isEmpty, "and nothing is what an empty restoration holds")
 }
 
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")

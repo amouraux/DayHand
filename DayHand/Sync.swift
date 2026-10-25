@@ -127,6 +127,13 @@ enum DocumentCoding {
 /// Deletions are recorded as tombstones rather than simply vanishing. Without
 /// them, deleting a card on the phone and then merging with a Mac that still
 /// has it would silently resurrect the card.
+/// The tasks an undo puts back, exactly as they stood before the change.
+struct Restoration: Equatable {
+    var cards: [TodoItem]
+
+    var isEmpty: Bool { cards.isEmpty }
+}
+
 struct StoreDocument: Codable, Equatable {
     var categories: [CardCategory] = []
     var cards: [TodoItem] = []
@@ -143,6 +150,42 @@ struct StoreDocument: Codable, Equatable {
     var defaultCategoryChangedAt: Date = .distantPast
 
     static let empty = StoreDocument()
+
+    /// Put a few tasks back exactly as they were.
+    ///
+    /// Every undoable change touches a handful of tasks and either edits them
+    /// or removes them — nothing creates one — so the inverse is always the
+    /// same shape: these tasks, as they used to be.
+    ///
+    /// Two things make it safe to sync, and both are easy to leave out:
+    ///
+    /// - The restored task is stamped **now**, not with the time it used to
+    ///   carry. A deletion beats an edit only if it happened after it, so
+    ///   putting a task back with its old timestamp would leave the tombstone
+    ///   newer and the other device would delete it again.
+    /// - Its **tombstone is dropped**. Keeping it would mean this device still
+    ///   held a record saying the task was deleted, which the next merge would
+    ///   hand to everyone else.
+    func restoring(_ restoration: Restoration, now: Date = .stamp()) -> StoreDocument {
+        var result = self
+        for card in restoration.cards {
+            var revived = card
+            // Strictly after the tombstone, not merely at `now`. A merge gives
+            // a tie to the deletion (`deletedAt >= modified`), so a task
+            // deleted and put back inside the same millisecond would come back
+            // here and stay dead everywhere else. Stamps carry milliseconds,
+            // so one is the smallest step that settles it.
+            let tombstone = result.deletedCards[card.id.uuidString]
+            revived.modifiedAt = max(now, tombstone?.addingTimeInterval(0.001) ?? now)
+            result.deletedCards.removeValue(forKey: card.id.uuidString)
+            if let index = result.cards.firstIndex(where: { $0.id == card.id }) {
+                result.cards[index] = revived
+            } else {
+                result.cards.append(revived)
+            }
+        }
+        return result
+    }
 
     /// What a merge actually did, so "Sync Now" can say so rather than looking
     /// identical whether it pulled in forty cards, found nothing, or failed.

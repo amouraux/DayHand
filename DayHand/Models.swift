@@ -342,6 +342,12 @@ enum CardMenu {
         /// Step back out of whatever is filtering; offered on every card,
         /// since a category filter also shows cards carrying no project.
         case showAll
+        /// Last, and destructive. Safe to offer from a menu rather than behind
+        /// a confirmation because it is undoable: the banner offers the way
+        /// back, and ⌘Z goes on working after it has gone. The confirmations
+        /// that remain are for what cannot be put back one step — emptying the
+        /// whole list, restoring a backup over it, completing a project.
+        case delete
     }
 
     static func actions(for card: TodoItem, isFiltered: Bool, hasProject: Bool) -> [Action] {
@@ -353,6 +359,7 @@ enum CardMenu {
         actions.append(.edit)
         if isFiltered { actions.append(.showAll) }
         else if hasProject { actions.append(.showOnlyProject) }
+        actions.append(.delete)
         return actions
     }
 }

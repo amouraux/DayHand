@@ -155,6 +155,9 @@ struct ContentView: View {
                 .padding(.bottom, 42)
             }
             .overlay(alignment: .bottomTrailing) { addButton }
+            // Above the buttons rather than among them: it comes and goes, and
+            // a control that appears between two permanent ones moves them.
+            .overlay(alignment: .bottom) { undoBanner }
             .onAppear {
                 guard !didAnchorToToday else { return }
                 didAnchorToToday = true
@@ -207,7 +210,7 @@ struct ContentView: View {
                 // gives you and it is the right shape on a phone.
                 ForEach(Array(cardActions(for: card).enumerated()), id: \.offset) { _, action in
                     let look = look(action, for: card)
-                    Button {
+                    Button(role: action == .delete ? .destructive : nil) {
                         stackPickItem = nil
                         look.run()
                     } label: { look.title }
@@ -663,7 +666,7 @@ struct ContentView: View {
                                     ForEach(Array(cardActions(for: card).enumerated()),
                                             id: \.offset) { _, action in
                                         let look = look(action, for: card)
-                                        Button {
+                                        Button(role: action == .delete ? .destructive : nil) {
                                             stackPickItem = nil
                                             look.run()
                                         } label: {
@@ -807,6 +810,9 @@ struct ContentView: View {
         case .showAll:
             return (Text("Show All"), "line.3.horizontal.decrease.circle.fill", .accentColor, 0,
                     { showAll() })
+        case .delete:
+            return (Text("Delete"), "trash", .red, 0,
+                    { withAnimation { store.delete(card) } })
         }
     }
 
@@ -822,9 +828,45 @@ struct ContentView: View {
             case .move: return 0
             case .snooze, .clearReminder: return 1
             case .edit, .showOnlyProject, .showAll: return 2
+            case .delete: return 3
             }
         }
         return rank(action) != rank(previous)
+    }
+
+    /// What just happened, and the way back from it.
+    ///
+    /// A banner rather than a dialog: undoing is the rare case, and a sheet
+    /// that has to be dismissed every time a task is ticked off would cost the
+    /// common case to serve the rare one. It says what happened — the house
+    /// rule — and offers the way back for as long as anyone is likely to want
+    /// it, then goes quietly. ⌘Z keeps working after it has gone.
+    @ViewBuilder
+    private var undoBanner: some View {
+        if let step = store.undoBanner {
+            HStack(spacing: 12) {
+                Text(step.message)
+                    .font(.subheadline)
+                    .lineLimit(1)
+                Spacer(minLength: 8)
+                Button("Undo") { withAnimation { store.undoLast() } }
+                    .font(.subheadline.weight(.semibold))
+                Button {
+                    withAnimation { store.dismissUndoBanner() }
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Dismiss")
+            }
+            .floatingBar()
+            .padding(.horizontal, 22)
+            .padding(.bottom, 104)
+            .transition(.move(edge: .bottom).combined(with: .opacity))
+            .animation(.snappy(duration: 0.25), value: step.id)
+        }
     }
 
     private func menuRow(_ title: Text, symbol: String, tint: Color,
@@ -963,26 +1005,36 @@ private struct FloatingChrome: ViewModifier {
     /// changing what the list shows. Glass is for chrome at rest; a filter
     /// that is on has to say so louder than a tint can.
     var solid: Color?
+    /// A round button, or the wide capsule the undo banner sits in. The shape
+    /// is all that differs: both take the same glass, the same ring and the
+    /// same fallback, which is the whole point of there being one modifier.
+    var bar = false
 
     private var ring: Color { state?.opacity(0.85) ?? .primary.opacity(0.10) }
     private var lineWidth: CGFloat { state == nil ? 1 : 2 }
+    private var corners: CGFloat { bar ? 22 : 24 }
 
     @ViewBuilder
     func body(content: Content) -> some View {
-        let shaped = content
-            .font(.body.weight(.semibold))
-            .frame(width: 48, height: 48)
+        let shaped = bar
+            ? AnyView(content.font(.subheadline).padding(.horizontal, 16).padding(.vertical, 12)
+                .frame(maxWidth: .infinity, alignment: .leading))
+            : AnyView(content.font(.body.weight(.semibold)).frame(width: 48, height: 48))
 
         if let solid {
-            edged(shaped.background(Circle().fill(solid)), shadowed: true)
+            edged(shaped.background(shape.fill(solid)), shadowed: true)
         } else if #available(iOS 26.0, macOS 26.0, *) {
             // No shadow: the glass carries its own depth, and a drop shadow
             // under it reads as two light sources.
-            edged(shaped.glassEffect(glass, in: .circle), shadowed: false)
+            edged(shaped.glassEffect(glass, in: .rect(cornerRadius: corners)), shadowed: false)
         } else {
-            edged(shaped.background(Circle().fill(Color(.secondarySystemGroupedBackground))),
+            edged(shaped.background(shape.fill(Color(.secondarySystemGroupedBackground))),
                   shadowed: true)
         }
+    }
+
+    private var shape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: corners, style: .continuous)
     }
 
     @available(iOS 26.0, macOS 26.0, *)
@@ -995,9 +1047,9 @@ private struct FloatingChrome: ViewModifier {
 
     private func edged(_ view: some View, shadowed: Bool) -> some View {
         view
-            .overlay(Circle().strokeBorder(ring, lineWidth: lineWidth))
+            .overlay(shape.strokeBorder(ring, lineWidth: lineWidth))
             .shadow(color: .black.opacity(shadowed ? 0.18 : 0), radius: 6, y: 3)
-            .contentShape(Circle())
+            .contentShape(shape)
     }
 }
 
@@ -1006,6 +1058,12 @@ extension View {
     /// glass is decided, so the two paths cannot drift apart.
     func floatingChrome(state: Color? = nil, solid: Color? = nil) -> some View {
         modifier(FloatingChrome(state: state, solid: solid))
+    }
+
+    /// The same chrome, as a wide bar. Here rather than in a second modifier
+    /// so the `#available(iOS 26, *)` fork stays in one place.
+    func floatingBar() -> some View {
+        modifier(FloatingChrome(bar: true))
     }
 }
 
