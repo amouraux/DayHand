@@ -2,6 +2,8 @@
 
 Last reviewed: 25 October 2026. English master copy.
 
+For the production App Store listing, see [APP_STORE.md](APP_STORE.md).
+
 This file is the source for TestFlight text and submission notes. Copy only
 an individual field’s text into App Store Connect, without its heading or the
 maintainer instructions. Editing this file does not update App Store Connect.

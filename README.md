@@ -5,7 +5,8 @@ longer than a day.
 
 **<https://amouraux.github.io/DayHand/>** · [join the TestFlight beta](https://testflight.apple.com/join/37FbdQp6)
 
-[TestFlight field text and submission notes](docs/TESTFLIGHT.md).
+[TestFlight field text and submission notes](docs/TESTFLIGHT.md) ·
+[App Store listing and submission fields](docs/APP_STORE.md).
 
 ## A task is not a date
 
