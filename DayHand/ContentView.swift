@@ -268,6 +268,82 @@ struct ContentView: View {
 
     /// Cards for a stack, after the filter — any chosen category or project —
     /// and then after the search. Both narrow; neither reorders.
+    /// One card in the list. Extracted so the plain stacks and the dated run
+    /// under Completed cannot end up building different cards.
+    private func row(_ card: TodoItem) -> some View {
+        CardRow(
+            item: card,
+            category: store.category(for: card),
+            project: store.project(for: card),
+            onTap: { stackPickItem = card },
+            onToggle: { withAnimation { store.toggleCompleted(card) } },
+            // Left swipe pulls the card into Today, or pushes it to Tomorrow
+            // if already in Today.
+            onMove: { withAnimation { store.move(card, to: card.bucket.forwardDestination) } },
+            // Right swipe opens the full editor.
+            onEdit: { editItem = card }
+        )
+        // The right-click menu, on the Mac only: a phone's long press has no
+        // second menu to be inconsistent with, since tapping already opens
+        // this same list.
+        #if targetEnvironment(macCatalyst)
+        .contextMenu {
+            ForEach(Array(cardActions(for: card).enumerated()), id: \.offset) { _, action in
+                let look = look(action, for: card)
+                Button(role: action == .delete ? .destructive : nil) {
+                    stackPickItem = nil
+                    look.run()
+                } label: {
+                    Label { look.title } icon: { Image(systemName: look.symbol) }
+                }
+            }
+        }
+        #endif
+        .transition(.opacity.combined(with: .move(edge: .top)))
+        // Identity must include the stack. A card that moves section keeps its
+        // id, and SwiftUI then reuses the old row without feeding it the new
+        // card — so it keeps painting the previous stack's colour and a date
+        // it no longer has.
+        .id("\(card.id)-\(card.bucket.rawValue)")
+        // Bound per row so it opens on the card that was clicked rather than
+        // over the middle of the list; only ever one can be true.
+        .popover(isPresented: Binding(
+            get: { usesPopoverMenus && stackPickItem?.id == card.id },
+            set: { if !$0 { stackPickItem = nil } }
+        )) {
+            cardMenu(card)
+        }
+    }
+
+    /// The days the shown completed tasks fall on, newest first. Built from
+    /// what is on screen rather than from everything, so the cap still caps.
+    private func completedDays(of cards: [TodoItem]) -> [Review.Day] {
+        Timeline.months(of: cards).flatMap(\.days)
+    }
+
+    private func undatedCompleted(in cards: [TodoItem]) -> [TodoItem] {
+        cards.filter { $0.completedAt == nil }
+    }
+
+    /// The date a run of finished tasks was done on. Quieter than a stack
+    /// header: it sits inside one, and the stack has already said what these
+    /// are.
+    private func dayHeading(_ day: Review.Day) -> some View {
+        HStack(spacing: 8) {
+            Text(Scheduler.relativeLabel(for: day.date))
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.secondary)
+            Spacer(minLength: 4)
+            Text("\(day.cards.count)")
+                .font(.subheadline)
+                .monospacedDigit()
+                .foregroundStyle(.tertiary)
+        }
+        .padding(.horizontal, 4)
+        .padding(.top, 6)
+        .accessibilityElement(children: .combine)
+    }
+
     private func cards(in bucket: Bucket) -> [TodoItem] {
         var all = store.items(in: bucket)
         if attentionOnly {
@@ -643,59 +719,24 @@ struct ContentView: View {
 
                     if !cards.isEmpty {
                         Section {
-                            ForEach(visible) { card in
-                                CardRow(
-                                    item: card,
-                                    category: store.category(for: card),
-                                    project: store.project(for: card),
-                                    onTap: { stackPickItem = card },
-                                    onToggle: { withAnimation { store.toggleCompleted(card) } },
-                                    // Left swipe pulls the card into Today, or
-                                    // pushes it to Tomorrow if already in Today.
-                                    onMove: {
-                                        withAnimation {
-                                            store.move(card, to: card.bucket.forwardDestination)
-                                        }
-                                    },
-                                    // Right swipe opens the full editor.
-                                    onEdit: { editItem = card }
-                                )
-                                // The right-click menu, on the Mac only: a
-                                // phone's long press has no second menu to be
-                                // inconsistent with, since tapping already
-                                // opens this same list.
-                                #if targetEnvironment(macCatalyst)
-                                .contextMenu {
-                                    ForEach(Array(cardActions(for: card).enumerated()),
-                                            id: \.offset) { _, action in
-                                        let look = look(action, for: card)
-                                        Button(role: action == .delete ? .destructive : nil) {
-                                            stackPickItem = nil
-                                            look.run()
-                                        } label: {
-                                            Label { look.title } icon: {
-                                                Image(systemName: look.symbol)
-                                            }
-                                        }
-                                    }
+                            // Completed is the one stack with a date on every
+                            // task in it, so it is the one stack worth reading
+                            // by day. Scoped by whatever Organise has picked,
+                            // like every other stack — which is what makes
+                            // this the project review: filter to a project and
+                            // the screen is what is left above, and when the
+                            // rest got done below.
+                            if bucket == .completed {
+                                ForEach(completedDays(of: visible)) { day in
+                                    dayHeading(day)
+                                    ForEach(day.cards) { card in row(card) }
                                 }
-                                #endif
-                                .transition(.opacity.combined(with: .move(edge: .top)))
-                                // Identity must include the stack. A card that
-                                // moves section keeps its id, and SwiftUI then
-                                // reuses the old row without feeding it the new
-                                // card — so it keeps painting the previous
-                                // stack's colour and a date it no longer has.
-                                .id("\(card.id)-\(card.bucket.rawValue)")
-                                // Bound per row so it opens on the card that
-                                // was clicked rather than over the middle of
-                                // the list; only ever one can be true.
-                                .popover(isPresented: Binding(
-                                    get: { usesPopoverMenus && stackPickItem?.id == card.id },
-                                    set: { if !$0 { stackPickItem = nil } }
-                                )) {
-                                    cardMenu(card)
-                                }
+                                // A completed task carrying no date cannot be
+                                // placed in the run, and must not vanish from
+                                // the list because of it.
+                                ForEach(undatedCompleted(in: visible)) { card in row(card) }
+                            } else {
+                                ForEach(visible) { card in row(card) }
                             }
 
                             if bucket == .completed {

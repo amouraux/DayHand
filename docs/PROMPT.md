@@ -480,6 +480,30 @@ tasks, no button appears.
 The cap applies to what is left *after* filtering and searching, so narrowing
 the list never hides a match behind it.
 
+**COMPLETED is grouped by the day the work was done** — "Today 1", "Tue, 20
+Oct 3" — and nothing else is. It is the one stack with a date on every task in
+it, so it is the only one worth reading as a run. The headings are quieter than
+a stack header: they sit inside one, and the stack above has already said what
+these are.
+
+This is what makes the screen a project review. Every stack is already scoped
+by Organise, COMPLETED included, so filtering to a project gives one screen
+holding both halves of the question: what is still open, by stack, above; and
+when the rest got done, by day, below. No mode to be in and no second screen —
+the filter was doing the scoping already, and only the dates were missing.
+
+A **review mode** was considered and rejected for the same reason. Nothing but
+a completion has a date to group by, so a mode showing the run would have to
+hide the open tasks — and the question being asked while reviewing a project is
+usually "does this need another task?", which is exactly the half it would
+hide.
+
+The grouping is built from what is **shown**, not from everything, so the cap
+still caps: More… reveals twenty more and they fall into their days. A
+completed task carrying no date is listed after the run rather than dropped —
+`Timeline.months` can only place a task it can date, and a task must not vanish
+from the list for want of a timestamp.
+
 ## Reminders
 
 A reminder is armed on a task with a **day**, and fires a local notification.
