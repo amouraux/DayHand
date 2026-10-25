@@ -197,12 +197,12 @@ struct FilterList: View {
             Section {
                 Picker(selection: $scope.animation(.easeInOut(duration: 0.2))) {
                     Text("With open tasks").tag(ProjectScope.unfinished)
-                    Text("Not archived").tag(ProjectScope.active)
+                    Text("Active projects").tag(ProjectScope.active)
                     Text("All projects").tag(ProjectScope.all)
                     // Apart, because it is the only one that looks away from
                     // what is going on rather than narrowing it.
                     Divider()
-                    Text("Archived").tag(ProjectScope.archived)
+                    Text("Archived projects").tag(ProjectScope.archived)
                 } label: {
                     Label("Show", systemImage: "line.3.horizontal.decrease.circle")
                 }

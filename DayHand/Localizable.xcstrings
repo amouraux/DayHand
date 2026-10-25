@@ -1547,6 +1547,46 @@
         }
       }
     },
+    "Active projects": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aktive Projekte"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proyectos activos"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Projets actifs"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Progetti attivi"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actieve projecten"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Projetos ativos"
+          }
+        }
+      }
+    },
     "Add": {
       "localizations": {
         "de": {
@@ -2075,42 +2115,82 @@
         }
       }
     },
-    "Archived. Its tasks are still there, and it is left out of the project list until Show in the Filter is set to Archived or All projects. Typing its name brings it back.": {
+    "Archived projects": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Archiviert. Die Aufgaben bleiben erhalten, und das Projekt wird aus der Liste gelassen, bis „Zeigen“ im Filter auf „Archiviert“ oder „Alle Projekte“ steht. Den Namen zu tippen holt es zurück."
+            "value": "Archivierte Projekte"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Archivado. Sus tareas siguen ahí y queda fuera de la lista hasta que «Mostrar» en el filtro esté en «Archivados» o «Todos los proyectos». Al escribir su nombre vuelve."
+            "value": "Proyectos archivados"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Archivé. Ses tâches sont toujours là, et il reste hors de la liste tant que « Afficher » dans le filtre n’est pas sur « Archivés » ou « Tous les projets ». Taper son nom le fait revenir."
+            "value": "Projets archivés"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Archiviato. Le sue attività ci sono ancora e resta fuori dall’elenco finché «Mostra» nel filtro non è su «Archiviati» o «Tutti i progetti». Digitarne il nome lo riporta."
+            "value": "Progetti archiviati"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Gearchiveerd. De taken blijven bestaan en het project blijft uit de lijst tot ‘Tonen’ in het filter op ‘Gearchiveerd’ of ‘Alle projecten’ staat. De naam typen haalt het terug."
+            "value": "Gearchiveerde projecten"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arquivado. As suas tarefas continuam lá e fica fora da lista até «Mostrar» no filtro estar em «Arquivados» ou «Todos os projetos». Escrever o nome trá-lo de volta."
+            "value": "Projetos arquivados"
+          }
+        }
+      }
+    },
+    "Archived. Its tasks are still there, and it is left out of the project list until the Filter’s Show row asks for archived projects. Typing its name brings it back.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archiviert. Die Aufgaben bleiben erhalten, und das Projekt wird aus der Liste gelassen, bis die Zeile „Zeigen“ im Filter nach archivierten Projekten fragt. Den Namen zu tippen holt es zurück."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archivado. Sus tareas siguen ahí y queda fuera de la lista hasta que la fila «Mostrar» del filtro pida los proyectos archivados. Al escribir su nombre vuelve."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archivé. Ses tâches sont toujours là, et il reste hors de la liste tant que la ligne « Afficher » du filtre ne demande pas les projets archivés. Taper son nom le fait revenir."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archiviato. Le sue attività ci sono ancora e resta fuori dall’elenco finché la riga «Mostra» del filtro non chiede i progetti archiviati. Digitarne il nome lo riporta."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gearchiveerd. De taken blijven bestaan en het project blijft uit de lijst tot de rij ‘Tonen’ in het filter om gearchiveerde projecten vraagt. De naam typen haalt het terug."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arquivado. As suas tarefas continuam lá e fica fora da lista até a linha «Mostrar» do filtro pedir os projetos arquivados. Escrever o nome trá-lo de volta."
           }
         }
       }
@@ -6789,47 +6869,6 @@
         }
       }
     },
-    "Not archived": {
-      "extractionState": "manual",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nicht archiviert"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sin archivar"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Non archivés"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Non archiviati"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Niet gearchiveerd"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Não arquivados"
-          }
-        }
-      }
-    },
     "Not syncing": {
       "comment": "Shown in Settings when no sync file is configured",
       "localizations": {
@@ -8370,6 +8409,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Procurar tarefas"
+          }
+        }
+      }
+    },
+    "Search tasks, projects or groups": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aufgaben, Projekte oder Gruppen suchen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscar tareas, proyectos o grupos"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher tâches, projets ou groupes"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerca attività, progetti o gruppi"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taken, projecten of groepen zoeken"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Procurar tarefas, projetos ou grupos"
           }
         }
       }

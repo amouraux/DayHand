@@ -1095,9 +1095,20 @@ the projects themselves. A row may read 0 and turn up completed tasks, which is
 the harmless direction: you are shown more than was promised, never less.
 
 **A "Show" row picks which slice of the project list is on screen**, in four
-scopes: **With open tasks** (not archived, something still to do), **Not
-archived** (the default, and what the list has always shown), **All projects**,
-and, set apart below a divider, **Archived**. It sits above the categories,
+scopes: **With open tasks** (not archived, something still to do), **Active
+projects** (the default, and what the list has always shown), **All projects**,
+and, set apart below a divider, **Archived projects**. Three of the four end in
+"projects" because three of them are about the archive; the odd one out is
+named for what it is about, tasks. "Not archived" came first and was dropped:
+it defines the ordinary case by negation, and names the exception.
+
+**The default is Active projects, not With open tasks**, even though the
+narrower one is the better answer to "where is work waiting?". Archiving lives
+in this panel, and a project whose tasks are all done is exactly the one about
+to be archived — a default that hid it would hide each project at the moment it
+is finished, which is the moment its row is wanted. The same reasoning that
+keeps a selected project visible whatever the scope: a list people organise
+from must not drop rows out from under them. It sits above the categories,
 because the search field is pinned to the bottom of the sheet and a short list
 would leave a row below it stranded underneath.
 
