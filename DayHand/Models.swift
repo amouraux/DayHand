@@ -319,6 +319,44 @@ struct Project: Identifiable, Codable, Equatable, Hashable {
     static let edgePunctuation = CharacterSet(charactersIn: ":;,.-–—()[]{}\"'/")
 }
 
+// MARK: - What a card's menu offers
+
+/// The actions a card offers, in order.
+///
+/// There are three surfaces showing them — a click, a right-click on the Mac,
+/// and the phone's dialog — and each used to carry its own hand-written list.
+/// They drifted exactly as you would expect: the right-click menu ended up
+/// with two of the eight, so on the Mac the richer gesture gave the poorer
+/// menu. The rule for which actions apply lives here, where it can be tested;
+/// each surface only decides how to draw them.
+enum CardMenu {
+    enum Action: Equatable {
+        /// A stack this card is not already in.
+        case move(Bucket)
+        /// Only once a reminder has arrived.
+        case snooze
+        case clearReminder
+        case edit
+        /// Narrow to this card's project; never offered while a filter is on.
+        case showOnlyProject
+        /// Step back out of whatever is filtering; offered on every card,
+        /// since a category filter also shows cards carrying no project.
+        case showAll
+    }
+
+    static func actions(for card: TodoItem, isFiltered: Bool, hasProject: Bool) -> [Action] {
+        // The stacks it is not in come first, so the common move stays one
+        // tap with nothing in the way.
+        var actions = Bucket.quickMoveTargets.filter { $0 != card.bucket }.map(Action.move)
+        if Reminders.canSnooze(card) { actions.append(.snooze) }
+        if card.remindAt != nil { actions.append(.clearReminder) }
+        actions.append(.edit)
+        if isFiltered { actions.append(.showAll) }
+        else if hasProject { actions.append(.showOnlyProject) }
+        return actions
+    }
+}
+
 // MARK: - Which projects the filter shows
 
 /// The filter list shows one of four slices of the project list. This replaced

@@ -202,47 +202,15 @@ struct ContentView: View {
                 titleVisibility: .visible,
                 presenting: stackPickItem
             ) { card in
-                // The stacks it is not already in come first, so the common
-                // move stays a single tap with nothing in the way.
-                ForEach(Bucket.quickMoveTargets.filter { $0 != card.bucket }) { target in
-                    Button(target.title) {
-                        withAnimation { store.move(card, to: target) }
-                    }
-                }
-                // The two things that are about the reminder rather than the
-                // card. Snooze for any reminder that has arrived — see
-                // `Reminders.canSnooze` for why that is wider than "waiting on
-                // an answer".
-                if Reminders.canSnooze(card) {
-                    Button("Snooze until tomorrow") {
-                        withAnimation { store.answerReminder(card, .snooze) }
-                    }
-                }
-                if card.remindAt != nil {
-                    Button("Clear the reminder") {
-                        withAnimation { store.answerReminder(card, .clear) }
-                    }
-                }
-                // Then the editor, so it is reachable from a plain click. On
-                // the Mac it was behind a right-click, which is not where
-                // anyone looks after learning that clicking a card does
-                // something.
-                Button("Edit…") {
-                    stackPickItem = nil
-                    // One hop: a sheet presented from the dialog's own action
-                    // is swallowed while that dialog is still dismissing.
-                    DispatchQueue.main.async { editItem = card }
-                }
-                // Narrowing to what is in front of you was a right-click, so it
-                // did not exist on a phone at all — where the only route to a
-                // project was to open the filter and find a name already
-                // printed on the card. While a filter is on the useful move is
-                // back out of it, on every card, since a category filter shows
-                // cards carrying no project.
-                if isFiltered {
-                    Button("Show All") { showAll() }
-                } else if let project = store.project(for: card) {
-                    Button("Show Only \(project.name)") { showOnly(project) }
+                // One list, three surfaces — see `CardMenu`. The dialog draws
+                // them plainly, because that is what a confirmation dialog
+                // gives you and it is the right shape on a phone.
+                ForEach(Array(cardActions(for: card).enumerated()), id: \.offset) { _, action in
+                    let look = look(action, for: card)
+                    Button {
+                        stackPickItem = nil
+                        look.run()
+                    } label: { look.title }
                 }
                 Button("Cancel", role: .cancel) { }
             }
@@ -684,12 +652,28 @@ struct ContentView: View {
                                         }
                                     },
                                     // Right swipe opens the full editor.
-                                    onEdit: { editItem = card },
-                                    onShowProject: store.project(for: card).map { project in
-                                        { showOnly(project) }
-                                    },
-                                    onShowAll: isFiltered ? { showAll() } : nil
+                                    onEdit: { editItem = card }
                                 )
+                                // The right-click menu, on the Mac only: a
+                                // phone's long press has no second menu to be
+                                // inconsistent with, since tapping already
+                                // opens this same list.
+                                #if targetEnvironment(macCatalyst)
+                                .contextMenu {
+                                    ForEach(Array(cardActions(for: card).enumerated()),
+                                            id: \.offset) { _, action in
+                                        let look = look(action, for: card)
+                                        Button {
+                                            stackPickItem = nil
+                                            look.run()
+                                        } label: {
+                                            Label { look.title } icon: {
+                                                Image(systemName: look.symbol)
+                                            }
+                                        }
+                                    }
+                                }
+                                #endif
                                 .transition(.opacity.combined(with: .move(edge: .top)))
                                 // Identity must include the stack. A card that
                                 // moves section keeps its id, and SwiftUI then
@@ -777,57 +761,70 @@ struct ContentView: View {
                 .padding(.top, 12)
                 .padding(.bottom, 2)
 
-            ForEach(Bucket.quickMoveTargets.filter { $0 != card.bucket }) { target in
-                menuRow(Text(target.title), symbol: target.symbolName, tint: target.tint,
-                        wash: target.lightWash) {
-                    stackPickItem = nil
-                    withAnimation { store.move(card, to: target) }
+            // The same list, drawn with the stack colours a click deserves.
+            // A divider wherever the kind of action changes, so moving a card
+            // and answering its reminder do not read as one run.
+            let actions = cardActions(for: card)
+            ForEach(Array(actions.enumerated()), id: \.offset) { index, action in
+                if index > 0, isNewGroup(action, after: actions[index - 1]) {
+                    Divider().padding(.vertical, 4)
                 }
-            }
-
-            // Any reminder that has arrived — the same rule the flag uses to
-            // gather the card in the first place, so a card it shows always
-            // offers the choices that go with it.
-            if Reminders.canSnooze(card) {
-                Divider().padding(.vertical, 4)
-                menuRow(Text("Snooze until tomorrow"), symbol: "bell.badge",
-                        tint: .accentColor, wash: 0) {
+                let look = look(action, for: card)
+                menuRow(look.title, symbol: look.symbol, tint: look.tint, wash: look.wash) {
                     stackPickItem = nil
-                    withAnimation { store.answerReminder(card, .snooze) }
-                }
-            }
-
-            Divider().padding(.vertical, 4)
-
-            if card.remindAt != nil {
-                menuRow(Text("Clear the reminder"), symbol: "bell.slash",
-                        tint: .secondary, wash: 0) {
-                    stackPickItem = nil
-                    withAnimation { store.answerReminder(card, .clear) }
-                }
-            }
-
-            menuRow(Text("Edit…"), symbol: "square.and.pencil", tint: .accentColor, wash: 0) {
-                stackPickItem = nil
-                DispatchQueue.main.async { editItem = card }
-            }
-            if isFiltered {
-                menuRow(Text("Show All"), symbol: "line.3.horizontal.decrease.circle.fill",
-                        tint: .accentColor, wash: 0) {
-                    stackPickItem = nil
-                    showAll()
-                }
-            } else if let project {
-                menuRow(Text("Show Only \(project.name)"), symbol: "line.3.horizontal.decrease.circle",
-                        tint: .accentColor, wash: 0) {
-                    stackPickItem = nil
-                    showOnly(project)
+                    look.run()
                 }
             }
         }
         .padding(.bottom, 10)
         .frame(width: 260)
         .presentationCompactAdaptation(.popover)
+    }
+
+    /// How one action is drawn and what it does. The three surfaces differ in
+    /// how they lay a row out, never in which rows they have or what they say.
+    private func look(_ action: CardMenu.Action, for card: TodoItem)
+        -> (title: Text, symbol: String, tint: Color, wash: Double, run: () -> Void) {
+        switch action {
+        case .move(let target):
+            return (Text(target.title), target.symbolName, target.tint, target.lightWash,
+                    { withAnimation { store.move(card, to: target) } })
+        case .snooze:
+            return (Text("Snooze until tomorrow"), "bell.badge", .accentColor, 0,
+                    { withAnimation { store.answerReminder(card, .snooze) } })
+        case .clearReminder:
+            return (Text("Clear the reminder"), "bell.slash", .secondary, 0,
+                    { withAnimation { store.answerReminder(card, .clear) } })
+        case .edit:
+            // One hop: a sheet presented from a dialog's own action is
+            // swallowed while that dialog is still dismissing.
+            return (Text("Edit…"), "square.and.pencil", .accentColor, 0,
+                    { DispatchQueue.main.async { editItem = card } })
+        case .showOnlyProject:
+            let name = store.project(for: card)?.name ?? ""
+            return (Text("Show Only \(name)"), "line.3.horizontal.decrease.circle", .accentColor, 0,
+                    { showOnly(store.project(for: card)!) })
+        case .showAll:
+            return (Text("Show All"), "line.3.horizontal.decrease.circle.fill", .accentColor, 0,
+                    { showAll() })
+        }
+    }
+
+    private func cardActions(for card: TodoItem) -> [CardMenu.Action] {
+        CardMenu.actions(for: card, isFiltered: isFiltered,
+                         hasProject: store.project(for: card) != nil)
+    }
+
+    /// Moving, answering a reminder, and everything else are three runs.
+    private func isNewGroup(_ action: CardMenu.Action, after previous: CardMenu.Action) -> Bool {
+        func rank(_ action: CardMenu.Action) -> Int {
+            switch action {
+            case .move: return 0
+            case .snooze, .clearReminder: return 1
+            case .edit, .showOnlyProject, .showAll: return 2
+            }
+        }
+        return rank(action) != rank(previous)
     }
 
     private func menuRow(_ title: Text, symbol: String, tint: Color,

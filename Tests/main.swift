@@ -1678,5 +1678,49 @@ do {
     expect(coded == doc, "a document still survives save and load through the fast path")
 }
 
+// MARK: — what a card's menu offers
+do {
+    func menu(_ card: TodoItem, filtered: Bool = false, project: Bool = false) -> [CardMenu.Action] {
+        CardMenu.actions(for: card, isFiltered: filtered, hasProject: project)
+    }
+    var plain = TodoItem(title: "plain"); plain.bucket = .tomorrow
+
+    let moves = menu(plain).compactMap { if case .move(let b) = $0 { return b } else { return nil } }
+    expect(!moves.contains(.tomorrow), "the stack a card is already in is not offered")
+    expect(moves == Bucket.quickMoveTargets.filter { $0 != .tomorrow },
+           "the others are offered in their usual order, and first")
+    expect(menu(plain).last == .edit, "with nothing to filter by, Edit is the end of it")
+
+    // Reminders add two, and only when they apply.
+    expect(!menu(plain).contains(.snooze), "no reminder, nothing to snooze")
+    expect(!menu(plain).contains(.clearReminder), "and nothing to clear")
+    var reminded = TodoItem(title: "reminded")
+    reminded.remindAt = Date().addingTimeInterval(60 * 60 * 24 * 7)
+    expect(menu(reminded).contains(.clearReminder), "a reminder can always be cleared")
+    expect(menu(reminded).contains(.snooze) == Reminders.canSnooze(reminded),
+           "snooze follows the same rule the flag uses to gather the card")
+
+    // Filtering is either/or, never both.
+    expect(menu(plain, project: true).contains(.showOnlyProject),
+           "a card with a project can narrow to it")
+    expect(!menu(plain, project: true).contains(.showAll), "and is not also offered the way out")
+    expect(menu(plain, filtered: true, project: true) .contains(.showAll),
+           "while a filter is on, the useful move is back out of it")
+    expect(!menu(plain, filtered: true, project: true).contains(.showOnlyProject),
+           "and narrowing again is not offered")
+    expect(menu(plain, filtered: true).contains(.showAll),
+           "Show All is offered even with no project, since a category filter shows those too")
+    expect(!menu(plain).contains(.showOnlyProject), "a card with no project cannot narrow to one")
+
+    // Edit is always there: a menu that will move a card but not open it
+    // reads as broken, which is why it is on every surface.
+    for card in [plain, reminded] {
+        for filtered in [true, false] {
+            expect(menu(card, filtered: filtered, project: true).contains(.edit),
+                   "Edit is offered whatever else is")
+        }
+    }
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

@@ -1224,8 +1224,31 @@ clothes: ticking a group of two projects holding three tasks between them put a
 2 on the button while the sidebar said 3 a thumb's width away. One predicate
 now serves the list, the sidebar and the button, so they cannot disagree again. Deleting a category
 removes it from the selection, so the list is never filtered by something that
-no longer exists. On the Mac, right-click a task for "Show Only <project>";
-while any filter is on, that item becomes "Show All" on every task.
+no longer exists. Clicking a task offers "Show Only <project>",
+and on the Mac so does right-clicking it; while any filter is on, that item
+becomes "Show All" on every task, since a category filter also shows tasks
+carrying no project.
+
+### One list, three surfaces
+
+What a task offers is **one list** — `CardMenu.actions(for:isFiltered:hasProject:)`
+— and the three places that show it decide only how to draw it: the phone's
+dialog plainly, the Mac and iPad popover with the stack colours, the Mac's
+right-click menu with symbols. The stacks it is not already in come first, so
+the common move stays one tap with nothing in the way; then the reminder, if it
+has one; then Edit; then the filter item.
+
+Each surface used to carry its own hand-written copy, which is the hazard this
+file already names about Snooze and Clear living in two code paths. They
+drifted exactly as predicted: the right-click menu was written with Edit and
+Show Only and never learned the rest, so the Mac's richer gesture gave the
+poorer menu. The rule is in the model layer now, where a test can say that a
+task in Next is not offered Next, that Snooze follows the same rule the flag
+uses to gather the task, and that Show All replaces Show Only rather than
+joining it.
+
+**Edit is on every surface, always.** A menu that will move a task but not open
+it reads as broken — Finder puts Open in both places for the same reason.
 
 ## Searching
 
@@ -1484,10 +1507,11 @@ Two differences that matter:
 
 - The swipes become **click-and-drag** on a Mac: a two-finger trackpad swipe
   scrolls instead, so the swipe left stays for anyone who wants it. The Mac
-  also has a **right-click menu** on a task, mirroring what a click already
-  offers — Edit and Show Only both appear in both, deliberately: a context menu
-  that will narrow the list by a task but not open it reads as broken, and
-  Finder puts Open in both places for the same reason.
+  also has a **right-click menu** on a task, offering **exactly what a click
+  offers** — the stacks, the reminder, Edit, and the filter item. It used to
+  hold two of those eight, which had it backwards: a right-click is the
+  richer gesture, and on a Mac a context menu that is shorter than a plain
+  click reads as a mistake.
 - **The window shows no title.** It is not a document, so there is nothing to
   name, and the app is already named in the menu bar and the Dock
   (`titlebar?.titleVisibility = .hidden`). The titlebar itself stays: the
