@@ -54,17 +54,6 @@ struct FilterList: View {
     /// accident from a list row.
     @State private var collision: String?
 
-    /// A drop that moves a project to another category, which takes every card
-    /// in it along. Worth asking about; a change of group is not.
-    struct PendingMove: Identifiable {
-        let id = UUID()
-        let project: Project
-        let categoryID: UUID?
-        let group: String?
-        let cards: Int
-    }
-    @State private var pendingMove: PendingMove?
-
     /// Which heading a drag is over. A category and a group are different
     /// targets — dropping on a category means that category in *no* group — so
     /// this is not the same set of things that can be renamed.
@@ -290,18 +279,6 @@ struct FilterList: View {
                         }
                     }
             }
-        }
-        // Moving a project to another category takes every card in it along,
-        // so it says how many rather than doing it quietly. A group is only a
-        // label, and changes without asking.
-        .alert("Move Project?", isPresented: Binding(
-            get: { pendingMove != nil }, set: { if !$0 { pendingMove = nil } }
-        ), presenting: pendingMove) { move in
-            Button("Move") { file(move.project, categoryID: move.categoryID, group: move.group) }
-            Button("Cancel", role: .cancel) { }
-        } message: { move in
-            let into = categories.first { $0.id == move.categoryID }?.label ?? "Other projects"
-            Text("\(move.project.name) and its \(move.cards) tasks move to \(into).")
         }
         .alert("Name Taken", isPresented: Binding(
             get: { collision != nil }, set: { if !$0 { collision = nil } }
@@ -652,13 +629,18 @@ struct FilterList: View {
                                             group: group, cards: store.items)
         else { return false }
 
-        // Changing a project's category takes its cards with it, a real edit
-        // to every one of them. A group is only a label, and goes quietly.
-        if move.cards > 0 {
-            pendingMove = PendingMove(project: project, categoryID: move.categoryID,
-                                      group: move.group, cards: move.cards)
-            return true
-        }
+        // No longer asked about first. Changing a project's category is a real
+        // edit to every task in it, which is why it used to stop and count
+        // them — but it is undoable now, and the bar that appears says both
+        // what happened and where it went: "Moved FRIA to Teaching", with the
+        // way back beside it.
+        //
+        // That is strictly better than the question was. A confirmation makes
+        // the deliberate case pay for the mistaken one, and it cannot help at
+        // all with the mistake people actually make here, which is dropping on
+        // the wrong row — the dialog names the destination, but so does the
+        // bar, and the bar does not interrupt the nine times out of ten the
+        // drop was right.
         file(project, categoryID: move.categoryID, group: move.group)
         return true
     }

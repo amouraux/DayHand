@@ -123,52 +123,6 @@
         }
       }
     },
-    "%@ and its %lld tasks move to %@.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@ and its %2$lld tasks move to %3$@."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@ und seine %2$lld Aufgaben wandern zu %3$@."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@ y sus %2$lld tareas pasan a %3$@."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@ et ses %2$lld tâches passent dans %3$@."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@ e le sue %2$lld attività passano a %3$@."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@ en zijn %2$lld taken gaan naar %3$@."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@ e as suas %2$lld tarefas passam para %3$@."
-          }
-        }
-      }
-    },
     "%@’s %lld tasks move to %@, and %@ is removed.": {
       "localizations": {
         "de": {
@@ -6394,46 +6348,6 @@
         }
       }
     },
-    "Move Project?": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Projekt verschieben?"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "¿Mover el proyecto?"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Déplacer le projet ?"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spostare il progetto?"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Project verplaatsen?"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mover o projeto?"
-          }
-        }
-      }
-    },
     "Move it, or keep it where it is.": {
       "comment": "Notification body for a reminder",
       "localizations": {
@@ -6511,6 +6425,86 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mover para %@"
+          }
+        }
+      }
+    },
+    "Moved %@ out of its category": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ aus seiner Kategorie genommen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ sacado de su categoría"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ retiré de sa catégorie"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ tolto dalla sua categoria"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ uit zijn categorie gehaald"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ retirado da sua categoria"
+          }
+        }
+      }
+    },
+    "Moved %@ to %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ nach %@ verschoben"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ movido a %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ déplacé vers %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ spostato in %@"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ verplaatst naar %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ movido para %@"
           }
         }
       }

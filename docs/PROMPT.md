@@ -1260,6 +1260,30 @@ tombstone, not merely `now`. A merge gives a tie to the deletion
 millisecond would come back on this device and stay dead everywhere else.
 Stamps carry milliseconds, so one is the smallest step that settles it.
 
+**Moving a project to another category is undoable too, and no longer asks
+first.** It used to stop and count the tasks it would take along — but only
+from the sidebar; the project editor's own picker applied the same change
+directly, so the two disagreed about whether it was worth a question.
+
+They agree now, and on the lighter answer. A confirmation makes the deliberate
+case pay for the mistaken one, and it cannot help with the mistake people
+actually make here, which is dropping on the wrong row: the dialog names the
+destination, but so does the bar — *"Moved FRIA to Teaching"* — and the bar
+does not interrupt the nine times in ten the drop was right.
+
+The project and its tasks are restored **together**. Moving a project rewrites
+the project's row *and* the category on every task carrying it, so undoing one
+without the other would leave a project in one category with its tasks in
+another. Only the tasks that actually moved are recorded: one already in the
+destination category is not changed by the move, and restoring it would stamp
+it for a change it never had.
+
+**The bar is shown by any sheet that can make an undoable change**, not only by
+the task list. A sheet is its own presentation context, so an overlay on the
+list behind it is simply not visible — and on a phone, where there is no ⌘Z, a
+category moved from the project editor would otherwise offer no way back at
+all.
+
 **Delete sits on the task's own menu**, last and in red. It is safe there
 rather than behind a confirmation precisely because it is undoable. The
 confirmations that remain are the ones no single step puts back: emptying the

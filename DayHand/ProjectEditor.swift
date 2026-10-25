@@ -185,6 +185,14 @@ struct ProjectEditor: View {
     }
 
     private func form(_ project: Project) -> some View {
+        formBody(project)
+            // Changing the category here moves every task in the project. The
+            // bar is how that is taken back, and an overlay on the list behind
+            // this sheet would not be visible from inside it.
+            .overlay(alignment: .bottom) { UndoBanner().environmentObject(store) }
+    }
+
+    private func formBody(_ project: Project) -> some View {
         Form {
             Section {
                 TextField("Name", text: $name)

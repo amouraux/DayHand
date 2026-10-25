@@ -460,6 +460,7 @@ final class TodoStore: ObservableObject {
     @discardableResult
     func setProjectCategory(_ project: Project, to categoryID: UUID?) -> Int {
         let moving = ProjectCategory.cardsToRefile(project, to: categoryID, in: items)
+        recordProjectMove(project, to: categoryID, taking: moving)
         if !moving.isEmpty {
             let stamp = Date.stamp()
             let ids = Set(moving.map(\.id))
@@ -477,6 +478,10 @@ final class TodoStore: ObservableObject {
 
     /// A sidebar move is one edit, including its destination group.
     func moveProject(_ id: UUID, toCategory categoryID: UUID?, group: String?) {
+        if let project = projects.first(where: { $0.id == id }) {
+            recordProjectMove(project, to: categoryID,
+                              taking: ProjectCategory.cardsToRefile(project, to: categoryID, in: items))
+        }
         var movedProjects = projects
         var movedCards = items
         guard ProjectFiling.apply(projectID: id, toCategory: categoryID, group: group,
@@ -705,6 +710,22 @@ final class TodoStore: ObservableObject {
     private func record(_ message: String, undoing cards: [TodoItem]) {
         guard !cards.isEmpty else { return }
         undoSteps.append(UndoStep(message: message, restoration: Restoration(cards: cards)))
+        if undoSteps.count > Self.undoDepth { undoSteps.removeFirst() }
+        show(undoSteps.last!)
+    }
+
+    /// Both ways a project changes category end up here, so the two cannot
+    /// offer different ways back. The tasks are only those that actually move
+    /// — one already in the destination category is not changed and must not
+    /// be restored, or undoing would stamp it for a change it never had.
+    private func recordProjectMove(_ project: Project, to categoryID: UUID?, taking cards: [TodoItem]) {
+        guard project.categoryID != categoryID || !cards.isEmpty else { return }
+        let name = categories.first { $0.id == categoryID }?.label
+        undoSteps.append(UndoStep(
+            message: name.map { String(localized: "Moved \(project.name) to \($0)") }
+                     ?? String(localized: "Moved \(project.name) out of its category"),
+            restoration: Restoration(cards: cards, projects: [project])
+        ))
         if undoSteps.count > Self.undoDepth { undoSteps.removeFirst() }
         show(undoSteps.last!)
     }

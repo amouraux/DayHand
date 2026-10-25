@@ -127,11 +127,18 @@ enum DocumentCoding {
 /// Deletions are recorded as tombstones rather than simply vanishing. Without
 /// them, deleting a card on the phone and then merging with a Mac that still
 /// has it would silently resurrect the card.
-/// The tasks an undo puts back, exactly as they stood before the change.
+/// What an undo puts back, exactly as it stood before the change.
+///
+/// Projects as well as tasks, because the changes worth undoing rarely touch
+/// only one kind: moving a project to another category rewrites the project's
+/// row *and* the category on every task carrying it, and the two have to come
+/// back together or the undo leaves a project in one category with its tasks
+/// in another.
 struct Restoration: Equatable {
-    var cards: [TodoItem]
+    var cards: [TodoItem] = []
+    var projects: [Project] = []
 
-    var isEmpty: Bool { cards.isEmpty }
+    var isEmpty: Bool { cards.isEmpty && projects.isEmpty }
 }
 
 struct StoreDocument: Codable, Equatable {
@@ -182,6 +189,18 @@ struct StoreDocument: Codable, Equatable {
                 result.cards[index] = revived
             } else {
                 result.cards.append(revived)
+            }
+        }
+        // The same three rules again, for the same reasons.
+        for project in restoration.projects {
+            var revived = project
+            let tombstone = result.deletedProjects[project.id.uuidString]
+            revived.modifiedAt = max(now, tombstone?.addingTimeInterval(0.001) ?? now)
+            result.deletedProjects.removeValue(forKey: project.id.uuidString)
+            if let index = result.projects.firstIndex(where: { $0.id == project.id }) {
+                result.projects[index] = revived
+            } else {
+                result.projects.append(revived)
             }
         }
         return result

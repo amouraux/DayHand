@@ -1775,6 +1775,40 @@ do {
     expect(StoreDocument.empty.restoring(Restoration(cards: []), now: now) == StoreDocument.empty,
            "restoring nothing changes nothing")
     expect(Restoration(cards: []).isEmpty, "and nothing is what an empty restoration holds")
+
+    // A project move rewrites the project's row and its tasks together, so
+    // undoing one without the other would leave them disagreeing.
+    let research = UUID(), teaching = UUID()
+    var project = Project(name: "FRIA", categoryID: research, group: "Grants")
+    project.modifiedAt = then
+    var task = TodoItem(title: "write the case", categoryID: research)
+    task.projectID = project.id
+    task.modifiedAt = then
+
+    var moved = project
+    moved.categoryID = teaching
+    moved.group = nil
+    moved.modifiedAt = now
+    var movedTask = task
+    movedTask.categoryID = teaching
+    movedTask.modifiedAt = now
+
+    let after = StoreDocument(cards: [movedTask], projects: [moved])
+    let back = after.restoring(Restoration(cards: [task], projects: [project]), now: now)
+    expect(back.projects[0].categoryID == research, "the project goes back to the category it came from")
+    expect(back.projects[0].group == "Grants", "and back into the group the move took it out of")
+    expect(back.cards[0].categoryID == research, "its tasks come back with it")
+    expect(back.projects[0].modifiedAt == now && back.cards[0].modifiedAt == now,
+           "both stamped now, so neither loses to the copy on another device")
+
+    // Deleting a project is the same shape: tombstone out, row back.
+    var afterDelete2 = StoreDocument(cards: [], projects: [])
+    afterDelete2.deletedProjects[project.id.uuidString] = now
+    let revivedProject = afterDelete2.restoring(Restoration(projects: [project]), now: now)
+    expect(revivedProject.projects.map(\.id) == [project.id], "a deleted project comes back")
+    expect(revivedProject.deletedProjects[project.id.uuidString] == nil, "and loses its tombstone")
+    expect(revivedProject.projects[0].modifiedAt > now,
+           "stamped past the tombstone, for the same reason a task is")
 }
 
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")

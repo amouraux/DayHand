@@ -157,7 +157,7 @@ struct ContentView: View {
             .overlay(alignment: .bottomTrailing) { addButton }
             // Above the buttons rather than among them: it comes and goes, and
             // a control that appears between two permanent ones moves them.
-            .overlay(alignment: .bottom) { undoBanner }
+            .overlay(alignment: .bottom) { UndoBanner().environmentObject(store) }
             .onAppear {
                 guard !didAnchorToToday else { return }
                 didAnchorToToday = true
@@ -834,41 +834,6 @@ struct ContentView: View {
         return rank(action) != rank(previous)
     }
 
-    /// What just happened, and the way back from it.
-    ///
-    /// A banner rather than a dialog: undoing is the rare case, and a sheet
-    /// that has to be dismissed every time a task is ticked off would cost the
-    /// common case to serve the rare one. It says what happened — the house
-    /// rule — and offers the way back for as long as anyone is likely to want
-    /// it, then goes quietly. ⌘Z keeps working after it has gone.
-    @ViewBuilder
-    private var undoBanner: some View {
-        if let step = store.undoBanner {
-            HStack(spacing: 12) {
-                Text(step.message)
-                    .font(.subheadline)
-                    .lineLimit(1)
-                Spacer(minLength: 8)
-                Button("Undo") { withAnimation { store.undoLast() } }
-                    .font(.subheadline.weight(.semibold))
-                Button {
-                    withAnimation { store.dismissUndoBanner() }
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(.secondary)
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Dismiss")
-            }
-            .floatingBar()
-            .padding(.horizontal, 22)
-            .padding(.bottom, 104)
-            .transition(.move(edge: .bottom).combined(with: .opacity))
-            .animation(.snappy(duration: 0.25), value: step.id)
-        }
-    }
-
     private func menuRow(_ title: Text, symbol: String, tint: Color,
                          wash: Double, action: @escaping () -> Void) -> some View {
         Button(action: action) {
@@ -1050,6 +1015,49 @@ private struct FloatingChrome: ViewModifier {
             .overlay(shape.strokeBorder(ring, lineWidth: lineWidth))
             .shadow(color: .black.opacity(shadowed ? 0.18 : 0), radius: 6, y: 3)
             .contentShape(shape)
+    }
+}
+
+/// What just happened, and the way back from it.
+///
+/// A bar rather than a dialog: undoing is the rare case, and a sheet to
+/// dismiss every time a task is ticked off would cost the common case to serve
+/// the rare one. It says what happened — the house rule — and offers the way
+/// back for as long as anyone is likely to want it, then goes quietly. ⌘Z
+/// keeps working after it has gone.
+///
+/// Shown by the task list *and* by any sheet that can make an undoable change.
+/// A sheet is its own presentation context, so an overlay on the list behind
+/// it is simply not visible — and on a phone, where there is no ⌘Z, a change
+/// made in a sheet would otherwise offer no way back at all.
+struct UndoBanner: View {
+    @EnvironmentObject private var store: TodoStore
+
+    var body: some View {
+        if let step = store.undoBanner {
+            HStack(spacing: 12) {
+                Text(step.message)
+                    .font(.subheadline)
+                    .lineLimit(1)
+                Spacer(minLength: 8)
+                Button("Undo") { withAnimation { store.undoLast() } }
+                    .font(.subheadline.weight(.semibold))
+                Button {
+                    withAnimation { store.dismissUndoBanner() }
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Dismiss")
+            }
+            .floatingBar()
+            .padding(.horizontal, 22)
+            .padding(.bottom, 104)
+            .transition(.move(edge: .bottom).combined(with: .opacity))
+            .animation(.snappy(duration: 0.25), value: step.id)
+        }
     }
 }
 
