@@ -47,10 +47,23 @@ struct SettingsView: View {
                             }
                         }
                     }
+                    // Below the two weeks, because the question people ask
+                    // most often is "what did I get done", and only sometimes
+                    // "how did the year go".
+                    NavigationLink {
+                        TimelineView(title: String(localized: "All time"), cards: store.items)
+                            .environmentObject(store)
+                    } label: {
+                        LabeledContent {
+                            Text("\(store.items.filter(\.isCompleted).count)").monospacedDigit()
+                        } label: {
+                            Label("All time", systemImage: "calendar.day.timeline.left")
+                        }
+                    }
                 } header: {
                     Text("Completed")
                 } footer: {
-                    Text("What you have accomplished, grouped by the day you did it.")
+                    Text("What you have accomplished, grouped by the day you did it. All time runs back to the beginning, month by month.")
                 }
 
                 Section {

@@ -213,6 +213,24 @@ struct ProjectEditor: View {
 
             // An action, not a setting: archiving has something to finish
             // first, so it asks rather than flicking back.
+            // Before archiving, which is what you do once you have looked.
+            Section {
+                let finished = store.items.filter { $0.projectID == project.id && $0.isCompleted }
+                NavigationLink {
+                    TimelineView(title: project.name, cards: finished)
+                        .environmentObject(store)
+                } label: {
+                    LabeledContent {
+                        Text("\(finished.count)").monospacedDigit()
+                    } label: {
+                        Label("History", systemImage: "calendar.day.timeline.left")
+                    }
+                }
+                .disabled(finished.isEmpty)
+            } footer: {
+                Text("When the work on this project actually landed, month by month.")
+            }
+
             Section {
                 if project.isArchived {
                     Button {

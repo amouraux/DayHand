@@ -35,7 +35,7 @@ struct ReviewView: View {
             ForEach(days) { day in
                 Section(Scheduler.relativeLabel(for: day.date)) {
                     ForEach(day.cards) { card in
-                        row(card)
+                        FinishedCardRow(card: card).environmentObject(store)
                     }
                 }
             }
@@ -51,35 +51,5 @@ struct ReviewView: View {
                 )
             }
         }
-    }
-
-    /// Deliberately not a `CardRow`: this is a record of what happened, so it
-    /// carries no swipes, no checkbox to untick and no stack colour.
-    private func row(_ card: TodoItem) -> some View {
-        let category = store.category(for: card)
-        let project = store.project(for: card)
-
-        return HStack(alignment: .firstTextBaseline, spacing: 10) {
-            Text(Image(systemName: category?.symbolName ?? "circle.dotted"))
-                .font(.footnote)
-                .foregroundStyle(category?.color.prefixTint ?? Color.secondary)
-                .frame(width: 18, alignment: .center)
-
-            Group {
-                if let project {
-                    Text(project.name)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(category?.color.prefixTint ?? Color.primary)
-                        + Text(" ") + Text(card.title)
-                } else {
-                    Text(card.title)
-                }
-            }
-            .font(.body)
-            .foregroundStyle(Color.primary)
-
-            Spacer(minLength: 0)
-        }
-        .accessibilityElement(children: .combine)
     }
 }

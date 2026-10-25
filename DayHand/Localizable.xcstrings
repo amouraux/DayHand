@@ -1951,6 +1951,46 @@
         }
       }
     },
+    "All time": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesamter Zeitraum"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todo el tiempo"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Depuis le début"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dall’inizio"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sinds het begin"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desde o início"
+          }
+        }
+      }
+    },
     "Already up to date": {
       "comment": "Result line under Sync Now",
       "localizations": {
@@ -4720,6 +4760,46 @@
         }
       }
     },
+    "History": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlauf"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Historial"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Historique"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cronologia"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geschiedenis"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Histórico"
+          }
+        }
+      }
+    },
     "Holidays": {
       "localizations": {
         "de": {
@@ -6987,6 +7067,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nada concluído"
+          }
+        }
+      }
+    },
+    "Nothing finished yet": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noch nichts erledigt"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no hay nada terminado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien de terminé pour l’instant"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ancora niente di finito"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nog niets afgerond"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ainda nada concluído"
           }
         }
       }
@@ -9553,6 +9673,46 @@
         }
       }
     },
+    "Tasks you tick off appear here, newest first, under the month and day you finished them.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aufgaben, die Sie abhaken, erscheinen hier, neueste zuerst, unter dem Monat und dem Tag, an dem Sie sie erledigt haben."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las tareas que marcas aparecen aquí, las más recientes primero, bajo el mes y el día en que las terminaste."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les tâches que vous cochez apparaissent ici, les plus récentes d’abord, sous le mois et le jour où vous les avez terminées."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le attività che spunti compaiono qui, dalle più recenti, sotto il mese e il giorno in cui le hai finite."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taken die je afvinkt verschijnen hier, de nieuwste eerst, onder de maand en de dag waarop je ze hebt afgerond."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As tarefas que assinala aparecem aqui, das mais recentes primeiro, sob o mês e o dia em que as concluiu."
+          }
+        }
+      }
+    },
     "The %lld tasks here will be replaced by the %lld in this backup. Categories and projects come back too.": {
       "localizations": {
         "de": {
@@ -10416,43 +10576,82 @@
         }
       }
     },
-    "What you have accomplished, grouped by the day you did it.": {
-      "comment": "Footer of the Completed section in More",
+    "What you have accomplished, grouped by the day you did it. All time runs back to the beginning, month by month.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Was Sie geschafft haben, nach dem Tag gruppiert, an dem Sie es getan haben."
+            "value": "Was Sie geschafft haben, nach dem Tag gruppiert, an dem Sie es getan haben. „Gesamter Zeitraum“ reicht zurück bis zum Anfang, Monat für Monat."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Lo que has logrado, agrupado por el día en que lo hiciste."
+            "value": "Lo que has logrado, agrupado por el día en que lo hiciste. «Todo el tiempo» llega hasta el principio, mes a mes."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ce que vous avez accompli, groupé par le jour où vous l’avez fait."
+            "value": "Ce que vous avez accompli, groupé par le jour où vous l’avez fait. « Depuis le début » remonte jusqu’au commencement, mois par mois."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ciò che hai portato a termine, raggruppato per il giorno in cui l’hai fatto."
+            "value": "Quello che hai portato a termine, raggruppato per il giorno in cui l’hai fatto. «Dall’inizio» risale fino al principio, mese per mese."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Wat je hebt bereikt, gegroepeerd per dag waarop je het deed."
+            "value": "Wat je hebt bereikt, gegroepeerd per dag waarop je het deed. ‘Sinds het begin’ gaat terug tot het allereerste begin, maand voor maand."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "O que conseguiu fazer, agrupado pelo dia em que o fez."
+            "value": "O que realizou, agrupado pelo dia em que o fez. «Desde o início» recua até ao princípio, mês a mês."
+          }
+        }
+      }
+    },
+    "When the work on this project actually landed, month by month.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wann die Arbeit an diesem Projekt tatsächlich erledigt wurde, Monat für Monat."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cuándo se hizo realmente el trabajo de este proyecto, mes a mes."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quand le travail sur ce projet a réellement avancé, mois par mois."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quando il lavoro su questo progetto è stato davvero fatto, mese per mese."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wanneer het werk aan dit project echt is gedaan, maand voor maand."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quando o trabalho neste projeto foi realmente feito, mês a mês."
           }
         }
       }

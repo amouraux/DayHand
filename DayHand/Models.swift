@@ -1131,6 +1131,65 @@ enum Review {
     }
 }
 
+/// The whole record of finished work, newest first, grouped by month and then
+/// by the day it was done.
+///
+/// `Review` answers "what did I get done this week" over a fixed fortnight.
+/// This answers "how did this project actually go", which is the same material
+/// read at a different distance, so it reuses `Review.Day` rather than
+/// inventing a second shape for the same thing.
+///
+/// Only completions. A task carries the day it was created and the day it was
+/// finished; `modifiedAt` is overwritten on every edit and spent on resolving
+/// sync conflicts, so there is no record of a task having moved from Next to
+/// Now on a Tuesday. A timeline drawn from what exists can say when work
+/// landed, and must not pretend to say more.
+enum Timeline {
+    struct Month: Identifiable, Equatable {
+        /// Midnight on the first of the month.
+        let start: Date
+        /// Newest first, and only days with something on them.
+        let days: [Review.Day]
+
+        var id: Date { start }
+        var completedCount: Int { days.reduce(0) { $0 + $1.cards.count } }
+    }
+
+    /// Months with something finished in them, newest first. A month with
+    /// nothing is left out rather than drawn empty — a gap in the dates says
+    /// "nothing happened" more plainly than a row of zeroes, and a project
+    /// that ran for a fortnight two years ago should not cost the reader two
+    /// years of scrolling to reach.
+    static func months(of cards: [TodoItem], calendar: Calendar = .current) -> [Month] {
+        var byDay: [Date: [TodoItem]] = [:]
+        for card in cards {
+            // A card that was un-completed has no timestamp and did not happen.
+            guard card.isCompleted, let done = card.completedAt else { continue }
+            byDay[calendar.startOfDay(for: done), default: []].append(card)
+        }
+
+        var byMonth: [Date: [Review.Day]] = [:]
+        for (day, cards) in byDay {
+            let sorted = cards.sorted {
+                ($0.completedAt ?? .distantPast) > ($1.completedAt ?? .distantPast)
+            }
+            let month = calendar.date(from: calendar.dateComponents([.year, .month], from: day)) ?? day
+            byMonth[month, default: []].append(Review.Day(date: day, cards: sorted))
+        }
+
+        return byMonth
+            .map { month, days in Month(start: month, days: days.sorted { $0.date > $1.date }) }
+            .sorted { $0.start > $1.start }
+    }
+
+    /// The busiest single day anywhere in `months`, which is what the bars are
+    /// drawn against. Scaling each month to its own busiest day would make a
+    /// quiet month look exactly like a frantic one.
+    static func busiestDay(in months: [Month]) -> Int {
+        months.flatMap(\.days).map(\.cards.count).max() ?? 0
+    }
+}
+
 // MARK: - Dates
 
 /// Date helpers. Buckets are stored on the card, so dates never decide where a

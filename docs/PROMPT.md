@@ -619,8 +619,32 @@ This is the counterweight to a list that never nags. An app that cannot tell you
 anything is late needs somewhere that says what you got done, or it reads as an
 app that does not notice.
 
-Two weeks only. The question worth answering is "what did I get done", not
-"let me browse an archive" — the Completed stack already holds everything.
+Two weeks, and then **All time**: a third row that keeps going, grouped by
+month and then by the day inside it. The weeks answer "what did I get done";
+All time answers "how did this actually go", which is the same material read
+at a different distance. It is the same view a project's ⓘ opens under
+**History**, scoped to that project — which is the one people actually want,
+since "how did the paper go" is a question about a project and not about a
+fortnight.
+
+**Each day carries a bar**, scaled to the busiest single day anywhere in that
+timeline — not the busiest in its own month, which would make a quiet month
+look exactly like a frantic one. A day with one task still draws a visible
+mark rather than an empty track. The bar is what makes a run of work read as a
+shape instead of a list of dates, and it costs one integer per day.
+
+Months with nothing finished are left out entirely rather than drawn empty: a
+project that ran for a fortnight two years ago must not cost two years of
+scrolling to reach.
+
+**Completions only.** A task carries the day it was created and the day it was
+finished; `modifiedAt` is overwritten on every edit and spent on resolving sync
+conflicts, so nothing records a task having moved from Next to Now on a
+Tuesday. A timeline drawn from what exists can say when work landed and must
+not pretend to say more. Showing moves and renames would need an append-only
+event log in the document — new storage, dedupe-by-id on merge, and a file that
+only ever grows — which is a different feature, not a bigger version of this
+one.
 
 Weeks start on whichever day the reader's calendar starts on: Monday across
 most of Europe, Sunday in the US. Take the boundary seriously — a task ticked

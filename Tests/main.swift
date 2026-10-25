@@ -1545,5 +1545,56 @@ do {
            "the stored scope decodes, so a remembered choice survives a launch")
 }
 
+// MARK: — the timeline of finished work
+do {
+    var cal = Calendar(identifier: .gregorian)
+    cal.timeZone = TimeZone(identifier: "UTC")!
+    func at(_ text: String) -> Date {
+        let f = DateFormatter()
+        f.calendar = cal; f.timeZone = cal.timeZone
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.dateFormat = "yyyy-MM-dd HH:mm"
+        return f.date(from: text)!
+    }
+    func done(_ stamp: String, _ title: String = "x") -> TodoItem {
+        var c = TodoItem(title: title)
+        c.bucket = .completed
+        c.completedAt = at(stamp)
+        return c
+    }
+    // Two days in October, one in August, plus noise that must not appear.
+    var open = TodoItem(title: "still going")
+    var untimed = TodoItem(title: "unticked but stamped")
+    untimed.completedAt = at("2026-10-05 09:00")      // not in the completed bucket
+    let cards = [done("2026-10-20 09:00", "a"), done("2026-10-20 17:00", "b"),
+                 done("2026-10-02 09:00", "c"),
+                 done("2026-08-14 09:00", "d"),
+                 open, untimed]
+
+    let months = Timeline.months(of: cards, calendar: cal)
+    expect(months.count == 2, "months with nothing finished are left out entirely")
+    expect(months.map(\.completedCount) == [3, 1], "newest month first, counting its own days")
+    expect(months[0].days.map(\.cards.count) == [2, 1], "days within a month run newest first")
+    expect(months[0].days[0].cards.map(\.title) == ["b", "a"],
+           "and the cards within a day run newest-finished first")
+    expect(!months.flatMap(\.days).flatMap(\.cards).contains { $0.title == "still going" },
+           "an unfinished task is not on the timeline")
+    expect(!months.flatMap(\.days).flatMap(\.cards).contains { $0.title == "unticked but stamped" },
+           "nor is one that was un-completed but kept its stamp")
+
+    expect(Timeline.busiestDay(in: months) == 2, "the bars scale to the busiest day anywhere")
+    expect(Timeline.busiestDay(in: []) == 0, "and an empty timeline has no busiest day")
+    expect(Timeline.months(of: [open], calendar: cal).isEmpty,
+           "a project with nothing finished has no timeline at all")
+
+    // The month key is the first of the month at midnight, so two cards in the
+    // same month always land in one bucket whatever time of day they carry.
+    let spread = [done("2026-10-01 00:30"), done("2026-10-31 23:30")]
+    expect(Timeline.months(of: spread, calendar: cal).count == 1,
+           "the ends of a month belong to the same month")
+    expect(Timeline.months(of: spread, calendar: cal)[0].days.count == 2,
+           "but to different days")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)
