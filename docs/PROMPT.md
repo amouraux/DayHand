@@ -968,6 +968,31 @@ accelerator, never the only route. The group menu — the groups already in the
 category, a new one, or none — is one shared view used by both the long-press
 menu and the editor's Group row, so the two cannot drift apart.
 
+**The Group row says who else a change reaches.** It is the one control on a
+task's editor that edits something other than the task in front of you: a group
+sits on the project, so setting it there regroups every task in that project.
+When the chosen project already exists and already carries other tasks, a line
+under the label says so — *"Also changes 148 other tasks"* — counted by id, so
+it stays right while a task is being moved *into* a project it is not in yet.
+
+It is a caption and not a confirmation. The app asks before a **category** move
+because that stamps every task in the project and syncs them; a group is one
+string on one project row, touches no task, and is undone by setting it back.
+Reserving the modal for what cannot be taken back is what keeps the modal
+meaningful.
+
+Three cases need no line at all, and must not show one: a project **named but
+not yet created** (there is nobody else to tell — it is created on Done, with
+the group), a project **holding this task alone**, and a task **with no
+project**, where the row is not drawn.
+
+**The New Task sheet shows the group but does not let an existing project's be
+changed**, because that sheet promises that cancelling leaves nothing behind
+and a global edit surviving Cancel is the opposite of that. A greyed row with
+no reason beside it reads as broken, so it carries its own line: *"Set on the
+project. Change it from its ⓘ in the Filter."* A project being named for the
+first time is settable there, since nothing exists yet to be edited.
+
 ### Groups of projects
 
 Groups such as Holidays or Clients within a category. A group is a *kind* of

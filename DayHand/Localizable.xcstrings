@@ -2032,6 +2032,136 @@
         }
       }
     },
+    "Also changes %lld other tasks": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Also changes %lld other task"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Also changes %lld other tasks"
+                }
+              }
+            }
+          }
+        },
+        "de": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Ändert auch %lld weitere Aufgabe"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Ändert auch %lld weitere Aufgaben"
+                }
+              }
+            }
+          }
+        },
+        "es": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "También cambia %lld tarea más"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "También cambia %lld tareas más"
+                }
+              }
+            }
+          }
+        },
+        "fr": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Change aussi %lld autre tâche"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Change aussi %lld autres tâches"
+                }
+              }
+            }
+          }
+        },
+        "it": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Cambia anche %lld altra attività"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Cambia anche %lld altre attività"
+                }
+              }
+            }
+          }
+        },
+        "nl": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Wijzigt ook %lld andere taak"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Wijzigt ook %lld andere taken"
+                }
+              }
+            }
+          }
+        },
+        "pt-PT": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Altera também %lld outra tarefa"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "Altera também %lld outras tarefas"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Archive %@?": {
       "comment": "Title of the prompt shown when cards are still open",
       "localizations": {
@@ -8610,6 +8740,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "A pesquisa está limitada a %@."
+          }
+        }
+      }
+    },
+    "Set on the project. Change it from its ⓘ in the Filter.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Am Projekt gesetzt. Über das ⓘ im Filter änderbar."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se define en el proyecto. Cámbialo desde su ⓘ en el filtro."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Défini sur le projet. Modifiable via son ⓘ dans le filtre."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impostato sul progetto. Cambialo dal suo ⓘ nel filtro."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Staat op het project. Wijzig het via de ⓘ in het filter."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Definido no projeto. Altere-o a partir do ⓘ no filtro."
           }
         }
       }

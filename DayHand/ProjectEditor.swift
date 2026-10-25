@@ -30,6 +30,11 @@ struct ProjectGroupRow: View {
     /// False where changing it would be a side effect the surrounding screen
     /// has promised not to have — see the New Task sheet.
     var editable: Bool = true
+    /// A line under the label saying who else this change reaches. A group sits
+    /// on the project, so setting it from a task is the one control on that
+    /// screen that edits something other than the task in front of you — and
+    /// the only place that is visible is here, on the control itself.
+    var note: String?
     let onNewGroup: () -> Void
 
     var body: some View {
@@ -68,7 +73,16 @@ struct ProjectGroupRow: View {
             }
             }
         } label: {
-            Label("Group", systemImage: "folder")
+            Label {
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("Group")
+                    if let note {
+                        Text(note).font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+            } icon: {
+                Image(systemName: "folder")
+            }
         }
     }
 }

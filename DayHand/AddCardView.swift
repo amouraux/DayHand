@@ -152,7 +152,12 @@ struct AddCardView: View {
                             // that cancelling leaves nothing behind — a global
                             // edit that survives Cancel is the opposite of
                             // that. The card editor is where it is changed.
-                            editable: !isExistingProject
+                            editable: !isExistingProject,
+                            // A greyed row with no reason beside it reads as
+                            // broken rather than as deliberate.
+                            note: isExistingProject
+                                ? String(localized: "Set on the project. Change it from its \u{24D8} in the Filter.")
+                                : nil
                         ) {
                             typedGroup = ""
                             isNamingGroup = true
@@ -727,6 +732,24 @@ struct CardActionsSheet: View {
 
     private var item: TodoItem? { store.items.first { $0.id == itemID } }
 
+    /// Who else a group change here would reach.
+    ///
+    /// Only for a project that already exists and already carries other tasks.
+    /// A project only typed so far is created on Done, so there is nobody else
+    /// to tell; and a project holding this task alone changes nothing beyond
+    /// the screen in front of you. Counting by id rather than subtracting one
+    /// keeps it right while the task is being moved *into* a project it is not
+    /// in yet.
+    private var sharedGroupNote: String? {
+        guard case .existing(let project) = draft.project else { return nil }
+        let others = store.items.filter { $0.projectID == project.id && $0.id != itemID }.count
+        guard others > 0 else { return nil }
+        // The project is named on the row directly above, so repeating it here
+        // only costs the width that pushes the group's own value onto a second
+        // line.
+        return String(localized: "Also changes \(others) other tasks")
+    }
+
     var body: some View {
         NavigationStack {
             if let item {
@@ -762,7 +785,8 @@ struct CardActionsSheet: View {
                                 selection: $draft.group,
                                 tint: store.categories
                                     .first { $0.id == draft.categoryID }?.color.prefixTint
-                                    ?? Color.accentColor
+                                    ?? Color.accentColor,
+                                note: sharedGroupNote
                             ) {
                                 typedGroup = ""
                                 isNamingGroup = true
