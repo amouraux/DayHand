@@ -158,6 +158,21 @@ Three things are easy to miss:
   sample tasks. It is data from then on: changing the device language later
   leaves what is already there alone, because renaming someone's categories
   behind their back would be worse than a mixed-language page.
+- **The word for a task, per language**: *Aufgabe*, *tarea*, *tâche*,
+  *attività*, *taak*, *tarefa*. Never the language's word for a card. Renaming
+  the English and leaving the translations is the easy half of a rename: the
+  key changes, every translation keeps the old noun, and the app goes on
+  calling them cards in six languages while English says task. German
+  addresses the reader as **Sie**, Portuguese in the third person; Spanish,
+  Italian and Dutch are informal; French uses **vous**.
+- **A translation that reorders arguments must use `%1$@`-style specifiers.**
+  Several languages put the count before the name in "%@'s %lld tasks move to
+  %@", and without the positions the name is read as the number. A string with
+  one argument needs nothing; one with two of different types is where this
+  bites.
+- **An `en` entry in the catalogue is an override, not the key.** The
+  multi-argument strings carry one, and a rename that edits only the key
+  leaves English itself reading the old word.
 
 ## Screen
 

@@ -127,8 +127,44 @@
       "localizations": {
         "en": {
           "stringUnit": {
-            "state": "new",
-            "value": "%1$@ and its %2$lld cards move to %3$@."
+            "state": "translated",
+            "value": "%1$@ and its %2$lld tasks move to %3$@."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ und seine %2$lld Aufgaben wandern zu %3$@."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ y sus %2$lld tareas pasan a %3$@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ et ses %2$lld tâches passent dans %3$@."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ e le sue %2$lld attività passano a %3$@."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ en zijn %2$lld taken gaan naar %3$@."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ e as suas %2$lld tarefas passam para %3$@."
           }
         }
       }
@@ -138,43 +174,43 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Die %lld Karten von %@ wandern zu %@, und %@ wird entfernt."
+            "value": "Die %2$lld Aufgaben von %1$@ wandern zu %3$@, und %4$@ wird entfernt."
           }
         },
         "en": {
           "stringUnit": {
-            "state": "new",
-            "value": "%1$@’s %2$lld cards move to %3$@, and %4$@ is removed."
+            "state": "translated",
+            "value": "%1$@’s %2$lld tasks move to %3$@, and %4$@ is removed."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Las %lld tarjetas de %@ pasan a %@, y %@ se elimina."
+            "value": "Las %2$lld tareas de %1$@ pasan a %3$@, y %4$@ se elimina."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Les %lld cartes de %@ passent dans %@, et %@ est supprimé."
+            "value": "Les %2$lld tâches de %1$@ passent dans %3$@, et %4$@ est supprimé."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le %lld carte di %@ passano a %@, e %@ viene rimosso."
+            "value": "Le %2$lld attività di %1$@ passano a %3$@, e %4$@ viene rimosso."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "De %lld kaarten van %@ gaan naar %@, en %@ verdwijnt."
+            "value": "De %2$lld taken van %1$@ gaan naar %3$@, en %4$@ verdwijnt."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Os %lld cartões de %@ passam para %@, e %@ é removido."
+            "value": "As %2$lld tarefas de %1$@ passam para %3$@, e %4$@ é removido."
           }
         }
       }
@@ -1315,79 +1351,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld Karten verlieren diese Kategorie. Die Karten selbst bleiben erhalten."
+            "value": "%lld Aufgaben verlieren diese Kategorie. Die Aufgaben selbst bleiben erhalten."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld tarjetas perderán esta categoría. Las tarjetas se conservan."
+            "value": "%lld tareas perderán esta categoría. Las tareas se conservan."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld cartes perdront cette catégorie. Les cartes elles-mêmes sont conservées."
+            "value": "%lld tâches perdront cette catégorie. Les tâches elles-mêmes sont conservées."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld carte perderanno questa categoria. Le carte restano."
+            "value": "%lld attività perderanno questa categoria. Le attività restano."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld kaarten verliezen deze categorie. De kaarten zelf blijven bestaan."
+            "value": "%lld taken verliezen deze categorie. De taken zelf blijven bestaan."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld cartões perderão esta categoria. Os cartões em si são mantidos."
-          }
-        }
-      }
-    },
-    "A #project groups tasks that belong to the same piece of work — a trip, a paper, a course, an assignment. Type # in a new task to use one. Rename, group and archive them in the Filter: tap ⓘ beside a project.": {
-      "comment": "Footer of the Projects section",
-      "extractionState": "stale",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ein #Projekt fasst Karten zusammen, die zur selben Arbeit gehören — eine Reise, ein Aufsatz, ein Kurs, eine Aufgabe. In einer neuen Aufgabe # tippen, um eines zu verwenden. Umbenennen, gruppieren und archivieren im Filter: auf ⓘ neben einem Projekt tippen."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Un #proyecto agrupa tarjetas que pertenecen al mismo trabajo: un viaje, un artículo, un curso, un encargo. Escribe # en una tarea nueva para usar uno. Renombra, agrupa y archiva en el Filtro: toca ⓘ junto a un proyecto."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Un #projet regroupe les cartes qui relèvent du même travail — un voyage, un article, un cours, un devoir. Tapez # dans une nouvelle tâche pour en utiliser un. Renommez, groupez et archivez dans le Filtre : touchez ⓘ à côté d’un projet."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Un #progetto raggruppa le carte che appartengono allo stesso lavoro — un viaggio, un articolo, un corso, un compito. Digita # in una nuova attività per usarne uno. Rinomina, raggruppa e archivia nel Filtro: tocca ⓘ accanto a un progetto."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Een #project groepeert kaarten die bij hetzelfde werk horen — een reis, een artikel, een cursus, een opdracht. Typ # in een nieuwe taak om er een te gebruiken. Hernoemen, groeperen en archiveren doe je in het filter: tik op ⓘ naast een project."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Um #projeto agrupa cartões que pertencem ao mesmo trabalho — uma viagem, um artigo, um curso, um trabalho. Escreva # numa nova tarefa para usar um. Renomeie, agrupe e arquive no Filtro: toque em ⓘ ao lado de um projeto."
+            "value": "%lld tarefas perderão esta categoria. As tarefas em si são mantidas."
           }
         }
       }
@@ -1432,48 +1426,46 @@
         }
       }
     },
-    "A project groups tasks that belong to the same piece of work — a trip, a client, a paper, a course. Type # in a new task to use one.": {
-      "extractionState": "stale",
+    "A project groups tasks that belong to the same piece of work — a trip, a paper, a course, an assignment. Start a task with its name and it is offered below the field. Rename, group and archive them in the Filter: tap ⓘ beside a project.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ein Projekt fasst Karten zusammen, die zur selben Sache gehören: eine Reise, ein Kunde, ein Artikel, ein Kurs. Tippen Sie # in einer neuen Aufgabe, um eines zu verwenden."
+            "value": "Ein Projekt fasst Aufgaben zusammen, die zur selben Arbeit gehören — eine Reise, ein Aufsatz, ein Kurs, eine Hausarbeit. Beginnen Sie eine Aufgabe mit seinem Namen, und es wird unter dem Feld angeboten. Umbenennen, gruppieren und archivieren im Filter: auf ⓘ neben einem Projekt tippen."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Un proyecto agrupa tarjetas que pertenecen al mismo trabajo: un viaje, un cliente, un artículo, un curso. Escribe # en una tarea nueva para usar uno."
+            "value": "Un proyecto agrupa tareas que pertenecen al mismo trabajo: un viaje, un artículo, un curso, un encargo. Empieza una tarea con su nombre y se te ofrecerá debajo del campo. Renombra, agrupa y archiva en el Filtro: toca ⓘ junto a un proyecto."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Un projet regroupe les cartes qui relèvent d’un même travail : un voyage, un client, un article, un cours. Tapez # dans une nouvelle tâche pour en utiliser un."
+            "value": "Un projet regroupe les tâches qui relèvent du même travail — un voyage, un article, un cours, un devoir. Commencez une tâche par son nom et il est proposé sous le champ. Renommez, groupez et archivez dans le Filtre : touchez ⓘ à côté d’un projet."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Un progetto raggruppa le carte che appartengono allo stesso lavoro: un viaggio, un cliente, un articolo, un corso. Digita # in una nuova attività per usarne uno."
+            "value": "Un progetto raggruppa le attività che appartengono allo stesso lavoro — un viaggio, un articolo, un corso, un compito. Inizia un’attività con il suo nome e viene proposto sotto il campo. Rinomina, raggruppa e archivia nel Filtro: tocca ⓘ accanto a un progetto."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Een project groepeert kaarten die bij hetzelfde werk horen: een reis, een klant, een artikel, een cursus. Typ # in een nieuwe taak om er een te gebruiken."
+            "value": "Een project groepeert taken die bij hetzelfde werk horen — een reis, een artikel, een cursus, een opdracht. Begin een taak met de naam ervan en het wordt onder het veld aangeboden. Hernoemen, groeperen en archiveren doe je in het filter: tik op ⓘ naast een project."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Um projeto agrupa cartões que pertencem ao mesmo trabalho: uma viagem, um cliente, um artigo, um curso. Escreva # numa nova tarefa para usar um."
+            "value": "Um projeto agrupa tarefas que pertencem ao mesmo trabalho — uma viagem, um artigo, um curso, um trabalho. Comece uma tarefa com o nome dele e é-lhe proposto sob o campo. Renomeie, agrupe e arquive no Filtro: toque em ⓘ ao lado de um projeto."
           }
         }
       }
     },
-    "A project groups tasks that belong to the same piece of work — a trip, a paper, a course, an assignment. Start a task with its name and it is offered below the field. Rename, group and archive them in the Filter: tap ⓘ beside a project.": {},
     "A project is archived once it is over, so anything still to do is marked completed first.": {
       "comment": "Project editor footer, when cards are still open",
       "localizations": {
@@ -1551,47 +1543,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Um nome curto, de uma palavra, para algo em que está a trabalhar."
-          }
-        }
-      }
-    },
-    "A task given this project takes this category. Tasks already in the project keep theirs. Moving a project to another category takes it out of its group; groups are arranged in the Filter sheet.": {
-      "extractionState": "stale",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Eine Karte, die dieses Projekt erhält, übernimmt diese Kategorie. Karten, die schon im Projekt sind, behalten ihre. Ein Projekt in eine andere Kategorie zu verschieben nimmt es aus seiner Gruppe; Gruppen werden im Filter geordnet."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Una tarjeta a la que asignes este proyecto toma esta categoría. Las tarjetas que ya están en el proyecto conservan la suya. Mover un proyecto a otra categoría lo saca de su grupo; los grupos se organizan en el filtro."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Une carte à laquelle vous donnez ce projet prend cette catégorie. Les cartes déjà dans le projet gardent la leur. Déplacer un projet vers une autre catégorie le sort de son groupe ; les groupes s’organisent dans le filtre."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Una carta a cui assegni questo progetto prende questa categoria. Le carte già nel progetto mantengono la loro. Spostare un progetto in un’altra categoria lo toglie dal suo gruppo; i gruppi si organizzano nel filtro."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Een kaart die dit project krijgt, neemt deze categorie over. Kaarten die al in het project zitten, houden de hunne. Een project naar een andere categorie verplaatsen haalt het uit zijn groep; groepen regel je in het filter."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Um cartão a que atribua este projeto fica com esta categoria. Os cartões que já estão no projeto mantêm a sua. Mover um projeto para outra categoria tira-o do seu grupo; os grupos organizam-se no filtro."
           }
         }
       }
@@ -1763,37 +1714,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Karte zum Eingang hinzufügen"
+            "value": "Aufgabe zum Eingang hinzufügen"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Añadir tarjeta a la bandeja"
+            "value": "Añadir tarea a la bandeja"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ajouter une carte à la boîte de réception"
+            "value": "Ajouter une tâche à la boîte de réception"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aggiungi una carta in arrivo"
+            "value": "Aggiungi un’attività in arrivo"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kaart aan postvak toevoegen"
+            "value": "Taak aan postvak toevoegen"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Adicionar cartão à caixa de entrada"
+            "value": "Adicionar tarefa à caixa de entrada"
           }
         }
       }
@@ -1803,37 +1754,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Zu vorhandenen Karten hinzufügen"
+            "value": "Zu vorhandenen Aufgaben hinzufügen"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Añadir a las tarjetas existentes"
+            "value": "Añadir a las tareas existentes"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ajouter aux cartes existantes"
+            "value": "Ajouter aux tâches existantes"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aggiungi alle carte esistenti"
+            "value": "Aggiungi alle attività esistenti"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Toevoegen aan bestaande kaarten"
+            "value": "Toevoegen aan bestaande taken"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Adicionar aos cartões existentes"
+            "value": "Adicionar às tarefas existentes"
           }
         }
       }
@@ -2124,85 +2075,42 @@
         }
       }
     },
-    "Archived projects keep their tasks, are no longer suggested, and are left out of the Filter until “Include archived projects” is on. Typing one’s name brings it back.": {
-      "comment": "Footer of the Archived section in Settings → Projects",
-      "extractionState": "stale",
+    "Archived. Its tasks are still there, and it is left out of the project list until Show in the Filter is set to Archived or All projects. Typing its name brings it back.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Archivierte Projekte behalten ihre Karten, werden nicht mehr vorgeschlagen und im Filter ausgelassen, bis „Archivierte Projekte einschließen“ aktiv ist. Einen Namen zu tippen holt das Projekt zurück."
+            "value": "Archiviert. Die Aufgaben bleiben erhalten, und das Projekt wird aus der Liste gelassen, bis „Zeigen“ im Filter auf „Archiviert“ oder „Alle Projekte“ steht. Den Namen zu tippen holt es zurück."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Los proyectos archivados conservan sus tarjetas, dejan de sugerirse y quedan fuera del Filtro hasta que se active «Incluir los proyectos archivados». Al escribir su nombre vuelven."
+            "value": "Archivado. Sus tareas siguen ahí y queda fuera de la lista hasta que «Mostrar» en el filtro esté en «Archivados» o «Todos los proyectos». Al escribir su nombre vuelve."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Les projets archivés gardent leurs cartes, ne sont plus suggérés et restent hors du Filtre tant que « Inclure les projets archivés » est désactivé. Taper un nom le fait revenir."
+            "value": "Archivé. Ses tâches sont toujours là, et il reste hors de la liste tant que « Afficher » dans le filtre n’est pas sur « Archivés » ou « Tous les projets ». Taper son nom le fait revenir."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "I progetti archiviati conservano le loro carte, non vengono più suggeriti e restano fuori dal Filtro finché «Includi i progetti archiviati» non è attivo. Digitarne il nome li riporta."
+            "value": "Archiviato. Le sue attività ci sono ancora e resta fuori dall’elenco finché «Mostra» nel filtro non è su «Archiviati» o «Tutti i progetti». Digitarne il nome lo riporta."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Gearchiveerde projecten behouden hun kaarten, worden niet meer voorgesteld en blijven buiten het filter tot ‘Gearchiveerde projecten tonen’ aanstaat. De naam typen haalt ze terug."
+            "value": "Gearchiveerd. De taken blijven bestaan en het project blijft uit de lijst tot ‘Tonen’ in het filter op ‘Gearchiveerd’ of ‘Alle projecten’ staat. De naam typen haalt het terug."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Os projetos arquivados mantêm os cartões, deixam de ser sugeridos e ficam fora do Filtro até ativar «Incluir os projetos arquivados». Escrever o nome traz-los de volta."
-          }
-        }
-      }
-    },
-    "Archived. Its tasks are still there, and it is left out of the project list until “Include archived projects” is on. Typing its name brings it back.": {
-      "comment": "Project editor footer, once archived",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Archiviert. Die Karten bleiben erhalten, und das Projekt wird aus der Liste gelassen, bis „Archivierte Projekte einschließen“ aktiv ist. Den Namen zu tippen holt es zurück."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Archivado. Sus tarjetas siguen ahí y queda fuera de la lista hasta que se active «Incluir los proyectos archivados». Al escribir su nombre vuelve."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Archivé. Ses cartes sont toujours là, et il reste hors de la liste tant que « Inclure les projets archivés » est désactivé. Taper son nom le fait revenir."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Archiviato. Le sue carte ci sono ancora e resta fuori dall’elenco finché «Includi i progetti archiviati» non è attivo. Digitarne il nome lo riporta."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gearchiveerd. De kaarten blijven bestaan en het project blijft uit de lijst tot ‘Gearchiveerde projecten tonen’ aanstaat. De naam typen haalt het terug."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Arquivado. Os cartões continuam lá e fica fora da lista até ativar «Incluir os projetos arquivados». Escrever o nome traz-lo de volta."
+            "value": "Arquivado. As suas tarefas continuam lá e fica fora da lista até «Mostrar» no filtro estar em «Arquivados» ou «Todos os projetos». Escrever o nome trá-lo de volta."
           }
         }
       }
@@ -2451,7 +2359,45 @@
     },
     "Choose a project": {
       "comment": "A button that displays a menu of projects.",
-      "isCommentAutoGenerated": true
+      "isCommentAutoGenerated": true,
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Projekt wählen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elige un proyecto"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisir un projet"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scegli un progetto"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kies een project"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escolher um projeto"
+          }
+        }
+      }
     },
     "Choosing one replaces the last. Touch and hold a row — right-click on the Mac — to add it instead.": {
       "comment": "Footer under Everything, explaining how to select several",
@@ -2583,7 +2529,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ein Klick auf eine Zeile wählt diese aus; mit dem Kästchen daneben wählst du mehrere. Klicke auf ⓘ, um ein Projekt oder eine Gruppe umzubenennen oder ein Projekt abzulegen."
+            "value": "Ein Klick auf eine Zeile wählt diese aus; mit dem Kästchen daneben wählen Sie mehrere. Klicken Sie auf ⓘ, um ein Projekt oder eine Gruppe umzubenennen oder ein Projekt abzulegen."
           }
         },
         "es": {
@@ -2661,7 +2607,45 @@
     },
     "Collapse": {
       "comment": "A button that collapses a list.",
-      "isCommentAutoGenerated": true
+      "isCommentAutoGenerated": true,
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Einklappen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contraer"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réduire"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comprimi"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inklappen"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recolher"
+          }
+        }
+      }
     },
     "Colour": {
       "localizations": {
@@ -2947,7 +2931,46 @@
         }
       }
     },
-    "Convert Title Prefixes into Projects…": {},
+    "Convert Title Prefixes into Projects…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titelpräfixe in Projekte umwandeln…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Convertir prefijos de título en proyectos…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Convertir les préfixes de titre en projets…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Converti i prefissi dei titoli in progetti…"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titelvoorvoegsels omzetten in projecten…"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Converter prefixos de título em projetos…"
+          }
+        }
+      }
+    },
     "Convert as": {
       "localizations": {
         "de": {
@@ -3478,37 +3501,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alle Karten löschen"
+            "value": "Alle Aufgaben löschen"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Eliminar todas las tarjetas"
+            "value": "Eliminar todas las tareas"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Supprimer toutes les cartes"
+            "value": "Supprimer toutes les tâches"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Elimina tutte le carte"
+            "value": "Elimina tutte le attività"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alle kaarten verwijderen"
+            "value": "Alle taken verwijderen"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Eliminar todos os cartões"
+            "value": "Eliminar todas as tarefas"
           }
         }
       }
@@ -3558,37 +3581,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alle Karten löschen?"
+            "value": "Alle Aufgaben löschen?"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "¿Eliminar todas las tarjetas?"
+            "value": "¿Eliminar todas las tareas?"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Supprimer toutes les cartes ?"
+            "value": "Supprimer toutes les tâches ?"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Eliminare tutte le carte?"
+            "value": "Eliminare tutte le attività?"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alle kaarten verwijderen?"
+            "value": "Alle taken verwijderen?"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Eliminar todos os cartões?"
+            "value": "Eliminar todas as tarefas?"
           }
         }
       }
@@ -3633,8 +3656,86 @@
         }
       }
     },
-    "Discard Changes": {},
-    "Discard changes?": {},
+    "Discard Changes": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Änderungen verwerfen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descartar cambios"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abandonner les modifications"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scarta le modifiche"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wijzigingen negeren"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descartar alterações"
+          }
+        }
+      }
+    },
+    "Discard changes?": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Änderungen verwerfen?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Descartar los cambios?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abandonner les modifications ?"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scartare le modifiche?"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wijzigingen negeren?"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descartar as alterações?"
+          }
+        }
+      }
+    },
     "Dismiss": {
       "extractionState": "stale",
       "localizations": {
@@ -3803,37 +3904,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Jedes angehakte Wort wird ein Projekt und verschwindet vom Anfang dieser Titel. Ein neues Projekt erhält die Kategorie, die die meisten seiner Karten haben."
+            "value": "Jedes angehakte Wort wird ein Projekt und verschwindet vom Anfang dieser Titel. Ein neues Projekt erhält die Kategorie, die die meisten seiner Aufgaben haben."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cada palabra marcada se convierte en un proyecto y desaparece del principio de esos títulos. Un proyecto nuevo toma la categoría que tienen la mayoría de sus tarjetas."
+            "value": "Cada palabra marcada se convierte en un proyecto y desaparece del principio de esos títulos. Un proyecto nuevo toma la categoría que tienen la mayoría de sus tareas."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Chaque mot coché devient un projet et disparaît du début de ces titres. Un nouveau projet prend la catégorie majoritaire de ses cartes."
+            "value": "Chaque mot coché devient un projet et disparaît du début de ces titres. Un nouveau projet prend la catégorie majoritaire de ses tâches."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ogni parola spuntata diventa un progetto e sparisce dall’inizio di quei titoli. Un nuovo progetto prende la categoria della maggior parte delle sue carte."
+            "value": "Ogni parola spuntata diventa un progetto e sparisce dall’inizio di quei titoli. Un nuovo progetto prende la categoria della maggior parte delle sue attività."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Elk aangevinkt woord wordt een project en verdwijnt uit het begin van die titels. Een nieuw project krijgt de categorie die de meeste van zijn kaarten hebben."
+            "value": "Elk aangevinkt woord wordt een project en verdwijnt uit het begin van die titels. Een nieuw project krijgt de categorie die de meeste van zijn taken hebben."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cada palavra assinalada torna-se um projeto e desaparece do início desses títulos. Um projeto novo fica com a categoria da maioria dos seus cartões."
+            "value": "Cada palavra assinalada torna-se um projeto e desaparece do início desses títulos. Um projeto novo fica com a categoria da maioria das suas tarefas."
           }
         }
       }
@@ -3880,7 +3981,45 @@
     },
     "Edit %@": {
       "comment": "A button that opens a project's settings. The argument is the name of the project.",
-      "isCommentAutoGenerated": true
+      "isCommentAutoGenerated": true,
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ bearbeiten"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Editar %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifica %@"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ bewerken"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Editar %@"
+          }
+        }
+      }
     },
     "Edit Category": {
       "localizations": {
@@ -4006,7 +4145,45 @@
     },
     "Edit…": {
       "comment": "A label for a button that opens a view for editing.",
-      "isCommentAutoGenerated": true
+      "isCommentAutoGenerated": true,
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bearbeiten…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Editar…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifica…"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bewerken…"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Editar…"
+          }
+        }
+      }
     },
     "Every device reads and writes this one file. Changes are merged, so edits made on any of them while offline are kept.": {
       "comment": "Sync footer once a file is chosen",
@@ -4051,7 +4228,45 @@
     },
     "Every task in this project moves with it, and new ones start here too. Moving a project to another category also takes it out of its group.": {
       "comment": "A description of how a project's cards are affected when it is moved.",
-      "isCommentAutoGenerated": true
+      "isCommentAutoGenerated": true,
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jede Aufgabe in diesem Projekt wandert mit, und neue starten ebenfalls hier. Ein Projekt in eine andere Kategorie zu verschieben nimmt es auch aus seiner Gruppe."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todas las tareas de este proyecto se mueven con él, y las nuevas también empiezan aquí. Mover un proyecto a otra categoría también lo saca de su grupo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chaque tâche de ce projet suit, et les nouvelles démarrent ici aussi. Déplacer un projet vers une autre catégorie le sort aussi de son groupe."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ogni attività in questo progetto si sposta con esso, e anche le nuove partono qui. Spostare un progetto in un’altra categoria lo toglie anche dal suo gruppo."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elke taak in dit project verhuist mee, en nieuwe beginnen hier ook. Een project naar een andere categorie verplaatsen haalt het ook uit zijn groep."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todas as tarefas deste projeto acompanham-no, e as novas também começam aqui. Mover um projeto para outra categoria também o tira do seu grupo."
+          }
+        }
+      }
     },
     "Everything": {
       "comment": "Filter sheet: clears the filter",
@@ -4096,44 +4311,82 @@
     },
     "Expand": {
       "comment": "A button that expands a list.",
-      "isCommentAutoGenerated": true
+      "isCommentAutoGenerated": true,
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ausklappen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expandir"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Développer"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Espandi"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uitklappen"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expandir"
+          }
+        }
+      }
     },
     "Export Tasks as CSV…": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Karten als CSV exportieren…"
+            "value": "Aufgaben als CSV exportieren…"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Exportar tarjetas a CSV…"
+            "value": "Exportar tareas a CSV…"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Exporter les cartes en CSV…"
+            "value": "Exporter les tâches en CSV…"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Esporta le carte in CSV…"
+            "value": "Esporta le attività in CSV…"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kaarten exporteren als CSV…"
+            "value": "Taken exporteren als CSV…"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Exportar cartões como CSV…"
+            "value": "Exportar tarefas como CSV…"
           }
         }
       }
@@ -4513,37 +4766,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Karten aus CSV importieren…"
+            "value": "Aufgaben aus CSV importieren…"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Importar tarjetas desde CSV…"
+            "value": "Importar tareas desde CSV…"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Importer des cartes depuis un CSV…"
+            "value": "Importer des tâches depuis un CSV…"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Importa carte da CSV…"
+            "value": "Importa attività da CSV…"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kaarten importeren uit CSV…"
+            "value": "Taken importeren uit CSV…"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Importar cartões de CSV…"
+            "value": "Importar tarefas de CSV…"
           }
         }
       }
@@ -4593,37 +4846,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Der Import kann ergänzen oder ersetzen. Karten werden per ID erkannt, Kategorien und Projekte per Name."
+            "value": "Der Import kann ergänzen oder ersetzen. Aufgaben werden per ID erkannt, Kategorien und Projekte per Name."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "La importación puede añadir a lo que hay o reemplazarlo. Las tarjetas se reconocen por identificador; las categorías y los proyectos por nombre."
+            "value": "La importación puede añadir a lo que hay o reemplazarlo. Las tareas se reconocen por identificador; las categorías y los proyectos por nombre."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "L’import peut compléter ce qui est ici ou le remplacer. Les cartes sont reconnues par identifiant ; les catégories et les projets par nom."
+            "value": "L’import peut compléter ce qui est ici ou le remplacer. Les tâches sont reconnues par identifiant ; les catégories et les projets par nom."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "L’importazione può aggiungersi a ciò che c’è o sostituirlo. Le carte sono riconosciute dall’identificativo; categorie e progetti dal nome."
+            "value": "L’importazione può aggiungersi a ciò che c’è o sostituirlo. Le attività sono riconosciute dall’identificativo; categorie e progetti dal nome."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Importeren kan aanvullen of vervangen. Kaarten worden op id herkend; categorieën en projecten op naam."
+            "value": "Importeren kan aanvullen of vervangen. Taken worden op id herkend; categorieën en projecten op naam."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "A importação pode juntar-se ao que existe ou substituí-lo. Os cartões são reconhecidos pelo id; categorias e projetos pelo nome."
+            "value": "A importação pode juntar-se ao que existe ou substituí-lo. As tarefas são reconhecidas pelo id; categorias e projetos pelo nome."
           }
         }
       }
@@ -4804,37 +5057,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Seine Karten bleiben erhalten; sie gehören nur zu keinem Projekt mehr."
+            "value": "Seine Aufgaben bleiben erhalten; sie gehören nur zu keinem Projekt mehr."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sus tarjetas se conservan: simplemente ya no pertenecen a un proyecto."
+            "value": "Sus tareas se conservan: simplemente ya no pertenecen a un proyecto."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ses cartes sont conservées : elles n’appartiennent simplement plus à un projet."
+            "value": "Ses tâches sont conservées : elles n’appartiennent simplement plus à un projet."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le sue carte restano: semplicemente non appartengono più a un progetto."
+            "value": "Le sue attività restano: semplicemente non appartengono più a un progetto."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "De kaarten blijven bestaan; ze horen alleen niet meer bij een project."
+            "value": "De taken blijven bestaan; ze horen alleen niet meer bij een project."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Os cartões são mantidos: apenas deixam de pertencer a um projeto."
+            "value": "As tarefas são mantidas: apenas deixam de pertencer a um projeto."
           }
         }
       }
@@ -4879,7 +5132,46 @@
         }
       }
     },
-    "Keep Editing": {},
+    "Keep Editing": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weiter bearbeiten"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seguir editando"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuer la modification"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continua a modificare"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verder bewerken"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuar a editar"
+          }
+        }
+      }
+    },
     "Label": {
       "localizations": {
         "de": {
@@ -5455,37 +5747,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Zusammenführen behält beide Seiten. Ersetzen verwirft die %lld Karten hier und übernimmt die der Datei."
+            "value": "Zusammenführen behält beide Seiten. Ersetzen verwirft die %lld Aufgaben hier und übernimmt die der Datei."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Combinar conserva ambos lados. Reemplazar descarta las %lld tarjetas de aquí y toma las del archivo."
+            "value": "Combinar conserva ambos lados. Reemplazar descarta las %lld tareas de aquí y toma las del archivo."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Fusionner garde les deux côtés. Remplacer écarte les %lld cartes présentes et prend celles du fichier."
+            "value": "Fusionner garde les deux côtés. Remplacer écarte les %lld tâches présentes et prend celles du fichier."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Unire mantiene entrambe le parti. Sostituire scarta le %lld carte qui e prende quelle del file."
+            "value": "Unire mantiene entrambe le parti. Sostituire scarta le %lld attività qui e prende quelle del file."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Samenvoegen behoudt beide kanten. Vervangen gooit de %lld kaarten hier weg en neemt die van het bestand."
+            "value": "Samenvoegen behoudt beide kanten. Vervangen gooit de %lld taken hier weg en neemt die van het bestand."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Combinar mantém os dois lados. Substituir descarta os %lld cartões daqui e fica com os do ficheiro."
+            "value": "Combinar mantém os dois lados. Substituir descarta as %lld tarefas daqui e fica com as do ficheiro."
           }
         }
       }
@@ -5613,7 +5905,45 @@
     },
     "Move %@ to Category": {
       "comment": "A section that lets you move a project to a",
-      "isCommentAutoGenerated": true
+      "isCommentAutoGenerated": true,
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ in Kategorie verschieben"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mover %@ a una categoría"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déplacer %@ vers une catégorie"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sposta %@ in una categoria"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ naar categorie verplaatsen"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mover %@ para uma categoria"
+          }
+        }
+      }
     },
     "Move %@ to Group": {
       "localizations": {
@@ -5655,7 +5985,46 @@
         }
       }
     },
-    "Move Project?": {},
+    "Move Project?": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Projekt verschieben?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Mover el proyecto?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déplacer le projet ?"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spostare il progetto?"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Project verplaatsen?"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mover o projeto?"
+          }
+        }
+      }
+    },
     "Move it, or keep it where it is.": {
       "comment": "Notification body for a reminder",
       "localizations": {
@@ -5777,7 +6146,46 @@
         }
       }
     },
-    "Name Taken": {},
+    "Name Taken": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name vergeben"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nombre en uso"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom déjà pris"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nome già in uso"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naam al in gebruik"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nome já utilizado"
+          }
+        }
+      }
+    },
     "New Category": {
       "localizations": {
         "de": {
@@ -6023,37 +6431,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Neue Karten"
+            "value": "Neue Aufgaben"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tarjetas nuevas"
+            "value": "Tareas nuevas"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nouvelles cartes"
+            "value": "Nouvelles tâches"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nuove carte"
+            "value": "Nuove attività"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nieuwe kaarten"
+            "value": "Nieuwe taken"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cartões novos"
+            "value": "Tarefas novas"
           }
         }
       }
@@ -6063,37 +6471,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Neue Karten starten mit dieser Kategorie. Auf der Karte lässt sie sich weiterhin ändern."
+            "value": "Neue Aufgaben starten mit dieser Kategorie. An der Aufgabe lässt sie sich weiterhin ändern."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Las tarjetas nuevas empiezan con esta categoría. Puedes cambiarla en la tarjeta."
+            "value": "Las tareas nuevas empiezan con esta categoría. Puedes cambiarla en la tarea."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Les nouvelles cartes démarrent avec cette catégorie. Vous pouvez toujours la changer sur la carte."
+            "value": "Les nouvelles tâches démarrent avec cette catégorie. Vous pouvez toujours la changer sur la tâche."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le nuove carte partono con questa categoria. Puoi sempre cambiarla sulla carta."
+            "value": "Le nuove attività partono con questa categoria. Puoi sempre cambiarla sull’attività."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nieuwe kaarten starten met deze categorie. Je kunt die op de kaart nog wijzigen."
+            "value": "Nieuwe taken starten met deze categorie. Je kunt die op de taak nog wijzigen."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Os cartões novos começam com esta categoria. Pode alterá-la no cartão."
+            "value": "As tarefas novas começam com esta categoria. Pode alterá-la na tarefa."
           }
         }
       }
@@ -6266,78 +6674,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Keine Karte passt zu „%@“"
+            "value": "Keine Aufgabe passt zu „%@“"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ninguna tarjeta coincide con «%@»"
+            "value": "Ninguna tarea coincide con «%@»"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aucune carte ne correspond à « %@ »"
+            "value": "Aucune tâche ne correspond à « %@ »"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nessuna carta corrisponde a «%@»"
+            "value": "Nessuna attività corrisponde a «%@»"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Geen kaart komt overeen met ‘%@’"
+            "value": "Geen taak komt overeen met ‘%@’"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nenhum cartão corresponde a «%@»"
-          }
-        }
-      }
-    },
-    "No tasks": {
-      "extractionState": "stale",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine Karten"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sin tarjetas"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aucune carte"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nessuna carta"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Geen kaarten"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sem cartões"
+            "value": "Nenhuma tarefa corresponde a «%@»"
           }
         }
       }
@@ -6347,37 +6714,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Noch keine Karten"
+            "value": "Noch keine Aufgaben"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aún no hay tarjetas"
+            "value": "Aún no hay tareas"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aucune carte pour l’instant"
+            "value": "Aucune tâche pour l’instant"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ancora nessuna carta"
+            "value": "Ancora nessuna attività"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nog geen kaarten"
+            "value": "Nog geen taken"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ainda sem cartões"
+            "value": "Ainda sem tarefas"
           }
         }
       }
@@ -6712,37 +7079,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nichts rutscht weiter: Karten bleiben, wo Sie sie ablegen"
+            "value": "Nichts rutscht weiter: Aufgaben bleiben, wo Sie sie ablegen"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nada se traslada: las tarjetas se quedan donde las pones"
+            "value": "Nada se traslada: las tareas se quedan donde las pones"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Rien ne bascule : les cartes restent où vous les mettez"
+            "value": "Rien ne bascule : les tâches restent où vous les mettez"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Niente slitta: le carte restano dove le metti"
+            "value": "Niente slitta: le attività restano dove le metti"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Niets schuift door: kaarten blijven waar je ze zet"
+            "value": "Niets schuift door: taken blijven waar je ze zet"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nada transita: os cartões ficam onde os puser"
+            "value": "Nada transita: as tarefas ficam onde as puser"
           }
         }
       }
@@ -7237,37 +7604,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Entfernt jede Karte auf diesem Gerät. Kategorien bleiben erhalten. Wird eine Sync-Datei verwendet, erreicht die Löschung auch Ihre anderen Geräte."
+            "value": "Entfernt jede Aufgabe auf diesem Gerät. Kategorien bleiben erhalten. Wird eine Sync-Datei verwendet, erreicht die Löschung auch Ihre anderen Geräte."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Elimina todas las tarjetas de este dispositivo. Las categorías se conservan. Si se usa un archivo de sincronización, la eliminación llega también a tus otros dispositivos."
+            "value": "Elimina todas las tareas de este dispositivo. Las categorías se conservan. Si se usa un archivo de sincronización, la eliminación llega también a tus otros dispositivos."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Supprime toutes les cartes de cet appareil. Les catégories sont conservées. Si un fichier de synchronisation est utilisé, la suppression touche aussi vos autres appareils."
+            "value": "Supprime toutes les tâches de cet appareil. Les catégories sont conservées. Si un fichier de synchronisation est utilisé, la suppression touche aussi vos autres appareils."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Rimuove ogni carta su questo dispositivo. Le categorie restano. Se è in uso un file di sincronizzazione, l’eliminazione raggiunge anche gli altri dispositivi."
+            "value": "Rimuove ogni attività su questo dispositivo. Le categorie restano. Se è in uso un file di sincronizzazione, l’eliminazione raggiunge anche gli altri dispositivi."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Verwijdert elke kaart op dit apparaat. Categorieën blijven behouden. Bij een synchronisatiebestand bereikt de verwijdering ook je andere apparaten."
+            "value": "Verwijdert elke taak op dit apparaat. Categorieën blijven behouden. Bij een synchronisatiebestand bereikt de verwijdering ook je andere apparaten."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Remove todos os cartões neste dispositivo. As categorias são mantidas. Se estiver em uso um ficheiro de sincronização, a eliminação chega também aos seus outros dispositivos."
+            "value": "Remove todas as tarefas neste dispositivo. As categorias são mantidas. Se estiver em uso um ficheiro de sincronização, a eliminação chega também aos seus outros dispositivos."
           }
         }
       }
@@ -7398,37 +7765,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Das Umbenennen ändert es auf einen Schlag auf jeder Karte."
+            "value": "Das Umbenennen ändert es auf einen Schlag bei jeder Aufgabe."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Al renombrar, cambia en todas las tarjetas a la vez."
+            "value": "Al renombrar, cambia en todas las tareas a la vez."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le renommage s’applique à toutes les cartes d’un coup."
+            "value": "Le renommage s’applique à toutes les tâches d’un coup."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Rinominare lo cambia su tutte le carte in una volta."
+            "value": "Rinominare lo cambia su tutte le attività in una volta."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hernoemen wijzigt het in één keer op elke kaart."
+            "value": "Hernoemen wijzigt het in één keer bij elke taak."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mudar o nome altera-o em todos os cartões de uma vez."
+            "value": "Mudar o nome altera-o em todas as tarefas de uma vez."
           }
         }
       }
@@ -7438,37 +7805,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alle Karten ersetzen"
+            "value": "Alle Aufgaben ersetzen"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Reemplazar todas las tarjetas"
+            "value": "Reemplazar todas las tareas"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Remplacer toutes les cartes"
+            "value": "Remplacer toutes les tâches"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sostituisci tutte le carte"
+            "value": "Sostituisci tutte le attività"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alle kaarten vervangen"
+            "value": "Alle taken vervangen"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Substituir todos os cartões"
+            "value": "Substituir todas as tarefas"
           }
         }
       }
@@ -7478,37 +7845,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Karten auf diesem Gerät ersetzen"
+            "value": "Aufgaben auf diesem Gerät ersetzen"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Reemplazar las tarjetas de este dispositivo"
+            "value": "Reemplazar las tareas de este dispositivo"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Remplacer les cartes de cet appareil"
+            "value": "Remplacer les tâches de cet appareil"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sostituisci le carte su questo dispositivo"
+            "value": "Sostituisci le attività su questo dispositivo"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kaarten op dit apparaat vervangen"
+            "value": "Taken op dit apparaat vervangen"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Substituir os cartões neste dispositivo"
+            "value": "Substituir as tarefas neste dispositivo"
           }
         }
       }
@@ -7518,37 +7885,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ersetzen löscht zuerst die %lld Karten hier."
+            "value": "Ersetzen löscht zuerst die %lld Aufgaben hier."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Reemplazar elimina primero las %lld tarjetas de aquí."
+            "value": "Reemplazar elimina primero las %lld tareas de aquí."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Remplacer supprime d’abord les %lld cartes présentes."
+            "value": "Remplacer supprime d’abord les %lld tâches présentes."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sostituire elimina prima le %lld carte qui."
+            "value": "Sostituire elimina prima le %lld attività qui."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vervangen verwijdert eerst de %lld kaarten hier."
+            "value": "Vervangen verwijdert eerst de %lld taken hier."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Substituir elimina primeiro os %lld cartões daqui."
+            "value": "Substituir elimina primeiro as %lld tarefas daqui."
           }
         }
       }
@@ -7972,37 +8339,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Karten suchen"
+            "value": "Aufgaben suchen"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Buscar tarjetas"
+            "value": "Buscar tareas"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Rechercher une carte"
+            "value": "Rechercher une tâche"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cerca carte"
+            "value": "Cerca attività"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kaarten zoeken"
+            "value": "Taken zoeken"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Procurar cartões"
+            "value": "Procurar tarefas"
           }
         }
       }
@@ -8173,11 +8540,87 @@
     },
     "Show All": {
       "comment": "A button that shows all cards.",
-      "isCommentAutoGenerated": true
+      "isCommentAutoGenerated": true,
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle zeigen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar todo"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tout afficher"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostra tutto"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alles tonen"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar tudo"
+          }
+        }
+      }
     },
     "Show Only %@": {
       "comment": "A label that shows the name of a project and an image of a line.",
-      "isCommentAutoGenerated": true
+      "isCommentAutoGenerated": true,
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nur %@ zeigen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar solo %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher seulement %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostra solo %@"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alleen %@ tonen"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar apenas %@"
+          }
+        }
+      }
     },
     "Show all tasks": {
       "comment": "The same button, once it is filtering",
@@ -8185,37 +8628,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alle Karten zeigen"
+            "value": "Alle Aufgaben zeigen"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mostrar todas las tarjetas"
+            "value": "Mostrar todas las tareas"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Afficher toutes les cartes"
+            "value": "Afficher toutes les tâches"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mostra tutte le carte"
+            "value": "Mostra tutte le attività"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alle kaarten tonen"
+            "value": "Alle taken tonen"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mostrar todos os cartões"
+            "value": "Mostrar todas as tarefas"
           }
         }
       }
@@ -8226,37 +8669,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Karten zum Erledigen anzeigen"
+            "value": "Aufgaben zum Erledigen anzeigen"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mostrar tarjetas por atender"
+            "value": "Mostrar tareas por atender"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Afficher les cartes à traiter"
+            "value": "Afficher les tâches à traiter"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mostra le carte da affrontare"
+            "value": "Mostra le attività da affrontare"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kaarten om aan te pakken tonen"
+            "value": "Taken om aan te pakken tonen"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mostrar cartões a tratar"
+            "value": "Mostrar tarefas a tratar"
           }
         }
       }
@@ -8267,37 +8710,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Zeigt wieder alle Karten"
+            "value": "Zeigt wieder alle Aufgaben"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Vuelve a mostrar todas las tarjetas"
+            "value": "Vuelve a mostrar todas las tareas"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Affiche de nouveau toutes les cartes"
+            "value": "Affiche de nouveau toutes les tâches"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mostra di nuovo tutte le carte"
+            "value": "Mostra di nuovo tutte le attività"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Toont weer alle kaarten"
+            "value": "Toont weer alle taken"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Mostra novamente todos os cartões"
+            "value": "Mostra novamente todas as tarefas"
           }
         }
       }
@@ -8425,7 +8868,45 @@
       }
     },
     "Start a task with a code like BIO2140 to file it under one": {
-      "comment": "Starter task"
+      "comment": "Starter task",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beginnen Sie eine Aufgabe mit einem Code wie BIO2140, um sie dort einzuordnen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empieza una tarea con un código como BIO2140 para archivarla en uno"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commencez une tâche par un code comme BIO2140 pour la classer"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inizia un’attività con un codice come BIO2140 per archiviarla in uno"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Begin een taak met een code als BIO2140 om hem daaronder te plaatsen"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comece uma tarefa com um código como BIO2140 para a arquivar num"
+          }
+        }
+      }
     },
     "Stop Using This File": {
       "localizations": {
@@ -8473,37 +8954,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Eine Karte nach links wischen, um sie vorzuziehen"
+            "value": "Eine Aufgabe nach links wischen, um sie vorzuziehen"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Desliza una tarjeta a la izquierda para adelantarla"
+            "value": "Desliza una tarea a la izquierda para adelantarla"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Glissez une carte vers la gauche pour l’avancer"
+            "value": "Glissez une tâche vers la gauche pour l’avancer"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Scorri una carta a sinistra per portarla avanti"
+            "value": "Scorri un’attività a sinistra per portarla avanti"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Veeg een kaart naar links om hem vooruit te zetten"
+            "value": "Veeg een taak naar links om hem vooruit te zetten"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Deslize um cartão para a esquerda para o adiantar"
+            "value": "Deslize uma tarefa para a esquerda para a adiantar"
           }
         }
       }
@@ -8715,37 +9196,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Auf + tippen, um eine Karte in den Eingang zu legen."
+            "value": "Auf + tippen, um eine Aufgabe in den Eingang zu legen."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Toca + para dejar una tarjeta en tu bandeja."
+            "value": "Toca + para dejar una tarea en tu bandeja."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Touchez + pour déposer une carte dans votre boîte de réception."
+            "value": "Touchez + pour déposer une tâche dans votre boîte de réception."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tocca + per mettere una carta in arrivo."
+            "value": "Tocca + per mettere un’attività in arrivo."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tik op + om een kaart in je postvak te leggen."
+            "value": "Tik op + om een taak in je postvak te leggen."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Toque em + para deixar um cartão na sua caixa de entrada."
+            "value": "Toque em + para deixar uma tarefa na sua caixa de entrada."
           }
         }
       }
@@ -8756,37 +9237,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Auf eine Karte tippen, um sie auf einen anderen Stapel zu legen"
+            "value": "Auf eine Aufgabe tippen, um sie auf einen anderen Stapel zu legen"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Toca una tarjeta para moverla a otra pila"
+            "value": "Toca una tarea para moverla a otra pila"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Touchez une carte pour la déplacer vers une autre pile"
+            "value": "Touchez une tâche pour la déplacer vers une autre pile"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tocca una carta per spostarla in un’altra pila"
+            "value": "Tocca un’attività per spostarla in un’altra pila"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tik op een kaart om hem naar een andere stapel te verplaatsen"
+            "value": "Tik op een taak om hem naar een andere stapel te verplaatsen"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Toque num cartão para o mover para outra pilha"
+            "value": "Toque numa tarefa para a mover para outra pilha"
           }
         }
       }
@@ -8797,7 +9278,7 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ein Tippen auf eine Zeile wählt diese aus; mit dem Kästchen daneben wählst du mehrere. Tippe auf ⓘ, um ein Projekt oder eine Gruppe umzubenennen, es in eine andere Gruppe oder Kategorie zu verschieben oder abzulegen."
+            "value": "Ein Tippen auf eine Zeile wählt diese aus; mit dem Kästchen daneben wählen Sie mehrere. Tippen Sie auf ⓘ, um ein Projekt oder eine Gruppe umzubenennen, es in eine andere Gruppe oder Kategorie zu verschieben oder abzulegen."
           }
         },
         "es": {
@@ -8877,37 +9358,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Karten"
+            "value": "Aufgaben"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tarjetas"
+            "value": "Tareas"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cartes"
+            "value": "Tâches"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Carte"
+            "value": "Attività"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kaarten"
+            "value": "Taken"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cartões"
+            "value": "Tarefas"
           }
         }
       }
@@ -8918,78 +9399,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Karten und Projekte werden nach Kategorien gruppiert. Legen Sie eigene an — auf Karten erscheint nur das Symbol, die Bezeichnung benennt es hier und für VoiceOver."
+            "value": "Aufgaben und Projekte werden nach Kategorien gruppiert. Legen Sie eigene an — auf Aufgaben erscheint nur das Symbol, die Bezeichnung benennt es hier und für VoiceOver."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Las tarjetas y los proyectos se agrupan por categorías. Crea las tuyas: en las tarjetas solo aparece el icono, así que la etiqueta lo nombra aquí y para VoiceOver."
+            "value": "Las tareas y los proyectos se agrupan por categorías. Crea las tuyas: en las tareas solo aparece el icono, así que la etiqueta lo nombra aquí y para VoiceOver."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Les cartes et les projets sont groupés par catégories. Créez les vôtres — sur les cartes, seule l’icône apparaît, le libellé la nomme ici et pour VoiceOver."
+            "value": "Les tâches et les projets sont groupés par catégories. Créez les vôtres — sur les tâches, seule l’icône apparaît, le libellé la nomme ici et pour VoiceOver."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le carte e i progetti sono raggruppati per categorie. Crea le tue — sulle carte compare solo l’icona, quindi l’etichetta la nomina qui e per VoiceOver."
+            "value": "Le attività e i progetti sono raggruppati per categorie. Crea le tue — sulle attività compare solo l’icona, quindi l’etichetta la nomina qui e per VoiceOver."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kaarten en projecten worden per categorie gegroepeerd. Maak je eigen categorieën — op kaarten staat alleen het symbool, dus het label benoemt het hier en voor VoiceOver."
+            "value": "Taken en projecten worden per categorie gegroepeerd. Maak je eigen categorieën — op taken staat alleen het symbool, dus het label benoemt het hier en voor VoiceOver."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Os cartões e os projetos são agrupados por categorias. Crie as suas — nos cartões aparece apenas o ícone, por isso a etiqueta nomeia-o aqui e para o VoiceOver."
-          }
-        }
-      }
-    },
-    "Tasks written as “TRIP book flights” can become “book flights” in project TRIP. You choose which words to convert.": {
-      "extractionState": "stale",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Karten wie „REISE Flüge buchen“ können zu „Flüge buchen“ im Projekt REISE werden. Sie wählen, welche Wörter."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Las tarjetas escritas como «VIAJE reservar vuelos» pueden convertirse en «reservar vuelos» dentro del proyecto VIAJE. Tú eliges qué palabras convertir."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Les cartes écrites « VOYAGE réserver les vols » peuvent devenir « réserver les vols » dans le projet VOYAGE. Vous choisissez les mots à convertir."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Le carte scritte come «VIAGGIO prenotare i voli» possono diventare «prenotare i voli» nel progetto VIAGGIO. Scegli tu quali parole convertire."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kaarten als “REIS vluchten boeken” kunnen “vluchten boeken” worden in project REIS. Jij kiest welke woorden."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Os cartões escritos como «VIAGEM reservar voos» podem tornar-se «reservar voos» no projeto VIAGEM. Escolhe que palavras converter."
+            "value": "As tarefas e os projetos são agrupados por categorias. Crie as suas — nas tarefas aparece apenas o ícone, por isso a etiqueta nomeia-o aqui e para o VoiceOver."
           }
         }
       }
@@ -8999,37 +9439,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Karten, die Sie abhaken, erscheinen hier, nach Tagen gruppiert."
+            "value": "Aufgaben, die Sie abhaken, erscheinen hier, nach Tagen gruppiert."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Las tarjetas que marcas aparecen aquí, agrupadas por día."
+            "value": "Las tareas que marcas aparecen aquí, agrupadas por día."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Les cartes que vous cochez apparaissent ici, regroupées par jour."
+            "value": "Les tâches que vous cochez apparaissent ici, regroupées par jour."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le carte che spunti compaiono qui, raggruppate per giorno."
+            "value": "Le attività che spunti compaiono qui, raggruppate per giorno."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kaarten die je afvinkt verschijnen hier, gegroepeerd per dag."
+            "value": "Taken die je afvinkt verschijnen hier, gegroepeerd per dag."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Os cartões que assinala aparecem aqui, agrupados por dia."
+            "value": "As tarefas que assinala aparecem aqui, agrupadas por dia."
           }
         }
       }
@@ -9039,43 +9479,43 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Die %lld Karten hier werden durch die %lld dieser Sicherung ersetzt. Kategorien und Projekte kommen ebenfalls zurück."
+            "value": "Die %1$lld Aufgaben hier werden durch die %2$lld dieser Sicherung ersetzt. Kategorien und Projekte kommen ebenfalls zurück."
           }
         },
         "en": {
           "stringUnit": {
-            "state": "new",
-            "value": "The %1$lld cards here will be replaced by the %2$lld in this backup. Categories and projects come back too."
+            "state": "translated",
+            "value": "The %1$lld tasks here will be replaced by the %2$lld in this backup. Categories and projects come back too."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Las %lld tarjetas de aquí se reemplazarán por las %lld de esta copia. Las categorías y los proyectos también vuelven."
+            "value": "Las %1$lld tareas de aquí se reemplazarán por las %2$lld de esta copia. Las categorías y los proyectos también vuelven."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Les %lld cartes présentes seront remplacées par les %lld de cette sauvegarde. Les catégories et les projets reviennent aussi."
+            "value": "Les %1$lld tâches présentes seront remplacées par les %2$lld de cette sauvegarde. Les catégories et les projets reviennent aussi."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le %lld carte qui saranno sostituite dalle %lld di questo backup. Tornano anche categorie e progetti."
+            "value": "Le %1$lld attività qui saranno sostituite dalle %2$lld di questo backup. Tornano anche categorie e progetti."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "De %lld kaarten hier worden vervangen door de %lld in deze back-up. Categorieën en projecten komen ook terug."
+            "value": "De %1$lld taken hier worden vervangen door de %2$lld in deze back-up. Categorieën en projecten komen ook terug."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Os %lld cartões daqui serão substituídos pelos %lld desta cópia. As categorias e os projetos também voltam."
+            "value": "As %1$lld tarefas daqui serão substituídas pelas %2$lld desta cópia. As categorias e os projetos também voltam."
           }
         }
       }
@@ -9127,37 +9567,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Diese Karte landet in Später."
+            "value": "Diese Aufgabe landet in Später."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Esta tarjeta va a Más tarde."
+            "value": "Esta tarea va a Más tarde."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cette carte va dans Plus tard."
+            "value": "Cette tâche va dans Plus tard."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Questa carta va in Più tardi."
+            "value": "Questa attività va in Più tardi."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Deze kaart gaat naar Later."
+            "value": "Deze taak gaat naar Later."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Este cartão vai para Mais tarde."
+            "value": "Esta tarefa vai para Mais tarde."
           }
         }
       }
@@ -9168,37 +9608,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Diese Karte landet in Als Nächstes."
+            "value": "Diese Aufgabe landet in Als Nächstes."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Esta tarjeta va a Siguiente."
+            "value": "Esta tarea va a Siguiente."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cette carte va dans Ensuite."
+            "value": "Cette tâche va dans Ensuite."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Questa carta va in Poi."
+            "value": "Questa attività va in Poi."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Deze kaart gaat naar Volgende."
+            "value": "Deze taak gaat naar Volgende."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Este cartão vai para A seguir."
+            "value": "Esta tarefa vai para A seguir."
           }
         }
       }
@@ -9209,37 +9649,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Diese Karte landet in Jetzt."
+            "value": "Diese Aufgabe landet in Jetzt."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Esta tarjeta va a Ahora."
+            "value": "Esta tarea va a Ahora."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cette carte va dans Maintenant."
+            "value": "Cette tâche va dans Maintenant."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Questa carta va in Ora."
+            "value": "Questa attività va in Ora."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Deze kaart gaat naar Nu."
+            "value": "Deze taak gaat naar Nu."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Este cartão vai para Agora."
+            "value": "Esta tarefa vai para Agora."
           }
         }
       }
@@ -9250,37 +9690,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Diese Karte landet in Wartet."
+            "value": "Diese Aufgabe landet in Wartet."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Esta tarjeta va a En espera."
+            "value": "Esta tarea va a En espera."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cette carte va dans En attente."
+            "value": "Cette tâche va dans En attente."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Questa carta va in In attesa."
+            "value": "Questa attività va in In attesa."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Deze kaart gaat naar Wachtend."
+            "value": "Deze taak gaat naar Wachtend."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Este cartão vai para A aguardar."
+            "value": "Esta tarefa vai para A aguardar."
           }
         }
       }
@@ -9291,37 +9731,37 @@
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Diese Karte landet im Eingang."
+            "value": "Diese Aufgabe landet im Eingang."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Esta tarjeta va a la bandeja de entrada."
+            "value": "Esta tarea va a la bandeja de entrada."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cette carte va dans la boîte de réception."
+            "value": "Cette tâche va dans la boîte de réception."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Questa carta va in Entrata."
+            "value": "Questa attività va in Entrata."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Deze kaart gaat naar Postvak in."
+            "value": "Deze taak gaat naar Postvak in."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Este cartão vai para a caixa de entrada."
+            "value": "Esta tarefa vai para a caixa de entrada."
           }
         }
       }

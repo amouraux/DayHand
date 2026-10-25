@@ -233,7 +233,7 @@ struct ProjectEditor: View {
                 }
             } footer: {
                 if project.isArchived {
-                    Text("Archived. Its tasks are still there, and it is left out of the project list until \u{201C}Include archived projects\u{201D} is on. Typing its name brings it back.")
+                    Text("Archived. Its tasks are still there, and it is left out of the project list until Show in the Filter is set to Archived or All projects. Typing its name brings it back.")
                 } else if store.openCards(in: project).isEmpty {
                     Text("Nothing left to do, so this project can be put away.")
                 } else {
