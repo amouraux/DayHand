@@ -2148,3 +2148,23 @@ can be set without moving the task; saving an edit alone does not advance the
 review. Complete and confirmed Delete stay secondary. Undo, live task reads,
 new-arrival handling and resume use the shared mechanics. Waiting saves its
 progress under waitingReviewSession.v1, independently of Inbox and Now.
+
+## Combined Next and Later review
+
+**Review Next and Later** appears at both stack headings and in More → Review.
+It uses the shared helper layout and asks **Is this still relevant, and when
+do I want to work on it?** Next comes first, then Later, with an explicit
+heading indicating the current phase and a neutral age in the current stack.
+
+Four choices: Now (ready to work), Next (keep or promote), Later (defer or
+keep), and Waiting (blocked or waiting). Wording adapts to the current task.
+Edit, Complete and confirmed Delete stay secondary. Keeping advances the
+review without changing the task's entry date or any other task data.
+
+The combined snapshot records original stacks as well as IDs. Moving between
+Next and Later, including via the editor, completes that task's decision for
+this pass, so it never appears a second time in the destination stack. Undo
+restores eligibility when a task returns to its original stack. Missing and
+completed tasks are skipped, and new arrivals wait for another pass. Saved
+progress uses nextLaterReviewSession.v1. Older single-stack session JSON stays
+compatible. No review state enters the shared task document.

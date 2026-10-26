@@ -1345,15 +1345,30 @@ struct StackReviewSession: Codable, Equatable {
 
     let taskIDs: [UUID]
     private(set) var keptIDs: Set<UUID> = []
+    // A combined pass remembers each original stack. A move between Next and
+    // Later is a decision, while Undo restores eligibility without extra state.
+    private var originalBuckets: [UUID: Bucket]? = nil
 
     init(cards: [TodoItem], bucket: Bucket = .inbox) {
         taskIDs = cards.filter { $0.bucket == bucket }.map(\.id)
     }
 
+    init(cards: [TodoItem], buckets: [Bucket]) {
+        let ordered = buckets.flatMap { bucket in cards.filter { $0.bucket == bucket } }
+        taskIDs = ordered.map(\.id)
+        originalBuckets = Dictionary(ordered.map { ($0.id, $0.bucket) }, uniquingKeysWith: { first, _ in first })
+    }
+
     func remaining(in cards: [TodoItem], bucket: Bucket = .inbox) -> [TodoItem] {
-        let inbox = Dictionary(cards.filter { $0.bucket == bucket }.map { ($0.id, $0) },
-                               uniquingKeysWith: { first, _ in first })
-        return taskIDs.compactMap { keptIDs.contains($0) ? nil : inbox[$0] }
+        remaining(in: cards, buckets: [bucket])
+    }
+
+    func remaining(in cards: [TodoItem], buckets: [Bucket]) -> [TodoItem] {
+        let eligible = cards.filter {
+            buckets.contains($0.bucket) && (originalBuckets?[$0.id] == nil || originalBuckets?[$0.id] == $0.bucket)
+        }
+        let live = Dictionary(eligible.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        return taskIDs.compactMap { keptIDs.contains($0) ? nil : live[$0] }
     }
 
     mutating func keepInStack(_ id: UUID) {

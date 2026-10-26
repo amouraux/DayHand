@@ -2498,5 +2498,47 @@ do {
            "a fresh review includes tasks still waiting")
 }
 
+// Combined review: Next first, no second decision after a cross-stack move.
+do {
+    let next = TodoItem(title: "Next", bucket: .tomorrow)
+    let later = TodoItem(title: "Later", bucket: .later)
+    let outside = TodoItem(title: "Outside", bucket: .today)
+    let buckets: [Bucket] = [.tomorrow, .later]
+    var review = StackReviewSession(cards: [later, outside, next], buckets: buckets)
+    expect(review.remaining(in: [later, next, outside], buckets: buckets).map(\.id) == [next.id, later.id],
+           "combined review always presents Next before Later")
+    var deferred = next
+    deferred.bucket = .later
+    expect(review.remaining(in: [deferred, later], buckets: buckets).map(\.id) == [later.id],
+           "Next moved to Later is not reviewed twice")
+    var promoted = later
+    promoted.bucket = .tomorrow
+    expect(review.remaining(in: [next, promoted], buckets: buckets).map(\.id) == [next.id],
+           "Later moved to Next is not reviewed twice")
+    let restored = try! JSONDecoder().decode(StackReviewSession.self, from: JSONEncoder().encode(review))
+    expect(restored.remaining(in: [deferred, later], buckets: buckets).map(\.id) == [later.id],
+           "resume preserves the original stack after a move")
+    expect(restored.remaining(in: [next, later], buckets: buckets).map(\.id) == [next.id, later.id],
+           "Undo restores eligibility and Next-first order")
+    let arrival = TodoItem(title: "Arrival", bucket: .tomorrow)
+    expect(review.remaining(in: [next, later, arrival], buckets: buckets).count == 2,
+           "new arrivals wait for another combined pass")
+    expect(review.remaining(in: [later], buckets: buckets).map(\.id) == [later.id],
+           "deleted tasks do not block transition to Later")
+    var completed = next
+    completed.bucket = .completed
+    expect(review.remaining(in: [completed, later], buckets: buckets).count == 1,
+           "completion advances combined review")
+    review.keepInStack(next.id)
+    review.keepInStack(later.id)
+    expect(review.remaining(in: [next, later], buckets: buckets).isEmpty, "keeping both finishes this pass")
+    expect(StackReviewSession(cards: [next, later], buckets: buckets).remaining(in: [next, later], buckets: buckets).count == 2,
+           "fresh pass includes kept work")
+    let oldJSON = "{\"taskIDs\":[\"\(next.id)\"],\"keptIDs\":[]}"
+    let legacy = try! JSONDecoder().decode(StackReviewSession.self, from: Data(oldJSON.utf8))
+    expect(legacy.remaining(in: [next], bucket: .tomorrow).count == 1,
+           "old single-stack session JSON still decodes without original buckets")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)
