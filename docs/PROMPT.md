@@ -2170,3 +2170,25 @@ restores eligibility when a task returns to its original stack. Missing and
 completed tasks are skipped, and new arrivals wait for another pass. Saved
 progress uses nextLaterReviewSession.v1. Older single-stack session JSON stays
 compatible. No review state enters the shared task document.
+
+## Review all tasks
+
+The first row in More → Review is **Review all tasks**, followed by the
+individual helpers. One snapshot covers open tasks in this order: Inbox,
+Now, Waiting, Next, Later. Empty stages are skipped automatically; a heading
+identifies the current stage (1–5), and the count covers the whole remaining
+pass. Use the existing stage-specific questions, age labels, edit controls,
+and fixed Now / Next / Later / Waiting button positions in the shared layout.
+
+Snapshot all task IDs and their original stacks once at the start. A task
+moved out of its original stack has received its decision and is not shown
+again in its destination, including moves from Inbox to Now and changes via
+the editor. Keeping marks it reviewed without editing task data. Undo restores
+eligibility when a task returns to its original stack. Complete and Delete
+advance as usual. Detail-only edits leave the current task available for a
+decision. New arrivals wait for another pass; missing tasks are skipped.
+
+Save the full session under allReviewSession.v1, independent of every focused
+helper. Closing or relaunching resumes the full pass. A finished review does
+not imply empty stacks: kept tasks stay where they are. Start a new full
+review creates a fresh snapshot including kept tasks and new arrivals.

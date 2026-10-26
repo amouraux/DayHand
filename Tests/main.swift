@@ -2540,5 +2540,46 @@ do {
            "old single-stack session JSON still decodes without original buckets")
 }
 
+// Full review is one snapshot across all stages, not sequential new sessions.
+do {
+    let buckets = StackReviewSession.allOpenBuckets
+    expect(buckets == [.inbox, .today, .waiting, .tomorrow, .later], "full review has the agreed stage order")
+    let cards = buckets.map { TodoItem(title: $0.rawValue, bucket: $0) }
+    let completed = TodoItem(title: "Finished", bucket: .completed)
+    var review = StackReviewSession(cards: Array(cards.reversed()) + [completed], buckets: buckets)
+    expect(review.remaining(in: cards + [completed], buckets: buckets).map(\.id) == cards.map(\.id),
+           "full review orders stages and excludes completed work")
+    for index in cards.indices {
+        for destination in buckets where destination != cards[index].bucket {
+            var live = cards
+            live[index].bucket = destination
+            expect(!review.remaining(in: live, buckets: buckets).contains { $0.id == cards[index].id },
+                   "moving any task to any other stage does not repeat it")
+            expect(review.remaining(in: cards, buckets: buckets).contains { $0.id == cards[index].id },
+                   "Undo restores a moved task in its original stage")
+        }
+    }
+    var live = cards
+    live[0].bucket = .today
+    review.keepInStack(cards[1].id)
+    let resumed = try! JSONDecoder().decode(StackReviewSession.self, from: JSONEncoder().encode(review))
+    expect(resumed.remaining(in: live, buckets: buckets).first?.bucket == .waiting,
+           "resume remembers the Inbox move and kept Now task, advancing to Waiting")
+    let arrival = TodoItem(title: "New", bucket: .inbox)
+    expect(resumed.remaining(in: live + [arrival], buckets: buckets).count == 3,
+           "new arrivals do not extend an ongoing full review")
+    expect(resumed.remaining(in: [cards[4]], buckets: buckets).first?.bucket == .later,
+           "empty or remotely removed stages are skipped automatically")
+    var edited = cards[2]
+    edited.notes = "Follow-up details"
+    expect(resumed.remaining(in: [edited], buckets: buckets).first?.notes == edited.notes,
+           "editing details without moving does not finish that task's review")
+    for card in cards { review.keepInStack(card.id) }
+    expect(review.remaining(in: cards, buckets: buckets).isEmpty, "keeping all tasks finishes the full pass")
+    let independent = StackReviewSession(cards: cards, bucket: .today)
+    expect(independent.remaining(in: cards, bucket: .today).count == 1,
+           "full-review choices do not modify individual review progress")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)
