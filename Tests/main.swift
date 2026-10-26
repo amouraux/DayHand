@@ -177,7 +177,7 @@ do {
     let p = Project(name: "ABC1234", categoryID: cat.id)
     var card = TodoItem(title: "slides, part 2", categoryID: cat.id); card.projectID = p.id
     let text = CardCSV.export(cards: [card], categories: [cat], projects: [p])
-    expect(text.hasPrefix("id,title,stack,category,deadline,completed,created,project,group,remind\n"),
+    expect(text.hasPrefix("id,title,stack,category,deadline,completed,created,project,group,remind,notes\n"),
            "the deadline keeps the old date column's place; new ones go last")
     let back = CardCSV.parse(text, categories: [cat])
     expect(back.cards.first?.title == "slides, part 2", "title round-trips")
@@ -249,7 +249,7 @@ do {
     let text = CardCSV.export(cards: [c1, c2, c3], categories: [cat], projects: [grant, loose])
     let lines = text.split(separator: "\n").map(String.init)
     // Every new column goes last, so an older export still reads by position.
-    expect(lines[0].hasSuffix(",project,group,remind"),
+    expect(lines[0].hasSuffix(",project,group,remind,notes"),
            "the newest columns are the last ones — got \(lines[0])")
     expect(lines[1].contains(",BETA,Grants,"), "a grouped project's cards carry its group")
     expect(lines[2].contains(",DELTA,,"), "no group: empty column")
@@ -1680,6 +1680,138 @@ do {
     expect(coded == doc, "a document still survives save and load through the fast path")
 }
 
+// MARK: — what a card's menu offers
+do {
+    func menu(_ card: TodoItem, filtered: Bool = false, project: Bool = false) -> [CardMenu.Action] {
+        CardMenu.actions(for: card, isFiltered: filtered, hasProject: project)
+    }
+    var plain = TodoItem(title: "plain"); plain.bucket = .tomorrow
+
+    let moves = menu(plain).compactMap { if case .move(let b) = $0 { return b } else { return nil } }
+    expect(!moves.contains(.tomorrow), "the stack a card is already in is not offered")
+    expect(moves == Bucket.quickMoveTargets.filter { $0 != .tomorrow },
+           "the others are offered in their usual order, and first")
+    expect(menu(plain).last == .delete, "Delete is last wherever the menu is shown")
+    expect(menu(plain, filtered: true, project: true).last == .delete, "and stays last")
+    expect(menu(plain).dropLast().last == .edit,
+           "with nothing to filter by, Edit is the last of the ordinary actions")
+    expect(menu(plain).filter { $0 == .delete }.count == 1, "and is offered once, not twice")
+
+    // Reminders add two, and only when they apply.
+    expect(!menu(plain).contains(.snooze), "no reminder, nothing to snooze")
+    expect(!menu(plain).contains(.clearReminder), "and nothing to clear")
+    var reminded = TodoItem(title: "reminded")
+    reminded.remindAt = Date().addingTimeInterval(60 * 60 * 24 * 7)
+    expect(menu(reminded).contains(.clearReminder), "a reminder can always be cleared")
+    expect(menu(reminded).contains(.snooze) == Reminders.canSnooze(reminded),
+           "snooze follows the same rule the flag uses to gather the card")
+
+    // Filtering is either/or, never both.
+    expect(menu(plain, project: true).contains(.showOnlyProject),
+           "a card with a project can narrow to it")
+    expect(!menu(plain, project: true).contains(.showAll), "and is not also offered the way out")
+    expect(menu(plain, filtered: true, project: true) .contains(.showAll),
+           "while a filter is on, the useful move is back out of it")
+    expect(!menu(plain, filtered: true, project: true).contains(.showOnlyProject),
+           "and narrowing again is not offered")
+    expect(menu(plain, filtered: true).contains(.showAll),
+           "Show All is offered even with no project, since a category filter shows those too")
+    expect(!menu(plain).contains(.showOnlyProject), "a card with no project cannot narrow to one")
+
+    // Edit is always there: a menu that will move a card but not open it
+    // reads as broken, which is why it is on every surface.
+    for card in [plain, reminded] {
+        for filtered in [true, false] {
+            expect(menu(card, filtered: filtered, project: true).contains(.edit),
+                   "Edit is offered whatever else is")
+        }
+    }
+}
+
+// MARK: — putting tasks back
+do {
+    let then = Date(timeIntervalSince1970: 1_700_000_000)
+    let now  = Date(timeIntervalSince1970: 1_800_000_000)
+
+    var card = TodoItem(title: "book the flights", bucket: .today)
+    card.modifiedAt = then
+
+    // Undoing an edit: the task is still there, so it is overwritten.
+    var edited = card
+    edited.bucket = .completed
+    edited.completedAt = now
+    edited.modifiedAt = now
+    let afterEdit = StoreDocument(cards: [edited])
+    let undone = afterEdit.restoring(Restoration(cards: [card]), now: now)
+    expect(undone.cards.count == 1, "undoing an edit does not add a second copy")
+    expect(undone.cards[0].bucket == .today, "the task is back in the stack it came from")
+    expect(undone.cards[0].completedAt == nil, "and is no longer completed")
+    expect(undone.cards[0].modifiedAt == now,
+           "stamped now, not with the time it used to carry, or the other device wins")
+
+    // Undoing a delete: the task is gone and its tombstone is standing.
+    var afterDelete = StoreDocument(cards: [])
+    afterDelete.deletedCards[card.id.uuidString] = now
+    let revived = afterDelete.restoring(Restoration(cards: [card]), now: now)
+    expect(revived.cards.map(\.id) == [card.id], "a deleted task comes back")
+    expect(revived.deletedCards[card.id.uuidString] == nil,
+           "and its tombstone goes, or this device hands the deletion back to everyone else")
+    expect(revived.cards[0].modifiedAt > now,
+           "stamped past the tombstone, because a merge gives a tie to the deletion")
+
+    // The restored copy must beat the tombstone by the app's own merge rule.
+    var tombstoned = StoreDocument(cards: [])
+    tombstoned.deletedCards[card.id.uuidString] = now
+    let merged = revived.merged(with: tombstoned)
+    expect(merged.cards.map(\.id) == [card.id],
+           "and survives a merge against a device that still thinks it was deleted")
+
+    // Several at once, and a mix of present and absent.
+    var other = TodoItem(title: "pack", bucket: .later)
+    other.modifiedAt = then
+    var doc = StoreDocument(cards: [other])
+    doc.deletedCards[card.id.uuidString] = now
+    let both = doc.restoring(Restoration(cards: [card, other]), now: now)
+    expect(both.cards.count == 2, "one re-added and one overwritten, not duplicated")
+
+    expect(StoreDocument.empty.restoring(Restoration(cards: []), now: now) == StoreDocument.empty,
+           "restoring nothing changes nothing")
+    expect(Restoration(cards: []).isEmpty, "and nothing is what an empty restoration holds")
+
+    // A project move rewrites the project's row and its tasks together, so
+    // undoing one without the other would leave them disagreeing.
+    let research = UUID(), teaching = UUID()
+    var project = Project(name: "FRIA", categoryID: research, group: "Grants")
+    project.modifiedAt = then
+    var task = TodoItem(title: "write the case", categoryID: research)
+    task.projectID = project.id
+    task.modifiedAt = then
+
+    var moved = project
+    moved.categoryID = teaching
+    moved.group = nil
+    moved.modifiedAt = now
+    var movedTask = task
+    movedTask.categoryID = teaching
+    movedTask.modifiedAt = now
+
+    let after = StoreDocument(cards: [movedTask], projects: [moved])
+    let back = after.restoring(Restoration(cards: [task], projects: [project]), now: now)
+    expect(back.projects[0].categoryID == research, "the project goes back to the category it came from")
+    expect(back.projects[0].group == "Grants", "and back into the group the move took it out of")
+    expect(back.cards[0].categoryID == research, "its tasks come back with it")
+    expect(back.projects[0].modifiedAt == now && back.cards[0].modifiedAt == now,
+           "both stamped now, so neither loses to the copy on another device")
+
+    // Deleting a project is the same shape: tombstone out, row back.
+    var afterDelete2 = StoreDocument(cards: [], projects: [])
+    afterDelete2.deletedProjects[project.id.uuidString] = now
+    let revivedProject = afterDelete2.restoring(Restoration(projects: [project]), now: now)
+    expect(revivedProject.projects.map(\.id) == [project.id], "a deleted project comes back")
+    expect(revivedProject.deletedProjects[project.id.uuidString] == nil, "and loses its tombstone")
+    expect(revivedProject.projects[0].modifiedAt > now,
+           "stamped past the tombstone, for the same reason a task is")
+}
 
 // MARK: One-time Reminders import — a pure plan, without opening app data
 do {
@@ -1692,14 +1824,14 @@ do {
     let existing = Project(name: "HOUSE", categoryID: category.id)
     let doc = StoreDocument(categories: [category], cards: [original], projects: [existing])
     let record = TaskImportRecord(id: "r1", listID: "l1", title: "#Keep title literally",
-                                     omittedDetails: "  Notes, with a \"quote\"\nand a second line.  ",
+                                     notes: "  Notes, with a \"quote\"\nand a second line.  ",
                                      dueDate: due, createdAt: now.addingTimeInterval(-86400))
     var options = TaskImport.Options(destinations: ["l1": .init(projectID: existing.id)])
     let plan = try! TaskImport.plan(records: [record], options: options, document: doc, now: now, calendar: cal)
     let card = plan.document.cards.last!
     expect(plan.added == 1 && plan.document.cards.count == 2, "import adds without replacing existing tasks")
     expect(plan.document.cards.first == original && doc.cards == [original], "planning does not edit existing tasks or its input")
-    expect(card.title == record.title && !record.omittedDetails.isEmpty, "source titles stay literal and unsupported details are available for preview")
+    expect(card.title == record.title && card.notes == record.notes, "source titles and multiline notes are preserved literally")
     expect(card.projectID == existing.id && card.categoryID == category.id, "an explicit project brings its category")
     expect(card.bucket == .inbox, "import defaults to Inbox")
     expect(card.remindAt == Scheduler.reminderTime(on: due, calendar: cal) && card.deadline == nil,
@@ -1742,8 +1874,8 @@ do {
     expect(datedFinished.document.cards.last?.completedAt == completed.completedAt, "a known completion date survives")
     options.importDates = false
     let noDates = try! TaskImport.plan(records: [record], options: options, document: doc, now: now)
-    expect(noDates.document.cards.last?.remindAt == nil && noDates.document.cards.last?.title == record.title,
-           "turning dates off omits them without adding source details to the title")
+    expect(noDates.document.cards.last?.remindAt == nil && noDates.document.cards.last?.notes == record.notes,
+           "dates can stay only in notes")
     options.importDates = true
     var past = record; past.dueDate = now.addingTimeInterval(-86400)
     let pastPlan = try! TaskImport.plan(records: [past], options: options, document: doc, now: now)
@@ -1779,21 +1911,16 @@ do {
     } catch { expect(error is TaskImportFailure, "a stale category is rejected") }
     let roundTrip = try! DocumentCoding.makeDecoder().decode(StoreDocument.self,
         from: DocumentCoding.makeEncoder().encode(plan.document))
-    expect(roundTrip == plan.document, "imported tasks and identifiers survive document save/load")
+    expect(roundTrip == plan.document, "import notes and identifiers survive document save/load")
     let merged = deleted.merged(with: doc)
     expect(merged.importedReminderIDs == deleted.importedReminderIDs, "sync with an older document retains import history")
     var remote = doc; remote.importedReminderIDs.insert("apple-reminders:remote")
     expect(deleted.merged(with: remote).importedReminderIDs == ["apple-reminders:r1", "apple-reminders:remote"],
            "import history merges by union")
     let old = try! DocumentCoding.makeDecoder().decode(StoreDocument.self, from: Data("{\"cards\":[{\"title\":\"old\"}]}".utf8))
-    expect(old.cards.first?.title == "old" && old.importedReminderIDs.isEmpty, "old documents still decode without import history")
+    expect(old.cards.first?.notes == "" && old.importedReminderIDs.isEmpty, "old documents decode without notes or import history")
     let csv = CardCSV.export(cards: [card], categories: [category], projects: [existing])
-    expect(CardCSV.header.count == 10 && CardCSV.header.last == "remind" && !csv.contains(record.omittedDetails),
-           "CSV keeps the original ten-column schema and never exports unsupported source details")
-    let encoded = try! JSONSerialization.jsonObject(with: DocumentCoding.makeEncoder().encode(plan.document)) as! [String: Any]
-    let saved = (encoded["cards"] as! [[String: Any]]).last!
-    expect(saved["notes"] == nil && saved["omittedDetails"] == nil,
-           "imported tasks contain no persistent Notes or preview-details fields")
+    expect(CardCSV.parse(csv, categories: [category]).cards.first?.notes == record.notes, "multiline quoted notes survive CSV export/import")
     var losAngeles = Calendar(identifier: .gregorian)
     losAngeles.timeZone = TimeZone(identifier: "America/Los_Angeles")!
     let allDay = DateComponents(year: 2026, month: 10, day: 25)
@@ -1819,9 +1946,9 @@ do {
     let file = try! TodoistCSV.parse(fixture, fileID: "official", name: "Example.csv", calendar: cal)
     expect(file.records.count == 4 && file.ignoredRows == 0, "Todoist's official CSV template yields four tasks without importing metadata as tasks")
     expect(file.unparsedDateIDs.count == 3, "relative and recurring expressions in the official template need review")
-    expect(file.records[0].omittedDetails.contains("Only available on Tuesdays and Thursdays"), "comment rows attach to the preceding task")
+    expect(file.records[0].notes.contains("Only available on Tuesdays and Thursdays"), "comment rows attach to the preceding task")
     expect(file.records[1].deadlineDate != nil && file.records[1].dueDate == nil, "the official template has a real deadline without a reminder")
-    expect(file.records[2].omittedDetails.contains("Parent task: **Household chores**:"), "subtask parent context is available in the preview only")
+    expect(file.records[2].notes.contains("Parent task: **Household chores**:"), "subtask parent context is retained in Notes")
     let options = TaskImport.Options(destinations: [file.id: TaskImportDestination()], bucket: .later)
     let baseline = StoreDocument(cards: [TodoItem(title: "Existing")])
     let safe = try! TodoistCSV.plan(files: [file], options: options, includeUnparsedDates: false,
@@ -1840,14 +1967,27 @@ do {
                                   document: baseline, now: now, calendar: cal)
     expect(all.added == 4 && all.document.cards.filter { $0.remindAt != nil }.isEmpty,
            "opting in imports unsupported date expressions once without inventing schedules")
-    expect(file.records.contains { $0.omittedDetails.contains("every Friday") }, "recurring source text is available for preview")
+    expect(all.document.cards.contains { $0.notes.contains("every Friday") }, "recurring source text is retained in Notes")
     let savedText = String(data: try! DocumentCoding.makeEncoder().encode(all.document), encoding: .utf8)!
     let savedCSV = CardCSV.export(cards: all.document.cards, categories: [])
-    expect(!savedText.contains("every Friday") && !savedText.contains("Only available on Tuesdays") && !savedCSV.contains("Only available on Tuesdays"),
-           "unsupported Todoist dates and comments are never persisted in JSON or exported CSV")
+    expect(savedText.contains("every Friday") && savedText.contains("Only available on Tuesdays") && savedCSV.contains("Only available on Tuesdays"),
+           "Todoist date text and comments persist in the existing Notes field and CSV")
+    let persisted = try! DocumentCoding.makeDecoder().decode(StoreDocument.self,
+        from: DocumentCoding.makeEncoder().encode(all.document))
+    expect(persisted.cards.map(\.notes) == all.document.cards.map(\.notes),
+           "imported descriptions, comments and metadata survive save/load without duplication")
     let repeatPlan = try! TodoistCSV.plan(files: [file], options: options, includeUnparsedDates: true,
                                          document: all.document, now: now, calendar: cal)
     expect(repeatPlan.added == 0 && repeatPlan.duplicates == 4, "unchanged files do not import their tasks twice")
+    var editedNotes = all.document
+    editedNotes.cards[1].notes = "Notes edited in DayHand"
+    let repeatedEdited = try! TodoistCSV.plan(files: [file], options: options, includeUnparsedDates: true,
+                                             document: editedNotes, now: now, calendar: cal)
+    expect(repeatedEdited.document.cards[1].notes == "Notes edited in DayHand" && repeatedEdited.added == 0,
+           "repeat import never overwrites Notes edited in DayHand")
+    let csvBack = CardCSV.parse(CardCSV.export(cards: all.document.cards, categories: []), categories: [])
+    expect(csvBack.cards.map(\.notes) == all.document.cards.map(\.notes),
+           "Todoist descriptions, comments and source metadata survive CSV export and import")
     var deleted = all.document
     deleted.cards.removeLast()
     let afterDelete = try! TodoistCSV.plan(files: [file], options: options, includeUnparsedDates: true,
@@ -1862,7 +2002,7 @@ do {
     let without = try! TodoistCSV.plan(files: [file], options: noDates, includeUnparsedDates: true,
                                       document: baseline, now: now, calendar: cal)
     expect(without.document.cards.allSatisfy { $0.remindAt == nil && $0.deadline == nil },
-           "turning dates off omits both reminders and deadlines")
+           "turning dates off omits both dates while retaining their source text in Notes")
     var excluded = options; excluded.excludedIDs.insert(file.records[1].id)
     let subset = try! TodoistCSV.plan(files: [file], options: excluded, includeUnparsedDates: true,
                                      document: baseline, now: now, calendar: cal)
@@ -1873,7 +2013,7 @@ do {
     expect(unselected.document == baseline, "unselected files change nothing")
     let quoted = "\u{FEFF}DESCRIPTION,CONTENT,TYPE,INDENT,DATE,DEADLINE,TIMEZONE\r\n\"Line one\nLine two, \"\"quoted\"\"\",@keep label,task,1,2026-10-26 10:30,2026-10-29,Europe/Brussels\r\n"
     let parsed = try! TodoistCSV.parse(quoted, fileID: "quoted", name: "Quoted.csv", calendar: cal)
-    expect(parsed.records.count == 1 && parsed.records[0].omittedDetails.contains("Line two, \"quoted\""),
+    expect(parsed.records.count == 1 && parsed.records[0].notes.contains("Line two, \"quoted\""),
            "BOM, reordered headers, CRLF, multiline fields, commas and escaped quotes parse correctly")
     expect(parsed.records[0].title == "@keep label", "labels and original titles are not stripped or reinterpreted")
     expect(parsed.unparsedDateIDs.isEmpty && parsed.records[0].dueDate != nil && parsed.records[0].deadlineDate != nil,
@@ -1887,13 +2027,13 @@ do {
            "a recognised deadline retains its civil day")
     let hierarchy = "TYPE,CONTENT,INDENT,DESCRIPTION\ntask,Root,1,\ntask,Child,2,\ntask,Grandchild,3,\nnote,First comment,,\ntask,Sibling,2,\nsection,New section,,Section description\nnote,Orphan comment,,\ntask,Next root,1,\nunknown,Unsupported,,\nnote,Another orphan,,\n"
     let tree = try! TodoistCSV.parse(hierarchy, fileID: "tree", name: "Tree.csv")
-    expect(tree.records[2].omittedDetails.contains("Root › Child") && tree.records[2].omittedDetails.contains("First comment"),
+    expect(tree.records[2].notes.contains("Root › Child") && tree.records[2].notes.contains("First comment"),
            "nested parents and comments follow CSV order")
-    expect(tree.records[3].omittedDetails.contains("Parent task: Root") && !tree.records[3].omittedDetails.contains("Root › Child"),
+    expect(tree.records[3].notes.contains("Parent task: Root") && !tree.records[3].notes.contains("Root › Child"),
            "a sibling is attached to the correct parent")
-    expect(tree.records[4].omittedDetails.contains("Section: New section") && tree.records[4].omittedDetails.contains("Section description"),
+    expect(tree.records[4].notes.contains("Section: New section") && tree.records[4].notes.contains("Section description"),
            "section context and its description are preserved")
-    expect(!tree.records[4].omittedDetails.contains("Parent task:") && !tree.records[4].omittedDetails.contains("Orphan"),
+    expect(!tree.records[4].notes.contains("Parent task:") && !tree.records[4].notes.contains("Orphan"),
            "section boundaries reset hierarchy and orphan comments never attach to another task")
     expect(tree.ignoredRows == 3, "unsupported and orphan note rows are counted explicitly")
     let badDates = try! TodoistCSV.parse("TYPE,CONTENT,DATE,DEADLINE,TIMEZONE\ntask,Impossible,2026-02-30,,\ntask,French,demain,,\ntask,Bad zone,2026-10-26,,Invalid/Zone\n", fileID: "bad", name: "Dates.csv")

@@ -78,8 +78,8 @@ struct TodoistImportView: View {
     @State private var report: String?
     @State private var didImport = false
 
-    private let limits = String(localized: "Todoist project CSVs exclude completed tasks. Descriptions, comments, priorities, assignees and attachments are not imported. Subtasks become separate tasks; section and parent relationships are not recreated. Labels in titles remain plain title text.")
-    private let dates = String(localized: "Recognised task dates become reminders at 9 a.m.; recognised deadlines stay deadlines. Turning dates off omits them. Original times and unrecognised date text are not saved. Dates written in words, including recurring dates, need review.")
+    private let limits = String(localized: "Todoist project CSVs exclude completed tasks. Descriptions, comments and exported metadata are kept in Notes. Subtasks become separate tasks; section and parent context stays in Notes. Labels in titles remain title text. Attachments are not downloaded.")
+    private let dates = String(localized: "Recognised task dates become reminders at 9 a.m.; recognised deadlines stay deadlines. Dates never move tasks. Original date text stays in Notes. Dates written in words, including recurring dates, need review.")
 
     var body: some View {
         NavigationStack {
@@ -149,7 +149,7 @@ struct TodoistImportView: View {
                 Toggle("Import dates", isOn: $options.importDates)
                 Toggle("Include tasks with unrecognised dates", isOn: $includeUnparsedDates)
             } footer: {
-                Text(dates + "\n\n" + String(localized: "Including these tasks imports them once without their unrecognised dates. Repeating schedules are not recreated. Check the source details in the preview before importing."))
+                Text(dates + "\n\n" + String(localized: "Including unrecognised dates imports those tasks once. Their unrecognised dates stay only in Notes; recurring schedules are not recreated."))
             }
             ForEach(files) { file in
                 Section(file.name) {
@@ -222,9 +222,9 @@ struct TodoistImportView: View {
                             }
                         }
                     }.disabled(dateExcluded || store.hasImportedTodoistRow(record.id))
-                    if !record.omittedDetails.isEmpty {
-                        DisclosureGroup("Source details (preview only)") {
-                            Text(record.omittedDetails).font(.caption).foregroundStyle(.secondary)
+                    if !record.notes.isEmpty {
+                        DisclosureGroup("Notes to import") {
+                            Text(record.notes).font(.caption).foregroundStyle(.secondary)
                                 .textSelection(.enabled)
                         }
                     }

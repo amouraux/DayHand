@@ -319,6 +319,51 @@ struct Project: Identifiable, Codable, Equatable, Hashable {
     static let edgePunctuation = CharacterSet(charactersIn: ":;,.-–—()[]{}\"'/")
 }
 
+// MARK: - What a card's menu offers
+
+/// The actions a card offers, in order.
+///
+/// There are three surfaces showing them — a click, a right-click on the Mac,
+/// and the phone's dialog — and each used to carry its own hand-written list.
+/// They drifted exactly as you would expect: the right-click menu ended up
+/// with two of the eight, so on the Mac the richer gesture gave the poorer
+/// menu. The rule for which actions apply lives here, where it can be tested;
+/// each surface only decides how to draw them.
+enum CardMenu {
+    enum Action: Equatable {
+        /// A stack this card is not already in.
+        case move(Bucket)
+        /// Only once a reminder has arrived.
+        case snooze
+        case clearReminder
+        case edit
+        /// Narrow to this card's project; never offered while a filter is on.
+        case showOnlyProject
+        /// Step back out of whatever is filtering; offered on every card,
+        /// since a category filter also shows cards carrying no project.
+        case showAll
+        /// Last, and destructive. Safe to offer from a menu rather than behind
+        /// a confirmation because it is undoable: the banner offers the way
+        /// back, and ⌘Z goes on working after it has gone. The confirmations
+        /// that remain are for what cannot be put back one step — emptying the
+        /// whole list, restoring a backup over it, completing a project.
+        case delete
+    }
+
+    static func actions(for card: TodoItem, isFiltered: Bool, hasProject: Bool) -> [Action] {
+        // The stacks it is not in come first, so the common move stays one
+        // tap with nothing in the way.
+        var actions = Bucket.quickMoveTargets.filter { $0 != card.bucket }.map(Action.move)
+        if Reminders.canSnooze(card) { actions.append(.snooze) }
+        if card.remindAt != nil { actions.append(.clearReminder) }
+        actions.append(.edit)
+        if isFiltered { actions.append(.showAll) }
+        else if hasProject { actions.append(.showOnlyProject) }
+        actions.append(.delete)
+        return actions
+    }
+}
+
 // MARK: - Which projects the filter shows
 
 /// The filter list shows one of four slices of the project list. This replaced
@@ -776,6 +821,8 @@ struct TodoItem: Identifiable, Codable, Equatable {
     /// Missing in old documents, whose lone date still needs migrating. An
     /// explicit modern deadline must survive reload without becoming a reminder.
     var dateSemanticsVersion = 1
+    /// Kept separately from the title, including text carried in by an import.
+    var notes: String = ""
     var bucket: Bucket = .inbox
     /// Optional category, independent of `bucket` and `dueDate`. Holds the id
     /// of a `CardCategory` the user has defined.
@@ -822,6 +869,7 @@ struct TodoItem: Identifiable, Codable, Equatable {
         id = try c.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
         title = try c.decode(String.self, forKey: .title)
         dateSemanticsVersion = try c.decodeIfPresent(Int.self, forKey: .dateSemanticsVersion) ?? 0
+        notes = try c.decodeIfPresent(String.self, forKey: .notes) ?? ""
         bucket = try c.decodeIfPresent(Bucket.self, forKey: .bucket) ?? .inbox
         // A date written by a version that filed cards is read as a deadline
         // here and promoted to a reminder by

@@ -147,6 +147,7 @@ final class TodoStore: ObservableObject {
 
     /// Move a card to INBOX / TODAY / TOMORROW / LATER.
     func move(_ item: TodoItem, to bucket: Bucket) {
+        record(String(localized: "Moved to \(bucket.title)"), undoing: [item])
         update(item) { card in
             card.bucket = bucket
             card.bucketBeforeCompletion = nil
@@ -461,6 +462,7 @@ final class TodoStore: ObservableObject {
     @discardableResult
     func setProjectCategory(_ project: Project, to categoryID: UUID?) -> Int {
         let moving = ProjectCategory.cardsToRefile(project, to: categoryID, in: items)
+        recordProjectMove(project, to: categoryID, taking: moving)
         if !moving.isEmpty {
             let stamp = Date.stamp()
             let ids = Set(moving.map(\.id))
@@ -478,6 +480,10 @@ final class TodoStore: ObservableObject {
 
     /// A sidebar move is one edit, including its destination group.
     func moveProject(_ id: UUID, toCategory categoryID: UUID?, group: String?) {
+        if let project = projects.first(where: { $0.id == id }) {
+            recordProjectMove(project, to: categoryID,
+                              taking: ProjectCategory.cardsToRefile(project, to: categoryID, in: items))
+        }
         var movedProjects = projects
         var movedCards = items
         guard ProjectFiling.apply(projectID: id, toCategory: categoryID, group: group,
@@ -639,6 +645,7 @@ final class TodoStore: ObservableObject {
     }
 
     func complete(_ item: TodoItem) {
+        record("Task completed", undoing: [item])
         update(item) { card in
             guard card.bucket != .completed else { return }
             card.bucketBeforeCompletion = card.bucket
@@ -652,6 +659,7 @@ final class TodoStore: ObservableObject {
 
     /// Send a completed card back where it came from.
     func uncomplete(_ item: TodoItem) {
+        record("Task reopened", undoing: [item])
         update(item) { card in
             guard card.bucket == .completed else { return }
             let origin = card.bucketBeforeCompletion ?? .inbox
@@ -666,8 +674,86 @@ final class TodoStore: ObservableObject {
     }
 
     func delete(_ item: TodoItem) {
+        record("Task deleted", undoing: [item])
         items.removeAll { $0.id == item.id }
         deletedCards[item.id.uuidString] = .stamp()
+        save()
+        rescheduleNotifications()
+    }
+
+    // MARK: - Undo
+
+    /// One step back, and what to say about it.
+    struct UndoStep: Identifiable, Equatable {
+        let id = UUID()
+        let message: String
+        let restoration: Restoration
+
+        static func == (a: UndoStep, b: UndoStep) -> Bool { a.id == b.id }
+    }
+
+    /// The last few changes, newest last. Deliberately shallow: undo here is
+    /// for the slip you just made, not a history to walk back through, and a
+    /// deep stack on a document two devices are both editing would let someone
+    /// undo their way into a state neither device ever held.
+    @Published private(set) var undoSteps: [UndoStep] = []
+    /// What the bottom of the screen is currently offering to undo, if
+    /// anything. Cleared on a timer, on being taken, or on being dismissed.
+    @Published private(set) var undoBanner: UndoStep?
+
+    private static let undoDepth = 20
+    private static let bannerSeconds: TimeInterval = 6
+    private var bannerTask: Task<Void, Never>?
+
+    var canUndo: Bool { !undoSteps.isEmpty }
+
+    /// Remember how to put these tasks back, exactly as they stand right now.
+    /// Called *before* the change, since afterwards the old version is gone.
+    private func record(_ message: String, undoing cards: [TodoItem]) {
+        guard !cards.isEmpty else { return }
+        undoSteps.append(UndoStep(message: message, restoration: Restoration(cards: cards)))
+        if undoSteps.count > Self.undoDepth { undoSteps.removeFirst() }
+        show(undoSteps.last!)
+    }
+
+    /// Both ways a project changes category end up here, so the two cannot
+    /// offer different ways back. The tasks are only those that actually move
+    /// — one already in the destination category is not changed and must not
+    /// be restored, or undoing would stamp it for a change it never had.
+    private func recordProjectMove(_ project: Project, to categoryID: UUID?, taking cards: [TodoItem]) {
+        guard project.categoryID != categoryID || !cards.isEmpty else { return }
+        let name = categories.first { $0.id == categoryID }?.label
+        undoSteps.append(UndoStep(
+            message: name.map { String(localized: "Moved \(project.name) to \($0)") }
+                     ?? String(localized: "Moved \(project.name) out of its category"),
+            restoration: Restoration(cards: cards, projects: [project])
+        ))
+        if undoSteps.count > Self.undoDepth { undoSteps.removeFirst() }
+        show(undoSteps.last!)
+    }
+
+    private func show(_ step: UndoStep) {
+        bannerTask?.cancel()
+        undoBanner = step
+        bannerTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(Self.bannerSeconds))
+            guard !Task.isCancelled else { return }
+            await MainActor.run { self?.undoBanner = nil }
+        }
+    }
+
+    func dismissUndoBanner() {
+        bannerTask?.cancel()
+        undoBanner = nil
+    }
+
+    /// Put the last change back. The restored tasks are stamped now and their
+    /// tombstones dropped — see `StoreDocument.restoring`, which is where the
+    /// rules that keep this safe to sync are written down and tested.
+    func undoLast() {
+        guard let step = undoSteps.popLast() else { return }
+        dismissUndoBanner()
+        withAnimation { apply(document.restoring(step.restoration)) }
         save()
         rescheduleNotifications()
     }
@@ -679,6 +765,10 @@ final class TodoStore: ObservableObject {
         // Touched by the user, so it is their card now and survives the sweep.
         items[index].isSample = false
         save()
+    }
+
+    func setNotes(_ item: TodoItem, to notes: String) {
+        update(item) { $0.notes = notes }
     }
 
     func previewReminders(_ records: [TaskImportRecord], options: TaskImport.Options) throws -> TaskImport.Plan {

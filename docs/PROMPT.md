@@ -480,6 +480,30 @@ tasks, no button appears.
 The cap applies to what is left *after* filtering and searching, so narrowing
 the list never hides a match behind it.
 
+**COMPLETED is grouped by the day the work was done** — "Today 1", "Tue, 20
+Oct 3" — and nothing else is. It is the one stack with a date on every task in
+it, so it is the only one worth reading as a run. The headings are quieter than
+a stack header: they sit inside one, and the stack above has already said what
+these are.
+
+This is what makes the screen a project review. Every stack is already scoped
+by Organise, COMPLETED included, so filtering to a project gives one screen
+holding both halves of the question: what is still open, by stack, above; and
+when the rest got done, by day, below. No mode to be in and no second screen —
+the filter was doing the scoping already, and only the dates were missing.
+
+A **review mode** was considered and rejected for the same reason. Nothing but
+a completion has a date to group by, so a mode showing the run would have to
+hide the open tasks — and the question being asked while reviewing a project is
+usually "does this need another task?", which is exactly the half it would
+hide.
+
+The grouping is built from what is **shown**, not from everything, so the cap
+still caps: More… reveals twenty more and they fall into their days. A
+completed task carrying no date is listed after the run rather than dropped —
+`Timeline.months` can only place a task it can date, and a task must not vanish
+from the list for want of a timestamp.
+
 ## Reminders
 
 A reminder is armed on a task with a **day**, and fires a local notification.
@@ -823,7 +847,7 @@ nothing is assumed: neither names one project.
   and wrong while naming: asked for by name it was offered neither as a match,
   being unused, nor as a new project, because it already exists. Moving a
   project's last task away therefore put it out of reach of the field
-  altogether, leaving the Filter as the only way back to it.
+  altogether, leaving Organise as the only way back to it.
 - **A project no task carries is not offered either.** The last task moving to
   another project leaves one behind that is still in the file but no longer a
   tag anybody is using, and it went on being suggested and listed in the
@@ -836,13 +860,13 @@ nothing is assumed: neither names one project.
   not. So the project stays, stops being offered, and comes back by itself the
   moment a task carries it again — keeping the id, group and category it had.
   A name typed in full still matches it, so it is reused rather than made a
-  second time, and the Filter still lists it, which is where it can be renamed,
+  second time, and Organise still lists it, which is where it can be renamed,
   merged or deleted deliberately.
 
-### Organising them — all in the Filter
+### Organising them — all in Organise
 
 There is no separate Projects screen. Everything about a project is reached from
-the Filter, which is the one place projects are listed at all.
+Organise, which is the one place projects are listed at all.
 
 **A project row carries no `#` of its own**; the hash is joined to the name,
 `#GRANT`. A separate glyph cost a 24pt frame and the gap beside it — 36pt of a
@@ -990,7 +1014,7 @@ project**, where the row is not drawn.
 changed**, because that sheet promises that cancelling leaves nothing behind
 and a global edit surviving Cancel is the opposite of that. A greyed row with
 no reason beside it reads as broken, so it carries its own line: *"Set on the
-project. Change it from its ⓘ in the Filter."* A project being named for the
+project. Change it from its ⓘ in Organise."* A project being named for the
 first time is settable there, since nothing exists yet to be edited.
 
 ### Groups of projects
@@ -1010,7 +1034,7 @@ to another category clears its group.
 **A group can be chosen where a project is**, in the New Task sheet and in the
 task editor: one row under the project, naming the group and offering the ones
 the category already has, plus **New Group…**. A group is easiest to set at the
-moment the project is first named, and having to find the Filter afterwards is
+moment the project is first named, and having to find Organise afterwards is
 how projects end up ungrouped for good.
 
 That row appears **only when there is a project**. A group is a label projects
@@ -1072,7 +1096,7 @@ into the one with the lowest id, remap tasks to it without stamping them, and
 tombstone the others at their own `modifiedAt` — so every device independently
 makes the same choice and writes the same tombstone.
 
-## Filtering
+## Organise
 
 The filter narrows the list to any mix of categories and projects: a task shows
 if it matches any of them. Selecting nothing means everything. An uncategorised
@@ -1111,6 +1135,38 @@ filtered.
 On a phone the sheet opens at the **large** detent. The list is categories,
 groups and every project, and `.searchable` floats its field at the bottom of
 the sheet, where at the medium detent it sits on top of the last rows.
+
+**The panel is called Organise, not Filter.** Every row in it is still a filter
+row — tapping one narrows the task list — but it is also the only place
+projects, groups and categories are arranged at all, and on the Mac and the
+iPad it is a permanent sidebar rather than something opened to perform one
+action. "Filter" named a verb; a sidebar is a place. The floating button that
+opens it on a phone keeps its filter glyph and its state, because what the
+button does is still filter.
+
+It is not called "Projects". Categories are a **peer axis**, not a container
+for projects: `FilterCounts.matches` answers true for any task carrying a
+category whether or not it has a project, so "All Research" includes tasks with
+no project at all. A name that covered only the projects would hide the half of
+the panel that is not about them.
+
+**New Project…** sits under the Show row, and makes a project from nothing
+rather than from a task. Every other route starts by typing a first word into a
+task, which is right when capturing and wrong when setting up, where the point
+is to lay out categories and projects first and add work to them afterwards. It
+asks for name, category and group together, because a project created with no
+category lands in "Other projects" and has to be moved immediately — the
+opposite of what setting up is for. A project with nothing in it is a real row:
+projects are removed only by merge or delete, so it waits under *Active
+projects* and is correctly hidden by *With open tasks*, where nothing is
+waiting yet.
+
+**A category carries the same ⓘ a project and a group do**, opening the editor
+for its name, icon and colour. It was the one row without one, so recolouring a
+category meant leaving the panel the category is actually looked at from.
+Adding, reordering and deleting categories stay in **More**: those are about the
+*set* of categories, and reordering needs a list in edit mode. The ⓘ is about
+the one in front of you.
 
 **Clicking a row picks that one and drops the rest.** Filtering is normally a
 question about one project, and a list that accumulates selections answers a
@@ -1192,8 +1248,118 @@ clothes: ticking a group of two projects holding three tasks between them put a
 2 on the button while the sidebar said 3 a thumb's width away. One predicate
 now serves the list, the sidebar and the button, so they cannot disagree again. Deleting a category
 removes it from the selection, so the list is never filtered by something that
-no longer exists. On the Mac, right-click a task for "Show Only <project>";
-while any filter is on, that item becomes "Show All" on every task.
+no longer exists. Clicking a task offers "Show Only <project>",
+and on the Mac so does right-clicking it; while any filter is on, that item
+becomes "Show All" on every task, since a category filter also shows tasks
+carrying no project.
+
+### Undo
+
+**Deleting, completing, reopening and moving a task are undoable**, and each
+says so: a bar at the bottom of the screen naming what just happened, with
+**Undo** beside it and a way to dismiss it. It goes on its own after a few
+seconds. **⌘Z keeps working after it has gone** — the bar is the offer, not the
+only route, and the last twenty changes are kept.
+
+The stack is deliberately shallow. Undo here is for the slip you just made, not
+a history to walk back through: on a document two devices are both editing, a
+deep stack would let someone undo their way into a state neither device ever
+held.
+
+**Putting a task back is `StoreDocument.restoring`**, and two rules in it are
+what make an undo safe to sync. Both are easy to leave out and neither shows up
+on one device:
+
+- The restored task is stamped **now**, not with the time it used to carry. A
+  deletion beats an edit only if it happened after it, so a task put back with
+  its old timestamp would leave the tombstone newer and the other device would
+  delete it again.
+- Its **tombstone is dropped**. Keeping it would mean this device still held a
+  record saying the task was deleted, and the next merge would hand that to
+  everyone else.
+
+And a third that only a test found: the stamp must be **strictly after** the
+tombstone, not merely `now`. A merge gives a tie to the deletion
+(`deletedAt >= modified`), so a task deleted and put back inside the same
+millisecond would come back on this device and stay dead everywhere else.
+Stamps carry milliseconds, so one is the smallest step that settles it.
+
+**Moving a project to another category is undoable too, and no longer asks
+first.** It used to stop and count the tasks it would take along — but only
+from the sidebar; the project editor's own picker applied the same change
+directly, so the two disagreed about whether it was worth a question.
+
+They agree now, and on the lighter answer. A confirmation makes the deliberate
+case pay for the mistaken one, and it cannot help with the mistake people
+actually make here, which is dropping on the wrong row: the dialog names the
+destination, but so does the bar — *"Moved FRIA to Teaching"* — and the bar
+does not interrupt the nine times in ten the drop was right.
+
+The project and its tasks are restored **together**. Moving a project rewrites
+the project's row *and* the category on every task carrying it, so undoing one
+without the other would leave a project in one category with its tasks in
+another. Only the tasks that actually moved are recorded: one already in the
+destination category is not changed by the move, and restoring it would stamp
+it for a change it never had.
+
+**The bar is shown by any sheet that can make an undoable change**, not only by
+the task list. A sheet is its own presentation context, so an overlay on the
+list behind it is simply not visible — and on a phone, where there is no ⌘Z, a
+category moved from the project editor would otherwise offer no way back at
+all.
+
+**Delete sits on the task's own menu**, last and in red. It is safe there
+rather than behind a confirmation precisely because it is undoable. The
+confirmations that remain are the ones no single step puts back: emptying the
+whole list, restoring a backup over it, completing an entire project.
+
+The bar goes through the same `FloatingChrome` as the round buttons, as a wide
+capsule rather than a disc — one `#available(iOS 26, *)` fork, as that modifier
+has always promised.
+
+### One list, three surfaces
+
+What a task offers is **one list** — `CardMenu.actions(for:isFiltered:hasProject:)`
+— and the three places that show it decide only how to draw it: the phone's
+dialog plainly, the Mac and iPad popover with the stack colours, the Mac's
+right-click menu with symbols. The stacks it is not already in come first, so
+the common move stays one tap with nothing in the way; then the reminder, if it
+has one; then Edit; then the filter item.
+
+Each surface used to carry its own hand-written copy, which is the hazard this
+file already names about Snooze and Clear living in two code paths. They
+drifted exactly as predicted: the right-click menu was written with Edit and
+Show Only and never learned the rest, so the Mac's richer gesture gave the
+poorer menu. The rule is in the model layer now, where a test can say that a
+task in Next is not offered Next, that Snooze follows the same rule the flag
+uses to gather the task, and that Show All replaces Show Only rather than
+joining it.
+
+**Edit is on every surface, always.** A menu that will move a task but not open
+it reads as broken — Finder puts Open in both places for the same reason.
+
+## The keyboard
+
+Four shortcuts, and each belongs to the control that does the thing rather than
+to a menu, so there is only ever one of each:
+
+| | |
+|---|---|
+| **⌘N** | a new task — on the + button |
+| **⌘F** | search — on the magnifying glass |
+| **⌘Z** | undo — the one exception, in `.commands`, because it has to replace the system's own Undo item rather than sit greyed out beside it |
+| **Escape** | leave the search bar, or the sheet in front of you |
+
+**Escape mostly worked already, and that is worth knowing before adding it
+anywhere.** A toolbar button placed as the `.cancellationAction` is what
+Escape picks, so every sheet with a Cancel — and More, whose Done is placed
+there too — already closed on Escape. That is also how leaving the task editor
+by keyboard came to discard rather than commit.
+
+Two sheets did not: Organise and the project editor, whose only way out is a
+**Done** placed as the *confirming* action, leaving no cancellation role for
+Escape to find. Those two bind it by hand. The search bar's Cancel is a plain
+button rather than a toolbar item, so it binds it too.
 
 ## Searching
 
@@ -1452,10 +1618,11 @@ Two differences that matter:
 
 - The swipes become **click-and-drag** on a Mac: a two-finger trackpad swipe
   scrolls instead, so the swipe left stays for anyone who wants it. The Mac
-  also has a **right-click menu** on a task, mirroring what a click already
-  offers — Edit and Show Only both appear in both, deliberately: a context menu
-  that will narrow the list by a task but not open it reads as broken, and
-  Finder puts Open in both places for the same reason.
+  also has a **right-click menu** on a task, offering **exactly what a click
+  offers** — the stacks, the reminder, Edit, and the filter item. It used to
+  hold two of those eight, which had it backwards: a right-click is the
+  richer gesture, and on a Mac a context menu that is shorter than a plain
+  click reads as a mistake.
 - **The window shows no title.** It is not a document, so there is nothing to
   name, and the app is already named in the menu bar and the Dock
   (`titlebar?.titleVisibility = .hidden`). The titlebar itself stays: the
@@ -1610,9 +1777,8 @@ Subtask relationships, tags, attachments and smart-list rules are not preserved.
 
 Due dates optionally become DayHand reminders at 9 a.m. on the corresponding
 local day. They never become deadlines or move tasks between stacks. Original
-due/start dates and times, notes, links, locations and priority values are shown
-only in the import preview and are not saved. The preview explicitly warns
-which details are not retained. Original alerts are not transferred. Past reminders arrive
+due/start dates and times, notes, links, locations and priority values are kept
+in the task's Notes. Original alerts are not transferred. Past reminders arrive
 answered; their dates can still make them appear in Attention. Future reminders
 may notify in both apps because Apple Reminders is left unchanged. All these
 limits are shown before import.
@@ -1631,14 +1797,12 @@ may change after account resets or source reorganisation: importing from
 another device or after such changes can produce duplicates. There is no
 heuristic merging by task title.
 
-Tasks remain title-only: there is no Notes property, editor section or CSV
-column. Source details are transient `omittedDetails` on the import snapshot,
-shown in a disclosure group outside the task-selection toggle, and never
-copied into `TodoItem`, JSON or exported CSV. The CSV remains the original ten
-columns. Neither the task title nor the card layout is extended to hold source
-details. Older prototype files carrying a `notes` key still decode, but the
-unsupported field is not retained on save. Import history is the only new
-persistence needed by this importer; update devices before relying on it.
+Tasks now carry an optional-on-disk `notes` string, defaulting to empty for
+older documents. It is editable in the task editor with Done/Cancel semantics,
+and round-trips through a new final `notes` CSV column. Existing CSV column
+positions and old JSON decoding remain compatible. Devices running older
+builds do not understand these new fields; update all devices before relying
+on Notes or import history across sync.
 
 Model tests cover mapping, idempotency, deletion history, new-project conflicts,
 completion, date-only/time-zone/DST handling, and JSON/CSV compatibility without
@@ -1669,29 +1833,32 @@ extra fields are rejected before import. UTF-8 and a 20 MB per-file limit are
 checked by the file reader off the main actor. A failed file load does not
 partially replace the current selection.
 
-Task titles, including label text already in them, remain literal. Only titles,
-chosen organisation and supported dates are imported. Descriptions, comments,
-sections, section descriptions, parent-task paths, assignees, priorities,
-original date strings, date languages, time zones, durations and other source
-details are transient `omittedDetails` in the import snapshot. They can be read
-in disclosure groups outside the selection toggles and are explicitly marked
-as preview-only. None are copied into task titles, JSON, sync, backups or CSV.
-The existing task editor and card layouts gain no Notes or comments feature.
-Subtasks become independent tasks; section and parent relationships are not
-recreated. Orphan comments and unsupported row types are counted as ignored CSV
-rows. Attachment links are available only as source text in the preview;
-attachments are not downloaded.
+Task titles, including label text already in them, remain literal. The importer
+uses the existing `TodoItem.notes` field, task editor and CSV support from main;
+it introduces no second Notes feature or additional task panel. Descriptions,
+comments, sections, section descriptions, parent-task paths, assignees,
+priorities, original date strings, date languages, time zones, durations and
+other nonempty exported details are preserved as text in Notes. Comment rows
+attach to the preceding task. Notes can be expanded in the import preview,
+then edited in the existing task editor after import. They survive JSON, sync,
+backups and the existing final `notes` CSV column.
+
+Subtasks become independent tasks. Section and parent relationships are not
+recreated as live structures; their context stays in Notes. Orphan comments and
+unsupported row types are counted as ignored CSV rows. Attachment links in
+exported text are retained in Notes; attachments are not downloaded. Recurring
+schedules are not recreated. These limits are shown in the preview.
 
 Only unambiguous absolute dates are parsed: ISO civil days, ISO timestamps with
 offsets, and year-month-day times with the exported time zone. Localized,
 relative, recurring, invalid or otherwise unrecognised date expressions are
 never guessed. Affected tasks are excluded until the user explicitly enables
 “Include tasks with unrecognised dates”. Then they are imported once with
-unrecognised dates omitted; recurring schedules are never recreated. The UI
-explicitly warns that these dates will not be saved.
+unrecognised dates kept only as text in Notes; recurring schedules are never
+recreated. The UI explicitly explains this mapping before import.
 Recognised task dates become reminders at 9 a.m. on the local day. Recognised
 deadlines remain deadlines, including when there is no reminder. “Import dates”
-can be turned off to omit all dates. Dates never move tasks.
+can be turned off to keep dates only as text in Notes. Dates never move tasks.
 Todoist project CSVs do not include completed tasks; the importer says so.
 
 The preview shows mappings, tasks, exclusions, counts, ignored rows and date
@@ -1717,7 +1884,7 @@ version 1. It never stamps `modifiedAt`. Explicit modern standalone deadlines
 therefore survive reload, sync and clearing a reminder. DayHand CSV headers
 naming `deadline` are modern; old `due` headers and headerless legacy files keep
 the legacy migration. Update all devices before relying on the new marker,
-or either import history across sync: older builds ignore these fields.
+Notes or either import history across sync: older builds ignore these fields.
 
 ### Verification and remaining runtime checks
 
@@ -1731,7 +1898,7 @@ Tests/Fixtures/README.md.
 Simulator runtime access remains unavailable in this session. Before release,
 use dummy exports to check the file picker on iPhone/iPad, cancellation,
 UTF-8/error messages, multiple files, all project/category mappings, preview
-exclusions, the date-review opt-in, preview-only source details, import, the
+exclusions, the date-review opt-in, imported Notes, import, the
 backup, reload,
 repeat import after editing/deleting a task, and the Mac layout. Do not launch
 the installed Mac app or use its real data to perform these checks.

@@ -1,7 +1,7 @@
 import SwiftUI
 
 
-/// Projects are organised in the Filter — long-press one, or right-click it on
+/// Projects are organised in Organise — long-press one, or right-click it on
 /// the Mac — so there is no second screen listing them. What is left here is
 /// the editor that menu opens, and the one-time conversion of title prefixes
 /// written before projects existed.
@@ -17,7 +17,7 @@ import SwiftUI
 ///
 /// Offered wherever a project is being chosen — the New Task sheet and the card
 /// editor — because a group is easiest to set at the moment the project is
-/// first named, and hunting for the Filter afterwards is how projects end up
+/// first named, and hunting for Organise afterwards is how projects end up
 /// ungrouped forever.
 ///
 /// Shown only when there *is* a project. A group with nothing in it is not a
@@ -125,7 +125,7 @@ struct ProjectGroupMenu: View {
 /// One project: its name, its category, archived or not, and the ways to fold
 /// it into another or remove it.
 ///
-/// Reached by long-pressing a project in the Filter — right-clicking it on the
+/// Reached by long-pressing a project in Organise — right-clicking it on the
 /// Mac — which is the one place projects are organised.
 struct ProjectEditor: View {
     let projectID: UUID
@@ -185,6 +185,14 @@ struct ProjectEditor: View {
     }
 
     private func form(_ project: Project) -> some View {
+        formBody(project)
+            // Changing the category here moves every task in the project. The
+            // bar is how that is taken back, and an overlay on the list behind
+            // this sheet would not be visible from inside it.
+            .overlay(alignment: .bottom) { UndoBanner().environmentObject(store) }
+    }
+
+    private func formBody(_ project: Project) -> some View {
         Form {
             Section {
                 TextField("Name", text: $name)
@@ -265,7 +273,7 @@ struct ProjectEditor: View {
                 }
             } footer: {
                 if project.isArchived {
-                    Text("Archived. Its tasks are still there, and it is left out of the project list until the Filter\u{2019}s Show row asks for archived projects. Typing its name brings it back.")
+                    Text("Archived. Its tasks are still there, and it is left out of the project list until the Show row in Organise asks for archived projects. Typing its name brings it back.")
                 } else if store.openCards(in: project).isEmpty {
                     Text("Nothing left to do, so this project can be put away.")
                 } else {
@@ -478,6 +486,116 @@ struct ProjectConversionView: View {
         // it would otherwise become withAnimation's return value, which nothing
         // reads — @discardableResult covers the function, not the wrapper.
         withAnimation { _ = store.convertTitlePrefixes(assignments) }
+        dismiss()
+    }
+}
+
+/// A project made from nothing, before there is a task to put in it.
+///
+/// Every other way to create one starts from a task — type a first word, take
+/// the chip — which is right when capturing and wrong when setting up, where
+/// the whole point is to lay out the categories and projects first and add
+/// work to them afterwards.
+///
+/// Name, category and group in one sheet, because a project created with no
+/// category lands in "Other projects" and has to be moved immediately, which
+/// is the opposite of what someone setting up is trying to do.
+struct NewProjectSheet: View {
+    @EnvironmentObject private var store: TodoStore
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var name = ""
+    @State private var categoryID: UUID?
+    @State private var group: String?
+    @State private var isNamingGroup = false
+    @State private var typedGroup = ""
+    @FocusState private var nameFocused: Bool
+
+    /// Blank, or already taken. A name that belongs to another project would
+    /// quietly become that project rather than a new one.
+    private var problem: String? {
+        guard let cleaned = Project.clean(name).isEmpty ? nil : Project.clean(name) else { return nil }
+        let key = Project.key(for: cleaned)
+        guard store.projects.contains(where: { $0.key == key }) else { return nil }
+        return String(localized: "A project called \(Project.canonicalName(cleaned)) already exists.")
+    }
+
+    private var canCreate: Bool {
+        !Project.clean(name).isEmpty && problem == nil
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextField("Name", text: $name)
+                        .focused($nameFocused)
+                        .textInputAutocapitalization(.characters)
+                        .autocorrectionDisabled()
+                        .onSubmit { if canCreate { create() } }
+                } footer: {
+                    if let problem {
+                        Text(problem).foregroundStyle(.red)
+                    } else {
+                        Text("Capitals are added for you, the way a project typed into a task gets them.")
+                    }
+                }
+
+                Section {
+                    Picker(selection: $categoryID) {
+                        Text("None").tag(UUID?.none)
+                        ForEach(store.categories) { category in
+                            Label(category.label, systemImage: category.symbolName)
+                                .tag(UUID?.some(category.id))
+                        }
+                    } label: {
+                        Label("Category", systemImage: "tag")
+                    }
+
+                    ProjectGroupRow(
+                        names: store.groupNames(in: categoryID),
+                        selection: $group,
+                        tint: store.categories.first { $0.id == categoryID }?.color.prefixTint
+                              ?? Color.accentColor
+                    ) {
+                        typedGroup = ""
+                        isNamingGroup = true
+                    }
+                } footer: {
+                    Text("Tasks given this project take its category. A group gathers projects that belong together.")
+                }
+            }
+            .navigationTitle("New Project")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Create") { create() }.disabled(!canCreate)
+                }
+            }
+            .alert("New Group", isPresented: $isNamingGroup) {
+                TextField("Holidays", text: $typedGroup)
+                Button("Add") { group = Project.cleanGroup(typedGroup) }
+                Button("Cancel", role: .cancel) { }
+            } message: {
+                Text("Groups gather projects that belong together, such as Grants or Courses.")
+            }
+            // A category moving means its groups change with it, and a label
+            // from the old one would be carried into a category that has no
+            // such group.
+            .onChange(of: categoryID) { _, _ in group = nil }
+            .onAppear {
+                categoryID = store.defaultCategoryID
+                nameFocused = true
+            }
+        }
+    }
+
+    private func create() {
+        guard canCreate else { return }
+        _ = store.ensureProject(named: name, categoryID: categoryID, group: group)
         dismiss()
     }
 }

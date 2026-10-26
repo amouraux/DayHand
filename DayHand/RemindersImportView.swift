@@ -51,32 +51,32 @@ final class AppleRemindersReader: ObservableObject {
                 ListInfo(id: $0.calendarIdentifier, title: $0.title, account: $0.source.title)
             }.sorted { ($0.account, $0.title) < ($1.account, $1.title) }
             records = fetched.map { reminder in
-                var details = [reminder.notes ?? ""]
-                details.append(String(localized: "Source list") + ": " + reminder.calendar.title)
-                if let url = reminder.url { details.append(url.absoluteString) }
+                var notes = [reminder.notes ?? ""]
+                notes.append(String(localized: "Source list") + ": " + reminder.calendar.title)
+                if let url = reminder.url { notes.append(url.absoluteString) }
                 if let location = reminder.location, !location.isEmpty {
-                    details.append(String(localized: "Location") + ": " + location)
+                    notes.append(String(localized: "Location") + ": " + location)
                 }
                 let due = TaskImport.date(from: reminder.dueDateComponents)
                 if let due {
                     let hasTime = reminder.dueDateComponents?.hour != nil
-                    details.append(String(localized: "Original due date") + ": " +
+                    notes.append(String(localized: "Original due date") + ": " +
                                  due.formatted(date: .abbreviated, time: hasTime ? .shortened : .omitted))
                 }
                 if let start = TaskImport.date(from: reminder.startDateComponents) {
-                    details.append(String(localized: "Original start date") + ": " + start.formatted())
+                    notes.append(String(localized: "Original start date") + ": " + start.formatted())
                 }
                 if reminder.priority > 0 {
-                    details.append(String(localized: "Original priority") + ": \(reminder.priority)")
+                    notes.append(String(localized: "Original priority") + ": \(reminder.priority)")
                 }
                 if reminder.hasAlarms {
-                    details.append(String(localized: "Original alerts are not transferred."))
+                    notes.append(String(localized: "Original alerts are not transferred."))
                 }
                 return TaskImportRecord(
                     id: reminder.calendarItemIdentifier,
                     listID: reminder.calendar.calendarIdentifier,
                     title: reminder.title ?? "",
-                    omittedDetails: details.filter { !$0.isEmpty }.joined(separator: "\n\n"),
+                    notes: notes.filter { !$0.isEmpty }.joined(separator: "\n\n"),
                     dueDate: due, createdAt: reminder.creationDate,
                     isCompleted: reminder.isCompleted, completedAt: reminder.completionDate,
                     isRecurring: reminder.hasRecurrenceRules
@@ -180,7 +180,7 @@ struct RemindersImportView: View {
             Toggle("Include completed tasks", isOn: $options.includeCompleted)
             Toggle("Use due dates as reminders", isOn: $options.importDates)
         } footer: {
-            Text("Due dates become reminders at 9 a.m. on that day, not deadlines. Turning this off omits dates. Original times are not retained. Dates never move tasks between stacks.")
+            Text("Due dates become reminders at 9 a.m. on that day, not deadlines. Original dates and times stay in Notes even when this is off. Dates never move tasks between stacks.")
         }
         if reader.lists.isEmpty {
             Section { Text("No Reminders lists are available on this device.") }
@@ -201,7 +201,7 @@ struct RemindersImportView: View {
             }
         }
         Section {
-            Text("Recurring reminders are skipped. Descriptions, notes, links, locations, priorities, attachments, tags and subtask relationships are not imported. Source details are available in the preview only.")
+            Text("Recurring reminders are skipped. Subtasks, tags, attachments and smart-list rules are not preserved. Notes, links, dates, locations and priority values are kept as text in Notes.")
         }
     }
 
@@ -244,7 +244,6 @@ struct RemindersImportView: View {
             Text("A backup is saved before import. Existing DayHand tasks are kept. Repeat imports skip tasks already imported on this device, including ones you deleted. Importing again on another device or after an account reset can create duplicates.")
         }
         Section {
-            Text("Recurring reminders are skipped. Descriptions, notes, links, locations, priorities, attachments, tags and subtask relationships are not imported. Source details are available in the preview only.")
             Text("Apple Reminders keeps its own alerts. Imported future reminders can also notify you in DayHand. Past dates are marked as answered; their tasks can still appear in Attention.")
         }
         ForEach(reader.lists.filter { options.destinations[$0.id] != nil }) { list in
@@ -267,15 +266,13 @@ struct RemindersImportView: View {
                             if store.hasImportedReminder(record.id) {
                                 Text("Already imported").font(.caption).foregroundStyle(.secondary)
                             }
+                            if !record.notes.isEmpty {
+                                Text(record.notes).font(.caption).foregroundStyle(.secondary)
+                                    .lineLimit(3)
+                            }
                         }
                     }
                     .disabled(store.hasImportedReminder(record.id))
-                    if !record.omittedDetails.isEmpty {
-                        DisclosureGroup("Source details (preview only)") {
-                            Text(record.omittedDetails).font(.caption).foregroundStyle(.secondary)
-                                .textSelection(.enabled)
-                        }
-                    }
                 }
             }
         }

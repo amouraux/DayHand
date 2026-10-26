@@ -88,7 +88,7 @@ struct ContentView: View {
                     projectSelection: $filterProjectIDs.animation(.easeInOut(duration: 0.2)),
                     isSidebar: true
                 )
-                .navigationTitle("Filter")
+                .navigationTitle("Organise")
                 // The system's own toggle sits at the far right of the sidebar
                 // header, and floats over the first card when the sidebar is
                 // closed. The filter button already opens and closes it, from
@@ -155,6 +155,9 @@ struct ContentView: View {
                 .padding(.bottom, 42)
             }
             .overlay(alignment: .bottomTrailing) { addButton }
+            // Above the buttons rather than among them: it comes and goes, and
+            // a control that appears between two permanent ones moves them.
+            .overlay(alignment: .bottom) { UndoBanner().environmentObject(store) }
             .onAppear {
                 guard !didAnchorToToday else { return }
                 didAnchorToToday = true
@@ -202,47 +205,15 @@ struct ContentView: View {
                 titleVisibility: .visible,
                 presenting: stackPickItem
             ) { card in
-                // The stacks it is not already in come first, so the common
-                // move stays a single tap with nothing in the way.
-                ForEach(Bucket.quickMoveTargets.filter { $0 != card.bucket }) { target in
-                    Button(target.title) {
-                        withAnimation { store.move(card, to: target) }
-                    }
-                }
-                // The two things that are about the reminder rather than the
-                // card. Snooze for any reminder that has arrived — see
-                // `Reminders.canSnooze` for why that is wider than "waiting on
-                // an answer".
-                if Reminders.canSnooze(card) {
-                    Button("Snooze until tomorrow") {
-                        withAnimation { store.answerReminder(card, .snooze) }
-                    }
-                }
-                if card.remindAt != nil {
-                    Button("Clear the reminder") {
-                        withAnimation { store.answerReminder(card, .clear) }
-                    }
-                }
-                // Then the editor, so it is reachable from a plain click. On
-                // the Mac it was behind a right-click, which is not where
-                // anyone looks after learning that clicking a card does
-                // something.
-                Button("Edit…") {
-                    stackPickItem = nil
-                    // One hop: a sheet presented from the dialog's own action
-                    // is swallowed while that dialog is still dismissing.
-                    DispatchQueue.main.async { editItem = card }
-                }
-                // Narrowing to what is in front of you was a right-click, so it
-                // did not exist on a phone at all — where the only route to a
-                // project was to open the filter and find a name already
-                // printed on the card. While a filter is on the useful move is
-                // back out of it, on every card, since a category filter shows
-                // cards carrying no project.
-                if isFiltered {
-                    Button("Show All") { showAll() }
-                } else if let project = store.project(for: card) {
-                    Button("Show Only \(project.name)") { showOnly(project) }
+                // One list, three surfaces — see `CardMenu`. The dialog draws
+                // them plainly, because that is what a confirmation dialog
+                // gives you and it is the right shape on a phone.
+                ForEach(Array(cardActions(for: card).enumerated()), id: \.offset) { _, action in
+                    let look = look(action, for: card)
+                    Button(role: action == .delete ? .destructive : nil) {
+                        stackPickItem = nil
+                        look.run()
+                    } label: { look.title }
                 }
                 Button("Cancel", role: .cancel) { }
             }
@@ -297,6 +268,82 @@ struct ContentView: View {
 
     /// Cards for a stack, after the filter — any chosen category or project —
     /// and then after the search. Both narrow; neither reorders.
+    /// One card in the list. Extracted so the plain stacks and the dated run
+    /// under Completed cannot end up building different cards.
+    private func row(_ card: TodoItem) -> some View {
+        CardRow(
+            item: card,
+            category: store.category(for: card),
+            project: store.project(for: card),
+            onTap: { stackPickItem = card },
+            onToggle: { withAnimation { store.toggleCompleted(card) } },
+            // Left swipe pulls the card into Today, or pushes it to Tomorrow
+            // if already in Today.
+            onMove: { withAnimation { store.move(card, to: card.bucket.forwardDestination) } },
+            // Right swipe opens the full editor.
+            onEdit: { editItem = card }
+        )
+        // The right-click menu, on the Mac only: a phone's long press has no
+        // second menu to be inconsistent with, since tapping already opens
+        // this same list.
+        #if targetEnvironment(macCatalyst)
+        .contextMenu {
+            ForEach(Array(cardActions(for: card).enumerated()), id: \.offset) { _, action in
+                let look = look(action, for: card)
+                Button(role: action == .delete ? .destructive : nil) {
+                    stackPickItem = nil
+                    look.run()
+                } label: {
+                    Label { look.title } icon: { Image(systemName: look.symbol) }
+                }
+            }
+        }
+        #endif
+        .transition(.opacity.combined(with: .move(edge: .top)))
+        // Identity must include the stack. A card that moves section keeps its
+        // id, and SwiftUI then reuses the old row without feeding it the new
+        // card — so it keeps painting the previous stack's colour and a date
+        // it no longer has.
+        .id("\(card.id)-\(card.bucket.rawValue)")
+        // Bound per row so it opens on the card that was clicked rather than
+        // over the middle of the list; only ever one can be true.
+        .popover(isPresented: Binding(
+            get: { usesPopoverMenus && stackPickItem?.id == card.id },
+            set: { if !$0 { stackPickItem = nil } }
+        )) {
+            cardMenu(card)
+        }
+    }
+
+    /// The days the shown completed tasks fall on, newest first. Built from
+    /// what is on screen rather than from everything, so the cap still caps.
+    private func completedDays(of cards: [TodoItem]) -> [Review.Day] {
+        Timeline.months(of: cards).flatMap(\.days)
+    }
+
+    private func undatedCompleted(in cards: [TodoItem]) -> [TodoItem] {
+        cards.filter { $0.completedAt == nil }
+    }
+
+    /// The date a run of finished tasks was done on. Quieter than a stack
+    /// header: it sits inside one, and the stack has already said what these
+    /// are.
+    private func dayHeading(_ day: Review.Day) -> some View {
+        HStack(spacing: 8) {
+            Text(Scheduler.relativeLabel(for: day.date))
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.secondary)
+            Spacer(minLength: 4)
+            Text("\(day.cards.count)")
+                .font(.subheadline)
+                .monospacedDigit()
+                .foregroundStyle(.tertiary)
+        }
+        .padding(.horizontal, 4)
+        .padding(.top, 6)
+        .accessibilityElement(children: .combine)
+    }
+
     private func cards(in bucket: Bucket) -> [TodoItem] {
         var all = store.items(in: bucket)
         if attentionOnly {
@@ -464,6 +511,9 @@ struct ContentView: View {
             }
             .buttonStyle(.plain)
             .foregroundStyle(Color.accentColor)
+            // Escape leaves the search, the way it leaves a sheet. ⌘F opened
+            // it; this is the other half of that pair.
+            .keyboardShortcut(.cancelAction)
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 8)
@@ -669,43 +719,24 @@ struct ContentView: View {
 
                     if !cards.isEmpty {
                         Section {
-                            ForEach(visible) { card in
-                                CardRow(
-                                    item: card,
-                                    category: store.category(for: card),
-                                    project: store.project(for: card),
-                                    onTap: { stackPickItem = card },
-                                    onToggle: { withAnimation { store.toggleCompleted(card) } },
-                                    // Left swipe pulls the card into Today, or
-                                    // pushes it to Tomorrow if already in Today.
-                                    onMove: {
-                                        withAnimation {
-                                            store.move(card, to: card.bucket.forwardDestination)
-                                        }
-                                    },
-                                    // Right swipe opens the full editor.
-                                    onEdit: { editItem = card },
-                                    onShowProject: store.project(for: card).map { project in
-                                        { showOnly(project) }
-                                    },
-                                    onShowAll: isFiltered ? { showAll() } : nil
-                                )
-                                .transition(.opacity.combined(with: .move(edge: .top)))
-                                // Identity must include the stack. A card that
-                                // moves section keeps its id, and SwiftUI then
-                                // reuses the old row without feeding it the new
-                                // card — so it keeps painting the previous
-                                // stack's colour and a date it no longer has.
-                                .id("\(card.id)-\(card.bucket.rawValue)")
-                                // Bound per row so it opens on the card that
-                                // was clicked rather than over the middle of
-                                // the list; only ever one can be true.
-                                .popover(isPresented: Binding(
-                                    get: { usesPopoverMenus && stackPickItem?.id == card.id },
-                                    set: { if !$0 { stackPickItem = nil } }
-                                )) {
-                                    cardMenu(card)
+                            // Completed is the one stack with a date on every
+                            // task in it, so it is the one stack worth reading
+                            // by day. Scoped by whatever Organise has picked,
+                            // like every other stack — which is what makes
+                            // this the project review: filter to a project and
+                            // the screen is what is left above, and when the
+                            // rest got done below.
+                            if bucket == .completed {
+                                ForEach(completedDays(of: visible)) { day in
+                                    dayHeading(day)
+                                    ForEach(day.cards) { card in row(card) }
                                 }
+                                // A completed task carrying no date cannot be
+                                // placed in the run, and must not vanish from
+                                // the list because of it.
+                                ForEach(undatedCompleted(in: visible)) { card in row(card) }
+                            } else {
+                                ForEach(visible) { card in row(card) }
                             }
 
                             if bucket == .completed {
@@ -777,57 +808,74 @@ struct ContentView: View {
                 .padding(.top, 12)
                 .padding(.bottom, 2)
 
-            ForEach(Bucket.quickMoveTargets.filter { $0 != card.bucket }) { target in
-                menuRow(Text(target.title), symbol: target.symbolName, tint: target.tint,
-                        wash: target.lightWash) {
-                    stackPickItem = nil
-                    withAnimation { store.move(card, to: target) }
+            // The same list, drawn with the stack colours a click deserves.
+            // A divider wherever the kind of action changes, so moving a card
+            // and answering its reminder do not read as one run.
+            let actions = cardActions(for: card)
+            ForEach(Array(actions.enumerated()), id: \.offset) { index, action in
+                if index > 0, isNewGroup(action, after: actions[index - 1]) {
+                    Divider().padding(.vertical, 4)
                 }
-            }
-
-            // Any reminder that has arrived — the same rule the flag uses to
-            // gather the card in the first place, so a card it shows always
-            // offers the choices that go with it.
-            if Reminders.canSnooze(card) {
-                Divider().padding(.vertical, 4)
-                menuRow(Text("Snooze until tomorrow"), symbol: "bell.badge",
-                        tint: .accentColor, wash: 0) {
+                let look = look(action, for: card)
+                menuRow(look.title, symbol: look.symbol, tint: look.tint, wash: look.wash) {
                     stackPickItem = nil
-                    withAnimation { store.answerReminder(card, .snooze) }
-                }
-            }
-
-            Divider().padding(.vertical, 4)
-
-            if card.remindAt != nil {
-                menuRow(Text("Clear the reminder"), symbol: "bell.slash",
-                        tint: .secondary, wash: 0) {
-                    stackPickItem = nil
-                    withAnimation { store.answerReminder(card, .clear) }
-                }
-            }
-
-            menuRow(Text("Edit…"), symbol: "square.and.pencil", tint: .accentColor, wash: 0) {
-                stackPickItem = nil
-                DispatchQueue.main.async { editItem = card }
-            }
-            if isFiltered {
-                menuRow(Text("Show All"), symbol: "line.3.horizontal.decrease.circle.fill",
-                        tint: .accentColor, wash: 0) {
-                    stackPickItem = nil
-                    showAll()
-                }
-            } else if let project {
-                menuRow(Text("Show Only \(project.name)"), symbol: "line.3.horizontal.decrease.circle",
-                        tint: .accentColor, wash: 0) {
-                    stackPickItem = nil
-                    showOnly(project)
+                    look.run()
                 }
             }
         }
         .padding(.bottom, 10)
         .frame(width: 260)
         .presentationCompactAdaptation(.popover)
+    }
+
+    /// How one action is drawn and what it does. The three surfaces differ in
+    /// how they lay a row out, never in which rows they have or what they say.
+    private func look(_ action: CardMenu.Action, for card: TodoItem)
+        -> (title: Text, symbol: String, tint: Color, wash: Double, run: () -> Void) {
+        switch action {
+        case .move(let target):
+            return (Text(target.title), target.symbolName, target.tint, target.lightWash,
+                    { withAnimation { store.move(card, to: target) } })
+        case .snooze:
+            return (Text("Snooze until tomorrow"), "bell.badge", .accentColor, 0,
+                    { withAnimation { store.answerReminder(card, .snooze) } })
+        case .clearReminder:
+            return (Text("Clear the reminder"), "bell.slash", .secondary, 0,
+                    { withAnimation { store.answerReminder(card, .clear) } })
+        case .edit:
+            // One hop: a sheet presented from a dialog's own action is
+            // swallowed while that dialog is still dismissing.
+            return (Text("Edit…"), "square.and.pencil", .accentColor, 0,
+                    { DispatchQueue.main.async { editItem = card } })
+        case .showOnlyProject:
+            let name = store.project(for: card)?.name ?? ""
+            return (Text("Show Only \(name)"), "line.3.horizontal.decrease.circle", .accentColor, 0,
+                    { showOnly(store.project(for: card)!) })
+        case .showAll:
+            return (Text("Show All"), "line.3.horizontal.decrease.circle.fill", .accentColor, 0,
+                    { showAll() })
+        case .delete:
+            return (Text("Delete"), "trash", .red, 0,
+                    { withAnimation { store.delete(card) } })
+        }
+    }
+
+    private func cardActions(for card: TodoItem) -> [CardMenu.Action] {
+        CardMenu.actions(for: card, isFiltered: isFiltered,
+                         hasProject: store.project(for: card) != nil)
+    }
+
+    /// Moving, answering a reminder, and everything else are three runs.
+    private func isNewGroup(_ action: CardMenu.Action, after previous: CardMenu.Action) -> Bool {
+        func rank(_ action: CardMenu.Action) -> Int {
+            switch action {
+            case .move: return 0
+            case .snooze, .clearReminder: return 1
+            case .edit, .showOnlyProject, .showAll: return 2
+            case .delete: return 3
+            }
+        }
+        return rank(action) != rank(previous)
     }
 
     private func menuRow(_ title: Text, symbol: String, tint: Color,
@@ -909,6 +957,10 @@ struct ContentView: View {
         // style draws its own rounded rect behind the label — invisible on
         // iOS, a grey square around the circle on the Mac.
         .buttonStyle(.plain)
+        // On the button rather than in the menu bar, the way ⌘F is: the
+        // shortcut belongs to the control that does the thing, and there is
+        // then only one of each.
+        .keyboardShortcut("n", modifiers: .command)
         .padding(.trailing, 22)
         .padding(.bottom, 28)
         .accessibilityLabel("Add task to inbox")
@@ -966,26 +1018,36 @@ private struct FloatingChrome: ViewModifier {
     /// changing what the list shows. Glass is for chrome at rest; a filter
     /// that is on has to say so louder than a tint can.
     var solid: Color?
+    /// A round button, or the wide capsule the undo banner sits in. The shape
+    /// is all that differs: both take the same glass, the same ring and the
+    /// same fallback, which is the whole point of there being one modifier.
+    var bar = false
 
     private var ring: Color { state?.opacity(0.85) ?? .primary.opacity(0.10) }
     private var lineWidth: CGFloat { state == nil ? 1 : 2 }
+    private var corners: CGFloat { bar ? 22 : 24 }
 
     @ViewBuilder
     func body(content: Content) -> some View {
-        let shaped = content
-            .font(.body.weight(.semibold))
-            .frame(width: 48, height: 48)
+        let shaped = bar
+            ? AnyView(content.font(.subheadline).padding(.horizontal, 16).padding(.vertical, 12)
+                .frame(maxWidth: .infinity, alignment: .leading))
+            : AnyView(content.font(.body.weight(.semibold)).frame(width: 48, height: 48))
 
         if let solid {
-            edged(shaped.background(Circle().fill(solid)), shadowed: true)
+            edged(shaped.background(shape.fill(solid)), shadowed: true)
         } else if #available(iOS 26.0, macOS 26.0, *) {
             // No shadow: the glass carries its own depth, and a drop shadow
             // under it reads as two light sources.
-            edged(shaped.glassEffect(glass, in: .circle), shadowed: false)
+            edged(shaped.glassEffect(glass, in: .rect(cornerRadius: corners)), shadowed: false)
         } else {
-            edged(shaped.background(Circle().fill(Color(.secondarySystemGroupedBackground))),
+            edged(shaped.background(shape.fill(Color(.secondarySystemGroupedBackground))),
                   shadowed: true)
         }
+    }
+
+    private var shape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: corners, style: .continuous)
     }
 
     @available(iOS 26.0, macOS 26.0, *)
@@ -998,9 +1060,52 @@ private struct FloatingChrome: ViewModifier {
 
     private func edged(_ view: some View, shadowed: Bool) -> some View {
         view
-            .overlay(Circle().strokeBorder(ring, lineWidth: lineWidth))
+            .overlay(shape.strokeBorder(ring, lineWidth: lineWidth))
             .shadow(color: .black.opacity(shadowed ? 0.18 : 0), radius: 6, y: 3)
-            .contentShape(Circle())
+            .contentShape(shape)
+    }
+}
+
+/// What just happened, and the way back from it.
+///
+/// A bar rather than a dialog: undoing is the rare case, and a sheet to
+/// dismiss every time a task is ticked off would cost the common case to serve
+/// the rare one. It says what happened — the house rule — and offers the way
+/// back for as long as anyone is likely to want it, then goes quietly. ⌘Z
+/// keeps working after it has gone.
+///
+/// Shown by the task list *and* by any sheet that can make an undoable change.
+/// A sheet is its own presentation context, so an overlay on the list behind
+/// it is simply not visible — and on a phone, where there is no ⌘Z, a change
+/// made in a sheet would otherwise offer no way back at all.
+struct UndoBanner: View {
+    @EnvironmentObject private var store: TodoStore
+
+    var body: some View {
+        if let step = store.undoBanner {
+            HStack(spacing: 12) {
+                Text(step.message)
+                    .font(.subheadline)
+                    .lineLimit(1)
+                Spacer(minLength: 8)
+                Button("Undo") { withAnimation { store.undoLast() } }
+                    .font(.subheadline.weight(.semibold))
+                Button {
+                    withAnimation { store.dismissUndoBanner() }
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Dismiss")
+            }
+            .floatingBar()
+            .padding(.horizontal, 22)
+            .padding(.bottom, 104)
+            .transition(.move(edge: .bottom).combined(with: .opacity))
+            .animation(.snappy(duration: 0.25), value: step.id)
+        }
     }
 }
 
@@ -1009,6 +1114,12 @@ extension View {
     /// glass is decided, so the two paths cannot drift apart.
     func floatingChrome(state: Color? = nil, solid: Color? = nil) -> some View {
         modifier(FloatingChrome(state: state, solid: solid))
+    }
+
+    /// The same chrome, as a wide bar. Here rather than in a second modifier
+    /// so the `#available(iOS 26, *)` fork stays in one place.
+    func floatingBar() -> some View {
+        modifier(FloatingChrome(bar: true))
     }
 }
 

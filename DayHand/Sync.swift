@@ -6,8 +6,7 @@ struct TaskImportRecord: Identifiable, Equatable {
     var id: String
     var listID: String
     var title: String
-    /// Transient source context for the preview; never copied into TodoItem.
-    var omittedDetails = ""
+    var notes = ""
     var dueDate: Date?
     var deadlineDate: Date?
     var createdAt: Date?
@@ -112,6 +111,7 @@ enum TaskImport {
             let bucket = options.bucket == .completed ? Bucket.inbox : options.bucket
             var card = TodoItem(title: record.title, bucket: record.isCompleted ? .completed : bucket,
                                 categoryID: categoryID, projectID: projectID)
+            card.notes = record.notes
             card.createdAt = record.createdAt ?? now
             card.modifiedAt = now
             if options.importDates, let date = record.dueDate {
@@ -250,7 +250,7 @@ enum TodoistCSV {
                 let comment = [raw("CONTENT"), raw("DESCRIPTION"), metadata(excluding: ["TYPE", "CONTENT", "DESCRIPTION"])]
                     .filter { !$0.isEmpty }.joined(separator: "\n")
                 if !comment.isEmpty {
-                    result.records[lastTask].omittedDetails += "\n\n" + String(localized: "Comment") + ":\n" + comment
+                    result.records[lastTask].notes += "\n\n" + String(localized: "Comment") + ":\n" + comment
                 }
             case "task":
                 lastTask = nil
@@ -270,7 +270,7 @@ enum TodoistCSV {
                     result.unparsedDateIDs.insert(id)
                 }
                 result.records.append(TaskImportRecord(id: id, listID: fileID, title: raw("CONTENT"),
-                    omittedDetails: details.filter { !$0.isEmpty }.joined(separator: "\n\n"), dueDate: scheduled, deadlineDate: deadline))
+                    notes: details.filter { !$0.isEmpty }.joined(separator: "\n\n"), dueDate: scheduled, deadlineDate: deadline))
                 ancestors.append((level, raw("CONTENT")))
                 lastTask = result.records.count - 1
             default:
@@ -444,6 +444,20 @@ enum DocumentCoding {
 /// Deletions are recorded as tombstones rather than simply vanishing. Without
 /// them, deleting a card on the phone and then merging with a Mac that still
 /// has it would silently resurrect the card.
+/// What an undo puts back, exactly as it stood before the change.
+///
+/// Projects as well as tasks, because the changes worth undoing rarely touch
+/// only one kind: moving a project to another category rewrites the project's
+/// row *and* the category on every task carrying it, and the two have to come
+/// back together or the undo leaves a project in one category with its tasks
+/// in another.
+struct Restoration: Equatable {
+    var cards: [TodoItem] = []
+    var projects: [Project] = []
+
+    var isEmpty: Bool { cards.isEmpty && projects.isEmpty }
+}
+
 struct StoreDocument: Codable, Equatable {
     /// Local EventKit identifiers already imported. Survives deleting a task,
     /// so importing the same list again cannot resurrect it. These identifiers
@@ -467,6 +481,54 @@ struct StoreDocument: Codable, Equatable {
     var defaultCategoryChangedAt: Date = .distantPast
 
     static let empty = StoreDocument()
+
+    /// Put a few tasks back exactly as they were.
+    ///
+    /// Every undoable change touches a handful of tasks and either edits them
+    /// or removes them — nothing creates one — so the inverse is always the
+    /// same shape: these tasks, as they used to be.
+    ///
+    /// Two things make it safe to sync, and both are easy to leave out:
+    ///
+    /// - The restored task is stamped **now**, not with the time it used to
+    ///   carry. A deletion beats an edit only if it happened after it, so
+    ///   putting a task back with its old timestamp would leave the tombstone
+    ///   newer and the other device would delete it again.
+    /// - Its **tombstone is dropped**. Keeping it would mean this device still
+    ///   held a record saying the task was deleted, which the next merge would
+    ///   hand to everyone else.
+    func restoring(_ restoration: Restoration, now: Date = .stamp()) -> StoreDocument {
+        var result = self
+        for card in restoration.cards {
+            var revived = card
+            // Strictly after the tombstone, not merely at `now`. A merge gives
+            // a tie to the deletion (`deletedAt >= modified`), so a task
+            // deleted and put back inside the same millisecond would come back
+            // here and stay dead everywhere else. Stamps carry milliseconds,
+            // so one is the smallest step that settles it.
+            let tombstone = result.deletedCards[card.id.uuidString]
+            revived.modifiedAt = max(now, tombstone?.addingTimeInterval(0.001) ?? now)
+            result.deletedCards.removeValue(forKey: card.id.uuidString)
+            if let index = result.cards.firstIndex(where: { $0.id == card.id }) {
+                result.cards[index] = revived
+            } else {
+                result.cards.append(revived)
+            }
+        }
+        // The same three rules again, for the same reasons.
+        for project in restoration.projects {
+            var revived = project
+            let tombstone = result.deletedProjects[project.id.uuidString]
+            revived.modifiedAt = max(now, tombstone?.addingTimeInterval(0.001) ?? now)
+            result.deletedProjects.removeValue(forKey: project.id.uuidString)
+            if let index = result.projects.firstIndex(where: { $0.id == project.id }) {
+                result.projects[index] = revived
+            } else {
+                result.projects.append(revived)
+            }
+        }
+        return result
+    }
 
     /// What a merge actually did, so "Sync Now" can say so rather than looking
     /// identical whether it pulled in forty cards, found nothing, or failed.
@@ -1079,7 +1141,7 @@ enum CardCSV {
     /// does. An older export's `reminds` column is simply ignored: what it
     /// recorded no longer exists, and a reminder is silenced by clearing it.
     static let header = ["id", "title", "stack", "category", "deadline", "completed", "created",
-                         "project", "group", "remind"]
+                         "project", "group", "remind", "notes"]
 
     private static let dayFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -1166,7 +1228,8 @@ enum CardCSV {
                 stampFormatter.string(from: card.createdAt),
                 card.projectID.flatMap { names[$0] } ?? "",
                 card.projectID.flatMap { groups[$0] } ?? "",
-                card.remindAt.map { stampFormatter.string(from: $0) } ?? ""
+                card.remindAt.map { stampFormatter.string(from: $0) } ?? "",
+                card.notes
             ].map(escape).joined(separator: ","))
         }
         return rows.joined(separator: "\n") + "\n"
@@ -1221,6 +1284,8 @@ enum CardCSV {
         for row in rows {
             func field(_ name: String) -> String {
                 guard let index = columns[name], index < row.count else { return "" }
+                // Notes can contain intentional indentation and spacing.
+                if name == "notes" { return row[index] }
                 return row[index].trimmingCharacters(in: .whitespaces)
             }
 
@@ -1243,6 +1308,7 @@ enum CardCSV {
 
             var card = TodoItem(title: cardTitle)
             card.dateSemanticsVersion = legacyDate ? 0 : 1
+            card.notes = field("notes")
             if let id = UUID(uuidString: field("id")) { card.id = id }
             if !projectName.isEmpty {
                 result.projectNames[card.id] = projectName
@@ -1275,6 +1341,7 @@ enum CardCSV {
     /// Names accepted for each column, so a file written by hand or by another
     /// tool still lands in the right places.
     private static let synonyms: [String: Set<String>] = [
+        "notes":     ["notes", "note", "description"],
         "id":        ["id", "uuid", "identifier"],
         "title":     ["title", "name", "task", "card", "todo"],
         "stack":     ["stack", "bucket", "list", "status", "column"],
