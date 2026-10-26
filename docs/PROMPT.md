@@ -2132,3 +2132,19 @@ Inbox progress. Both use the same ID snapshot model; live edits, deletion,
 Undo and new arrivals follow the same rules. Now reviews all Now tasks,
 regardless of main-list filters, and shows its neutral time-in-Now label.
 At the end, kept work remains in Now; reviewing again starts a new pass.
+
+## Waiting review helper
+
+**Review Waiting** appears at the Waiting heading and in More → Review. It
+uses the same shared layout as Inbox and Now, asking **Am I still waiting,
+or can this move forward?** Four primary choices: Still waiting (keep), Now
+(I can work on this now), Next (It is ready; I will tackle it next), and Later
+(I am putting this aside). Keeping advances the review without touching the
+entry date, reminder or edit timestamp. Age is shown neutrally as Waiting
+since today / Waiting for 1 day / Waiting for N days.
+
+**Edit / set reminder** opens the existing editor, where a follow-up reminder
+can be set without moving the task; saving an edit alone does not advance the
+review. Complete and confirmed Delete stay secondary. Undo, live task reads,
+new-arrival handling and resume use the shared mechanics. Waiting saves its
+progress under waitingReviewSession.v1, independently of Inbox and Now.

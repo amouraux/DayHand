@@ -757,11 +757,11 @@ struct ContentView: View {
                         } header: {
                             VStack(alignment: .leading, spacing: 4) {
                                 SectionHeader(bucket: bucket, count: cards.count)
-                                if bucket == .inbox || bucket == .today {
+                                if bucket == .inbox || bucket == .today || bucket == .waiting {
                                     Button {
-                                        reviewingStack = bucket == .inbox ? .inbox : .now
+                                        reviewingStack = bucket == .inbox ? .inbox : (bucket == .waiting ? .waiting : .now)
                                     } label: {
-                                        Label(bucket == .inbox ? "Review Inbox" : "Review Now", systemImage: bucket.symbolName)
+                                        Label((bucket == .inbox ? ReviewStack.inbox : (bucket == .waiting ? .waiting : .now)).title, systemImage: bucket.symbolName)
                                             .font(.subheadline)
                                     }
                                     .buttonStyle(.borderless)

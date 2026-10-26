@@ -11,10 +11,50 @@ import SwiftUI
 /// fixed in place there is nothing to scroll to and nothing to get lost: each
 /// task is a glance and a tap.
 enum ReviewStack: String, Identifiable {
-    case inbox, now
+    case inbox, now, waiting
     var id: String { rawValue }
-    var bucket: Bucket { self == .inbox ? .inbox : .today }
-    var title: String { self == .inbox ? String(localized: "Review Inbox") : String(localized: "Review Now") }
+    var bucket: Bucket {
+        switch self {
+        case .inbox: return .inbox
+        case .now: return .today
+        case .waiting: return .waiting
+        }
+    }
+    var title: String {
+        switch self {
+        case .inbox: return String(localized: "Review Inbox")
+        case .now: return String(localized: "Review Now")
+        case .waiting: return String(localized: "Review Waiting")
+        }
+    }
+    var question: LocalizedStringKey {
+        switch self {
+        case .inbox: return "Where does this task belong?"
+        case .now: return "Am I still actively working on this?"
+        case .waiting: return "Am I still waiting, or can this move forward?"
+        }
+    }
+    var scopeNote: LocalizedStringKey {
+        switch self {
+        case .inbox: return "All Inbox tasks, including those outside your current filters."
+        case .now: return "All Now tasks, including those outside your current filters."
+        case .waiting: return "All Waiting tasks, including those outside your current filters."
+        }
+    }
+    var emptyTitle: LocalizedStringKey {
+        switch self {
+        case .inbox: return "Inbox is clear"
+        case .now: return "Nothing in Now"
+        case .waiting: return "Nothing in Waiting"
+        }
+    }
+    var restartTitle: LocalizedStringKey {
+        switch self {
+        case .inbox: return "Review remaining Inbox"
+        case .now: return "Review Now again"
+        case .waiting: return "Review Waiting again"
+        }
+    }
 }
 
 struct InboxReviewView: View {
@@ -25,15 +65,14 @@ struct NowReviewView: View {
     var body: some View { StackReviewView(stack: .now) }
 }
 
-/// Both helpers deliberately share the same layout and task controls.
+/// All helpers deliberately share the same layout and task controls.
 struct StackReviewView: View {
     let stack: ReviewStack
 
     init(stack: ReviewStack) {
         self.stack = stack
-        // Preserve existing Inbox sessions; Now has its own local progress.
-        _savedSession = AppStorage(wrappedValue: "", stack == .inbox
-            ? "inboxReviewSession.v1" : "nowReviewSession.v1")
+        // Preserve the existing keys and keep each helper's progress independent.
+        _savedSession = AppStorage(wrappedValue: "", "\(stack.rawValue)ReviewSession.v1")
     }
 
     @EnvironmentObject private var store: TodoStore
@@ -128,7 +167,11 @@ struct StackReviewView: View {
             SwiftUI.TimelineView(.periodic(from: .now, by: 60)) { context in
                 if let days = StackReviewSession.daysInStack(since: card.enteredStackAt, now: context.date) {
                     Group {
-                        if days == 0 {
+                        if stack == .waiting {
+                            if days == 0 { Text("Waiting since today") }
+                            else if days == 1 { Text("Waiting for 1 day") }
+                            else { Text("Waiting for \(days) days") }
+                        } else if days == 0 {
                             Text(stack == .inbox ? "Entered Inbox today" : "Entered Now today")
                         } else if days == 1 {
                             Text(stack == .inbox ? "In Inbox for 1 day" : "In Now for 1 day")
@@ -182,7 +225,7 @@ struct StackReviewView: View {
                 .background(Color.secondary.opacity(0.10), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
             }
 
-            Text(stack == .inbox ? "All Inbox tasks, including those outside your current filters." : "All Now tasks, including those outside your current filters.")
+            Text(stack.scopeNote)
                 .font(.footnote)
                 .foregroundStyle(.tertiary)
                 .padding(.top, 4)
@@ -200,7 +243,7 @@ struct StackReviewView: View {
 
     private func actions(_ card: TodoItem) -> some View {
         VStack(spacing: 10) {
-            Text(stack == .inbox ? "Where does this task belong?" : "Am I still actively working on this?")
+            Text(stack.question)
                 .font(.headline)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -210,6 +253,11 @@ struct StackReviewView: View {
                     destination(.tomorrow, explanation: "I intend to work on this next")
                     destination(.later, explanation: "This is for another time")
                     destination(.waiting, explanation: "I am waiting for someone or something")
+                } else if stack == .waiting {
+                    destination(.waiting, explanation: "I am waiting for someone or something")
+                    destination(.today, explanation: "I can work on this now")
+                    destination(.tomorrow, explanation: "It is ready; I will tackle it next")
+                    destination(.later, explanation: "I am putting this aside")
                 } else {
                     destination(.today, explanation: "Yes, still working on it")
                     destination(.tomorrow, explanation: "Not now, but it is next")
@@ -219,7 +267,7 @@ struct StackReviewView: View {
             }
 
             HStack(spacing: 8) {
-                secondary("Edit task", symbol: "pencil") { editing = card }
+                secondary(stack == .waiting ? "Edit / set reminder" : "Edit task", symbol: "pencil") { editing = card }
                 if stack == .inbox {
                     secondary("Keep in Inbox", symbol: "tray") { keep(card) }
                 }
@@ -244,7 +292,7 @@ struct StackReviewView: View {
         Button {
             guard let id = remaining.first?.id, let card = liveCard(id) else { return }
             if bucket == stack.bucket {
-                // Keeping Now is a decision, not a move: no date or reminder changes.
+                // Keeping a task is a decision, not a move: no date or reminder changes.
                 keep(card)
             } else {
                 store.move(card, to: bucket)
@@ -253,7 +301,7 @@ struct StackReviewView: View {
             VStack(spacing: 4) {
                 HStack(spacing: 6) {
                     Image(systemName: bucket.symbolName)
-                    Text(bucket == stack.bucket ? String(localized: "Keep in Now") : bucket.title).font(.headline)
+                    Text(bucket == stack.bucket ? (stack == .waiting ? String(localized: "Still waiting") : String(localized: "Keep in Now")) : bucket.title).font(.headline)
                 }
                 Text(explanation)
                     .font(.caption2)
@@ -294,13 +342,17 @@ struct StackReviewView: View {
             // action. Beside it in a stack, the message takes all the room there
             // is and leaves the button stranded at the bottom edge.
             ContentUnavailableView {
-                Label(stackCount == 0 ? (stack == .inbox ? "Inbox is clear" : "Nothing in Now") : "Review finished",
+                Label(stackCount == 0 ? stack.emptyTitle : "Review finished",
                       systemImage: stackCount == 0 ? stack.bucket.symbolName : "checkmark.circle")
             } description: {
                 if stack == .inbox {
                     Text(stackCount == 0
                         ? "New tasks will be here when you need them."
                         : "Tasks you kept in Inbox and any new arrivals are still there. Nothing moves unless you choose.")
+                } else if stack == .waiting {
+                    Text(stackCount == 0
+                        ? "Tasks waiting on someone or something will appear here."
+                        : "Tasks you are still waiting on remain in Waiting. New arrivals will be included in your next review.")
                 } else {
                     Text(stackCount == 0
                         ? "Tasks you choose to work on will appear here."
@@ -308,7 +360,7 @@ struct StackReviewView: View {
                 }
             } actions: {
                 if stackCount > 0 {
-                    Button(stack == .inbox ? "Review remaining Inbox" : "Review Now again") { start() }
+                    Button(stack.restartTitle) { start() }
                         .buttonStyle(.borderedProminent)
                 }
             }

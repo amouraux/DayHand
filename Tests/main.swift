@@ -2475,5 +2475,28 @@ do {
            "a fresh Now pass includes kept work and new arrivals")
 }
 
+// Waiting reviews keep follow-up edits in the current pass.
+do {
+    var waiting = TodoItem(title: "Reply", bucket: .waiting)
+    let inbox = TodoItem(title: "Inbox")
+    var review = StackReviewSession(cards: [inbox, waiting], bucket: .waiting)
+    expect(review.remaining(in: [inbox, waiting], bucket: .waiting).map(\.id) == [waiting.id],
+           "Waiting review includes only Waiting")
+    let entry = waiting.enteredStackAt
+    waiting.remindAt = Date(timeIntervalSince1970: 1_800_000_000)
+    let shown = review.remaining(in: [waiting], bucket: .waiting).first
+    expect(shown?.remindAt == waiting.remindAt && shown?.enteredStackAt == entry,
+           "follow-up edits stay in the review with their original waiting age")
+    var moved = waiting
+    moved.bucket = .today
+    expect(review.remaining(in: [moved], bucket: .waiting).isEmpty, "moving forward leaves Waiting review")
+    expect(review.remaining(in: [waiting], bucket: .waiting).count == 1, "Undo restores Waiting eligibility")
+    review.keepInStack(waiting.id)
+    let restored = try! JSONDecoder().decode(StackReviewSession.self, from: JSONEncoder().encode(review))
+    expect(restored.remaining(in: [waiting], bucket: .waiting).isEmpty, "Still waiting persists across resume")
+    expect(StackReviewSession(cards: [waiting], bucket: .waiting).remaining(in: [waiting], bucket: .waiting).count == 1,
+           "a fresh review includes tasks still waiting")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

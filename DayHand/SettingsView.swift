@@ -56,6 +56,15 @@ struct SettingsView: View {
                             Label("Review Now", systemImage: "sun.max")
                         }
                     }
+                    NavigationLink {
+                        StackReviewView(stack: .waiting).environmentObject(store)
+                    } label: {
+                        LabeledContent {
+                            Text("\(store.items.filter { $0.bucket == .waiting }.count)").monospacedDigit()
+                        } label: {
+                            Label("Review Waiting", systemImage: "pause.circle")
+                        }
+                    }
                 } header: {
                     Text("Review")
                 } footer: {
