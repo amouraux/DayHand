@@ -2075,14 +2075,14 @@ do {
     let first = TodoItem(title: "First")
     let second = TodoItem(title: "Second")
     let outside = TodoItem(title: "Already active", bucket: .today)
-    var review = InboxReviewSession(cards: [first, outside, second])
+    var review = StackReviewSession(cards: [first, outside, second])
     expect(review.remaining(in: [second, first, outside]).map(\.id) == [first.id, second.id],
            "review preserves its initial order and includes only Inbox")
-    review.keepInInbox(first.id)
+    review.keepInStack(first.id)
     expect(review.remaining(in: [first, second]).map(\.id) == [second.id],
            "keep leaves the task unchanged but advances this review")
     expect(first.bucket == .inbox, "keep is review state, not a task mutation")
-    let restored = try! JSONDecoder().decode(InboxReviewSession.self,
+    let restored = try! JSONDecoder().decode(StackReviewSession.self,
         from: JSONEncoder().encode(review))
     expect(restored == review, "closing and reopening preserves review position")
     var moved = second
@@ -2102,10 +2102,10 @@ do {
     edited.notes = "Current notes"
     expect(review.remaining(in: [first, edited]).first == edited,
            "review always presents live titles and Notes")
-    let restarted = InboxReviewSession(cards: [first, arrival])
+    let restarted = StackReviewSession(cards: [first, arrival])
     expect(restarted.remaining(in: [first, arrival]).count == 2,
            "new pass includes kept tasks and new arrivals")
-    expect(InboxReviewSession(cards: []).remaining(in: []).isEmpty, "empty Inbox is a valid review")
+    expect(StackReviewSession(cards: []).remaining(in: []).isEmpty, "empty Inbox is a valid review")
 }
 
 // MARK: — how long a task has been sitting in its stack
@@ -2438,14 +2438,106 @@ do {
     func date(_ day: Int, _ hour: Int) -> Date {
         calendar.date(from: DateComponents(year: 2026, month: 3, day: day, hour: hour))!
     }
-    expect(InboxReviewSession.daysInStack(since: date(28, 23), now: date(29, 1), calendar: calendar) == 1,
+    expect(StackReviewSession.daysInStack(since: date(28, 23), now: date(29, 1), calendar: calendar) == 1,
            "crossing midnight is one day even before 24 hours elapse")
-    expect(InboxReviewSession.daysInStack(since: date(28, 12), now: date(30, 12), calendar: calendar) == 2,
+    expect(StackReviewSession.daysInStack(since: date(28, 12), now: date(30, 12), calendar: calendar) == 2,
            "day count survives daylight-saving transition")
-    expect(InboxReviewSession.daysInStack(since: date(29, 1), now: date(29, 12), calendar: calendar) == 0,
+    expect(StackReviewSession.daysInStack(since: date(29, 1), now: date(29, 12), calendar: calendar) == 0,
            "same-day arrival is today")
-    expect(InboxReviewSession.daysInStack(since: date(30, 1), now: date(29, 12), calendar: calendar) == nil,
+    expect(StackReviewSession.daysInStack(since: date(30, 1), now: date(29, 12), calendar: calendar) == nil,
            "future entry dates never show negative ages")
+}
+
+// Now uses the same review mechanics with separate scope and progress.
+do {
+    let inbox = TodoItem(title: "Inbox")
+    var first = TodoItem(title: "Working", bucket: .today)
+    first.enteredStackAt = Date(timeIntervalSince1970: 1_700_000_000)
+    first.remindAt = Date(timeIntervalSince1970: 1_800_000_000)
+    let second = TodoItem(title: "Next to review", bucket: .today)
+    let original = first
+    var review = StackReviewSession(cards: [inbox, first, second], bucket: .today)
+    expect(review.remaining(in: [inbox, first, second], bucket: .today).map(\.id) == [first.id, second.id],
+           "Now review excludes Inbox and preserves its task order")
+    review.keepInStack(first.id)
+    expect(first == original, "keeping Now leaves entry date, reminder and edit timestamp unchanged")
+    expect(review.remaining(in: [first, second], bucket: .today).map(\.id) == [second.id],
+           "keeping Now advances without moving the task")
+    let restored = try! JSONDecoder().decode(StackReviewSession.self, from: JSONEncoder().encode(review))
+    expect(restored == review, "Now review resumes its kept choices")
+    var moved = second
+    moved.bucket = .waiting
+    expect(review.remaining(in: [first, moved], bucket: .today).isEmpty, "moving out of Now finishes the pass")
+    expect(review.remaining(in: [first, second], bucket: .today).count == 1, "Undo returns an eligible Now task")
+    let arrival = TodoItem(title: "New", bucket: .today)
+    expect(review.remaining(in: [first, moved, arrival], bucket: .today).isEmpty, "Now arrivals wait for another pass")
+    expect(StackReviewSession(cards: [first, arrival], bucket: .today).remaining(in: [first, arrival], bucket: .today).count == 2,
+           "a fresh Now pass includes kept work and new arrivals")
+}
+
+// Waiting reviews keep follow-up edits in the current pass.
+do {
+    var waiting = TodoItem(title: "Reply", bucket: .waiting)
+    let inbox = TodoItem(title: "Inbox")
+    var review = StackReviewSession(cards: [inbox, waiting], bucket: .waiting)
+    expect(review.remaining(in: [inbox, waiting], bucket: .waiting).map(\.id) == [waiting.id],
+           "Waiting review includes only Waiting")
+    let entry = waiting.enteredStackAt
+    waiting.remindAt = Date(timeIntervalSince1970: 1_800_000_000)
+    let shown = review.remaining(in: [waiting], bucket: .waiting).first
+    expect(shown?.remindAt == waiting.remindAt && shown?.enteredStackAt == entry,
+           "follow-up edits stay in the review with their original waiting age")
+    var moved = waiting
+    moved.bucket = .today
+    expect(review.remaining(in: [moved], bucket: .waiting).isEmpty, "moving forward leaves Waiting review")
+    expect(review.remaining(in: [waiting], bucket: .waiting).count == 1, "Undo restores Waiting eligibility")
+    review.keepInStack(waiting.id)
+    let restored = try! JSONDecoder().decode(StackReviewSession.self, from: JSONEncoder().encode(review))
+    expect(restored.remaining(in: [waiting], bucket: .waiting).isEmpty, "Still waiting persists across resume")
+    expect(StackReviewSession(cards: [waiting], bucket: .waiting).remaining(in: [waiting], bucket: .waiting).count == 1,
+           "a fresh review includes tasks still waiting")
+}
+
+// Combined review: Next first, no second decision after a cross-stack move.
+do {
+    let next = TodoItem(title: "Next", bucket: .tomorrow)
+    let later = TodoItem(title: "Later", bucket: .later)
+    let outside = TodoItem(title: "Outside", bucket: .today)
+    let buckets: [Bucket] = [.tomorrow, .later]
+    var review = StackReviewSession(cards: [later, outside, next], buckets: buckets)
+    expect(review.remaining(in: [later, next, outside], buckets: buckets).map(\.id) == [next.id, later.id],
+           "combined review always presents Next before Later")
+    var deferred = next
+    deferred.bucket = .later
+    expect(review.remaining(in: [deferred, later], buckets: buckets).map(\.id) == [later.id],
+           "Next moved to Later is not reviewed twice")
+    var promoted = later
+    promoted.bucket = .tomorrow
+    expect(review.remaining(in: [next, promoted], buckets: buckets).map(\.id) == [next.id],
+           "Later moved to Next is not reviewed twice")
+    let restored = try! JSONDecoder().decode(StackReviewSession.self, from: JSONEncoder().encode(review))
+    expect(restored.remaining(in: [deferred, later], buckets: buckets).map(\.id) == [later.id],
+           "resume preserves the original stack after a move")
+    expect(restored.remaining(in: [next, later], buckets: buckets).map(\.id) == [next.id, later.id],
+           "Undo restores eligibility and Next-first order")
+    let arrival = TodoItem(title: "Arrival", bucket: .tomorrow)
+    expect(review.remaining(in: [next, later, arrival], buckets: buckets).count == 2,
+           "new arrivals wait for another combined pass")
+    expect(review.remaining(in: [later], buckets: buckets).map(\.id) == [later.id],
+           "deleted tasks do not block transition to Later")
+    var completed = next
+    completed.bucket = .completed
+    expect(review.remaining(in: [completed, later], buckets: buckets).count == 1,
+           "completion advances combined review")
+    review.keepInStack(next.id)
+    review.keepInStack(later.id)
+    expect(review.remaining(in: [next, later], buckets: buckets).isEmpty, "keeping both finishes this pass")
+    expect(StackReviewSession(cards: [next, later], buckets: buckets).remaining(in: [next, later], buckets: buckets).count == 2,
+           "fresh pass includes kept work")
+    let oldJSON = "{\"taskIDs\":[\"\(next.id)\"],\"keptIDs\":[]}"
+    let legacy = try! JSONDecoder().decode(StackReviewSession.self, from: Data(oldJSON.utf8))
+    expect(legacy.remaining(in: [next], bucket: .tomorrow).count == 1,
+           "old single-stack session JSON still decodes without original buckets")
 }
 
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")

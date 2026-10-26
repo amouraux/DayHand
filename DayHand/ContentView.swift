@@ -8,7 +8,7 @@ struct ContentView: View {
     /// The card being edited in full, from a right swipe.
     @State private var editItem: TodoItem?
     @State private var isAdding = false
-    @State private var isReviewingInbox = false
+    @State private var reviewingStack: ReviewStack?
     @State private var isShowingSettings = false
     /// Narrows the list to the cards asking for attention, so they can be dealt
     /// with among their own stacks rather than in a sheet.
@@ -170,12 +170,12 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $isAdding) { addCardSheet }
-            .sheet(isPresented: $isReviewingInbox) {
+            .sheet(item: $reviewingStack) { stack in
                 NavigationStack {
-                    InboxReviewView().environmentObject(store)
+                    StackReviewView(stack: stack).environmentObject(store)
                         .toolbar {
                             ToolbarItem(placement: .confirmationAction) {
-                                Button("Done") { isReviewingInbox = false }
+                                Button("Done") { reviewingStack = nil }
                                     .keyboardShortcut(.cancelAction)
                             }
                         }
@@ -757,11 +757,11 @@ struct ContentView: View {
                         } header: {
                             VStack(alignment: .leading, spacing: 4) {
                                 SectionHeader(bucket: bucket, count: cards.count)
-                                if bucket == .inbox {
+                                if let helper = ReviewStack.forBucket(bucket) {
                                     Button {
-                                        isReviewingInbox = true
+                                        reviewingStack = helper
                                     } label: {
-                                        Label("Review Inbox", systemImage: "tray")
+                                        Label(helper.title, systemImage: bucket.symbolName)
                                             .font(.subheadline)
                                     }
                                     .buttonStyle(.borderless)

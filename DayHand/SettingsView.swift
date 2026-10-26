@@ -47,10 +47,37 @@ struct SettingsView: View {
                             Label("Review Inbox", systemImage: "tray")
                         }
                     }
+                    NavigationLink {
+                        NowReviewView().environmentObject(store)
+                    } label: {
+                        LabeledContent {
+                            Text("\(store.items.filter { $0.bucket == .today }.count)").monospacedDigit()
+                        } label: {
+                            Label("Review Now", systemImage: "sun.max")
+                        }
+                    }
+                    NavigationLink {
+                        StackReviewView(stack: .waiting).environmentObject(store)
+                    } label: {
+                        LabeledContent {
+                            Text("\(store.items.filter { $0.bucket == .waiting }.count)").monospacedDigit()
+                        } label: {
+                            Label("Review Waiting", systemImage: "pause.circle")
+                        }
+                    }
+                    NavigationLink {
+                        StackReviewView(stack: .nextLater).environmentObject(store)
+                    } label: {
+                        LabeledContent {
+                            Text("\(store.items.filter { $0.bucket == .tomorrow || $0.bucket == .later }.count)").monospacedDigit()
+                        } label: {
+                            Label("Review Next and Later", systemImage: "sunrise")
+                        }
+                    }
                 } header: {
                     Text("Review")
                 } footer: {
-                    Text("Decide where each Inbox task belongs, one at a time. You can stop and resume whenever you like.")
+                    Text("Review your tasks one at a time. You can stop and resume whenever you like.")
                 }
 
                 Section {

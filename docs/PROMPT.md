@@ -2110,3 +2110,61 @@ while the helper stays open; hide future dates rather than show negative ages.
 No warning colour or automatic movement. The existing migration uses creation
 date for older tasks without an entry date; the helper uses that same value,
 which the user can correct in the existing task editor.
+
+## Now review helper
+
+**Review Now** is available at the Now heading and in More → Review. It shares
+the Inbox helper's exact layout implementation: scrolling details (reset for
+each task), visible Notes, stack age, a bottom-pinned two-column decision grid,
+secondary actions and an Undo banner above the controls. Inbox behavior stays
+the same. Now asks **Am I still actively working on this?**:
+
+- **Keep in Now** — Yes, still working on it.
+- **Next** — Not now, but it is next.
+- **Later** — I am putting this aside.
+- **Waiting** — I am blocked or waiting.
+
+Keep advances only the local review, preserving `enteredStackAt`, reminders,
+`modifiedAt` and all task data. Edit, Complete and Delete remain secondary;
+Delete still confirms. No separate Skip button. Users can close and resume.
+Now and Inbox have separate local session keys, preserving existing saved
+Inbox progress. Both use the same ID snapshot model; live edits, deletion,
+Undo and new arrivals follow the same rules. Now reviews all Now tasks,
+regardless of main-list filters, and shows its neutral time-in-Now label.
+At the end, kept work remains in Now; reviewing again starts a new pass.
+
+## Waiting review helper
+
+**Review Waiting** appears at the Waiting heading and in More → Review. It
+uses the same shared layout as Inbox and Now, asking **Am I still waiting,
+or can this move forward?** Four primary choices: Still waiting (keep), Now
+(I can work on this now), Next (It is ready; I will tackle it next), and Later
+(I am putting this aside). Keeping advances the review without touching the
+entry date, reminder or edit timestamp. Age is shown neutrally as Waiting
+since today / Waiting for 1 day / Waiting for N days.
+
+**Edit / set reminder** opens the existing editor, where a follow-up reminder
+can be set without moving the task; saving an edit alone does not advance the
+review. Complete and confirmed Delete stay secondary. Undo, live task reads,
+new-arrival handling and resume use the shared mechanics. Waiting saves its
+progress under waitingReviewSession.v1, independently of Inbox and Now.
+
+## Combined Next and Later review
+
+**Review Next and Later** appears at both stack headings and in More → Review.
+It uses the shared helper layout and asks **Is this still relevant, and when
+do I want to work on it?** Next comes first, then Later, with an explicit
+heading indicating the current phase and a neutral age in the current stack.
+
+Four choices: Now (ready to work), Next (keep or promote), Later (defer or
+keep), and Waiting (blocked or waiting). Wording adapts to the current task.
+Edit, Complete and confirmed Delete stay secondary. Keeping advances the
+review without changing the task's entry date or any other task data.
+
+The combined snapshot records original stacks as well as IDs. Moving between
+Next and Later, including via the editor, completes that task's decision for
+this pass, so it never appears a second time in the destination stack. Undo
+restores eligibility when a task returns to its original stack. Missing and
+completed tasks are skipped, and new arrivals wait for another pass. Saved
+progress uses nextLaterReviewSession.v1. Older single-stack session JSON stays
+compatible. No review state enters the shared task document.
