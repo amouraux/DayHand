@@ -2076,6 +2076,31 @@ backup, reload,
 repeat import after editing/deleting a task, and the Mac layout. Do not launch
 the installed Mac app or use its real data to perform these checks.
 
+**The decision is pinned to the bottom; nothing about it scrolls.** The task and
+its details take the room that is left at the top, and the four moves — Now,
+Next, Later, Waiting — sit below as large colour-coded buttons in a two-by-two
+grid, each with its one-line explanation, with Edit, Keep in Inbox, Complete and
+Delete in a row beneath them. Only the details scroll, and only when Notes run
+long.
+
+This replaced a form-style list with the moves below the details. That put the
+only thing the screen is for under a scroll on every task — and the scroll
+position then survived the decision, so the *next* task opened with its title
+above the top edge: you would be pressing the buttons for a task you could not
+see. With the actions fixed in place there is nothing to scroll to and nothing
+to lose; each task is a glance and a tap.
+
+Details shown: the title, the age, the project and category, the reminder and
+deadline, and the Notes **in full rather than behind a disclosure** — they are
+often what decides it, and deciding is the purpose of being here.
+
+The undo bar sits **above** the buttons, in the layout, not over them, so a
+control never moves under a thumb when it appears. The finished state keeps its
+one action beside its message rather than at the screen's edge.
+
+A task's project is marked with the **paperclip**, as everywhere else in the
+app; the folder means a group.
+
 ### Inbox age in the review helper
 
 Below the task title, show a neutral secondary label: **Entered Inbox today**,
