@@ -2137,9 +2137,11 @@ At the end, kept work remains in Now; reviewing again starts a new pass.
 
 **Review Waiting** appears at the Waiting heading and in More → Review. It
 uses the same shared layout as Inbox and Now, asking **Am I still waiting,
-or can this move forward?** Four primary choices: Still waiting (keep), Now
-(I can work on this now), Next (It is ready; I will tackle it next), and Later
-(I am putting this aside). Keeping advances the review without touching the
+or can this move forward?** Four primary choices: Now (I can work on this
+now), Next (It is ready; I will tackle it next), Later (I am putting this
+aside), and Still waiting (keep). In every helper the four stacks sit in the
+same places — Now, Next, Later, Waiting — so a thumb learns them once; the
+stack the task is already in is the keep button. Keeping advances the review without touching the
 entry date, reminder or edit timestamp. Age is shown neutrally as Waiting
 since today / Waiting for 1 day / Waiting for N days.
 

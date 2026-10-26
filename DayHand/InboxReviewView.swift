@@ -1,15 +1,8 @@
 import SwiftUI
 
-/// One Inbox task at a time, and where it should go.
-///
-/// The layout is the point. The task and its details take whatever room is left
-/// at the top; **the decision is pinned to the bottom**, where a thumb already
-/// is. A form-style list put the four moves below the task's details, so every
-/// task meant scrolling to reach the only thing the screen is for — and the
-/// scroll position then survived the decision, opening the next task with its
-/// title out of sight above the buttons being pressed for it. With the actions
-/// fixed in place there is nothing to scroll to and nothing to get lost: each
-/// task is a glance and a tap.
+/// The four review helpers: which stack each walks through, and the words that
+/// differ between them. Next and Later share one pass, since they answer the
+/// same question — when do I want to work on this.
 enum ReviewStack: String, Identifiable {
     case inbox, now, waiting, nextLater
     var id: String { rawValue }
@@ -81,7 +74,19 @@ struct NowReviewView: View {
     var body: some View { StackReviewView(stack: .now) }
 }
 
-/// All helpers deliberately share the same layout and task controls.
+/// One task at a time from a stack, and where it should go.
+///
+/// The layout is the point. The task and its details take whatever room is left
+/// at the top; **the decision is pinned to the bottom**, where a thumb already
+/// is. A form-style list put the four moves below the task's details, so every
+/// task meant scrolling to reach the only thing the screen is for — and the
+/// scroll position then survived the decision, opening the next task with its
+/// title out of sight above the buttons being pressed for it. With the actions
+/// fixed in place there is nothing to scroll to and nothing to get lost: each
+/// task is a glance and a tap.
+///
+/// The four stacks are always in the same places (Now, Next, Later, Waiting) so
+/// a thumb learns them once; the one the task is already in becomes "keep".
 struct StackReviewView: View {
     let stack: ReviewStack
 
@@ -293,10 +298,10 @@ struct StackReviewView: View {
                         ? "This is still for another time" : "This can stay for another time")
                     destination(.waiting, explanation: "I am blocked or waiting")
                 } else if stack == .waiting {
-                    destination(.waiting, explanation: "I am waiting for someone or something")
                     destination(.today, explanation: "I can work on this now")
                     destination(.tomorrow, explanation: "It is ready; I will tackle it next")
                     destination(.later, explanation: "I am putting this aside")
+                    destination(.waiting, explanation: "I am waiting for someone or something")
                 } else {
                     destination(.today, explanation: "Yes, still working on it")
                     destination(.tomorrow, explanation: "Not now, but it is next")
