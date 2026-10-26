@@ -692,23 +692,41 @@ appear in the review; only the notification is lost.
 
 ## Looking back
 
-The bottom-left corner opens more than settings, so it is an **ellipsis, not a
-gear**, and the sheet is titled **More**. Its first section is **Review**: two
-rows, *This week* and *Last week*, each showing how many tasks were finished
-and opening a list of them grouped by the day they were finished, newest day
-first, and newest task within a day.
+The bottom-left corner opens **More**. **Completed → Timeline** shows the
+whole completion history, grouped by month and day. The main Completed stack
+also groups tasks by day; neither surface needs This week / Last week filters.
+Project **History** keeps the same timeline scoped to that project.
 
-This is the counterweight to a list that never nags. An app that cannot tell you
-anything is late needs somewhere that says what you got done, or it reads as an
-app that does not notice.
+## Inbox review helper
 
-Two weeks, and then **All time**: a third row that keeps going, grouped by
-month and then by the day inside it. The weeks answer "what did I get done";
-All time answers "how did this actually go", which is the same material read
-at a different distance. It is the same view a project's ⓘ opens under
-**History**, scoped to that project — which is the one people actually want,
-since "how did the paper go" is a question about a project and not about a
-fortnight.
+**Review Inbox** is available at the Inbox heading and in More's **Review**
+section. It reviews the entire Inbox, regardless of the main list's filters
+or search. It asks **Where does this task belong?**, showing one live task at a
+time, including its category, project, Notes, reminder and deadline.
+
+The choices are **Now** (I am working on this), **Next** (I intend to work on
+this next), **Later** (This is for another time), and **Waiting** (I am waiting
+for someone or something). These use the normal move operation: dates stay,
+and an outstanding reminder is answered. **Edit task** opens the existing
+editor for title, organisation, Notes and dates; Cancel changes nothing.
+Editing alone does not advance unless the task leaves Inbox.
+
+**Keep in Inbox** leaves the task unchanged and continues. **Complete** uses
+normal completion. **Delete** asks for confirmation. Normal Undo is available
+inside the helper; restoring a moved, completed or deleted task returns it to
+this review. Keeping a task never changes its edit timestamp or reminder.
+
+A pass snapshots Inbox task IDs in the usual Inbox order. Its IDs and kept
+choices are saved locally, so closing and reopening resumes the same pass,
+including after a relaunch. Tasks are always read live; remote edits appear,
+and removed tasks are skipped. New arrivals wait for the next pass. At the
+end, **Review remaining Inbox** starts a fresh pass including kept tasks and
+new arrivals. An empty Inbox says **Inbox is clear**; finishing a pass with
+kept tasks says **Review finished**, without claiming the Inbox is empty.
+This UI state does not enter the shared document or impose a review schedule.
+No paid restriction is added in this implementation.
+
+## Completion timeline
 
 **Each day carries a bar**, scaled to the busiest single day anywhere in that
 timeline — not the busiest in its own month, which would make a quiet month
@@ -729,14 +747,8 @@ event log in the document — new storage, dedupe-by-id on merge, and a file tha
 only ever grows — which is a different feature, not a bigger version of this
 one.
 
-Weeks start on whichever day the reader's calendar starts on: Monday across
-most of Europe, Sunday in the US. Take the boundary seriously — a task ticked
-off at 23:59 on Sunday belongs to the week that was ending, not the one
-beginning. A task that was un-completed has no timestamp and never happened.
-
-Days with nothing on them are left out rather than drawn empty, and a week with
-nothing at all shows one line of text instead of a row of blank days. The rows
-are a record, not tasks: no swipes, no checkbox to untick, no stack colour.
+Days with nothing on them are left out. The timeline is a record of
+completions, not an alternative task editor.
 
 ## Categories
 
@@ -1442,8 +1454,8 @@ whatever the filter has already chosen, and the empty state says so.
 
 ## More
 
-The sheet behind the ellipsis, in order: **Completed** (the weekly review
-above), **Categories**, **Convert Title Prefixes into Projects…** when there is
+The sheet behind the ellipsis, in order: **Review** (Inbox helper),
+**Completed** (timeline), **Categories**, **Convert Title Prefixes into Projects…** when there is
 something to convert, **New tasks** (the default category), **Language**,
 **Sync**, **CSV**, and **Backups**.
 
@@ -2063,3 +2075,13 @@ exclusions, the date-review opt-in, imported Notes, import, the
 backup, reload,
 repeat import after editing/deleting a task, and the Mac layout. Do not launch
 the installed Mac app or use its real data to perform these checks.
+
+### Inbox age in the review helper
+
+Below the task title, show a neutral secondary label: **Entered Inbox today**,
+**In Inbox for 1 day**, or **In Inbox for N days**, based on `enteredStackAt`.
+Count local calendar days, including across daylight-saving changes. Refresh
+while the helper stays open; hide future dates rather than show negative ages.
+No warning colour or automatic movement. The existing migration uses creation
+date for older tasks without an entry date; the helper uses that same value,
+which the user can correct in the existing task editor.

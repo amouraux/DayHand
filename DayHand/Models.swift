@@ -1198,10 +1198,8 @@ enum Review {
 /// The whole record of finished work, newest first, grouped by month and then
 /// by the day it was done.
 ///
-/// `Review` answers "what did I get done this week" over a fixed fortnight.
-/// This answers "how did this project actually go", which is the same material
-/// read at a different distance, so it reuses `Review.Day` rather than
-/// inventing a second shape for the same thing.
+/// Shared by the main Completed stack, project History and the full timeline.
+/// It reuses `Review.Day` so each surface agrees about day grouping.
 ///
 /// Only completions. A task carries the day it was created and the day it was
 /// finished; `modifiedAt` is overwritten on every edit and spent on resolving
@@ -1333,3 +1331,33 @@ enum Scheduler {
     }
 }
 
+// MARK: - Inbox review
+
+/// Only the local review's place is saved, never copies of tasks. Re-reading
+/// live tasks means a sync deletion cannot resurrect one, and Undo brings a
+/// moved task straight back into the review. New arrivals wait for the next pass.
+struct InboxReviewSession: Codable, Equatable {
+    static func daysInStack(since entered: Date, now: Date, calendar: Calendar = .current) -> Int? {
+        guard entered <= now else { return nil }
+        return calendar.dateComponents([.day], from: calendar.startOfDay(for: entered),
+                                       to: calendar.startOfDay(for: now)).day
+    }
+
+    let taskIDs: [UUID]
+    private(set) var keptIDs: Set<UUID> = []
+
+    init(cards: [TodoItem]) {
+        taskIDs = cards.filter { $0.bucket == .inbox }.map(\.id)
+    }
+
+    func remaining(in cards: [TodoItem]) -> [TodoItem] {
+        let inbox = Dictionary(cards.filter { $0.bucket == .inbox }.map { ($0.id, $0) },
+                               uniquingKeysWith: { first, _ in first })
+        return taskIDs.compactMap { keptIDs.contains($0) ? nil : inbox[$0] }
+    }
+
+    mutating func keepInInbox(_ id: UUID) {
+        guard taskIDs.contains(id) else { return }
+        keptIDs.insert(id)
+    }
+}

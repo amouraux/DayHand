@@ -2,12 +2,8 @@ import SwiftUI
 
 /// The whole record of finished work, newest first.
 ///
-/// `ReviewView` answers "what did I get done this week". This is the same
-/// material read at a different distance: "how did this actually go", over a
-/// project, or over everything. Months are sections, days are headings inside
-/// them, and each day carries a bar scaled to the busiest day anywhere in the
-/// list — which is what makes a run of work read as a shape rather than as a
-/// list of dates.
+/// Months are sections, days are headings inside them, and each day carries
+/// a bar scaled to the busiest day anywhere in the list.
 ///
 /// It takes its cards rather than reaching for the store's, so the caller
 /// decides the scope and there is no second idea of what "this project" means.

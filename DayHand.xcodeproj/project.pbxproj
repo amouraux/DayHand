@@ -19,7 +19,7 @@
 		D0000000000000000000000B /* ProjectEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000B /* ProjectEditor.swift */; };
 		D0000000000000000000001A /* FilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001A /* FilterView.swift */; };
 		D0000000000000000000001B /* ReminderScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001B /* ReminderScheduler.swift */; };
-		D0000000000000000000000E /* ReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000E /* ReviewView.swift */; };
+		D0000000000000000000000E /* InboxReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000E /* InboxReviewView.swift */; };
 		D0000000000000000000001C /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001C /* TimelineView.swift */; };
 		D0000000000000000000000C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000C /* PrivacyInfo.xcprivacy */; };
 		D0000000000000000000000D /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000D /* Localizable.xcstrings */; };
@@ -39,7 +39,7 @@
 		C00000000000000000000008 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C00000000000000000000009 /* Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync.swift; sourceTree = "<group>"; };
 		C0000000000000000000000A /* DayHand.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DayHand.entitlements; sourceTree = "<group>"; };
-		C0000000000000000000000E /* ReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewView.swift; sourceTree = "<group>"; };
+		C0000000000000000000000E /* InboxReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxReviewView.swift; sourceTree = "<group>"; };
 		C0000000000000000000001C /* TimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
 		C0000000000000000000000B /* ProjectEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectEditor.swift; sourceTree = "<group>"; };
 		C0000000000000000000001A /* FilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterView.swift; sourceTree = "<group>"; };
@@ -90,7 +90,7 @@
 				C0000000000000000000000B /* ProjectEditor.swift */,
 				C0000000000000000000001A /* FilterView.swift */,
 				C0000000000000000000001B /* ReminderScheduler.swift */,
-				C0000000000000000000000E /* ReviewView.swift */,
+				C0000000000000000000000E /* InboxReviewView.swift */,
 				C0000000000000000000001C /* TimelineView.swift */,
 				C00000000000000000000002 /* Models.swift */,
 				C00000000000000000000009 /* Sync.swift */,
@@ -212,7 +212,7 @@
 				D0000000000000000000000B /* ProjectEditor.swift in Sources */,
 				D0000000000000000000001A /* FilterView.swift in Sources */,
 				D0000000000000000000001B /* ReminderScheduler.swift in Sources */,
-				D0000000000000000000000E /* ReviewView.swift in Sources */,
+				D0000000000000000000000E /* InboxReviewView.swift in Sources */,
 				D0000000000000000000001C /* TimelineView.swift in Sources */,
 				D00000000000000000000001 /* DayHandApp.swift in Sources */,
 			);
