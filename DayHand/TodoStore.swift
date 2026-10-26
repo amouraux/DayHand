@@ -44,6 +44,7 @@ final class TodoStore: ObservableObject {
     private var deletedCategories: [String: Date] = [:]
     private var deletedProjects: [String: Date] = [:]
     private var importedReminderIDs: Set<String> = []
+    private var importedTodoistIDs: Set<String> = []
 
     init(storage: DocumentStorage = DocumentStorage()) {
         self.storage = storage
@@ -770,8 +771,8 @@ final class TodoStore: ObservableObject {
         update(item) { $0.notes = notes }
     }
 
-    func previewReminders(_ records: [ReminderImportRecord], options: ReminderImport.Options) throws -> ReminderImport.Plan {
-        try ReminderImport.plan(records: records, options: options, document: document)
+    func previewReminders(_ records: [TaskImportRecord], options: TaskImport.Options) throws -> TaskImport.Plan {
+        try TaskImport.plan(records: records, options: options, document: document)
     }
 
     func hasImportedReminder(_ id: String) -> Bool {
@@ -780,11 +781,30 @@ final class TodoStore: ObservableObject {
 
     /// A single write, after a backup, rather than one save per imported task.
     /// Neither path constructs or modifies an EventKit object.
-    func importReminders(_ records: [ReminderImportRecord], options: ReminderImport.Options) throws -> ReminderImport.Plan {
+    func importReminders(_ records: [TaskImportRecord], options: TaskImport.Options) throws -> TaskImport.Plan {
         let plan = try previewReminders(records, options: options)
+        return try commitImport(plan)
+    }
+
+    func hasImportedTodoistRow(_ id: String) -> Bool {
+        importedTodoistIDs.contains("todoist-csv:" + id)
+    }
+
+    func previewTodoist(_ files: [TodoistCSV.File], options: TaskImport.Options,
+                        includeUnparsedDates: Bool) throws -> TaskImport.Plan {
+        try TodoistCSV.plan(files: files, options: options, includeUnparsedDates: includeUnparsedDates,
+                            document: document)
+    }
+
+    func importTodoist(_ files: [TodoistCSV.File], options: TaskImport.Options,
+                       includeUnparsedDates: Bool) throws -> TaskImport.Plan {
+        try commitImport(previewTodoist(files, options: options, includeUnparsedDates: includeUnparsedDates))
+    }
+
+    private func commitImport(_ plan: TaskImport.Plan) throws -> TaskImport.Plan {
         guard plan.added > 0 else { return plan }
-        guard backUpNow() != nil else { throw ReminderImportFailure.backup }
-        guard storage.write(plan.document) else { throw ReminderImportFailure.save }
+        guard backUpNow() != nil else { throw TaskImportFailure.backup }
+        guard storage.write(plan.document) else { throw TaskImportFailure.save }
         apply(plan.document)
         lastSeenSyncDate = storage.syncFileModifiedAt()
         rescheduleNotifications()
@@ -1078,6 +1098,7 @@ final class TodoStore: ObservableObject {
         projects = document.projects
         deletedProjects = document.deletedProjects
         importedReminderIDs = document.importedReminderIDs
+        importedTodoistIDs = document.importedTodoistIDs
         defaultCategoryID = document.defaultCategoryID
         defaultCategoryChangedAt = document.defaultCategoryChangedAt
         // Never point at a category that is no longer there.
@@ -1098,6 +1119,7 @@ final class TodoStore: ObservableObject {
             defaultCategoryChangedAt: defaultCategoryChangedAt
         )
         result.importedReminderIDs = importedReminderIDs
+        result.importedTodoistIDs = importedTodoistIDs
         return result
     }
 

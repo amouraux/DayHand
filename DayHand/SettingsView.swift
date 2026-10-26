@@ -15,6 +15,7 @@ struct SettingsView: View {
     @State private var isExporting = false
     @State private var isImporting = false
     @State private var isImportingReminders = false
+    @State private var isImportingTodoist = false
     @State private var importReport: String?
     /// The report alert serves both CSV import and restoring a backup.
     @State private var reportTitle = "Import"
@@ -279,10 +280,15 @@ struct SettingsView: View {
                     } label: {
                         Label("Import from Apple Reminders…", systemImage: "checklist")
                     }
+                    Button {
+                        isImportingTodoist = true
+                    } label: {
+                        Label("Import from Todoist…", systemImage: "doc.text")
+                    }
                 } header: {
                     Text("Tasks")
                 } footer: {
-                    Text("CSV import can either add to what is here or replace it. Tasks are matched by id; categories and projects by name.")
+                    Text("DayHand CSV import can either add to what is here or replace it. Tasks are matched by id; categories and projects by name.")
                 }
 
                 Section {
@@ -386,6 +392,9 @@ struct SettingsView: View {
             .navigationTitle("More")
             .sheet(isPresented: $isImportingReminders) {
                 RemindersImportView().environmentObject(store)
+            }
+            .sheet(isPresented: $isImportingTodoist) {
+                TodoistImportView().environmentObject(store)
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

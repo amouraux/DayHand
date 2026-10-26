@@ -1,26 +1,27 @@
 import Foundation
 
-// MARK: - One-time Apple Reminders import (no EventKit dependency)
+// MARK: - One-time task imports (no platform dependencies)
 
-struct ReminderImportRecord: Identifiable, Equatable {
+struct TaskImportRecord: Identifiable, Equatable {
     var id: String
     var listID: String
     var title: String
     var notes = ""
     var dueDate: Date?
+    var deadlineDate: Date?
     var createdAt: Date?
     var isCompleted = false
     var completedAt: Date?
     var isRecurring = false
 }
 
-struct ReminderImportDestination: Equatable {
+struct TaskImportDestination: Equatable {
     var categoryID: UUID?
     var projectID: UUID?
     var newProjectName = ""
 }
 
-enum ReminderImportFailure: LocalizedError {
+enum TaskImportFailure: LocalizedError {
     case changedDestination, conflictingProject, backup, save
 
     var errorDescription: String? {
@@ -37,9 +38,13 @@ enum ReminderImportFailure: LocalizedError {
     }
 }
 
-enum ReminderImport {
+enum TaskImport {
+    enum Source {
+        case appleReminders, todoist
+        var prefix: String { self == .appleReminders ? "apple-reminders:" : "todoist-csv:" }
+    }
     struct Options {
-        var destinations: [String: ReminderImportDestination] = [:]
+        var destinations: [String: TaskImportDestination] = [:]
         var bucket: Bucket = .inbox
         var includeCompleted = false
         var importDates = true
@@ -56,10 +61,11 @@ enum ReminderImport {
 
     /// Recomputed against the live document on confirmation. Nothing in a
     /// preview can overwrite an edit made while its sheet was open.
-    static func plan(records: [ReminderImportRecord], options: Options,
+    static func plan(records: [TaskImportRecord], options: Options,
                      document: StoreDocument, now: Date = .stamp(),
-                     calendar: Calendar = .current) throws -> Plan {
+                     calendar: Calendar = .current, source: Source = .appleReminders) throws -> Plan {
         var result = Plan(document: document)
+        var history = source == .appleReminders ? document.importedReminderIDs : document.importedTodoistIDs
         var resolved: [String: (UUID?, UUID?)] = [:]
         for record in records {
             guard let destination = options.destinations[record.listID] else { continue }
@@ -68,8 +74,8 @@ enum ReminderImport {
                   !record.id.isEmpty,
                   !record.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             else { result.skipped += 1; continue }
-            let key = "apple-reminders:" + record.id
-            guard !result.document.importedReminderIDs.contains(key) else {
+            let key = source.prefix + record.id
+            guard !history.contains(key) else {
                 result.duplicates += 1
                 continue
             }
@@ -78,16 +84,16 @@ enum ReminderImport {
                 var projectID = destination.projectID
                 if let id = projectID {
                     guard let project = result.document.projects.first(where: { $0.id == id }),
-                          !project.isArchived else { throw ReminderImportFailure.changedDestination }
+                          !project.isArchived else { throw TaskImportFailure.changedDestination }
                     categoryID = project.categoryID
                 } else if !destination.newProjectName.isEmpty {
                     let name = Project.canonicalName(destination.newProjectName)
-                    guard !name.isEmpty else { throw ReminderImportFailure.changedDestination }
+                    guard !name.isEmpty else { throw TaskImportFailure.changedDestination }
                     if let project = result.document.projects.first(where: { $0.key == Project.key(for: name) }) {
                         // Two selected lists may intentionally share a *new*
                         // project. Existing projects require an explicit choice.
                         guard !document.projects.contains(where: { $0.id == project.id }),
-                              project.categoryID == categoryID else { throw ReminderImportFailure.conflictingProject }
+                              project.categoryID == categoryID else { throw TaskImportFailure.conflictingProject }
                         projectID = project.id
                     } else {
                         let project = Project(name: name, categoryID: categoryID, modifiedAt: now)
@@ -97,7 +103,7 @@ enum ReminderImport {
                     }
                 }
                 if let id = categoryID, !document.categories.contains(where: { $0.id == id }) {
-                    throw ReminderImportFailure.changedDestination
+                    throw TaskImportFailure.changedDestination
                 }
                 resolved[record.listID] = (categoryID, projectID)
             }
@@ -113,15 +119,20 @@ enum ReminderImport {
                 card.remindAt = at
                 if at <= now || record.isCompleted { card.reminderAnsweredAt = at }
             }
+            if options.importDates, let deadline = record.deadlineDate {
+                card.deadline = calendar.startOfDay(for: deadline)
+            }
             if record.isCompleted {
                 card.bucketBeforeCompletion = bucket
                 // An unknown completion date is not a completion today.
                 card.completedAt = record.completedAt
             }
             result.document.cards.append(card)
-            result.document.importedReminderIDs.insert(key)
+            history.insert(key)
             result.added += 1
         }
+        if source == .appleReminders { result.document.importedReminderIDs = history }
+        else { result.document.importedTodoistIDs = history }
         return result
     }
 
@@ -134,6 +145,175 @@ enum ReminderImport {
         source.timeZone = components.timeZone ?? calendar.timeZone
         components.calendar = source
         return source.date(from: components)
+    }
+}
+
+// MARK: - Todoist project CSV
+
+enum TodoistCSV {
+    enum Failure: LocalizedError {
+        case format, encoding, size
+        var errorDescription: String? {
+            switch self {
+            case .format: return String(localized: "This is not a valid Todoist project CSV. Export a project from Todoist and choose its CSV file.")
+            case .encoding: return String(localized: "The CSV file must use UTF-8 text encoding.")
+            case .size: return String(localized: "Choose CSV files smaller than 20 MB each.")
+            }
+        }
+    }
+
+    struct File: Identifiable {
+        var id: String
+        var name: String
+        var records: [TaskImportRecord]
+        var unparsedDateIDs: Set<String>
+        var ignoredRows: Int
+    }
+
+    static func plan(files: [File], options: TaskImport.Options, includeUnparsedDates: Bool,
+                     document: StoreDocument, now: Date = .stamp(),
+                     calendar: Calendar = .current) throws -> TaskImport.Plan {
+        var options = options
+        if !includeUnparsedDates {
+            for file in files { options.excludedIDs.formUnion(file.unparsedDateIDs) }
+        }
+        return try TaskImport.plan(records: files.flatMap(\.records), options: options,
+                                   document: document, now: now, calendar: calendar, source: .todoist)
+    }
+
+    /// Only absolute, unambiguous dates are interpreted. Relative and recurring
+    /// expressions cannot be safely anchored to the day the file was exported.
+    static func date(_ raw: String, timeZone: String = "", calendar: Calendar = .current) -> Date? {
+        let text = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return nil }
+        let zone: TimeZone
+        if timeZone.isEmpty { zone = calendar.timeZone }
+        else if let known = TimeZone(identifier: timeZone) { zone = known }
+        else { return nil }
+        let patterns = [
+            ("^\\d{4}-\\d{2}-\\d{2}$", "yyyy-MM-dd"),
+            ("^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}$", "yyyy-MM-dd HH:mm"),
+            ("^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$", "yyyy-MM-dd HH:mm:ss")
+        ]
+        for (pattern, format) in patterns where text.range(of: pattern, options: .regularExpression) != nil {
+            let formatter = DateFormatter()
+            formatter.locale = Locale(identifier: "en_US_POSIX")
+            formatter.calendar = Calendar(identifier: .gregorian)
+            formatter.timeZone = zone
+            formatter.dateFormat = format
+            formatter.isLenient = false
+            guard let date = formatter.date(from: text), formatter.string(from: date) == text else { return nil }
+            return date
+        }
+        if text.range(of: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[+-]\\d{2}:\\d{2})$",
+                      options: .regularExpression) != nil {
+            guard date(String(text.prefix(10)), calendar: calendar) != nil else { return nil }
+            let f = ISO8601DateFormatter()
+            f.formatOptions = text.contains(".") ? [.withInternetDateTime, .withFractionalSeconds] : [.withInternetDateTime]
+            return f.date(from: text)
+        }
+        return nil
+    }
+
+    static func parse(_ text: String, fileID: String, name: String,
+                      calendar: Calendar = .current) throws -> File {
+        let rows = try csvRows(text.hasPrefix("\u{FEFF}") ? String(text.dropFirst()) : text)
+        guard let header = rows.first else { throw Failure.format }
+        let names = header.map { $0.trimmingCharacters(in: .whitespacesAndNewlines).uppercased() }
+        guard Set(names).count == names.count, names.contains("TYPE"), names.contains("CONTENT") else { throw Failure.format }
+        let columns = Dictionary(uniqueKeysWithValues: names.enumerated().map { ($1, $0) })
+        var result = File(id: fileID, name: name, records: [], unparsedDateIDs: [], ignoredRows: 0)
+        var section = ""
+        var sectionDescription = ""
+        var ancestors: [(level: Int, title: String)] = []
+        var lastTask: Int?
+        for (offset, row) in rows.dropFirst().enumerated() {
+            if row.allSatisfy({ $0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }) { continue }
+            guard row.count <= names.count else { throw Failure.format }
+            func raw(_ key: String) -> String {
+                guard let index = columns[key], index < row.count else { return "" }
+                return row[index]
+            }
+            func field(_ key: String) -> String { raw(key).trimmingCharacters(in: .whitespacesAndNewlines) }
+            func metadata(excluding excluded: Set<String>) -> String {
+                names.filter { !excluded.contains($0) && !field($0).isEmpty }
+                    .map { $0 + ": " + raw($0) }.joined(separator: "\n")
+            }
+            switch field("TYPE") {
+            case "meta":
+                lastTask = nil
+            case "section":
+                section = raw("CONTENT"); sectionDescription = raw("DESCRIPTION")
+                ancestors = []; lastTask = nil
+            case "note":
+                guard let lastTask else { result.ignoredRows += 1; continue }
+                let comment = [raw("CONTENT"), raw("DESCRIPTION"), metadata(excluding: ["TYPE", "CONTENT", "DESCRIPTION"])]
+                    .filter { !$0.isEmpty }.joined(separator: "\n")
+                if !comment.isEmpty {
+                    result.records[lastTask].notes += "\n\n" + String(localized: "Comment") + ":\n" + comment
+                }
+            case "task":
+                lastTask = nil
+                let level = max(1, Int(field("INDENT")) ?? 1)
+                while let last = ancestors.last, last.level >= level { ancestors.removeLast() }
+                guard !field("CONTENT").isEmpty else { result.ignoredRows += 1; continue }
+                var details = [raw("DESCRIPTION"), String(localized: "Source file") + ": " + name]
+                if !section.isEmpty { details.append(String(localized: "Section") + ": " + section) }
+                if !sectionDescription.isEmpty { details.append(sectionDescription) }
+                if !ancestors.isEmpty { details.append(String(localized: "Parent task") + ": " + ancestors.map(\.title).joined(separator: " › ")) }
+                details.append(metadata(excluding: ["TYPE", "CONTENT", "DESCRIPTION"]))
+                let scheduled = date(field("DATE"), timeZone: field("TIMEZONE"), calendar: calendar)
+                // Deadlines are civil days, not instants in the task's time zone.
+                let deadline = date(field("DEADLINE"), calendar: calendar)
+                let id = fileID + ":" + String(offset + 2)
+                if (!field("DATE").isEmpty && scheduled == nil) || (!field("DEADLINE").isEmpty && deadline == nil) {
+                    result.unparsedDateIDs.insert(id)
+                }
+                result.records.append(TaskImportRecord(id: id, listID: fileID, title: raw("CONTENT"),
+                    notes: details.filter { !$0.isEmpty }.joined(separator: "\n\n"), dueDate: scheduled, deadlineDate: deadline))
+                ancestors.append((level, raw("CONTENT")))
+                lastTask = result.records.count - 1
+            default:
+                result.ignoredRows += 1
+                lastTask = nil; ancestors = []
+            }
+        }
+        return result
+    }
+
+    /// Strict quoting avoids silently rearranging a malformed export's tasks
+    /// or attaching comments to the wrong parent. Fields may span lines.
+    private static func csvRows(_ text: String) throws -> [[String]] {
+        var result: [[String]] = [], row: [String] = []
+        var field = "", quoted = false, closed = false
+        var chars = text.makeIterator()
+        var pending: Character?
+        func endField() { row.append(field); field = ""; closed = false }
+        func endRow() { endField(); result.append(row); row = [] }
+        while let char = pending ?? chars.next() {
+            pending = nil
+            if quoted {
+                if char == "\"" {
+                    if let next = chars.next() {
+                        if next == "\"" { field.append("\"") }
+                        else { quoted = false; closed = true; pending = next }
+                    } else { quoted = false; closed = true }
+                } else { field.append(char) }
+                continue
+            }
+            if closed && char != "," && char != "\n" && char != "\r" && char != "\r\n" { throw Failure.format }
+            switch char {
+            case "\"":
+                guard field.isEmpty else { throw Failure.format }
+                quoted = true
+            case ",": endField()
+            case "\n", "\r", "\r\n": endRow()
+            default: field.append(char)
+            }
+        }
+        guard !quoted else { throw Failure.format }
+        if closed || !field.isEmpty || !row.isEmpty { endRow() }
+        return result
     }
 }
 
@@ -283,6 +463,9 @@ struct StoreDocument: Codable, Equatable {
     /// so importing the same list again cannot resurrect it. These identifiers
     /// are device-local; importing on another device may produce duplicates.
     var importedReminderIDs: Set<String> = []
+    /// Exact CSV file identity plus row, since Todoist project CSVs have no
+    /// stable task ids. Edited or renamed exports may therefore duplicate tasks.
+    var importedTodoistIDs: Set<String> = []
     var categories: [CardCategory] = []
     var cards: [TodoItem] = []
     /// Card id (as a string, so the JSON stays readable) -> when it was deleted.
@@ -401,6 +584,7 @@ struct StoreDocument: Codable, Equatable {
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         importedReminderIDs = try c.decodeIfPresent(Set<String>.self, forKey: .importedReminderIDs) ?? []
+        importedTodoistIDs = try c.decodeIfPresent(Set<String>.self, forKey: .importedTodoistIDs) ?? []
         categories = try c.decodeIfPresent([CardCategory].self, forKey: .categories) ?? []
         cards = try c.decodeIfPresent([TodoItem].self, forKey: .cards) ?? []
         deletedCards = try c.decodeIfPresent([String: Date].self, forKey: .deletedCards) ?? [:]
@@ -423,6 +607,7 @@ extension StoreDocument {
     func merged(with other: StoreDocument) -> StoreDocument {
         var result = StoreDocument()
         result.importedReminderIDs = importedReminderIDs.union(other.importedReminderIDs)
+        result.importedTodoistIDs = importedTodoistIDs.union(other.importedTodoistIDs)
 
         result.deletedCards = StoreDocument.mergeTombstones(deletedCards, other.deletedCards)
         result.deletedCategories = StoreDocument.mergeTombstones(deletedCategories, other.deletedCategories)
@@ -596,11 +781,9 @@ extension StoreDocument {
 }
 
 extension StoreDocument {
-    /// A card whose only date is a deadline had that date written by a version
-    /// where a date meant one thing. It means the reminder now — the day to
-    /// pick the card up — so move it there rather than leaving it as a finish
-    /// line with no start, which is a date the app can do nothing with and the
-    /// editor no longer offers.
+    /// Only legacy cards need their lone date promoted. The version is marked
+    /// even when no promotion is needed, so clearing a modern reminder or
+    /// importing an explicit standalone deadline cannot trigger this again.
     ///
     /// Nine in the morning, because the old date carried no time. Derived, so
     /// nothing is stamped as edited: every device computes the same thing from
@@ -612,10 +795,12 @@ extension StoreDocument {
     /// nobody asked.
     func promotingOrphanDeadlines(now: Date = Date(),
                                   calendar: Calendar = .current) -> StoreDocument {
-        guard cards.contains(where: { $0.remindAt == nil && $0.deadline != nil }) else { return self }
+        guard cards.contains(where: { $0.dateSemanticsVersion == 0 }) else { return self }
 
         var result = self
         for index in result.cards.indices {
+            guard result.cards[index].dateSemanticsVersion == 0 else { continue }
+            result.cards[index].dateSemanticsVersion = 1
             guard result.cards[index].remindAt == nil,
                   let deadline = result.cards[index].deadline,
                   let at = calendar.date(bySettingHour: 9, minute: 0, second: 0,
@@ -1084,6 +1269,7 @@ enum CardCSV {
         guard !rows.isEmpty else { return ImportResult() }
 
         var columns = defaultColumns
+        let legacyDate = !rows[0].contains { $0.trimmingCharacters(in: .whitespaces).lowercased() == "deadline" }
         if let mapped = headerColumns(rows[0]) {
             columns = mapped
             rows.removeFirst()
@@ -1121,6 +1307,7 @@ enum CardCSV {
             }
 
             var card = TodoItem(title: cardTitle)
+            card.dateSemanticsVersion = legacyDate ? 0 : 1
             card.notes = field("notes")
             if let id = UUID(uuidString: field("id")) { card.id = id }
             if !projectName.isEmpty {
