@@ -507,8 +507,8 @@ from the list for want of a timestamp.
 ## How long a task has been sitting
 
 A task records **`enteredStackAt`**: when it arrived in the stack it is in now.
-Nothing is shown for it yet. It is stored because the question cannot be
-answered afterwards — a timestamp not written at the moment of the move is gone
+It is not shown on the card or in any list. It is stored because the question
+cannot be answered afterwards — a timestamp not written at the moment of the move is gone
 — and because the helpers worth building on a list that never nags are reviews
 of a stack that has stopped moving: what has been in the inbox a fortnight,
 what has sat in NOW all week, what went to LATER in July.
@@ -529,6 +529,39 @@ have every task in the list claim it had just arrived, on the first launch
 after this shipped. The CSV carries it as an `entered` column and falls
 back the same way, because tasks are matched by id on import — without it,
 exporting and re-importing would quietly reset every task to today.
+
+### Editing it
+
+The task editor has one row for it, under **Stack**: **In this stack since**, a
+date. It exists for the one case the app cannot know about — a task that has
+been sitting longer than it has been here, such as one brought in from another
+app — and it is the same draft as everything else in that sheet: nothing is
+written until **Done**, and **Cancel** discards it.
+
+Four rules, each there because the obvious version would be wrong:
+
+- **Choosing a stack is an arrival, so the date follows.** Move a task from
+  Later to Next in the same edit and the row reads today, not the day it reached
+  Later under the name of Next. Choosing the stack it started in puts the
+  original date back, since nothing has then moved.
+- **A date the user chose is written after the move**, which stamps its own
+  arrival as now, so the chosen one is the one that stands.
+- **Never later than now.** The picker greys out the future, and the store
+  clamps as well, because the picker keeps the time of day it was given and
+  choosing today could otherwise land a few hours ahead.
+- **Not shown for a completed task.** Its stack is locked, and the date it
+  entered Completed is when it was done, which is a different field.
+
+It may be **earlier than `created`**, and `created` is left alone. For an
+imported task the creation date can itself be wrong, and one picker silently
+rewriting a second field would be a surprise.
+
+**The importers set it from the source, not from the import.** The field
+defaults to the moment of import, which would have every task in a four-year-old
+backlog report that it had just arrived. An open task takes the date it was made
+in the other app, a finished one the date it was finished, and either falls back
+to when it was made — then, only when the source gives nothing, to the import. A
+bulk fix for tasks already imported is a CSV with an `entered` column.
 
 ## Reminders
 
@@ -1662,7 +1695,7 @@ sheets and floating buttons do not translate, so the layout would change.
 
 ## CSV import and export
 
-More offers **Export Tasks as CSV…** and **Import Tasks from CSV…** through
+More offers **Export as CSV…** and **Import from CSV…** through
 the system save and open panels.
 
 ### One file, three kinds of row

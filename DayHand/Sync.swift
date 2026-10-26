@@ -127,6 +127,14 @@ enum TaskImport {
                 // An unknown completion date is not a completion today.
                 card.completedAt = record.completedAt
             }
+            // When it arrived in the stack it sits in. The field defaults to the
+            // moment of import, which would have every task in a four-year-old
+            // backlog report that it had just arrived — and the helpers this
+            // field exists for would find nothing sitting still. The best bound
+            // a source gives is when the task was made, or, for one already
+            // done, when it was finished. Both are the same fallback the
+            // decoder and the CSV use for a value they do not have.
+            card.enteredStackAt = (record.isCompleted ? record.completedAt : nil) ?? card.createdAt
             result.document.cards.append(card)
             history.insert(key)
             result.added += 1

@@ -2365,5 +2365,32 @@ do {
            "a task naming an archived project revives it, as typing the name does")
 }
 
+// MARK: — an imported task has been sitting since it was made, not since the import
+do {
+    let now = Date(timeIntervalSince1970: 1_800_000_000)
+    let made = Date(timeIntervalSince1970: 1_700_000_000)
+    let finished = Date(timeIntervalSince1970: 1_750_000_000)
+    let doc = StoreDocument.empty
+    let options = TaskImport.Options(destinations: ["l": .init()])
+
+    func imported(_ record: TaskImportRecord) -> TodoItem {
+        try! TaskImport.plan(records: [record], options: { var o = options; o.includeCompleted = true; return o }(),
+                             document: doc, now: now).document.cards[0]
+    }
+
+    let open = imported(TaskImportRecord(id: "1", listID: "l", title: "open", createdAt: made))
+    expect(open.enteredStackAt == made, "an open task has been sitting since it was made, not since the import")
+
+    let noDate = imported(TaskImportRecord(id: "2", listID: "l", title: "undated"))
+    expect(noDate.enteredStackAt == now, "with no creation date the import is the best answer there is")
+
+    let done = imported(TaskImportRecord(id: "3", listID: "l", title: "done", createdAt: made,
+                                         isCompleted: true, completedAt: finished))
+    expect(done.enteredStackAt == finished, "a finished task entered Completed when it was finished")
+    let doneUnknown = imported(TaskImportRecord(id: "4", listID: "l", title: "done, when unknown",
+                                                createdAt: made, isCompleted: true))
+    expect(doneUnknown.enteredStackAt == made, "and when that is not known, falls back to when it was made")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

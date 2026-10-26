@@ -778,6 +778,13 @@ final class TodoStore: ObservableObject {
         update(item) { $0.notes = notes }
     }
 
+    /// Say when a task arrived in the stack it is in, for one that has been
+    /// sitting longer than the app knows. A real edit, so it is stamped and
+    /// syncs. Never later than now.
+    func setEnteredStackAt(_ item: TodoItem, to date: Date) {
+        update(item) { $0.enteredStackAt = min(date, .stamp()) }
+    }
+
     func previewReminders(_ records: [TaskImportRecord], options: TaskImport.Options) throws -> TaskImport.Plan {
         try TaskImport.plan(records: records, options: options, document: document)
     }

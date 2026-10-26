@@ -4713,42 +4713,42 @@
         }
       }
     },
-    "Export Tasks as CSV…": {
+    "Export as CSV…": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aufgaben als CSV exportieren…"
+            "value": "Als CSV exportieren…"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Exportar tareas a CSV…"
+            "value": "Exportar a CSV…"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Exporter les tâches en CSV…"
+            "value": "Exporter en CSV…"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Esporta le attività in CSV…"
+            "value": "Esporta in CSV…"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Taken exporteren als CSV…"
+            "value": "Exporteren als CSV…"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Exportar tarefas como CSV…"
+            "value": "Exportar como CSV…"
           }
         }
       }
@@ -5123,42 +5123,42 @@
         }
       }
     },
-    "Import Tasks from CSV…": {
+    "Import from CSV…": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aufgaben aus CSV importieren…"
+            "value": "Aus CSV importieren…"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Importar tareas desde CSV…"
+            "value": "Importar desde CSV…"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Importer des tâches depuis un CSV…"
+            "value": "Importer depuis un CSV…"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Importa attività da CSV…"
+            "value": "Importa da CSV…"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Taken importeren uit CSV…"
+            "value": "Importeren uit CSV…"
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Importar tarefas de CSV…"
+            "value": "Importar de CSV…"
           }
         }
       }
@@ -14268,48 +14268,42 @@
         }
       }
     },
-    "DayHand CSV import can either add to what is here or replace it. Tasks are matched by id; categories and projects by name.": {
+    "DayHand CSV import can either add to what is here or replace the tasks. Rows are matched by id, then by name, and only what the file says is changed.": {
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DayHand CSV import can either add to what is here or replace it. Tasks are matched by id; categories and projects by name."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "L’import CSV DayHand peut compléter ce qui est ici ou le remplacer. Les tâches sont reconnues par identifiant ; les catégories et les projets par nom."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DayHand-CSV-import kan bestaande taken aanvullen of vervangen. Taken worden herkend op id; categorieën en projecten op naam."
-          }
-        },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Der DayHand-CSV-Import kann vorhandene Aufgaben ergänzen oder ersetzen. Aufgaben werden per ID erkannt, Kategorien und Projekte per Name."
+            "value": "Der DayHand-CSV-Import kann ergänzen oder die Aufgaben ersetzen. Zeilen werden per ID, dann per Name erkannt, und nur das, was die Datei sagt, wird geändert."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "La importación CSV de DayHand puede añadir a lo que hay o reemplazarlo. Las tareas se reconocen por identificador; las categorías y los proyectos por nombre."
+            "value": "La importación CSV de DayHand puede añadir a lo que hay o reemplazar las tareas. Las filas se reconocen por identificador y luego por nombre, y solo se cambia lo que dice el archivo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’import CSV DayHand peut compléter ce qui est ici ou remplacer les tâches. Les lignes sont reconnues par identifiant, puis par nom, et seul ce que dit le fichier est modifié."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "L’importazione CSV di DayHand può aggiungere alle attività esistenti o sostituirle. Le attività vengono riconosciute per ID; categorie e progetti per nome."
+            "value": "L’importazione CSV di DayHand può aggiungere a ciò che c’è o sostituire le attività. Le righe vengono riconosciute per identificativo, poi per nome, e viene modificato solo ciò che dice il file."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand-CSV-import kan aanvullen of de taken vervangen. Rijen worden herkend op id, dan op naam, en alleen wat het bestand zegt wordt gewijzigd."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "A importação CSV do DayHand pode acrescentar ao que existe ou substituí-lo. As tarefas são reconhecidas por ID; categorias e projetos por nome."
+            "value": "A importação CSV do DayHand pode acrescentar ao que existe ou substituir as tarefas. As linhas são reconhecidas pelo ID e depois pelo nome, e só é alterado o que o ficheiro diz."
           }
         }
       }
@@ -14494,6 +14488,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Os CSV de projetos do Todoist excluem tarefas concluídas. Descrições, comentários e metadados exportados ficam nas Notas. As subtarefas tornam-se tarefas separadas; o contexto de secções e tarefas principais fica nas Notas. As etiquetas nos títulos permanecem como texto do título. Os anexos não são descarregados."
+          }
+        }
+      }
+    },
+    "In this stack since": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auf diesem Stapel seit"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En esta pila desde"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dans cette pile depuis"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In questa pila dal"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Op deze stapel sinds"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nesta pilha desde"
           }
         }
       }
