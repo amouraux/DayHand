@@ -1,8 +1,10 @@
 import SwiftUI
 
-/// The four review helpers: which stack each walks through, and the words that
+/// The review helpers: which stacks each walks through, and the words that
 /// differ between them. Next and Later share one pass, since they answer the
-/// same question — when do I want to work on this.
+/// same question — when do I want to work on this. `all` walks every open stack
+/// in one pass, so a task is decided once rather than once per helper; each
+/// task in it is asked the question of the stack it started in.
 enum ReviewStack: String, Identifiable {
     case inbox, now, waiting, nextLater, all
     var id: String { rawValue }
