@@ -2110,3 +2110,25 @@ while the helper stays open; hide future dates rather than show negative ages.
 No warning colour or automatic movement. The existing migration uses creation
 date for older tasks without an entry date; the helper uses that same value,
 which the user can correct in the existing task editor.
+
+## Now review helper
+
+**Review Now** is available at the Now heading and in More → Review. It shares
+the Inbox helper's exact layout implementation: scrolling details (reset for
+each task), visible Notes, stack age, a bottom-pinned two-column decision grid,
+secondary actions and an Undo banner above the controls. Inbox behavior stays
+the same. Now asks **Am I still actively working on this?**:
+
+- **Keep in Now** — Yes, still working on it.
+- **Next** — Not now, but it is next.
+- **Later** — I am putting this aside.
+- **Waiting** — I am blocked or waiting.
+
+Keep advances only the local review, preserving `enteredStackAt`, reminders,
+`modifiedAt` and all task data. Edit, Complete and Delete remain secondary;
+Delete still confirms. No separate Skip button. Users can close and resume.
+Now and Inbox have separate local session keys, preserving existing saved
+Inbox progress. Both use the same ID snapshot model; live edits, deletion,
+Undo and new arrivals follow the same rules. Now reviews all Now tasks,
+regardless of main-list filters, and shows its neutral time-in-Now label.
+At the end, kept work remains in Now; reviewing again starts a new pass.

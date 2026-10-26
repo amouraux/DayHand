@@ -10,16 +10,41 @@ import SwiftUI
 /// title out of sight above the buttons being pressed for it. With the actions
 /// fixed in place there is nothing to scroll to and nothing to get lost: each
 /// task is a glance and a tap.
+enum ReviewStack: String, Identifiable {
+    case inbox, now
+    var id: String { rawValue }
+    var bucket: Bucket { self == .inbox ? .inbox : .today }
+    var title: String { self == .inbox ? String(localized: "Review Inbox") : String(localized: "Review Now") }
+}
+
 struct InboxReviewView: View {
+    var body: some View { StackReviewView(stack: .inbox) }
+}
+
+struct NowReviewView: View {
+    var body: some View { StackReviewView(stack: .now) }
+}
+
+/// Both helpers deliberately share the same layout and task controls.
+struct StackReviewView: View {
+    let stack: ReviewStack
+
+    init(stack: ReviewStack) {
+        self.stack = stack
+        // Preserve existing Inbox sessions; Now has its own local progress.
+        _savedSession = AppStorage(wrappedValue: "", stack == .inbox
+            ? "inboxReviewSession.v1" : "nowReviewSession.v1")
+    }
+
     @EnvironmentObject private var store: TodoStore
     // Device-local UI state: this must never compete with task edits in sync.
-    @AppStorage("inboxReviewSession.v1") private var savedSession = ""
-    @State private var session: InboxReviewSession?
+    @AppStorage private var savedSession: String
+    @State private var session: StackReviewSession?
     @State private var editing: TodoItem?
     @State private var deleting: TodoItem?
 
-    private var remaining: [TodoItem] { session?.remaining(in: store.items) ?? [] }
-    private var inboxCount: Int { store.items.filter { $0.bucket == .inbox }.count }
+    private var remaining: [TodoItem] { session?.remaining(in: store.items, bucket: stack.bucket) ?? [] }
+    private var stackCount: Int { store.items.filter { $0.bucket == stack.bucket }.count }
 
     /// Wide enough to read, not so wide that a Mac window stretches a handful
     /// of buttons across the whole screen.
@@ -38,12 +63,12 @@ struct InboxReviewView: View {
                 finished
             }
         }
-        .navigationTitle("Review Inbox")
+        .navigationTitle(stack.title)
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             guard session == nil else { return }
             if let data = savedSession.data(using: .utf8),
-               let restored = try? JSONDecoder().decode(InboxReviewSession.self, from: data) {
+               let restored = try? JSONDecoder().decode(StackReviewSession.self, from: data) {
                 session = restored
             } else {
                 start()
@@ -56,7 +81,7 @@ struct InboxReviewView: View {
             get: { deleting != nil }, set: { if !$0 { deleting = nil } }
         ), presenting: deleting) { card in
             Button("Delete", role: .destructive) {
-                if let live = liveInboxCard(card.id) { store.delete(live) }
+                if let live = liveCard(card.id) { store.delete(live) }
                 deleting = nil
             }
             Button("Cancel", role: .cancel) { deleting = nil }
@@ -101,14 +126,15 @@ struct InboxReviewView: View {
                 .textSelection(.enabled)
 
             SwiftUI.TimelineView(.periodic(from: .now, by: 60)) { context in
-                if let days = InboxReviewSession.daysInStack(since: card.enteredStackAt, now: context.date) {
+                if let days = StackReviewSession.daysInStack(since: card.enteredStackAt, now: context.date) {
                     Group {
                         if days == 0 {
-                            Text("Entered Inbox today")
+                            Text(stack == .inbox ? "Entered Inbox today" : "Entered Now today")
                         } else if days == 1 {
-                            Text("In Inbox for 1 day")
+                            Text(stack == .inbox ? "In Inbox for 1 day" : "In Now for 1 day")
                         } else {
-                            Text("In Inbox for \(days) days")
+                            if stack == .inbox { Text("In Inbox for \(days) days") }
+                            else { Text("In Now for \(days) days") }
                         }
                     }
                     .font(.subheadline)
@@ -156,7 +182,7 @@ struct InboxReviewView: View {
                 .background(Color.secondary.opacity(0.10), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
             }
 
-            Text("All Inbox tasks, including those outside your current filters.")
+            Text(stack == .inbox ? "All Inbox tasks, including those outside your current filters." : "All Now tasks, including those outside your current filters.")
                 .font(.footnote)
                 .foregroundStyle(.tertiary)
                 .padding(.top, 4)
@@ -174,25 +200,31 @@ struct InboxReviewView: View {
 
     private func actions(_ card: TodoItem) -> some View {
         VStack(spacing: 10) {
-            Text("Where does this task belong?")
+            Text(stack == .inbox ? "Where does this task belong?" : "Am I still actively working on this?")
                 .font(.headline)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible())], spacing: 10) {
-                destination(.today, explanation: "I am working on this")
-                destination(.tomorrow, explanation: "I intend to work on this next")
-                destination(.later, explanation: "This is for another time")
-                destination(.waiting, explanation: "I am waiting for someone or something")
+                if stack == .inbox {
+                    destination(.today, explanation: "I am working on this")
+                    destination(.tomorrow, explanation: "I intend to work on this next")
+                    destination(.later, explanation: "This is for another time")
+                    destination(.waiting, explanation: "I am waiting for someone or something")
+                } else {
+                    destination(.today, explanation: "Yes, still working on it")
+                    destination(.tomorrow, explanation: "Not now, but it is next")
+                    destination(.later, explanation: "I am putting this aside")
+                    destination(.waiting, explanation: "I am blocked or waiting")
+                }
             }
 
             HStack(spacing: 8) {
                 secondary("Edit task", symbol: "pencil") { editing = card }
-                secondary("Keep in Inbox", symbol: "tray") {
-                    session?.keepInInbox(card.id)
-                    persist()
+                if stack == .inbox {
+                    secondary("Keep in Inbox", symbol: "tray") { keep(card) }
                 }
                 secondary("Complete", symbol: "checkmark.circle") {
-                    if let live = liveInboxCard(card.id) { store.complete(live) }
+                    if let live = liveCard(card.id) { store.complete(live) }
                 }
                 secondary("Delete", symbol: "trash", role: .destructive) { deleting = card }
             }
@@ -210,13 +242,18 @@ struct InboxReviewView: View {
     /// answered.
     private func destination(_ bucket: Bucket, explanation: LocalizedStringKey) -> some View {
         Button {
-            guard let id = remaining.first?.id, let card = liveInboxCard(id) else { return }
-            store.move(card, to: bucket)
+            guard let id = remaining.first?.id, let card = liveCard(id) else { return }
+            if bucket == stack.bucket {
+                // Keeping Now is a decision, not a move: no date or reminder changes.
+                keep(card)
+            } else {
+                store.move(card, to: bucket)
+            }
         } label: {
             VStack(spacing: 4) {
                 HStack(spacing: 6) {
                     Image(systemName: bucket.symbolName)
-                    Text(bucket.title).font(.headline)
+                    Text(bucket == stack.bucket ? String(localized: "Keep in Now") : bucket.title).font(.headline)
                 }
                 Text(explanation)
                     .font(.caption2)
@@ -257,15 +294,21 @@ struct InboxReviewView: View {
             // action. Beside it in a stack, the message takes all the room there
             // is and leaves the button stranded at the bottom edge.
             ContentUnavailableView {
-                Label(inboxCount == 0 ? "Inbox is clear" : "Review finished",
-                      systemImage: inboxCount == 0 ? "tray" : "checkmark.circle")
+                Label(stackCount == 0 ? (stack == .inbox ? "Inbox is clear" : "Nothing in Now") : "Review finished",
+                      systemImage: stackCount == 0 ? stack.bucket.symbolName : "checkmark.circle")
             } description: {
-                Text(inboxCount == 0
-                    ? "New tasks will be here when you need them."
-                    : "Tasks you kept in Inbox and any new arrivals are still there. Nothing moves unless you choose.")
+                if stack == .inbox {
+                    Text(stackCount == 0
+                        ? "New tasks will be here when you need them."
+                        : "Tasks you kept in Inbox and any new arrivals are still there. Nothing moves unless you choose.")
+                } else {
+                    Text(stackCount == 0
+                        ? "Tasks you choose to work on will appear here."
+                        : "Tasks you are still working on remain in Now. New arrivals will be included in your next review.")
+                }
             } actions: {
-                if inboxCount > 0 {
-                    Button("Review remaining Inbox") { start() }
+                if stackCount > 0 {
+                    Button(stack == .inbox ? "Review remaining Inbox" : "Review Now again") { start() }
                         .buttonStyle(.borderedProminent)
                 }
             }
@@ -275,12 +318,17 @@ struct InboxReviewView: View {
 
     // MARK: - Session
 
-    private func liveInboxCard(_ id: UUID) -> TodoItem? {
-        store.items.first { $0.id == id && $0.bucket == .inbox }
+    private func liveCard(_ id: UUID) -> TodoItem? {
+        store.items.first { $0.id == id && $0.bucket == stack.bucket }
+    }
+
+    private func keep(_ card: TodoItem) {
+        session?.keepInStack(card.id)
+        persist()
     }
 
     private func start() {
-        session = InboxReviewSession(cards: store.items(in: .inbox))
+        session = StackReviewSession(cards: store.items(in: stack.bucket), bucket: stack.bucket)
         persist()
     }
 

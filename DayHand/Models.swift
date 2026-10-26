@@ -1336,7 +1336,7 @@ enum Scheduler {
 /// Only the local review's place is saved, never copies of tasks. Re-reading
 /// live tasks means a sync deletion cannot resurrect one, and Undo brings a
 /// moved task straight back into the review. New arrivals wait for the next pass.
-struct InboxReviewSession: Codable, Equatable {
+struct StackReviewSession: Codable, Equatable {
     static func daysInStack(since entered: Date, now: Date, calendar: Calendar = .current) -> Int? {
         guard entered <= now else { return nil }
         return calendar.dateComponents([.day], from: calendar.startOfDay(for: entered),
@@ -1346,17 +1346,17 @@ struct InboxReviewSession: Codable, Equatable {
     let taskIDs: [UUID]
     private(set) var keptIDs: Set<UUID> = []
 
-    init(cards: [TodoItem]) {
-        taskIDs = cards.filter { $0.bucket == .inbox }.map(\.id)
+    init(cards: [TodoItem], bucket: Bucket = .inbox) {
+        taskIDs = cards.filter { $0.bucket == bucket }.map(\.id)
     }
 
-    func remaining(in cards: [TodoItem]) -> [TodoItem] {
-        let inbox = Dictionary(cards.filter { $0.bucket == .inbox }.map { ($0.id, $0) },
+    func remaining(in cards: [TodoItem], bucket: Bucket = .inbox) -> [TodoItem] {
+        let inbox = Dictionary(cards.filter { $0.bucket == bucket }.map { ($0.id, $0) },
                                uniquingKeysWith: { first, _ in first })
         return taskIDs.compactMap { keptIDs.contains($0) ? nil : inbox[$0] }
     }
 
-    mutating func keepInInbox(_ id: UUID) {
+    mutating func keepInStack(_ id: UUID) {
         guard taskIDs.contains(id) else { return }
         keptIDs.insert(id)
     }
