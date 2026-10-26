@@ -177,7 +177,7 @@ do {
     let p = Project(name: "ABC1234", categoryID: cat.id)
     var card = TodoItem(title: "slides, part 2", categoryID: cat.id); card.projectID = p.id
     let text = CardCSV.export(cards: [card], categories: [cat], projects: [p])
-    expect(text.hasPrefix("id,title,stack,category,deadline,completed,created,project,group,remind\n"),
+    expect(text.hasPrefix("id,title,stack,category,deadline,completed,created,project,group,remind,notes\n"),
            "the deadline keeps the old date column's place; new ones go last")
     let back = CardCSV.parse(text, categories: [cat])
     expect(back.cards.first?.title == "slides, part 2", "title round-trips")
@@ -249,7 +249,7 @@ do {
     let text = CardCSV.export(cards: [c1, c2, c3], categories: [cat], projects: [grant, loose])
     let lines = text.split(separator: "\n").map(String.init)
     // Every new column goes last, so an older export still reads by position.
-    expect(lines[0].hasSuffix(",project,group,remind"),
+    expect(lines[0].hasSuffix(",project,group,remind,notes"),
            "the newest columns are the last ones — got \(lines[0])")
     expect(lines[1].contains(",BETA,Grants,"), "a grouped project's cards carry its group")
     expect(lines[2].contains(",DELTA,,"), "no group: empty column")
@@ -1809,6 +1809,127 @@ do {
     expect(revivedProject.deletedProjects[project.id.uuidString] == nil, "and loses its tombstone")
     expect(revivedProject.projects[0].modifiedAt > now,
            "stamped past the tombstone, for the same reason a task is")
+}
+
+// MARK: One-time Reminders import — a pure plan, without opening app data
+do {
+    var cal = Calendar(identifier: .gregorian)
+    cal.timeZone = TimeZone(identifier: "Europe/Brussels")!
+    let now = cal.date(from: DateComponents(year: 2026, month: 10, day: 25, hour: 12))!
+    let due = cal.date(from: DateComponents(year: 2026, month: 10, day: 26))!
+    let original = TodoItem(title: "Already here")
+    let category = CardCategory(label: "Home", symbolName: "house", color: .teal)
+    let existing = Project(name: "HOUSE", categoryID: category.id)
+    let doc = StoreDocument(categories: [category], cards: [original], projects: [existing])
+    let record = ReminderImportRecord(id: "r1", listID: "l1", title: "#Keep title literally",
+                                     notes: "  Notes, with a \"quote\"\nand a second line.  ",
+                                     dueDate: due, createdAt: now.addingTimeInterval(-86400))
+    var options = ReminderImport.Options(destinations: ["l1": .init(projectID: existing.id)])
+    let plan = try! ReminderImport.plan(records: [record], options: options, document: doc, now: now, calendar: cal)
+    let card = plan.document.cards.last!
+    expect(plan.added == 1 && plan.document.cards.count == 2, "import adds without replacing existing tasks")
+    expect(plan.document.cards.first == original && doc.cards == [original], "planning does not edit existing tasks or its input")
+    expect(card.title == record.title && card.notes == record.notes, "source titles and multiline notes are preserved literally")
+    expect(card.projectID == existing.id && card.categoryID == category.id, "an explicit project brings its category")
+    expect(card.bucket == .inbox, "import defaults to Inbox")
+    expect(card.remindAt == Scheduler.reminderTime(on: due, calendar: cal) && card.deadline == nil,
+           "due dates map to a 9am reminder, never a deadline or automatic stack move")
+    expect(card.reminderAnsweredAt == nil, "a future reminder remains unanswered")
+    expect(card.createdAt == record.createdAt && card.modifiedAt == now, "creation is preserved while import is a new edit")
+    expect(plan.document.importedReminderIDs.contains("apple-reminders:r1"), "the successful import records its source identifier")
+    let again = try! ReminderImport.plan(records: [record, record], options: options, document: plan.document, now: now, calendar: cal)
+    expect(again.added == 0 && again.duplicates == 2, "reimport skips already imported identifiers")
+    var deleted = plan.document
+    deleted.cards.removeLast()
+    deleted.deletedCards[card.id.uuidString] = now
+    let afterDelete = try! ReminderImport.plan(records: [record], options: options, document: deleted, now: now)
+    expect(afterDelete.added == 0 && afterDelete.document.cards == [original], "reimport does not resurrect a deleted imported task")
+    let twice = try! ReminderImport.plan(records: [record, record], options: options, document: doc, now: now)
+    expect(twice.added == 1 && twice.duplicates == 1, "duplicate identifiers within a batch only import once")
+    var sameTitle = record; sameTitle.id = "r2"
+    let separate = try! ReminderImport.plan(records: [record, sameTitle], options: options, document: doc, now: now)
+    expect(separate.added == 2, "equal titles with different source identifiers remain separate tasks")
+    let unselected = try! ReminderImport.plan(records: [record], options: .init(), document: doc, now: now)
+    expect(unselected.document == doc && unselected.added == 0, "an unselected list changes nothing")
+    options.excludedIDs.insert(record.id)
+    let excluded = try! ReminderImport.plan(records: [record], options: options, document: doc, now: now)
+    expect(excluded.added == 0 && excluded.skipped == 1 && excluded.document == doc, "excluded records leave no import marker or empty project")
+    options.excludedIDs = []
+    var recurring = record; recurring.isRecurring = true
+    let recurrence = try! ReminderImport.plan(records: [recurring], options: options, document: doc, now: now)
+    expect(recurrence.added == 0 && recurrence.skipped == 1, "recurring reminders are not silently converted to one-off tasks")
+    var completed = record; completed.isCompleted = true
+    let finishedOff = try! ReminderImport.plan(records: [completed], options: options, document: doc, now: now)
+    expect(finishedOff.added == 0, "completed tasks require an explicit opt-in")
+    options.includeCompleted = true
+    options.bucket = .waiting
+    let finished = try! ReminderImport.plan(records: [completed], options: options, document: doc, now: now)
+    expect(finished.document.cards.last?.bucket == .completed && finished.document.cards.last?.completedAt == nil,
+           "an unknown completion time is not fabricated")
+    expect(finished.document.cards.last?.bucketBeforeCompletion == .waiting, "reopening imported completed tasks restores the chosen stack")
+    completed.completedAt = now.addingTimeInterval(-3600)
+    let datedFinished = try! ReminderImport.plan(records: [completed], options: options, document: doc, now: now)
+    expect(datedFinished.document.cards.last?.completedAt == completed.completedAt, "a known completion date survives")
+    options.importDates = false
+    let noDates = try! ReminderImport.plan(records: [record], options: options, document: doc, now: now)
+    expect(noDates.document.cards.last?.remindAt == nil && noDates.document.cards.last?.notes == record.notes,
+           "dates can stay only in notes")
+    options.importDates = true
+    var past = record; past.dueDate = now.addingTimeInterval(-86400)
+    let pastPlan = try! ReminderImport.plan(records: [past], options: options, document: doc, now: now)
+    expect(pastPlan.document.cards.last?.reminderAnsweredAt == pastPlan.document.cards.last?.remindAt,
+           "past imported reminders arrive answered instead of generating a notification backlog")
+    var blank = record; blank.title = " \n "
+    let blankPlan = try! ReminderImport.plan(records: [blank], options: options, document: doc, now: now)
+    expect(blankPlan.added == 0 && blankPlan.skipped == 1, "empty titles are reported and skipped")
+    options.destinations = ["l1": .init(categoryID: category.id, newProjectName: "Garden work")]
+    let newProject = try! ReminderImport.plan(records: [record], options: options, document: doc, now: now)
+    expect(newProject.projectsCreated == 1 && newProject.document.projects.last?.name == "GARDENWORK",
+           "new projects use DayHand's canonical names")
+    expect(newProject.document.projects.last?.modifiedAt == now && newProject.document.cards.last?.categoryID == category.id,
+           "a new project's category and edit stamp are explicit")
+    var otherList = sameTitle; otherList.listID = "l2"
+    options.destinations["l2"] = options.destinations["l1"]
+    let shared = try! ReminderImport.plan(records: [record, otherList], options: options, document: doc, now: now)
+    expect(shared.projectsCreated == 1 && shared.added == 2, "two lists can intentionally share a newly named project")
+    options.destinations = ["l1": .init(newProjectName: "house")]
+    do {
+        _ = try ReminderImport.plan(records: [record], options: options, document: doc, now: now)
+        expect(false, "a new-project name collision must be explicit")
+    } catch { expect(error is ReminderImportFailure, "name collision is reported without modifying an existing project") }
+    options.destinations = ["l1": .init(projectID: UUID())]
+    do {
+        _ = try ReminderImport.plan(records: [record], options: options, document: doc, now: now)
+        expect(false, "a disappeared project cannot be imported into")
+    } catch { expect(error is ReminderImportFailure, "a stale destination is rejected") }
+    options.destinations = ["l1": .init(categoryID: UUID())]
+    do {
+        _ = try ReminderImport.plan(records: [record], options: options, document: doc, now: now)
+        expect(false, "a disappeared category cannot be imported into")
+    } catch { expect(error is ReminderImportFailure, "a stale category is rejected") }
+    let roundTrip = try! DocumentCoding.makeDecoder().decode(StoreDocument.self,
+        from: DocumentCoding.makeEncoder().encode(plan.document))
+    expect(roundTrip == plan.document, "import notes and identifiers survive document save/load")
+    let merged = deleted.merged(with: doc)
+    expect(merged.importedReminderIDs == deleted.importedReminderIDs, "sync with an older document retains import history")
+    var remote = doc; remote.importedReminderIDs.insert("apple-reminders:remote")
+    expect(deleted.merged(with: remote).importedReminderIDs == ["apple-reminders:r1", "apple-reminders:remote"],
+           "import history merges by union")
+    let old = try! DocumentCoding.makeDecoder().decode(StoreDocument.self, from: Data("{\"cards\":[{\"title\":\"old\"}]}".utf8))
+    expect(old.cards.first?.notes == "" && old.importedReminderIDs.isEmpty, "old documents decode without notes or import history")
+    let csv = CardCSV.export(cards: [card], categories: [category], projects: [existing])
+    expect(CardCSV.parse(csv, categories: [category]).cards.first?.notes == record.notes, "multiline quoted notes survive CSV export/import")
+    var losAngeles = Calendar(identifier: .gregorian)
+    losAngeles.timeZone = TimeZone(identifier: "America/Los_Angeles")!
+    let allDay = DateComponents(year: 2026, month: 10, day: 25)
+    let local = ReminderImport.date(from: allDay, calendar: losAngeles)!
+    expect(losAngeles.component(.day, from: local) == 25 && losAngeles.component(.hour, from: local) == 0,
+           "floating date-only reminders stay on the source day west of UTC")
+    let dstDay = ReminderImport.date(from: allDay, calendar: cal)!
+    expect(cal.component(.day, from: dstDay) == 25 && cal.component(.hour, from: Scheduler.reminderTime(on: dstDay, calendar: cal)) == 9,
+           "date-only reminders still become 9am on a daylight-saving transition")
+    expect(ReminderImport.date(from: nil) == nil && ReminderImport.date(from: DateComponents(hour: 9)) == nil,
+           "missing or partial dates stay absent")
 }
 
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")

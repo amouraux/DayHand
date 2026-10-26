@@ -23,6 +23,7 @@
 		D0000000000000000000001C /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001C /* TimelineView.swift */; };
 		D0000000000000000000000C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000C /* PrivacyInfo.xcprivacy */; };
 		D0000000000000000000000D /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000D /* Localizable.xcstrings */; };
+		D0000000000000000000001D /* RemindersImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001D /* RemindersImportView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +45,7 @@
 		C0000000000000000000001B /* ReminderScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderScheduler.swift; sourceTree = "<group>"; };
 		C0000000000000000000000C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		C0000000000000000000000D /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		C0000000000000000000001D /* RemindersImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersImportView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +83,7 @@
 				C00000000000000000000005 /* CardRow.swift */,
 				C00000000000000000000006 /* AddCardView.swift */,
 				C00000000000000000000008 /* SettingsView.swift */,
+				C0000000000000000000001D /* RemindersImportView.swift */,
 				C0000000000000000000000B /* ProjectEditor.swift */,
 				C0000000000000000000001A /* FilterView.swift */,
 				C0000000000000000000001B /* ReminderScheduler.swift */,
@@ -201,6 +204,7 @@
 				D00000000000000000000004 /* ContentView.swift in Sources */,
 				D00000000000000000000006 /* AddCardView.swift in Sources */,
 				D00000000000000000000008 /* SettingsView.swift in Sources */,
+				D0000000000000000000001D /* RemindersImportView.swift in Sources */,
 				D0000000000000000000000B /* ProjectEditor.swift in Sources */,
 				D0000000000000000000001A /* FilterView.swift in Sources */,
 				D0000000000000000000001B /* ReminderScheduler.swift in Sources */,

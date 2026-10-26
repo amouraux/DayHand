@@ -7,6 +7,9 @@
 	     and never sees this file. -->
 	<key>com.apple.security.app-sandbox</key>
 	<true/>
+	<!-- EventKit requires this entitlement for Reminders access on Mac. -->
+	<key>com.apple.security.personal-information.calendars</key>
+	<true/>
 
 	<!-- The sync file is one the user picks themselves, typically in iCloud
 	     Drive. Choosing it grants access; the bookmark keeps that access

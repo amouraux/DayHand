@@ -1752,3 +1752,61 @@ and clear their tombstones, or the very delete being undone will simply reapply
 from the other device. Tasks added since the backup are dropped locally but
 **not** tombstoned — they are not what the user asked to remove, so if the other
 device still has them they come back on the next sync.
+
+
+## One-time import from Apple Reminders
+
+More → Tasks → Import from Apple Reminders opens a copy-only importer on
+all three platforms. Nothing is requested on launch: the user first chooses
+“Choose lists”, and EventKit then requests full Reminders access (Apple has no
+read-only Reminders permission). DayHand never writes to EventKit and installs
+no continuous sync observer.
+
+The importer reads a snapshot of the device's ordinary Reminders lists. Each
+selected list can go to an existing category, an explicitly selected active
+project (which supplies its category), or a newly named project. No list is
+selected initially and no project is created until tasks are actually imported.
+New project names follow the existing uppercase, no-spaces rule; a collision
+with an existing project requires selecting that project explicitly.
+
+Unfinished tasks start in Inbox unless another stack is selected. Completed
+tasks require a separate opt-in, retain their known completion dates, and return
+to the selected stack if reopened. An unknown completion date stays unknown.
+Recurring reminders are skipped rather than silently becoming one-off tasks.
+Subtask relationships, tags, attachments and smart-list rules are not preserved.
+
+Due dates optionally become DayHand reminders at 9 a.m. on the corresponding
+local day. They never become deadlines or move tasks between stacks. Original
+due/start dates and times, notes, links, locations and priority values are kept
+in the task's Notes. Original alerts are not transferred. Past reminders arrive
+answered; their dates can still make them appear in Attention. Future reminders
+may notify in both apps because Apple Reminders is left unchanged. All these
+limits are shown before import.
+
+The preview shows individual task exclusions and counts of added, already
+imported, skipped and newly created projects. Import recomputes the plan against
+the current document, saves a manual backup, and writes the batch once. If the
+backup or local write fails it reports an error and does not apply the plan in
+memory. No import claims that an iCloud write has already reached other devices.
+
+`StoreDocument.importedReminderIDs` is a union-merged set of namespaced local
+EventKit identifiers. It survives deleting an imported task, so importing the
+same source again does not resurrect it or overwrite later DayHand edits. It
+only marks tasks actually imported. EventKit identifiers are device-local and
+may change after account resets or source reorganisation: importing from
+another device or after such changes can produce duplicates. There is no
+heuristic merging by task title.
+
+Tasks now carry an optional-on-disk `notes` string, defaulting to empty for
+older documents. It is editable in the task editor with Done/Cancel semantics,
+and round-trips through a new final `notes` CSV column. Existing CSV column
+positions and old JSON decoding remain compatible. Devices running older
+builds do not understand these new fields; update all devices before relying
+on Notes or import history across sync.
+
+Model tests cover mapping, idempotency, deletion history, new-project conflicts,
+completion, date-only/time-zone/DST handling, and JSON/CSV compatibility without
+constructing TodoStore or opening live app data. Simulator verification still
+needs permission denial/retry, list loading, all mapping choices, preview
+exclusion, import, reopen, repeat import, cancellation, and a sample recurring
+reminder. Use dummy data only; do not launch the Mac app against live data.

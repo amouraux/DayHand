@@ -14,6 +14,7 @@ struct SettingsView: View {
     @State private var pendingDeletion: CardCategory?
     @State private var isExporting = false
     @State private var isImporting = false
+    @State private var isImportingReminders = false
     @State private var importReport: String?
     /// The report alert serves both CSV import and restoring a backup.
     @State private var reportTitle = "Import"
@@ -273,10 +274,15 @@ struct SettingsView: View {
                     } label: {
                         Label("Import Tasks from CSV…", systemImage: "square.and.arrow.down")
                     }
+                    Button {
+                        isImportingReminders = true
+                    } label: {
+                        Label("Import from Apple Reminders…", systemImage: "checklist")
+                    }
                 } header: {
                     Text("Tasks")
                 } footer: {
-                    Text("Importing can either add to what is here or replace it. Tasks are matched by id; categories and projects by name.")
+                    Text("CSV import can either add to what is here or replace it. Tasks are matched by id; categories and projects by name.")
                 }
 
                 Section {
@@ -378,6 +384,9 @@ struct SettingsView: View {
             }
             .environment(\.editMode, $categoryEdit)
             .navigationTitle("More")
+            .sheet(isPresented: $isImportingReminders) {
+                RemindersImportView().environmentObject(store)
+            }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
