@@ -1337,6 +1337,8 @@ enum Scheduler {
 /// live tasks means a sync deletion cannot resurrect one, and Undo brings a
 /// moved task straight back into the review. New arrivals wait for the next pass.
 struct StackReviewSession: Codable, Equatable {
+    static let allOpenBuckets: [Bucket] = [.inbox, .today, .waiting, .tomorrow, .later]
+
     static func daysInStack(since entered: Date, now: Date, calendar: Calendar = .current) -> Int? {
         guard entered <= now else { return nil }
         return calendar.dateComponents([.day], from: calendar.startOfDay(for: entered),

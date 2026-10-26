@@ -38,6 +38,15 @@ struct SettingsView: View {
             List {
                 Section {
                     NavigationLink {
+                        StackReviewView(stack: .all).environmentObject(store)
+                    } label: {
+                        LabeledContent {
+                            Text("\(store.items.filter { !$0.isCompleted }.count)").monospacedDigit()
+                        } label: {
+                            Label("Review all tasks", systemImage: "square.stack.3d.up")
+                        }
+                    }
+                    NavigationLink {
                         InboxReviewView().environmentObject(store)
                     } label: {
                         LabeledContent {
