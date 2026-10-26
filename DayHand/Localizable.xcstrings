@@ -123,52 +123,6 @@
         }
       }
     },
-    "%@ and its %lld tasks move to %@.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@ and its %2$lld tasks move to %3$@."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@ und seine %2$lld Aufgaben wandern zu %3$@."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@ y sus %2$lld tareas pasan a %3$@."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@ et ses %2$lld tâches passent dans %3$@."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@ e le sue %2$lld attività passano a %3$@."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@ en zijn %2$lld taken gaan naar %3$@."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@ e as suas %2$lld tarefas passam para %3$@."
-          }
-        }
-      }
-    },
     "%@’s %lld tasks move to %@, and %@ is removed.": {
       "localizations": {
         "de": {
@@ -1426,42 +1380,82 @@
         }
       }
     },
-    "A project groups tasks that belong to the same piece of work — a trip, a paper, a course, an assignment. Start a task with its name and it is offered below the field. Rename, group and archive them in the Filter: tap ⓘ beside a project.": {
+    "A project called %@ already exists.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ein Projekt fasst Aufgaben zusammen, die zur selben Arbeit gehören — eine Reise, ein Aufsatz, ein Kurs, eine Hausarbeit. Beginnen Sie eine Aufgabe mit seinem Namen, und es wird unter dem Feld angeboten. Umbenennen, gruppieren und archivieren im Filter: auf ⓘ neben einem Projekt tippen."
+            "value": "Ein Projekt namens %@ gibt es bereits."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Un proyecto agrupa tareas que pertenecen al mismo trabajo: un viaje, un artículo, un curso, un encargo. Empieza una tarea con su nombre y se te ofrecerá debajo del campo. Renombra, agrupa y archiva en el Filtro: toca ⓘ junto a un proyecto."
+            "value": "Ya existe un proyecto llamado %@."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Un projet regroupe les tâches qui relèvent du même travail — un voyage, un article, un cours, un devoir. Commencez une tâche par son nom et il est proposé sous le champ. Renommez, groupez et archivez dans le Filtre : touchez ⓘ à côté d’un projet."
+            "value": "Un projet nommé %@ existe déjà."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Un progetto raggruppa le attività che appartengono allo stesso lavoro — un viaggio, un articolo, un corso, un compito. Inizia un’attività con il suo nome e viene proposto sotto il campo. Rinomina, raggruppa e archivia nel Filtro: tocca ⓘ accanto a un progetto."
+            "value": "Esiste già un progetto chiamato %@."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Een project groepeert taken die bij hetzelfde werk horen — een reis, een artikel, een cursus, een opdracht. Begin een taak met de naam ervan en het wordt onder het veld aangeboden. Hernoemen, groeperen en archiveren doe je in het filter: tik op ⓘ naast een project."
+            "value": "Er bestaat al een project met de naam %@."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Um projeto agrupa tarefas que pertencem ao mesmo trabalho — uma viagem, um artigo, um curso, um trabalho. Comece uma tarefa com o nome dele e é-lhe proposto sob o campo. Renomeie, agrupe e arquive no Filtro: toque em ⓘ ao lado de um projeto."
+            "value": "Já existe um projeto chamado %@."
+          }
+        }
+      }
+    },
+    "A project groups tasks that belong to the same piece of work — a trip, a paper, a course, an assignment. Start a task with its name and it is offered below the field. Rename, group and archive them in Organise: tap ⓘ beside a project.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ein Projekt fasst Aufgaben zusammen, die zur selben Arbeit gehören — eine Reise, ein Aufsatz, ein Kurs, eine Hausarbeit. Beginnen Sie eine Aufgabe mit seinem Namen, und es wird unter dem Feld angeboten. Umbenennen, gruppieren und archivieren im Organise: auf ⓘ neben einem Projekt tippen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un proyecto agrupa tareas que pertenecen al mismo trabajo: un viaje, un artículo, un curso, un encargo. Empieza una tarea con su nombre y se te ofrecerá debajo del campo. Renombra, agrupa y archiva en el Organizar: toca ⓘ junto a un proyecto."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un projet regroupe les tâches qui relèvent du même travail — un voyage, un article, un cours, un devoir. Commencez une tâche par son nom et il est proposé sous le champ. Renommez, groupez et archivez dans le Organiser : touchez ⓘ à côté d’un projet."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un progetto raggruppa le attività che appartengono allo stesso lavoro — un viaggio, un articolo, un corso, un compito. Inizia un’attività con il suo nome e viene proposto sotto il campo. Rinomina, raggruppa e archivia nel Organizar: tocca ⓘ accanto a un progetto."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Een project groepeert taken die bij hetzelfde werk horen — een reis, een artikel, een cursus, een opdracht. Begin een taak met de naam ervan en het wordt onder het veld aangeboden. Hernoemen, groeperen en archiveren doe je in het Ordenen: tik op ⓘ naast een project."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Um projeto agrupa tarefas que pertencem ao mesmo trabalho — uma viagem, um artigo, um curso, um trabalho. Comece uma tarefa com o nome dele e é-lhe proposto sob o campo. Renomeie, agrupe e arquive no Organizar: toque em ⓘ ao lado de um projeto."
           }
         }
       }
@@ -2325,18 +2319,18 @@
         }
       }
     },
-    "Archived. Its tasks are still there, and it is left out of the project list until the Filter’s Show row asks for archived projects. Typing its name brings it back.": {
+    "Archived. Its tasks are still there, and it is left out of the project list until the Show row in Organise asks for archived projects. Typing its name brings it back.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Archiviert. Die Aufgaben bleiben erhalten, und das Projekt wird aus der Liste gelassen, bis die Zeile „Zeigen“ im Filter nach archivierten Projekten fragt. Den Namen zu tippen holt es zurück."
+            "value": "Archiviert. Die Aufgaben bleiben erhalten, und das Projekt wird aus der Liste gelassen, bis die Zeile „Zeigen“ im Organise nach archivierten Projekten fragt. Den Namen zu tippen holt es zurück."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Archivado. Sus tareas siguen ahí y queda fuera de la lista hasta que la fila «Mostrar» del filtro pida los proyectos archivados. Al escribir su nombre vuelve."
+            "value": "Archivado. Sus tareas siguen ahí y queda fuera de la lista hasta que la fila «Mostrar» del Organizar pida los proyectos archivados. Al escribir su nombre vuelve."
           }
         },
         "fr": {
@@ -2348,19 +2342,19 @@
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Archiviato. Le sue attività ci sono ancora e resta fuori dall’elenco finché la riga «Mostra» del filtro non chiede i progetti archiviati. Digitarne il nome lo riporta."
+            "value": "Archiviato. Le sue attività ci sono ancora e resta fuori dall’elenco finché la riga «Mostra» del Organizar non chiede i progetti archiviati. Digitarne il nome lo riporta."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Gearchiveerd. De taken blijven bestaan en het project blijft uit de lijst tot de rij ‘Tonen’ in het filter om gearchiveerde projecten vraagt. De naam typen haalt het terug."
+            "value": "Gearchiveerd. De taken blijven bestaan en het project blijft uit de lijst tot de rij ‘Tonen’ in het Ordenen om gearchiveerde projecten vraagt. De naam typen haalt het terug."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arquivado. As suas tarefas continuam lá e fica fora da lista até a linha «Mostrar» do filtro pedir os projetos arquivados. Escrever o nome trá-lo de volta."
+            "value": "Arquivado. As suas tarefas continuam lá e fica fora da lista até a linha «Mostrar» do Organizar pedir os projetos arquivados. Escrever o nome trá-lo de volta."
           }
         }
       }
@@ -2523,6 +2517,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cancelar"
+          }
+        }
+      }
+    },
+    "Capitals are added for you, the way a project typed into a task gets them.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Großbuchstaben werden für Sie ergänzt, genau wie bei einem Projekt, das in eine Aufgabe getippt wird."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las mayúsculas se añaden solas, igual que en un proyecto escrito dentro de una tarea."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les majuscules sont ajoutées pour vous, comme pour un projet tapé dans une tâche."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le maiuscole vengono aggiunte da sole, come per un progetto digitato in un’attività."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hoofdletters worden voor je toegevoegd, net als bij een project dat je in een taak typt."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As maiúsculas são adicionadas por si, tal como num projeto escrito dentro de uma tarefa."
           }
         }
       }
@@ -2773,43 +2807,42 @@
         }
       }
     },
-    "Clicking a row picks that one; use the checkbox beside it to pick several. Click ⓘ to rename a project or a group, or to put a project away.": {
-      "extractionState": "manual",
+    "Clicking a row picks that one; use the checkbox beside it to pick several. Click ⓘ to rename a project, a group or a category, to move a project, or to put one away.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ein Klick auf eine Zeile wählt diese aus; mit dem Kästchen daneben wählen Sie mehrere. Klicken Sie auf ⓘ, um ein Projekt oder eine Gruppe umzubenennen oder ein Projekt abzulegen."
+            "value": "Ein Klick auf eine Zeile wählt diese aus; mit dem Kästchen daneben wählen Sie mehrere. Klicken Sie auf ⓘ, um ein Projekt, eine Gruppe oder eine Kategorie umzubenennen, ein Projekt zu verschieben oder eines abzulegen."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Hacer clic en una fila selecciona esa; usa la casilla contigua para seleccionar varias. Haz clic en ⓘ para renombrar un proyecto o un grupo, o para archivar un proyecto."
+            "value": "Hacer clic en una fila selecciona esa; usa la casilla contigua para seleccionar varias. Haz clic en ⓘ para renombrar un proyecto, un grupo o una categoría, mover un proyecto o archivarlo."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cliquer sur une ligne sélectionne celle-ci ; utilisez la case à côté pour en sélectionner plusieurs. Cliquez sur ⓘ pour renommer un projet ou un groupe, ou pour ranger un projet."
+            "value": "Cliquer sur une ligne sélectionne celle-ci ; utilisez la case à côté pour en sélectionner plusieurs. Cliquez sur ⓘ pour renommer un projet, un groupe ou une catégorie, déplacer un projet ou en ranger un."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Fare clic su una riga seleziona quella; usa la casella accanto per selezionarne diverse. Fai clic su ⓘ per rinominare un progetto o un gruppo, o per archiviare un progetto."
+            "value": "Fare clic su una riga seleziona quella; usa la casella accanto per selezionarne diverse. Fai clic su ⓘ per rinominare un progetto, un gruppo o una categoria, spostare un progetto o archiviarne uno."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Op een rij klikken kiest die ene; gebruik het vakje ernaast om er meerdere te kiezen. Klik op ⓘ om een project of groep te hernoemen, of om een project op te bergen."
+            "value": "Op een rij klikken kiest die ene; gebruik het vakje ernaast om er meerdere te kiezen. Klik op ⓘ om een project, groep of categorie te hernoemen, een project te verplaatsen of er een op te bergen."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Clicar numa linha seleciona essa; use a caixa ao lado para selecionar várias. Clique em ⓘ para mudar o nome de um projeto ou grupo, ou para arquivar um projeto."
+            "value": "Clicar numa linha seleciona essa; use a caixa ao lado para selecionar várias. Clique em ⓘ para mudar o nome de um projeto, grupo ou categoria, mover um projeto ou arquivar um."
           }
         }
       }
@@ -3380,6 +3413,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cursos"
+          }
+        }
+      }
+    },
+    "Create": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anlegen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crear"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Créer"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crea"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aanmaken"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Criar"
           }
         }
       }
@@ -4311,6 +4384,46 @@
         }
       }
     },
+    "Edit Category…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kategorie bearbeiten…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Editar categoría…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier la catégorie…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifica categoria…"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Categorie bewerken…"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Editar a categoria…"
+          }
+        }
+      }
+    },
     "Edit Group": {
       "extractionState": "manual",
       "localizations": {
@@ -4637,46 +4750,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Exportar tarefas como CSV…"
-          }
-        }
-      }
-    },
-    "Filter": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Filter"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Filtro"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Filtre"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Filtro"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Filter"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Filtro"
           }
         }
       }
@@ -6235,46 +6308,6 @@
         }
       }
     },
-    "Move Project?": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Projekt verschieben?"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "¿Mover el proyecto?"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Déplacer le projet ?"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spostare il progetto?"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Project verplaatsen?"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mover o projeto?"
-          }
-        }
-      }
-    },
     "Move it, or keep it where it is.": {
       "comment": "Notification body for a reminder",
       "localizations": {
@@ -6352,6 +6385,126 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mover para %@"
+          }
+        }
+      }
+    },
+    "Moved %@ out of its category": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ aus seiner Kategorie genommen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ sacado de su categoría"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ retiré de sa catégorie"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ tolto dalla sua categoria"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ uit zijn categorie gehaald"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ retirado da sua categoria"
+          }
+        }
+      }
+    },
+    "Moved %@ to %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ nach %@ verschoben"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ movido a %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ déplacé vers %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ spostato in %@"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ verplaatst naar %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ movido para %@"
+          }
+        }
+      }
+    },
+    "Moved to %@": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verschoben nach %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Movida a %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déplacée vers %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spostata in %@"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verplaatst naar %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Movida para %@"
           }
         }
       }
@@ -7481,6 +7634,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "OK"
+          }
+        }
+      }
+    },
+    "Organise": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordnen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Organizar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Organiser"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Organizza"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordenen"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Organizar"
           }
         }
       }
@@ -8704,42 +8897,42 @@
         }
       }
     },
-    "Set on the project. Change it from its ⓘ in the Filter.": {
+    "Set on the project. Change it from its ⓘ in Organise.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Am Projekt gesetzt. Über das ⓘ im Filter änderbar."
+            "value": "Am Projekt gesetzt. Über das ⓘ in „Ordnen“ änderbar."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Se define en el proyecto. Cámbialo desde su ⓘ en el filtro."
+            "value": "Se define en el proyecto. Cámbialo desde su ⓘ en Organizar."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Défini sur le projet. Modifiable via son ⓘ dans le filtre."
+            "value": "Défini sur le projet. Modifiable via son ⓘ dans Organiser."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Impostato sul progetto. Cambialo dal suo ⓘ nel filtro."
+            "value": "Impostato sul progetto. Cambialo dal suo ⓘ in Organizza."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Staat op het project. Wijzig het via de ⓘ in het filter."
+            "value": "Staat op het project. Wijzig het via de ⓘ in Ordenen."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Definido no projeto. Altere-o a partir do ⓘ no filtro."
+            "value": "Definido no projeto. Altere-o a partir do ⓘ em Organizar."
           }
         }
       }
@@ -9601,43 +9794,42 @@
         }
       }
     },
-    "Tapping a row picks that one; use the checkbox beside it to pick several. Tap ⓘ to rename a project or a group, to move it to another group or category, or to put it away.": {
-      "extractionState": "manual",
+    "Tapping a row picks that one; use the checkbox beside it to pick several. Tap ⓘ to rename a project, a group or a category, to move a project, or to put one away.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ein Tippen auf eine Zeile wählt diese aus; mit dem Kästchen daneben wählen Sie mehrere. Tippen Sie auf ⓘ, um ein Projekt oder eine Gruppe umzubenennen, es in eine andere Gruppe oder Kategorie zu verschieben oder abzulegen."
+            "value": "Ein Tippen auf eine Zeile wählt diese aus; mit dem Kästchen daneben wählen Sie mehrere. Tippen Sie auf ⓘ, um ein Projekt, eine Gruppe oder eine Kategorie umzubenennen, ein Projekt zu verschieben oder eines abzulegen."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tocar una fila selecciona esa; usa la casilla contigua para seleccionar varias. Toca ⓘ para renombrar un proyecto o un grupo, moverlo a otro grupo o categoría, o archivarlo."
+            "value": "Tocar una fila selecciona esa; usa la casilla contigua para seleccionar varias. Toca ⓘ para renombrar un proyecto, un grupo o una categoría, mover un proyecto o archivarlo."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Toucher une ligne sélectionne celle-ci ; utilisez la case à côté pour en sélectionner plusieurs. Touchez ⓘ pour renommer un projet ou un groupe, le déplacer vers un autre groupe ou une autre catégorie, ou le ranger."
+            "value": "Toucher une ligne sélectionne celle-ci ; utilisez la case à côté pour en sélectionner plusieurs. Touchez ⓘ pour renommer un projet, un groupe ou une catégorie, déplacer un projet ou en ranger un."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Toccare una riga seleziona quella; usa la casella accanto per selezionarne diverse. Tocca ⓘ per rinominare un progetto o un gruppo, spostarlo in un altro gruppo o categoria, o archiviarlo."
+            "value": "Toccare una riga seleziona quella; usa la casella accanto per selezionarne diverse. Tocca ⓘ per rinominare un progetto, un gruppo o una categoria, spostare un progetto o archiviarne uno."
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Op een rij tikken kiest die ene; gebruik het vakje ernaast om er meerdere te kiezen. Tik op ⓘ om een project of groep te hernoemen, het naar een andere groep of categorie te verplaatsen, of het op te bergen."
+            "value": "Op een rij tikken kiest die ene; gebruik het vakje ernaast om er meerdere te kiezen. Tik op ⓘ om een project, groep of categorie te hernoemen, een project te verplaatsen of er een op te bergen."
           }
         },
         "pt-PT": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tocar numa linha seleciona essa; use a caixa ao lado para selecionar várias. Toque em ⓘ para mudar o nome de um projeto ou grupo, movê-lo para outro grupo ou categoria, ou arquivá-lo."
+            "value": "Tocar numa linha seleciona essa; use a caixa ao lado para selecionar várias. Toque em ⓘ para mudar o nome de um projeto, grupo ou categoria, mover um projeto ou arquivar um."
           }
         }
       }
@@ -9678,6 +9870,126 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tarefa"
+          }
+        }
+      }
+    },
+    "Task completed": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aufgabe erledigt"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tarea completada"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tâche terminée"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attività completata"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taak voltooid"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tarefa concluída"
+          }
+        }
+      }
+    },
+    "Task deleted": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aufgabe gelöscht"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tarea eliminada"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tâche supprimée"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attività eliminata"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taak verwijderd"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tarefa eliminada"
+          }
+        }
+      }
+    },
+    "Task reopened": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aufgabe wieder geöffnet"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tarea reabierta"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tâche rouverte"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attività riaperta"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taak heropend"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tarefa reaberta"
           }
         }
       }
@@ -9759,6 +10071,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "As tarefas e os projetos são agrupados por categorias. Crie as suas — nas tarefas aparece apenas o ícone, por isso a etiqueta nomeia-o aqui e para o VoiceOver."
+          }
+        }
+      }
+    },
+    "Tasks given this project take its category. A group gathers projects that belong together.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aufgaben, die dieses Projekt erhalten, übernehmen seine Kategorie. Eine Gruppe fasst Projekte zusammen, die zusammengehören."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las tareas a las que asignes este proyecto toman su categoría. Un grupo reúne proyectos que van juntos."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les tâches qui reçoivent ce projet prennent sa catégorie. Un groupe rassemble des projets qui vont ensemble."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le attività a cui assegni questo progetto prendono la sua categoria. Un gruppo raccoglie progetti che stanno insieme."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taken die dit project krijgen, nemen de categorie ervan over. Een groep verzamelt projecten die bij elkaar horen."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As tarefas a que atribuir este projeto ficam com a sua categoria. Um grupo reúne projetos que andam juntos."
           }
         }
       }
@@ -10504,6 +10856,46 @@
         }
       }
     },
+    "Undo": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Widerrufen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deshacer"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuler"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annulla"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ongedaan maken"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anular"
+          }
+        }
+      }
+    },
     "Ungroup": {
       "extractionState": "manual",
       "localizations": {
@@ -11067,6 +11459,52 @@
           "stringUnit": {
             "state": "translated",
             "value": "estava em %@"
+          }
+        }
+      }
+    },
+    "Notes": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notes"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notes"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notities"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notizen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notas"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Note"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notas"
           }
         }
       }
@@ -12589,6 +13027,98 @@
         }
       }
     },
+    "Due dates become reminders at 9 a.m. on that day, not deadlines. Original dates and times stay in Notes even when this is off. Dates never move tasks between stacks.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Due dates become reminders at 9 a.m. on that day, not deadlines. Original dates and times stay in Notes even when this is off. Dates never move tasks between stacks."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les échéances deviennent des rappels à 9 h ce jour-là, et non des dates limites. Les dates et heures d’origine restent dans Notes même si cette option est désactivée. Les dates ne déplacent jamais les tâches entre piles."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vervaldatums worden herinneringen om 9 uur die dag, geen deadlines. Oorspronkelijke datums en tijden blijven in Notities staan, ook als deze optie uitstaat. Datums verplaatsen taken nooit tussen stapels."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fälligkeitstage werden zu Erinnerungen um 9 Uhr an diesem Tag, nicht zu Fristen. Ursprüngliche Daten und Uhrzeiten bleiben auch bei deaktivierter Option in den Notizen. Daten verschieben niemals Aufgaben zwischen Stapeln."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las fechas de vencimiento se convierten en recordatorios a las 9 de ese día, no en fechas límite. Las fechas y horas originales permanecen en Notas aunque desactives esta opción. Las fechas nunca mueven tareas entre pilas."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le scadenze diventano promemoria alle 9 di quel giorno, non termini di consegna. Date e orari originali restano nelle Note anche disattivando questa opzione. Le date non spostano mai le attività tra le pile."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As datas de vencimento tornam-se lembretes às 9 h desse dia, não prazos. As datas e horas originais ficam nas Notas mesmo com esta opção desativada. As datas nunca movem tarefas entre pilhas."
+          }
+        }
+      }
+    },
+    "Recurring reminders are skipped. Subtasks, tags, attachments and smart-list rules are not preserved. Notes, links, dates, locations and priority values are kept as text in Notes.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recurring reminders are skipped. Subtasks, tags, attachments and smart-list rules are not preserved. Notes, links, dates, locations and priority values are kept as text in Notes."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les rappels récurrents sont ignorés. Les sous-tâches, étiquettes, pièces jointes et règles des listes intelligentes ne sont pas conservés. Notes, liens, dates, lieux et priorités sont conservés comme texte dans Notes."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terugkerende herinneringen worden overgeslagen. Subtaken, tags, bijlagen en regels voor slimme lijsten blijven niet behouden. Notities, links, datums, locaties en prioriteiten worden als tekst bewaard in Notities."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wiederkehrende Erinnerungen werden übersprungen. Unteraufgaben, Tags, Anhänge und Regeln intelligenter Listen werden nicht beibehalten. Notizen, Links, Daten, Orte und Prioritätswerte bleiben als Text in den Notizen erhalten."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se omiten los recordatorios recurrentes. No se conservan subtareas, etiquetas, adjuntos ni reglas de listas inteligentes. Las notas, enlaces, fechas, ubicaciones y prioridades se guardan como texto en Notas."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I promemoria ricorrenti vengono ignorati. Sottoattività, tag, allegati e regole degli elenchi smart non vengono mantenuti. Note, link, date, luoghi e priorità vengono conservati come testo nelle Note."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os lembretes recorrentes são ignorados. Subtarefas, etiquetas, anexos e regras de listas inteligentes não são preservados. Notas, ligações, datas, locais e prioridades ficam como texto nas Notas."
+          }
+        }
+      }
+    },
     "A backup is saved before import. Existing DayHand tasks are kept. Repeat imports skip tasks already imported on this device, including ones you deleted. Importing again on another device or after an account reset can create duplicates.": {
       "localizations": {
         "en": {
@@ -12769,144 +13299,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "A importação CSV pode acrescentar ao que existe ou substituí-lo. As tarefas são reconhecidas por ID; categorias e projetos por nome."
-          }
-        }
-      }
-    },
-    "Due dates become reminders at 9 a.m. on that day, not deadlines. Turning this off omits dates. Original times are not retained. Dates never move tasks between stacks.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Due dates become reminders at 9 a.m. on that day, not deadlines. Turning this off omits dates. Original times are not retained. Dates never move tasks between stacks."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Les échéances deviennent des rappels à 9 h ce jour-là, et non des dates limites. Désactiver cette option omet les dates. Les heures d’origine ne sont pas conservées. Les dates ne déplacent jamais les tâches entre piles."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Vervaldatums worden herinneringen om 9 uur die dag, geen deadlines. Met deze optie uit worden datums weggelaten. Oorspronkelijke tijden blijven niet behouden. Datums verplaatsen taken nooit tussen stapels."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Fälligkeitstage werden zu Erinnerungen um 9 Uhr, nicht zu Fristen. Bei deaktivierter Option werden Daten weggelassen. Ursprüngliche Uhrzeiten bleiben nicht erhalten. Daten verschieben niemals Aufgaben zwischen Stapeln."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Las fechas de vencimiento se convierten en recordatorios a las 9, no en fechas límite. Al desactivar esta opción se omiten las fechas. No se conservan las horas originales. Las fechas nunca mueven tareas entre pilas."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Le scadenze diventano promemoria alle 9, non termini di consegna. Disattivando questa opzione, le date vengono omesse. Gli orari originali non vengono mantenuti. Le date non spostano mai le attività tra le pile."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "As datas de vencimento tornam-se lembretes às 9 h, não prazos. Desativar esta opção omite as datas. As horas originais não são mantidas. As datas nunca movem tarefas entre pilhas."
-          }
-        }
-      }
-    },
-    "Recurring reminders are skipped. Descriptions, notes, links, locations, priorities, attachments, tags and subtask relationships are not imported. Source details are available in the preview only.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Recurring reminders are skipped. Descriptions, notes, links, locations, priorities, attachments, tags and subtask relationships are not imported. Source details are available in the preview only."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Les rappels récurrents sont ignorés. Descriptions, notes, liens, lieux, priorités, pièces jointes, étiquettes et liens entre sous-tâches ne sont pas importés. Les détails d’origine sont disponibles uniquement dans l’aperçu."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Terugkerende herinneringen worden overgeslagen. Beschrijvingen, notities, links, locaties, prioriteiten, bijlagen, tags en subtaakrelaties worden niet geïmporteerd. Brongegevens zijn alleen in het voorbeeld beschikbaar."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wiederkehrende Erinnerungen werden übersprungen. Beschreibungen, Notizen, Links, Orte, Prioritäten, Anhänge, Tags und Unteraufgabenbeziehungen werden nicht importiert. Quelldetails sind nur in der Vorschau verfügbar."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Se omiten los recordatorios recurrentes. No se importan descripciones, notas, enlaces, ubicaciones, prioridades, adjuntos, etiquetas ni relaciones entre subtareas. Los detalles originales solo están disponibles en la vista previa."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "I promemoria ricorrenti vengono ignorati. Descrizioni, note, link, luoghi, priorità, allegati, tag e relazioni tra sottoattività non vengono importati. I dettagli originali sono disponibili solo nell’anteprima."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Os lembretes recorrentes são ignorados. Descrições, notas, ligações, locais, prioridades, anexos, etiquetas e relações entre subtarefas não são importados. Os detalhes originais estão disponíveis apenas na pré-visualização."
-          }
-        }
-      }
-    },
-    "Source details (preview only)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Source details (preview only)"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Détails d’origine (aperçu uniquement)"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Brongegevens (alleen voorbeeld)"
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Quelldetails (nur Vorschau)"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Detalles originales (solo vista previa)"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dettagli originali (solo anteprima)"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Detalhes originais (apenas pré-visualização)"
           }
         }
       }

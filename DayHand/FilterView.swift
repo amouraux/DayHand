@@ -37,6 +37,10 @@ struct FilterList: View {
     /// merging and deleting all live there, reached from this list rather than
     /// from a second screen somewhere else.
     @State private var editingProject: Project?
+    /// The category whose name, icon and colour are being changed.
+    @State private var editingCategory: CardCategory?
+    /// Set while a project is being made from nothing rather than from a task.
+    @State private var isAddingProject = false
 
     /// What is being renamed in place, if anything.
     enum Renaming: Equatable {
@@ -49,17 +53,6 @@ struct FilterList: View {
     /// A rename that would really be a merge, which is not something to do by
     /// accident from a list row.
     @State private var collision: String?
-
-    /// A drop that moves a project to another category, which takes every card
-    /// in it along. Worth asking about; a change of group is not.
-    struct PendingMove: Identifiable {
-        let id = UUID()
-        let project: Project
-        let categoryID: UUID?
-        let group: String?
-        let cards: Int
-    }
-    @State private var pendingMove: PendingMove?
 
     /// Which heading a drag is over. A category and a group are different
     /// targets — dropping on a category means that category in *no* group — so
@@ -179,14 +172,14 @@ struct FilterList: View {
                 // the help read as written for someone else's device.
                 VStack(alignment: .leading, spacing: 6) {
                     if isSidebar {
-                        Text("Clicking a row picks that one; use the checkbox beside it to pick several. Click \u{24D8} to rename a project or a group, or to put a project away.")
+                        Text("Clicking a row picks that one; use the checkbox beside it to pick several. Click \u{24D8} to rename a project, a group or a category, to move a project, or to put one away.")
                         Text("Drag a project by its handle onto a group or an All category row to move it.")
                     } else {
                         // One sentence, not two: with the handle gone, moving
                         // a project is one more thing behind the same \u{24D8}
                         // the line already names, and a second line repeating
                         // "Tap \u{24D8}" read as a different control.
-                        Text("Tapping a row picks that one; use the checkbox beside it to pick several. Tap \u{24D8} to rename a project or a group, to move it to another group or category, or to put it away.")
+                        Text("Tapping a row picks that one; use the checkbox beside it to pick several. Tap \u{24D8} to rename a project, a group or a category, to move a project, or to put one away.")
                     }
                 }
             }
@@ -207,6 +200,17 @@ struct FilterList: View {
                     Label("Show", systemImage: "line.3.horizontal.decrease.circle")
                 }
                 .pickerStyle(.menu)
+
+                // Setting up is the case this is for: a project with nothing
+                // in it yet, made before there is a task to put in it. It
+                // sits here rather than at the foot of each category because
+                // one row is cheaper than one per category, and the sheet
+                // asks which category anyway.
+                Button {
+                    isAddingProject = true
+                } label: {
+                    Label("New Project…", systemImage: "plus.circle")
+                }
             }
 
             if search.isEmpty {
@@ -253,6 +257,16 @@ struct FilterList: View {
             // Going to look in the cupboard is not a way to leave the list.
             if scope == .archived { scope = .active }
         }
+        .sheet(item: $editingCategory) { category in
+            CategoryEditor(category: category) { label, symbol, color in
+                store.updateCategory(
+                    CardCategory(id: category.id, label: label, symbolName: symbol, color: color)
+                )
+            }
+        }
+        .sheet(isPresented: $isAddingProject) {
+            NewProjectSheet().environmentObject(store)
+        }
         .sheet(item: $editingProject) { project in
             NavigationStack {
                 ProjectEditor(projectID: project.id)
@@ -261,22 +275,14 @@ struct FilterList: View {
                     // way out that is not the keyboard.
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
+                            // Escape has nothing to pick on a sheet whose
+                            // only way out is the confirming action, so it is
+                            // bound here by hand.
                             Button("Done") { editingProject = nil }
+                                .keyboardShortcut(.cancelAction)
                         }
                     }
             }
-        }
-        // Moving a project to another category takes every card in it along,
-        // so it says how many rather than doing it quietly. A group is only a
-        // label, and changes without asking.
-        .alert("Move Project?", isPresented: Binding(
-            get: { pendingMove != nil }, set: { if !$0 { pendingMove = nil } }
-        ), presenting: pendingMove) { move in
-            Button("Move") { file(move.project, categoryID: move.categoryID, group: move.group) }
-            Button("Cancel", role: .cancel) { }
-        } message: { move in
-            let into = categories.first { $0.id == move.categoryID }?.label ?? "Other projects"
-            Text("\(move.project.name) and its \(move.cards) tasks move to \(into).")
         }
         .alert("Name Taken", isPresented: Binding(
             get: { collision != nil }, set: { if !$0 { collision = nil } }
@@ -367,6 +373,20 @@ struct FilterList: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+
+            // The same ⓘ a project and a group carry. Categories were the one
+            // row without one, so renaming or recolouring meant leaving the
+            // panel the category is actually looked at from. Reordering and
+            // the default for new tasks stay in More: they are about the set
+            // of categories, not about the one in front of you.
+            Button {
+                editingCategory = category
+            } label: {
+                Image(systemName: "info.circle")
+                    .foregroundStyle(Color.accentColor)
+            }
+            .buttonStyle(.borderless)
+            .accessibilityLabel("Edit Category…")
         }
         .listRowBackground(
             headingBand(category.color.prefixTint, strong: true)
@@ -376,7 +396,14 @@ struct FilterList: View {
         // is also the way one is taken out of a group, by dropping it on the
         // category it is already in.
         .background(projectDropTarget(.category(category.id), categoryID: category.id, group: nil))
-        .contextMenu { addToSelection(categories: [category.id]) }
+        .contextMenu {
+            addToSelection(categories: [category.id])
+            Button {
+                editingCategory = category
+            } label: {
+                Label("Edit Category…", systemImage: "pencil")
+            }
+        }
     }
 
     /// A group heading. Tapping selects the whole group — or clears it, when all
@@ -606,13 +633,18 @@ struct FilterList: View {
                                             group: group, cards: store.items)
         else { return false }
 
-        // Changing a project's category takes its cards with it, a real edit
-        // to every one of them. A group is only a label, and goes quietly.
-        if move.cards > 0 {
-            pendingMove = PendingMove(project: project, categoryID: move.categoryID,
-                                      group: move.group, cards: move.cards)
-            return true
-        }
+        // No longer asked about first. Changing a project's category is a real
+        // edit to every task in it, which is why it used to stop and count
+        // them — but it is undoable now, and the bar that appears says both
+        // what happened and where it went: "Moved FRIA to Teaching", with the
+        // way back beside it.
+        //
+        // That is strictly better than the question was. A confirmation makes
+        // the deliberate case pay for the mistaken one, and it cannot help at
+        // all with the mistake people actually make here, which is dropping on
+        // the wrong row — the dialog names the destination, but so does the
+        // bar, and the bar does not interrupt the nine times out of ten the
+        // drop was right.
         file(project, categoryID: move.categoryID, group: move.group)
         return true
     }
@@ -818,11 +850,15 @@ struct FilterSheet: View {
     var body: some View {
         NavigationStack {
             FilterList(categorySelection: $categorySelection, projectSelection: $projectSelection)
-                .navigationTitle("Filter")
+                .navigationTitle("Organise")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .confirmationAction) {
+                        // The same: Done is the only way out, so Escape is
+                        // bound to it rather than to a cancellation role that
+                        // this sheet does not have.
                         Button("Done") { dismiss() }
+                            .keyboardShortcut(.cancelAction)
                     }
                 }
         }

@@ -247,10 +247,6 @@ struct CardRow: View {
     let onMove: () -> Void
     /// Open the full editor.
     let onEdit: () -> Void
-    /// Narrow the list to this card's project (the Mac's right-click menu).
-    var onShowProject: (() -> Void)? = nil
-    /// Set while the list is filtered, so the same menu can offer the way back.
-    var onShowAll: (() -> Void)? = nil
 
     /// How far the card must travel to commit.
     private static let commitDistance: CGFloat = 96
@@ -391,27 +387,10 @@ struct CardRow: View {
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .onTapGesture(perform: onTap)
-        #if targetEnvironment(macCatalyst)
-        // The Mac's right-click menu mirrors what a click already offers. Edit
-        // is in both deliberately: this menu also filters, and a context menu
-        // that will narrow the list by a card but not open it reads as broken.
-        // Finder puts Open in both places for the same reason.
-        .contextMenu {
-            Button { onEdit() } label: { Label("Edit…", systemImage: "square.and.pencil") }
-            // While any filter is on, the useful move is back out of it, so
-            // "Show All" replaces "Show Only" — on every card, not only those
-            // with a project, since a category filter shows cards without one.
-            if let onShowAll {
-                Button { onShowAll() } label: {
-                    Label("Show All", systemImage: "line.3.horizontal.decrease.circle.fill")
-                }
-            } else if let project, let onShowProject {
-                Button { onShowProject() } label: {
-                    Label("Show Only \(project.name)", systemImage: "line.3.horizontal.decrease.circle")
-                }
-            }
-        }
-        #endif
+        // The Mac's right-click menu is attached by the caller, which is where
+        // the one list of actions lives — see `CardMenu`. Keeping it here meant
+        // the row had to be handed a callback per action, and the two it was
+        // given were the only two that menu ever learned to show.
         .opacity(item.isCompleted ? 0.65 : 1)
     }
 

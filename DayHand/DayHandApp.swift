@@ -10,6 +10,16 @@ struct DayHandApp: App {
                 .environmentObject(store)
                 .onAppear { Self.tidyMacTitlebar() }
         }
+        // Replacing the group rather than adding to it: the system's own Undo
+        // is wired to a responder chain this app's lists do not feed, so it
+        // would sit there greyed out beside a working one.
+        .commands {
+            CommandGroup(replacing: .undoRedo) {
+                Button("Undo") { store.undoLast() }
+                    .keyboardShortcut("z", modifiers: .command)
+                    .disabled(!store.canUndo)
+            }
+        }
     }
 
     /// The Mac window shows no title. It is not a document, so there is nothing
