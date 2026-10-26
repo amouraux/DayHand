@@ -2061,5 +2061,44 @@ do {
            "explicit modern CSV deadlines survive migration")
 }
 
+// MARK: - Inbox review is a resumable snapshot, resolved against live tasks
+
+do {
+    let first = TodoItem(title: "First")
+    let second = TodoItem(title: "Second")
+    let outside = TodoItem(title: "Already active", bucket: .today)
+    var review = InboxReviewSession(cards: [first, outside, second])
+    expect(review.remaining(in: [second, first, outside]).map(\.id) == [first.id, second.id],
+           "review preserves its initial order and includes only Inbox")
+    review.keepInInbox(first.id)
+    expect(review.remaining(in: [first, second]).map(\.id) == [second.id],
+           "keep leaves the task unchanged but advances this review")
+    expect(first.bucket == .inbox, "keep is review state, not a task mutation")
+    let restored = try! JSONDecoder().decode(InboxReviewSession.self,
+        from: JSONEncoder().encode(review))
+    expect(restored == review, "closing and reopening preserves review position")
+    var moved = second
+    moved.bucket = .waiting
+    expect(review.remaining(in: [first, moved]).isEmpty, "moved task leaves the review")
+    expect(review.remaining(in: [first, second]).map(\.id) == [second.id],
+           "undoing a move brings its live task back")
+    expect(review.remaining(in: [first]).isEmpty, "deleted or sync-removed tasks are skipped")
+    var completed = second
+    completed.bucket = .completed
+    expect(review.remaining(in: [first, completed]).isEmpty, "completed tasks leave the review")
+    let arrival = TodoItem(title: "New arrival")
+    expect(review.remaining(in: [first, second, arrival]).map(\.id) == [second.id],
+           "new arrivals cannot extend an ongoing review")
+    var edited = second
+    edited.title = "Edited on another device"
+    edited.notes = "Current notes"
+    expect(review.remaining(in: [first, edited]).first == edited,
+           "review always presents live titles and Notes")
+    let restarted = InboxReviewSession(cards: [first, arrival])
+    expect(restarted.remaining(in: [first, arrival]).count == 2,
+           "new pass includes kept tasks and new arrivals")
+    expect(InboxReviewSession(cards: []).remaining(in: []).isEmpty, "empty Inbox is a valid review")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

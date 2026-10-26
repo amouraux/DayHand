@@ -8,6 +8,7 @@ struct ContentView: View {
     /// The card being edited in full, from a right swipe.
     @State private var editItem: TodoItem?
     @State private var isAdding = false
+    @State private var isReviewingInbox = false
     @State private var isShowingSettings = false
     /// Narrows the list to the cards asking for attention, so they can be dealt
     /// with among their own stacks rather than in a sheet.
@@ -169,6 +170,17 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $isAdding) { addCardSheet }
+            .sheet(isPresented: $isReviewingInbox) {
+                NavigationStack {
+                    InboxReviewView().environmentObject(store)
+                        .toolbar {
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button("Done") { isReviewingInbox = false }
+                                    .keyboardShortcut(.cancelAction)
+                            }
+                        }
+                }
+            }
             .sheet(isPresented: $isFiltering) {
                 FilterSheet(
                     categorySelection: $filterCategoryIDs.animation(.easeInOut(duration: 0.2)),
@@ -743,8 +755,20 @@ struct ContentView: View {
                                 moreButton(shown: visible.count, total: cards.count)
                             }
                         } header: {
-                            SectionHeader(bucket: bucket, count: cards.count)
-                                .id(bucket)
+                            VStack(alignment: .leading, spacing: 4) {
+                                SectionHeader(bucket: bucket, count: cards.count)
+                                if bucket == .inbox {
+                                    Button {
+                                        isReviewingInbox = true
+                                    } label: {
+                                        Label("Review Inbox", systemImage: "tray")
+                                            .font(.subheadline)
+                                    }
+                                    .buttonStyle(.borderless)
+                                    .padding(.bottom, 4)
+                                }
+                            }
+                            .id(bucket)
                         }
                     }
                 }
@@ -1079,6 +1103,7 @@ private struct FloatingChrome: ViewModifier {
 /// it is simply not visible — and on a phone, where there is no ⌘Z, a change
 /// made in a sheet would otherwise offer no way back at all.
 struct UndoBanner: View {
+    var bottomPadding: CGFloat = 104
     @EnvironmentObject private var store: TodoStore
 
     var body: some View {
@@ -1102,7 +1127,7 @@ struct UndoBanner: View {
             }
             .floatingBar()
             .padding(.horizontal, 22)
-            .padding(.bottom, 104)
+            .padding(.bottom, bottomPadding)
             .transition(.move(edge: .bottom).combined(with: .opacity))
             .animation(.snappy(duration: 0.25), value: step.id)
         }

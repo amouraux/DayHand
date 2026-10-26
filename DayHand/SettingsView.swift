@@ -37,35 +37,33 @@ struct SettingsView: View {
         NavigationStack {
             List {
                 Section {
-                    ForEach(ReviewWeek.allCases) { week in
-                        NavigationLink {
-                            ReviewView(week: week).environmentObject(store)
-                        } label: {
-                            LabeledContent {
-                                Text("\(finished(week))").monospacedDigit()
-                            } label: {
-                                Label(week.title, systemImage: week == .thisWeek
-                                      ? "checkmark.circle" : "clock.arrow.circlepath")
-                            }
-                        }
-                    }
-                    // Below the two weeks, because the question people ask
-                    // most often is "what did I get done", and only sometimes
-                    // "how did the year go".
                     NavigationLink {
-                        TimelineView(title: String(localized: "All time"), cards: store.items)
-                            .environmentObject(store)
+                        InboxReviewView().environmentObject(store)
                     } label: {
                         LabeledContent {
-                            Text("\(store.items.filter(\.isCompleted).count)").monospacedDigit()
+                            Text("\(store.items.filter { $0.bucket == .inbox }.count)")
+                                .monospacedDigit()
                         } label: {
-                            Label("All time", systemImage: "calendar.day.timeline.left")
+                            Label("Review Inbox", systemImage: "tray")
                         }
+                    }
+                } header: {
+                    Text("Review")
+                } footer: {
+                    Text("Decide where each Inbox task belongs, one at a time. You can stop and resume whenever you like.")
+                }
+
+                Section {
+                    NavigationLink {
+                        TimelineView(title: String(localized: "Completed"), cards: store.items)
+                            .environmentObject(store)
+                    } label: {
+                        Label("Timeline", systemImage: "calendar.day.timeline.left")
                     }
                 } header: {
                     Text("Completed")
                 } footer: {
-                    Text("What you have accomplished, grouped by the day you did it. All time runs back to the beginning, month by month.")
+                    Text("What you have accomplished, grouped by the day you did it.")
                 }
 
                 Section {
@@ -539,14 +537,6 @@ struct SettingsView: View {
                 )
             }
         }
-    }
-
-    /// A sheet presented straight from a dialog's button can be swallowed while
-    /// the dialog is still dismissing, so let the run loop turn over first.
-    /// How many cards were finished in a week, for the row beside its name.
-    private func finished(_ week: ReviewWeek) -> Int {
-        guard let interval = week.interval() else { return 0 }
-        return Review.count(completedIn: interval, cards: store.items)
     }
 
     /// The language the app is actually being read in, named in that language:
