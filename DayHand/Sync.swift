@@ -1141,7 +1141,7 @@ enum CardCSV {
     /// does. An older export's `reminds` column is simply ignored: what it
     /// recorded no longer exists, and a reminder is silenced by clearing it.
     static let header = ["id", "title", "stack", "category", "deadline", "completed", "created",
-                         "project", "group", "remind", "notes"]
+                         "project", "group", "remind", "notes", "entered"]
 
     private static let dayFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -1229,7 +1229,8 @@ enum CardCSV {
                 card.projectID.flatMap { names[$0] } ?? "",
                 card.projectID.flatMap { groups[$0] } ?? "",
                 card.remindAt.map { stampFormatter.string(from: $0) } ?? "",
-                card.notes
+                card.notes,
+                stampFormatter.string(from: card.enteredStackAt)
             ].map(escape).joined(separator: ","))
         }
         return rows.joined(separator: "\n") + "\n"
@@ -1323,6 +1324,11 @@ enum CardCSV {
             card.remindAt = stampFormatter.date(from: field("remind")) ?? parseDay(field("remind"))
             card.completedAt = stampFormatter.date(from: field("completed"))
             if let created = stampFormatter.date(from: field("created")) { card.createdAt = created }
+            // Falls back to `createdAt` for the same reason the decoder does:
+            // an export written before this column existed knows nothing about
+            // when its tasks last moved, and re-importing one must not make
+            // every task look as though it arrived today.
+            card.enteredStackAt = stampFormatter.date(from: field("entered")) ?? card.createdAt
 
             // A completed timestamp and a non-completed stack contradict; the
             // stack column wins, since that is what the app reads.
@@ -1342,6 +1348,7 @@ enum CardCSV {
     /// tool still lands in the right places.
     private static let synonyms: [String: Set<String>] = [
         "notes":     ["notes", "note", "description"],
+        "entered":   ["entered", "entered_stack", "stack_since"],
         "id":        ["id", "uuid", "identifier"],
         "title":     ["title", "name", "task", "card", "todo"],
         "stack":     ["stack", "bucket", "list", "status", "column"],

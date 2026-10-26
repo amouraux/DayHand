@@ -504,6 +504,32 @@ completed task carrying no date is listed after the run rather than dropped —
 `Timeline.months` can only place a task it can date, and a task must not vanish
 from the list for want of a timestamp.
 
+## How long a task has been sitting
+
+A task records **`enteredStackAt`**: when it arrived in the stack it is in now.
+Nothing is shown for it yet. It is stored because the question cannot be
+answered afterwards — a timestamp not written at the moment of the move is gone
+— and because the helpers worth building on a list that never nags are reviews
+of a stack that has stopped moving: what has been in the inbox a fortnight,
+what has sat in NOW all week, what went to LATER in July.
+
+`modifiedAt` cannot stand in for it. It is bumped by any edit, so renaming a
+task that has not moved since July would make it look as though it had just
+arrived. `createdAt` only bounds it from the other side.
+
+Stamped wherever a bucket changes, and nowhere else: moving, completing,
+reopening, and the bulk completion that archiving a project performs. Reopening
+counts as an arrival — the task starts sitting in that stack again from now,
+not from whenever it first did.
+
+**Absent, it falls back to `createdAt`, never to now.** A file written before
+the field existed knows nothing about when its tasks last moved, and the day
+they were made is the one honest answer available; falling back to now would
+have every task in the list claim it had just arrived, on the first launch
+after this shipped. The CSV carries it as a final `entered` column and falls
+back the same way, because tasks are matched by id on import — without it,
+exporting and re-importing would quietly reset every task to today.
+
 ## Reminders
 
 A reminder is armed on a task with a **day**, and fires a local notification.

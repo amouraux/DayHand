@@ -149,7 +149,9 @@ final class TodoStore: ObservableObject {
     func move(_ item: TodoItem, to bucket: Bucket) {
         record(String(localized: "Moved to \(bucket.title)"), undoing: [item])
         update(item) { card in
+            guard card.bucket != bucket else { return }
             card.bucket = bucket
+            card.enteredStackAt = .stamp()
             card.bucketBeforeCompletion = nil
             card.completedAt = nil
             // Both dates survive the move. Nothing files a card any more, so a
@@ -564,6 +566,7 @@ final class TodoStore: ObservableObject {
         where items[index].projectID == project.id && !items[index].isCompleted {
             items[index].bucketBeforeCompletion = items[index].bucket
             items[index].bucket = .completed
+            items[index].enteredStackAt = stamp
             items[index].completedAt = stamp
             items[index].modifiedAt = stamp
         }
@@ -650,6 +653,7 @@ final class TodoStore: ObservableObject {
             guard card.bucket != .completed else { return }
             card.bucketBeforeCompletion = card.bucket
             card.bucket = .completed
+            card.enteredStackAt = .stamp()
             card.completedAt = .stamp()
         }
         // Finishing the work cancels the reminder about it, and takes it off
@@ -664,6 +668,9 @@ final class TodoStore: ObservableObject {
             guard card.bucket == .completed else { return }
             let origin = card.bucketBeforeCompletion ?? .inbox
             card.bucket = origin
+            // Reopening is an arrival like any other: the task starts sitting
+            // in that stack again from now, not from whenever it first did.
+            card.enteredStackAt = .stamp()
             card.bucketBeforeCompletion = nil
             card.completedAt = nil
         }

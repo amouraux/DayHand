@@ -177,7 +177,7 @@ do {
     let p = Project(name: "ABC1234", categoryID: cat.id)
     var card = TodoItem(title: "slides, part 2", categoryID: cat.id); card.projectID = p.id
     let text = CardCSV.export(cards: [card], categories: [cat], projects: [p])
-    expect(text.hasPrefix("id,title,stack,category,deadline,completed,created,project,group,remind,notes\n"),
+    expect(text.hasPrefix("id,title,stack,category,deadline,completed,created,project,group,remind,notes,entered\n"),
            "the deadline keeps the old date column's place; new ones go last")
     let back = CardCSV.parse(text, categories: [cat])
     expect(back.cards.first?.title == "slides, part 2", "title round-trips")
@@ -249,11 +249,11 @@ do {
     let text = CardCSV.export(cards: [c1, c2, c3], categories: [cat], projects: [grant, loose])
     let lines = text.split(separator: "\n").map(String.init)
     // Every new column goes last, so an older export still reads by position.
-    expect(lines[0].hasSuffix(",project,group,remind,notes"),
+    expect(lines[0].hasSuffix(",project,group,remind,notes,entered"),
            "the newest columns are the last ones — got \(lines[0])")
     expect(lines[1].contains(",BETA,Grants,"), "a grouped project's cards carry its group")
     expect(lines[2].contains(",DELTA,,"), "no group: empty column")
-    expect(lines[3].hasSuffix(",,,"), "no project, no group, no reminder: empty to the end")
+    expect(lines[3].contains(",,,"), "no project, no group, no reminder: empty columns")
 
     // An older export still carries a "reminds" column. It records something
     // that no longer exists, and is read as the unknown column it now is.
@@ -2059,6 +2059,45 @@ do {
            "old due-column CSV dates still migrate to reminders")
     expect(StoreDocument(cards: modern.cards).promotingOrphanDeadlines().cards[0].remindAt == nil,
            "explicit modern CSV deadlines survive migration")
+}
+
+// MARK: — how long a task has been sitting in its stack
+do {
+    let enc = DocumentCoding.makeEncoder(), dec = DocumentCoding.makeDecoder()
+    let made = Date(timeIntervalSince1970: 1_700_000_000)
+
+    // A file written before the field existed knows nothing about moves. The
+    // day the task was made is the one honest answer; falling back to *now*
+    // would have every task claim it had just arrived.
+    let old = #"{"cards":[{"id":"\#(UUID().uuidString)","title":"x","bucket":"later","createdAt":"2023-11-14T22:13:20.000Z"}],"categories":[]}"#
+    let loaded = try! dec.decode(StoreDocument.self, from: Data(old.utf8))
+    expect(loaded.cards[0].enteredStackAt == loaded.cards[0].createdAt,
+           "an older file falls back to when the task was made, not to now")
+
+    // A real value survives a round trip.
+    var card = TodoItem(title: "sitting", bucket: .later)
+    card.createdAt = made
+    card.enteredStackAt = Date(timeIntervalSince1970: 1_750_000_000)
+    let back = try! dec.decode(StoreDocument.self, from: try! enc.encode(StoreDocument(cards: [card])))
+    expect(back.cards[0].enteredStackAt == card.enteredStackAt,
+           "and a known arrival survives save and load")
+    expect(back.cards[0].enteredStackAt != back.cards[0].createdAt,
+           "without collapsing back onto createdAt")
+
+    // The CSV carries it too, or exporting and re-importing would reset every
+    // task to today — and tasks are matched by id, so that would overwrite.
+    let cat = CardCategory(label: "Home", symbolName: "house", color: .teal)
+    let text = CardCSV.export(cards: [card], categories: [cat], projects: [])
+    let parsed = CardCSV.parse(text, categories: [cat])
+    expect(parsed.cards.count == 1, "the row comes back")
+    expect(parsed.cards[0].enteredStackAt == card.enteredStackAt,
+           "and carries the arrival through a CSV round trip")
+
+    // An export written before the column existed must not reset anything.
+    let headerless = "id,title,stack,created\n\(card.id.uuidString),x,later,2023-11-14T22:13:20.000Z"
+    let older = CardCSV.parse(headerless, categories: [cat])
+    expect(older.cards[0].enteredStackAt == older.cards[0].createdAt,
+           "a CSV with no entered column falls back to created, not to now")
 }
 
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
