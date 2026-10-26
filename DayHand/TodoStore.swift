@@ -1067,7 +1067,17 @@ final class TodoStore: ObservableObject {
             if self.project(id: project.id)?.group != before { regrouped = true }
         }
 
-        if summary.added + summary.updated + summary.removed > 0 || regrouped {
+        // Archived only where the file says so; a blank cell, or a file from
+        // before the column, leaves a project exactly as it is.
+        var rearchived = false
+        for (projectKey, archived) in parsed.projectArchived {
+            guard let project = projects.first(where: { $0.key == projectKey }),
+                  project.isArchived != archived else { continue }
+            setProjectArchived(project, archived)
+            rearchived = true
+        }
+
+        if summary.added + summary.updated + summary.removed > 0 || regrouped || rearchived {
             rescheduleNotifications()
             save()
         }

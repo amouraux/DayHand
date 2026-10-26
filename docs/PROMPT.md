@@ -1665,9 +1665,38 @@ sheets and floating buttons do not translate, so the layout would change.
 More offers **Export Tasks as CSV…** and **Import Tasks from CSV…** through
 the system save and open panels.
 
-Columns, in this order: `id, title, stack, category, due, completed, created,
-project, group`. The last two are written **last** so header-less older exports
-still read by position.
+Columns, in this order: `id, title, stack, category, deadline, completed,
+created, project, group, remind, notes, entered, answered, before, archived`.
+Every new column goes **last**, so header-less older exports still read by
+position.
+
+The last five carry what a round trip used to lose silently:
+
+- **`entered`** — when the task arrived in its stack. Tasks are matched by id on
+  import, so without it exporting and re-importing would reset every task to
+  today.
+- **`answered`** — when a reminder was answered. Without it a task whose
+  reminder had been dealt with would come back asking again.
+- **`before`** — the stack a completed task would be reopened to. Without it
+  reopening an imported task drops it in the inbox. Ignored on any stack but
+  Completed, where it contradicts the stack and the stack wins.
+- **`archived`** — whether the task's *project* is archived, `yes` or `no`, and
+  blank when the task has no project. An empty cell is silence, never a `no`:
+  an export from before the column must not take a project out of the archive.
+- `notes` is the free text the task editor offers.
+
+Timestamps in the CSV are to the second, as `created` and `completed` already
+were; nothing here depends on the millisecond.
+
+**Deliberately not exported:** `modifiedAt`. Import is itself an edit, so every
+imported row is stamped now — which is what lets a corrected CSV win a sync
+against another device's older copy. Writing the old value back would make it
+lose.
+
+**Not carried, because a task CSV has nowhere to put them:** a category's icon
+and colour (a task names its category by label, and an unknown label leaves the
+task uncategorised rather than inventing one with a made-up icon), and a
+project with no tasks, which appears in no row at all.
 
 **Parse the due column leniently.** Only the app's own export uses `yyyy-MM-dd`;
 open that file in a spreadsheet and the column comes back in the user's locale,

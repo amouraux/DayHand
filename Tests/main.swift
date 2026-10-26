@@ -177,7 +177,7 @@ do {
     let p = Project(name: "ABC1234", categoryID: cat.id)
     var card = TodoItem(title: "slides, part 2", categoryID: cat.id); card.projectID = p.id
     let text = CardCSV.export(cards: [card], categories: [cat], projects: [p])
-    expect(text.hasPrefix("id,title,stack,category,deadline,completed,created,project,group,remind,notes,entered\n"),
+    expect(text.hasPrefix("id,title,stack,category,deadline,completed,created,project,group,remind,notes,entered,answered,before,archived\n"),
            "the deadline keeps the old date column's place; new ones go last")
     let back = CardCSV.parse(text, categories: [cat])
     expect(back.cards.first?.title == "slides, part 2", "title round-trips")
@@ -249,7 +249,7 @@ do {
     let text = CardCSV.export(cards: [c1, c2, c3], categories: [cat], projects: [grant, loose])
     let lines = text.split(separator: "\n").map(String.init)
     // Every new column goes last, so an older export still reads by position.
-    expect(lines[0].hasSuffix(",project,group,remind,notes,entered"),
+    expect(lines[0].hasSuffix(",project,group,remind,notes,entered,answered,before,archived"),
            "the newest columns are the last ones — got \(lines[0])")
     expect(lines[1].contains(",BETA,Grants,"), "a grouped project's cards carry its group")
     expect(lines[2].contains(",DELTA,,"), "no group: empty column")
@@ -2098,6 +2098,58 @@ do {
     let older = CardCSV.parse(headerless, categories: [cat])
     expect(older.cards[0].enteredStackAt == older.cards[0].createdAt,
            "a CSV with no entered column falls back to created, not to now")
+}
+
+// MARK: — the rest of what a task and its project carry through a CSV
+do {
+    let cat = CardCategory(label: "Home", symbolName: "house", color: .teal)
+    // A whole second: the CSV writes timestamps to the second, as it already
+    // does for created and completed. Nothing here depends on the millisecond.
+    let answered = Date(timeIntervalSince1970: 1_750_000_000)
+
+    // A completed task remembers where it came from, so reopening it after a
+    // round trip does not drop it into the inbox.
+    var done = TodoItem(title: "finished", bucket: .completed, categoryID: cat.id)
+    done.bucketBeforeCompletion = .later
+    done.completedAt = Date(timeIntervalSince1970: 1_760_000_000)
+    done.remindAt = Date(timeIntervalSince1970: 1_750_000_000)
+    done.reminderAnsweredAt = answered
+    var live = TodoItem(title: "still open", bucket: .today, categoryID: cat.id)
+    live.reminderAnsweredAt = nil
+
+    var shelved = Project(name: "OLDJOB", categoryID: cat.id)
+    shelved.isArchived = true
+    var current = Project(name: "NOWJOB", categoryID: cat.id)
+    done.projectID = shelved.id
+    live.projectID = current.id
+
+    let text = CardCSV.export(cards: [done, live], categories: [cat], projects: [shelved, current])
+    let parsed = CardCSV.parse(text, categories: [cat])
+    let byTitle = Dictionary(uniqueKeysWithValues: parsed.cards.map { ($0.title, $0) })
+
+    expect(byTitle["finished"]?.bucketBeforeCompletion == .later,
+           "a completed task keeps the stack it would be reopened to")
+    expect(byTitle["finished"]?.reminderAnsweredAt == answered,
+           "an answered reminder stays answered, rather than asking again")
+    expect(byTitle["still open"]?.bucketBeforeCompletion == nil,
+           "a task that is not completed has nothing to reopen to")
+    expect(parsed.projectArchived[Project.key(for: "OLDJOB")] == true, "an archived project reads as archived")
+    expect(parsed.projectArchived[Project.key(for: "NOWJOB")] == false, "and a live one as not")
+
+    // A stack that contradicts the column wins, as it does for completedAt.
+    let contradictory = "id,title,stack,before\n\(UUID().uuidString),x,today,later"
+    expect(CardCSV.parse(contradictory, categories: [cat]).cards[0].bucketBeforeCompletion == nil,
+           "a before-stack on a task that is not completed is ignored")
+
+    // An export from before these columns must read exactly as it did, in
+    // particular without taking a project out of the archive.
+    let older = "id,title,stack,project\n\(UUID().uuidString),x,today,NOWJOB"
+    let old = CardCSV.parse(older, categories: [cat])
+    expect(old.projectArchived.isEmpty, "no archived column means the file says nothing about it")
+    expect(old.cards[0].reminderAnsweredAt == nil, "and no answered column leaves it unanswered")
+    let blank = "id,title,stack,project,archived\n\(UUID().uuidString),x,today,NOWJOB,"
+    expect(CardCSV.parse(blank, categories: [cat]).projectArchived.isEmpty,
+           "an empty archived cell is silence too, not a no")
 }
 
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")

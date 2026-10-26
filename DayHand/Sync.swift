@@ -1141,7 +1141,8 @@ enum CardCSV {
     /// does. An older export's `reminds` column is simply ignored: what it
     /// recorded no longer exists, and a reminder is silenced by clearing it.
     static let header = ["id", "title", "stack", "category", "deadline", "completed", "created",
-                         "project", "group", "remind", "notes", "entered"]
+                         "project", "group", "remind", "notes", "entered",
+                         "answered", "before", "archived"]
 
     private static let dayFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -1215,6 +1216,11 @@ enum CardCSV {
         let labels = Dictionary(uniqueKeysWithValues: categories.map { ($0.id, $0.label) })
         let names = Dictionary(projects.map { ($0.id, $0.name) }, uniquingKeysWith: { first, _ in first })
         let groups = Dictionary(projects.map { ($0.id, $0.group ?? "") }, uniquingKeysWith: { first, _ in first })
+        // "yes" or "no" rather than blank for a project that exists, so that an
+        // empty cell can keep meaning "the file says nothing" — which is what
+        // an export from before this column reads as.
+        let archived = Dictionary(projects.map { ($0.id, $0.isArchived ? "yes" : "no") },
+                                  uniquingKeysWith: { first, _ in first })
 
         var rows = [header.joined(separator: ",")]
         for card in cards {
@@ -1230,7 +1236,10 @@ enum CardCSV {
                 card.projectID.flatMap { groups[$0] } ?? "",
                 card.remindAt.map { stampFormatter.string(from: $0) } ?? "",
                 card.notes,
-                stampFormatter.string(from: card.enteredStackAt)
+                stampFormatter.string(from: card.enteredStackAt),
+                card.reminderAnsweredAt.map { stampFormatter.string(from: $0) } ?? "",
+                card.bucketBeforeCompletion?.rawValue ?? "",
+                card.projectID.flatMap { archived[$0] } ?? ""
             ].map(escape).joined(separator: ","))
         }
         return rows.joined(separator: "\n") + "\n"
@@ -1256,6 +1265,9 @@ enum CardCSV {
         /// Project key -> the group the file puts it in. The first row naming a
         /// group for a project wins; a hand-edited file could disagree with itself.
         var projectGroups: [String: String] = [:]
+        /// Project key -> whether the file says it is archived. Absent when the
+        /// column is missing or empty, which leaves the project as it is.
+        var projectArchived: [String: Bool] = [:]
     }
 
     /// Parses rows into cards. Categories are matched to existing ones by label,
@@ -1317,6 +1329,13 @@ enum CardCSV {
                 if result.projectGroups[key] == nil, let group = Project.cleanGroup(field("group")) {
                     result.projectGroups[key] = group
                 }
+                if result.projectArchived[key] == nil {
+                    switch field("archived").lowercased() {
+                    case "yes", "true", "1": result.projectArchived[key] = true
+                    case "no", "false", "0": result.projectArchived[key] = false
+                    default: break
+                    }
+                }
             }
             card.bucket = Bucket(rawValue: field("stack").lowercased()) ?? .inbox
             card.categoryID = byLabel[field("category").lowercased()]
@@ -1329,10 +1348,15 @@ enum CardCSV {
             // when its tasks last moved, and re-importing one must not make
             // every task look as though it arrived today.
             card.enteredStackAt = stampFormatter.date(from: field("entered")) ?? card.createdAt
+            card.reminderAnsweredAt = stampFormatter.date(from: field("answered"))
 
             // A completed timestamp and a non-completed stack contradict; the
             // stack column wins, since that is what the app reads.
             if card.bucket != .completed { card.completedAt = nil }
+            // Only a completed task has somewhere to be reopened to; on any
+            // other stack the column is a contradiction, and the stack wins.
+            card.bucketBeforeCompletion = card.bucket == .completed
+                ? Bucket(rawValue: field("before").lowercased()) : nil
             card.modifiedAt = .stamp()
 
             result.cards.append(card)
@@ -1349,6 +1373,9 @@ enum CardCSV {
     private static let synonyms: [String: Set<String>] = [
         "notes":     ["notes", "note", "description"],
         "entered":   ["entered", "entered_stack", "stack_since"],
+        "answered":  ["answered", "reminder_answered"],
+        "before":    ["before", "before_completion", "was_in"],
+        "archived":  ["archived", "is_archived"],
         "id":        ["id", "uuid", "identifier"],
         "title":     ["title", "name", "task", "card", "todo"],
         "stack":     ["stack", "bucket", "list", "status", "column"],
