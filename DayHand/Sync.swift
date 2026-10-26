@@ -814,6 +814,217 @@ extension StoreDocument {
     }
 }
 
+/// What an import did, in tasks. Categories and projects are created or changed
+/// quietly: they are the structure the tasks arrive in, not what was asked for.
+struct CSVImportSummary: Equatable {
+    var added = 0
+    var updated = 0
+    var skipped = 0
+    var removed = 0
+}
+
+extension StoreDocument {
+    /// What a parsed CSV does to a document: categories, then projects, then
+    /// tasks, each matched by id and then by name, so a file can be the whole of
+    /// a document or a handful of rows typed into a spreadsheet.
+    ///
+    /// A pure function, on purpose. It is where the rules live — what is
+    /// stamped, what is left alone, what a blank cell means — and the store is
+    /// not something a test may construct, so it could not otherwise be tested.
+    ///
+    /// Nothing here deletes, except `replacing`, which replaces tasks and only
+    /// tasks.
+    ///
+    /// **Only rows that actually changed are stamped.** Import is an edit, but a
+    /// whole-file round trip is not an edit of every row in it. Stamping them
+    /// all would let a stale file overwrite a newer change made on another
+    /// device in the meantime, and would turn every sync after a restore into a
+    /// rewrite of the whole document. A row identical to what is here is left
+    /// exactly as it is, its `modifiedAt` included; a row that differs is
+    /// stamped now, so a corrected file wins; a row that is new keeps the
+    /// `modified` the file gives it, so a restore keeps its history.
+    func importing(_ parsed: CardCSV.ImportResult, replacing: Bool = false,
+                   now: Date = .stamp()) -> (document: StoreDocument, summary: CSVImportSummary) {
+        var doc = self
+        var summary = CSVImportSummary(skipped: parsed.skipped)
+
+        // Replacing with a file that turned out to hold no cards would wipe
+        // everything and put nothing back, so refuse rather than obey.
+        if replacing && !parsed.cards.isEmpty {
+            summary.removed = doc.cards.count
+            for card in doc.cards { doc.deletedCards[card.id.uuidString] = now }
+            doc.cards.removeAll()
+        }
+
+        // ---- categories
+        for row in parsed.categories {
+            if let index = doc.categories.firstIndex(where: { $0.id == row.id }) {
+                var edited = doc.categories[index]
+                // Not a rename when only the case differs: a hand-typed
+                // "research" matched "Research" by label, and should not
+                // rewrite it.
+                if row.label.lowercased() != edited.label.lowercased() { edited.label = row.label }
+                if let symbol = row.symbolName { edited.symbolName = symbol }
+                if let color = row.color { edited.color = color }
+                if edited != doc.categories[index] {
+                    edited.modifiedAt = now
+                    doc.categories[index] = edited
+                }
+            } else {
+                doc.categories.append(CardCategory(
+                    id: row.id,
+                    label: row.label,
+                    // Chosen here only when the file did not choose: a category
+                    // made from a bare name still has to look like something.
+                    symbolName: row.symbolName ?? "tag",
+                    color: row.color ?? .indigo,
+                    modifiedAt: row.modifiedAt ?? now
+                ))
+                doc.deletedCategories.removeValue(forKey: row.id.uuidString)
+            }
+        }
+        if let id = parsed.categories.first(where: \.isDefault)?.id, id != doc.defaultCategoryID {
+            doc.defaultCategoryID = id
+            doc.defaultCategoryChangedAt = now
+        }
+
+        // ---- projects
+        var declared = Set<String>()
+        for row in parsed.projects {
+            let key = Project.key(for: Project.clean(row.name))
+            declared.insert(key)
+            let group = row.group
+
+            if let index = row.id.flatMap({ id in doc.projects.firstIndex { $0.id == id } })
+                ?? doc.projects.firstIndex(where: { $0.key == key }) {
+                var edited = doc.projects[index]
+                let cleaned = Project.canonicalName(row.name)
+                // A rename, but never onto a name another project already has —
+                // that would be a merge, which is not something a spreadsheet
+                // cell should be able to do.
+                if !cleaned.isEmpty, cleaned != edited.name,
+                   !doc.projects.contains(where: { $0.id != edited.id && $0.key == Project.key(for: cleaned) }) {
+                    edited.name = cleaned
+                }
+                var refile = false
+                if row.givesCategory, edited.categoryID != row.categoryID {
+                    edited.categoryID = row.categoryID
+                    edited.group = nil
+                    refile = true
+                }
+                if let group {
+                    edited.group = ProjectGroups.existingName(for: group, in: edited.categoryID,
+                                                              projects: doc.projects) ?? group
+                }
+                if let archived = row.archived { edited.isArchived = archived }
+                guard edited != doc.projects[index] else { continue }
+
+                edited.modifiedAt = now
+                doc.projects[index] = edited
+                if refile {
+                    // Moving a project takes its tasks, as everywhere else.
+                    let ids = Set(ProjectCategory.cardsToRefile(edited, to: edited.categoryID, in: doc.cards).map(\.id))
+                    for i in doc.cards.indices where ids.contains(doc.cards[i].id) {
+                        doc.cards[i].categoryID = edited.categoryID
+                        doc.cards[i].modifiedAt = now
+                    }
+                }
+            } else {
+                let name = Project.canonicalName(row.name)
+                guard !name.isEmpty else { continue }
+                doc.projects.append(Project(
+                    id: row.id ?? UUID(),
+                    name: name,
+                    categoryID: row.categoryID,
+                    isArchived: row.archived ?? false,
+                    group: group.map { ProjectGroups.existingName(for: $0, in: row.categoryID, projects: doc.projects) ?? $0 },
+                    modifiedAt: row.modifiedAt ?? now
+                ))
+                if let id = row.id { doc.deletedProjects.removeValue(forKey: id.uuidString) }
+            }
+        }
+
+        // ---- tasks
+        for var card in parsed.cards {
+            let given = parsed.given[card.id] ?? []
+            let index = doc.cards.firstIndex { $0.id == card.id }
+
+            // Named projects are matched, or created, and bring their category
+            // to a task that did not name one.
+            if let name = parsed.projectNames[card.id] {
+                let cleaned = Project.clean(name)
+                let key = Project.key(for: cleaned)
+                // A project the file describes keeps the state the file gives
+                // it. Naming an archived project in a task brings it back, which
+                // is right for typing a name and wrong for restoring a file.
+                let stays = declared.contains(key) || parsed.projectArchived[key] != nil
+                var project: Project?
+                if let i = doc.projects.firstIndex(where: { $0.key == key }) {
+                    if doc.projects[i].isArchived && !stays {
+                        doc.projects[i].isArchived = false
+                        doc.projects[i].modifiedAt = now
+                    }
+                    project = doc.projects[i]
+                } else if !cleaned.isEmpty {
+                    let made = Project(name: Project.canonicalName(cleaned), categoryID: card.categoryID, modifiedAt: now)
+                    doc.projects.append(made)
+                    project = made
+                }
+                card.projectID = project?.id
+                if card.categoryID == nil, let category = project?.categoryID,
+                   index == nil || given.contains("category") {
+                    card.categoryID = category
+                }
+            }
+
+            if let index {
+                let existing = doc.cards[index]
+                var merged = CardCSV.merged(existing, with: card, given: given)
+                var compare = merged
+                compare.modifiedAt = existing.modifiedAt
+                if compare != existing {
+                    merged.modifiedAt = now
+                    // Touched by the user, so it is their task now.
+                    merged.isSample = false
+                    doc.cards[index] = merged
+                    summary.updated += 1
+                }
+            } else {
+                doc.cards.append(card)
+                summary.added += 1
+            }
+            // An imported card must not be resurrected-then-deleted by a stale
+            // tombstone from an earlier delete of the same id.
+            doc.deletedCards.removeValue(forKey: card.id.uuidString)
+        }
+
+        // ---- older files
+        // Files from before projects had rows of their own repeated these on
+        // every task. They still apply — for any project the file does not
+        // describe itself, which would otherwise be told twice.
+        //
+        // A group named in the file puts its project in that group. An empty
+        // group column leaves the project where it is, so a file from before
+        // groups never takes a project out of one.
+        for (key, label) in parsed.projectGroups where !declared.contains(key) {
+            guard let i = doc.projects.firstIndex(where: { $0.key == key }) else { continue }
+            let group = ProjectGroups.existingName(for: label, in: doc.projects[i].categoryID,
+                                                   projects: doc.projects) ?? label
+            if doc.projects[i].group != group {
+                doc.projects[i].group = group
+                doc.projects[i].modifiedAt = now
+            }
+        }
+        for (key, archived) in parsed.projectArchived where !declared.contains(key) {
+            guard let i = doc.projects.firstIndex(where: { $0.key == key }),
+                  doc.projects[i].isArchived != archived else { continue }
+            doc.projects[i].isArchived = archived
+            doc.projects[i].modifiedAt = now
+        }
+        return (doc, summary)
+    }
+}
+
 /// Watches the shared file and reports when something else writes to it —
 /// the other device, or iCloud finishing a download.
 private final class SyncFilePresenter: NSObject, NSFilePresenter {
@@ -1142,7 +1353,8 @@ enum CardCSV {
     /// recorded no longer exists, and a reminder is silenced by clearing it.
     static let header = ["id", "title", "stack", "category", "deadline", "completed", "created",
                          "project", "group", "remind", "notes", "entered",
-                         "answered", "before", "archived"]
+                         "answered", "before", "archived",
+                         "modified", "symbol", "color", "default", "type"]
 
     private static let dayFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -1212,35 +1424,77 @@ enum CardCSV {
 
     // MARK: Writing
 
-    static func export(cards: [TodoItem], categories: [CardCategory], projects: [Project] = []) -> String {
+    /// Everything in the document, one row per thing: categories, then projects,
+    /// then tasks, each saying which it is in the `type` column.
+    ///
+    /// One wide table with empty cells where a column does not apply, rather
+    /// than three files, because a CSV is one file and because a spreadsheet can
+    /// filter on `type` to see any one kind alone. `title` carries a task's
+    /// title, a project's name or a category's label — the column means "what it
+    /// is called" in all three — and `category` is, for a task or a project, the
+    /// category it belongs to.
+    ///
+    /// Categories and projects come first only because there are few of them
+    /// and it makes the structure readable at the top of the sheet. Import does
+    /// not depend on the order.
+    static func export(cards: [TodoItem], categories: [CardCategory], projects: [Project] = [],
+                       defaultCategoryID: UUID? = nil) -> String {
         let labels = Dictionary(uniqueKeysWithValues: categories.map { ($0.id, $0.label) })
         let names = Dictionary(projects.map { ($0.id, $0.name) }, uniquingKeysWith: { first, _ in first })
-        let groups = Dictionary(projects.map { ($0.id, $0.group ?? "") }, uniquingKeysWith: { first, _ in first })
-        // "yes" or "no" rather than blank for a project that exists, so that an
-        // empty cell can keep meaning "the file says nothing" — which is what
-        // an export from before this column reads as.
-        let archived = Dictionary(projects.map { ($0.id, $0.isArchived ? "yes" : "no") },
-                                  uniquingKeysWith: { first, _ in first })
+
+        func line(_ values: [String: String]) -> String {
+            header.map { escape(values[$0] ?? "") }.joined(separator: ",")
+        }
+        func stamp(_ date: Date?) -> String { date.map { stampFormatter.string(from: $0) } ?? "" }
 
         var rows = [header.joined(separator: ",")]
+
+        for category in categories {
+            rows.append(line([
+                "type": "category",
+                "id": category.id.uuidString,
+                "title": category.label,
+                "symbol": category.symbolName,
+                "color": category.color.rawValue,
+                // Written only for the one that is, so a blank stays silence.
+                "default": category.id == defaultCategoryID ? "yes" : "",
+                "modified": stamp(category.modifiedAt)
+            ]))
+        }
+        for project in projects {
+            rows.append(line([
+                "type": "project",
+                "id": project.id.uuidString,
+                "title": project.name,
+                "category": project.categoryID.flatMap { labels[$0] } ?? "",
+                "group": project.group ?? "",
+                // "yes" or "no" rather than blank, so that an empty cell can keep
+                // meaning "the file says nothing" — which is what an export
+                // from before this column reads as.
+                "archived": project.isArchived ? "yes" : "no",
+                "modified": stamp(project.modifiedAt)
+            ]))
+        }
         for card in cards {
-            rows.append([
-                card.id.uuidString,
-                card.title,
-                card.bucket.rawValue,
-                card.categoryID.flatMap { labels[$0] } ?? "",
-                card.deadline.map { dayFormatter.string(from: $0) } ?? "",
-                card.completedAt.map { stampFormatter.string(from: $0) } ?? "",
-                stampFormatter.string(from: card.createdAt),
-                card.projectID.flatMap { names[$0] } ?? "",
-                card.projectID.flatMap { groups[$0] } ?? "",
-                card.remindAt.map { stampFormatter.string(from: $0) } ?? "",
-                card.notes,
-                stampFormatter.string(from: card.enteredStackAt),
-                card.reminderAnsweredAt.map { stampFormatter.string(from: $0) } ?? "",
-                card.bucketBeforeCompletion?.rawValue ?? "",
-                card.projectID.flatMap { archived[$0] } ?? ""
-            ].map(escape).joined(separator: ","))
+            rows.append(line([
+                "id": card.id.uuidString,
+                "title": card.title,
+                "stack": card.bucket.rawValue,
+                "category": card.categoryID.flatMap { labels[$0] } ?? "",
+                "deadline": card.deadline.map { dayFormatter.string(from: $0) } ?? "",
+                "completed": stamp(card.completedAt),
+                "created": stamp(card.createdAt),
+                // Group and archived belong to the project, and are written on
+                // its row. Repeating them here would give the same fact two
+                // places to disagree.
+                "project": card.projectID.flatMap { names[$0] } ?? "",
+                "remind": stamp(card.remindAt),
+                "notes": card.notes,
+                "entered": stamp(card.enteredStackAt),
+                "answered": stamp(card.reminderAnsweredAt),
+                "before": card.bucketBeforeCompletion?.rawValue ?? "",
+                "modified": stamp(card.modifiedAt)
+            ]))
         }
         return rows.joined(separator: "\n") + "\n"
     }
@@ -1255,8 +1509,40 @@ enum CardCSV {
 
     // MARK: Reading
 
+    /// A category row as the file describes it, with its identity already
+    /// settled: the id of the category it matches here if there is one, otherwise
+    /// the file's own, otherwise a fresh one.
+    struct CategoryRow {
+        var id: UUID
+        var label: String
+        var symbolName: String?
+        var color: CategoryColor?
+        var isDefault: Bool
+        var modifiedAt: Date?
+    }
+
+    /// A project row. `givesCategory` is whether the file has a category column
+    /// at all, since an empty cell there means "none" but no column means
+    /// nothing was said.
+    struct ProjectRow {
+        var id: UUID?
+        var name: String
+        var categoryID: UUID?
+        var givesCategory: Bool
+        var group: String?
+        var archived: Bool?
+        var modifiedAt: Date?
+    }
+
     struct ImportResult {
         var cards: [TodoItem] = []
+        var categories: [CategoryRow] = []
+        var projects: [ProjectRow] = []
+        /// Task id -> the columns the file actually has something to say about
+        /// for that row. An existing task is only changed in these, so a file
+        /// with no `notes` column, or an unreadable date, leaves them alone
+        /// rather than blanking them.
+        var given: [UUID: Set<String>] = [:]
         var skipped = 0
         /// Card id -> the project name it was given, from a project column or a
         /// `#CODE` at the start of its title. Resolved to projects by the store,
@@ -1270,9 +1556,41 @@ enum CardCSV {
         var projectArchived: [String: Bool] = [:]
     }
 
-    /// Parses rows into cards. Categories are matched to existing ones by label,
-    /// case-insensitively; an unknown one leaves the card uncategorised rather
-    /// than inventing a category the user did not ask for.
+    /// What a row in the file is. A blank type is a task, so every file written
+    /// before there were kinds of row still reads as exactly what it was.
+    enum RowKind { case task, project, category }
+
+    private static func kind(of raw: String) -> RowKind? {
+        switch raw.trimmingCharacters(in: .whitespaces).lowercased() {
+        case "", "task", "card", "todo": return .task
+        case "project": return .project
+        case "category": return .category
+        default: return nil
+        }
+    }
+
+    private static func flag(_ raw: String) -> Bool? {
+        switch raw.trimmingCharacters(in: .whitespaces).lowercased() {
+        case "yes", "true", "1": return true
+        case "no", "false", "0": return false
+        default: return nil
+        }
+    }
+
+    /// Columns where an empty cell means "clear this", as opposed to "the file
+    /// says nothing". Everything else — the stack, the title, the timestamps —
+    /// is left alone when blank, because a blank stack that moved a task to the
+    /// inbox, or a blank `created` that made it brand new, would be a way for a
+    /// half-filled spreadsheet to damage tasks it never meant to touch.
+    private static let clearable: Set<String> = [
+        "category", "deadline", "remind", "completed", "answered", "before", "notes", "project"
+    ]
+
+    /// Parses rows into categories, projects and tasks. Categories are matched to
+    /// existing ones by id, then by label, case-insensitively; one the file
+    /// declares and this device lacks is created by the store. A task naming a
+    /// category nobody declared is left uncategorised rather than having one
+    /// invented with an icon nobody chose.
     ///
     /// Columns are located by **header name**, not by position, so a file that
     /// has been reordered or trimmed in a spreadsheet still imports correctly.
@@ -1288,21 +1606,62 @@ enum CardCSV {
             rows.removeFirst()
         }
 
-        let byLabel = Dictionary(
+        func field(_ row: [String], _ name: String) -> String {
+            guard let index = columns[name], index < row.count else { return "" }
+            // Notes can contain intentional indentation and spacing.
+            if name == "notes" { return row[index] }
+            return row[index].trimmingCharacters(in: .whitespaces)
+        }
+        /// Whether this row reaches the column at all. A short row in a file
+        /// with no header simply does not have the later columns.
+        func has(_ row: [String], _ name: String) -> Bool {
+            guard let index = columns[name] else { return false }
+            return index < row.count
+        }
+        func stamp(_ row: [String], _ name: String) -> Date? {
+            stampFormatter.date(from: field(row, name))
+        }
+
+        var result = ImportResult()
+        var byLabel = Dictionary(
             categories.map { ($0.label.lowercased(), $0.id) },
             uniquingKeysWith: { first, _ in first }
         )
 
-        var result = ImportResult()
-        for row in rows {
-            func field(_ name: String) -> String {
-                guard let index = columns[name], index < row.count else { return "" }
-                // Notes can contain intentional indentation and spacing.
-                if name == "notes" { return row[index] }
-                return row[index].trimmingCharacters(in: .whitespaces)
+        // Categories first, so that every project and task can name them.
+        var seenLabels = Set<String>()
+        for row in rows where kind(of: field(row, "type")) == .category {
+            let label = field(row, "title")
+            guard !label.isEmpty, seenLabels.insert(label.lowercased()).inserted else {
+                if row.contains(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty }) {
+                    result.skipped += 1
+                }
+                continue
             }
+            let fileID = UUID(uuidString: field(row, "id"))
+            let existing = fileID.flatMap { id in categories.first { $0.id == id } }
+                ?? categories.first { $0.label.lowercased() == label.lowercased() }
+            let id = existing?.id ?? fileID ?? UUID()
+            byLabel[label.lowercased()] = id
+            let symbol = field(row, "symbol")
+            result.categories.append(CategoryRow(
+                id: id,
+                label: label,
+                symbolName: symbol.isEmpty ? nil : symbol,
+                color: CategoryColor(rawValue: field(row, "color").lowercased()),
+                isDefault: flag(field(row, "default")) == true,
+                modifiedAt: stamp(row, "modified")
+            ))
+        }
 
-            let title = field("title")
+        for row in rows {
+            guard let kind = kind(of: field(row, "type")) else {
+                result.skipped += 1
+                continue
+            }
+            if kind == .category { continue }
+
+            let title = field(row, "title")
             guard !title.isEmpty else {
                 if row.contains(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty }) {
                     result.skipped += 1
@@ -1310,10 +1669,25 @@ enum CardCSV {
                 continue
             }
 
+            if kind == .project {
+                result.projects.append(ProjectRow(
+                    id: UUID(uuidString: field(row, "id")),
+                    name: title,
+                    categoryID: byLabel[field(row, "category").lowercased()],
+                    givesCategory: has(row, "category"),
+                    // Blank is silence for a group and for archived alike, so
+                    // a project is never taken out of one by a cell left empty.
+                    group: Project.cleanGroup(field(row, "group")),
+                    archived: flag(field(row, "archived")),
+                    modifiedAt: stamp(row, "modified")
+                ))
+                continue
+            }
+
             // A title written as "#ABC1234 slides" carries its project, which
             // is how a list pasted from elsewhere would say it.
             var cardTitle = title
-            var projectName = Project.clean(field("project"))
+            var projectName = Project.clean(field(row, "project"))
             if cardTitle.hasPrefix("#"), let (word, rest) = ProjectConversion.split(cardTitle) {
                 if projectName.isEmpty { projectName = word }
                 cardTitle = rest
@@ -1321,47 +1695,143 @@ enum CardCSV {
 
             var card = TodoItem(title: cardTitle)
             card.dateSemanticsVersion = legacyDate ? 0 : 1
-            card.notes = field("notes")
-            if let id = UUID(uuidString: field("id")) { card.id = id }
+            card.notes = field(row, "notes")
+            if let id = UUID(uuidString: field(row, "id")) { card.id = id }
             if !projectName.isEmpty {
                 result.projectNames[card.id] = projectName
                 let key = Project.key(for: projectName)
-                if result.projectGroups[key] == nil, let group = Project.cleanGroup(field("group")) {
+                // Older files repeated these on every task row; they still read,
+                // but a project row for the same project takes precedence.
+                if result.projectGroups[key] == nil, let group = Project.cleanGroup(field(row, "group")) {
                     result.projectGroups[key] = group
                 }
-                if result.projectArchived[key] == nil {
-                    switch field("archived").lowercased() {
-                    case "yes", "true", "1": result.projectArchived[key] = true
-                    case "no", "false", "0": result.projectArchived[key] = false
-                    default: break
-                    }
+                if result.projectArchived[key] == nil, let archived = flag(field(row, "archived")) {
+                    result.projectArchived[key] = archived
                 }
             }
-            card.bucket = Bucket(rawValue: field("stack").lowercased()) ?? .inbox
-            card.categoryID = byLabel[field("category").lowercased()]
-            card.deadline = parseDay(field("deadline"))
-            card.remindAt = stampFormatter.date(from: field("remind")) ?? parseDay(field("remind"))
-            card.completedAt = stampFormatter.date(from: field("completed"))
-            if let created = stampFormatter.date(from: field("created")) { card.createdAt = created }
+
+            var given: Set<String> = ["title"]
+            func speak(_ name: String, valid: Bool = true) {
+                guard has(row, name) else { return }
+                let blank = field(row, name).isEmpty
+                if blank ? clearable.contains(name) : valid { given.insert(name) }
+            }
+
+            let stack = Bucket(rawValue: field(row, "stack").lowercased())
+            card.bucket = stack ?? .inbox
+            speak("stack", valid: stack != nil)
+
+            let label = field(row, "category").lowercased()
+            card.categoryID = byLabel[label]
+            speak("category", valid: byLabel[label] != nil)
+
+            card.deadline = parseDay(field(row, "deadline"))
+            speak("deadline", valid: card.deadline != nil)
+            card.remindAt = stamp(row, "remind") ?? parseDay(field(row, "remind"))
+            speak("remind", valid: card.remindAt != nil)
+            card.completedAt = stamp(row, "completed")
+            speak("completed", valid: card.completedAt != nil)
+            card.reminderAnsweredAt = stamp(row, "answered")
+            speak("answered", valid: card.reminderAnsweredAt != nil)
+
+            let before = Bucket(rawValue: field(row, "before").lowercased())
+            speak("before", valid: before != nil)
+
+            if let created = stamp(row, "created") { card.createdAt = created; given.insert("created") }
             // Falls back to `createdAt` for the same reason the decoder does:
             // an export written before this column existed knows nothing about
             // when its tasks last moved, and re-importing one must not make
             // every task look as though it arrived today.
-            card.enteredStackAt = stampFormatter.date(from: field("entered")) ?? card.createdAt
-            card.reminderAnsweredAt = stampFormatter.date(from: field("answered"))
+            if let entered = stamp(row, "entered") {
+                card.enteredStackAt = entered
+                given.insert("entered")
+            } else {
+                card.enteredStackAt = card.createdAt
+            }
+
+            speak("notes")
+            if has(row, "project") || !projectName.isEmpty { given.insert("project") }
 
             // A completed timestamp and a non-completed stack contradict; the
             // stack column wins, since that is what the app reads.
             if card.bucket != .completed { card.completedAt = nil }
             // Only a completed task has somewhere to be reopened to; on any
             // other stack the column is a contradiction, and the stack wins.
-            card.bucketBeforeCompletion = card.bucket == .completed
-                ? Bucket(rawValue: field("before").lowercased()) : nil
-            card.modifiedAt = .stamp()
+            card.bucketBeforeCompletion = card.bucket == .completed ? before : nil
+            // What the file says, or now: a row with no `modified` is new to
+            // whoever wrote it, and an import is an edit.
+            card.modifiedAt = stamp(row, "modified") ?? .stamp()
 
             result.cards.append(card)
+            result.given[card.id] = given
         }
         return result
+    }
+
+    /// An existing task with what a file says about it laid over the top — and
+    /// only what the file says. Anything the file does not speak to, because
+    /// the column is absent, or empty where empty means silence, or unreadable,
+    /// keeps the value the task already has.
+    ///
+    /// Timestamps compare to the second, which is all a CSV holds: a task whose
+    /// stored millisecond differs from the file's whole second has not changed.
+    /// Returning the old value when they agree is what lets the caller tell an
+    /// untouched row from an edited one by simple equality.
+    static func merged(_ existing: TodoItem, with parsed: TodoItem, given: Set<String>) -> TodoItem {
+        func same(_ a: Date?, _ b: Date?) -> Bool {
+            switch (a, b) {
+            case (nil, nil): return true
+            case let (x?, y?): return abs(x.timeIntervalSince(y)) < 1
+            default: return false
+            }
+        }
+        func take(_ old: Date?, _ new: Date?) -> Date? { same(old, new) ? old : new }
+        /// A deadline is a day, and the CSV writes it as one. A task whose
+        /// stored deadline happens to carry a time of day — an imported one can —
+        /// reads back as midnight, and is not thereby a task that changed.
+        func takeDay(_ old: Date?, _ new: Date?) -> Date? {
+            switch (old, new) {
+            case (nil, nil): return nil
+            case let (x?, y?): return Calendar.current.isDate(x, inSameDayAs: y) ? x : y
+            default: return new
+            }
+        }
+
+        var card = existing
+        if given.contains("title") { card.title = parsed.title }
+        if given.contains("notes") { card.notes = parsed.notes }
+        if given.contains("stack") { card.bucket = parsed.bucket }
+        if given.contains("category") { card.categoryID = parsed.categoryID }
+        if given.contains("project") { card.projectID = parsed.projectID }
+        if given.contains("deadline") { card.deadline = takeDay(existing.deadline, parsed.deadline) }
+        if given.contains("remind") { card.remindAt = take(existing.remindAt, parsed.remindAt) }
+        if given.contains("completed") { card.completedAt = take(existing.completedAt, parsed.completedAt) }
+        if given.contains("answered") {
+            card.reminderAnsweredAt = take(existing.reminderAnsweredAt, parsed.reminderAnsweredAt)
+        }
+        if given.contains("before") { card.bucketBeforeCompletion = parsed.bucketBeforeCompletion }
+        if given.contains("created") {
+            card.createdAt = take(existing.createdAt, parsed.createdAt) ?? existing.createdAt
+        }
+        if given.contains("entered") {
+            card.enteredStackAt = take(existing.enteredStackAt, parsed.enteredStackAt) ?? existing.enteredStackAt
+        }
+
+        // Changing the stack in the sheet is an arrival, and has to read as one
+        // unless the sheet also said when.
+        if card.bucket != existing.bucket {
+            let saidWhen = given.contains("entered") && !same(parsed.enteredStackAt, existing.enteredStackAt)
+            if !saidWhen { card.enteredStackAt = .stamp() }
+            if card.bucket == .completed {
+                if card.completedAt == nil { card.completedAt = .stamp() }
+                if card.bucketBeforeCompletion == nil { card.bucketBeforeCompletion = existing.bucket }
+            }
+        }
+        if card.bucket != .completed {
+            card.completedAt = nil
+            card.bucketBeforeCompletion = nil
+        }
+        return card
     }
 
     private static var defaultColumns: [String: Int] {
@@ -1376,6 +1846,11 @@ enum CardCSV {
         "answered":  ["answered", "reminder_answered"],
         "before":    ["before", "before_completion", "was_in"],
         "archived":  ["archived", "is_archived"],
+        "modified":  ["modified", "modified_at", "last_modified"],
+        "symbol":    ["symbol", "icon"],
+        "color":     ["color", "colour"],
+        "default":   ["default", "is_default"],
+        "type":      ["type", "kind", "record"],
         "id":        ["id", "uuid", "identifier"],
         "title":     ["title", "name", "task", "card", "todo"],
         "stack":     ["stack", "bucket", "list", "status", "column"],

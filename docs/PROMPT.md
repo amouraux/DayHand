@@ -526,7 +526,7 @@ not from whenever it first did.
 the field existed knows nothing about when its tasks last moved, and the day
 they were made is the one honest answer available; falling back to now would
 have every task in the list claim it had just arrived, on the first launch
-after this shipped. The CSV carries it as a final `entered` column and falls
+after this shipped. The CSV carries it as an `entered` column and falls
 back the same way, because tasks are matched by id on import — without it,
 exporting and re-importing would quietly reset every task to today.
 
@@ -1665,38 +1665,113 @@ sheets and floating buttons do not translate, so the layout would change.
 More offers **Export Tasks as CSV…** and **Import Tasks from CSV…** through
 the system save and open panels.
 
+### One file, three kinds of row
+
+The CSV holds the whole document: a row for every **category**, every
+**project** and every **task**, each saying which it is in a final `type`
+column. A **blank `type` is a task**, so every file written before there were
+kinds of row still reads as exactly what it was.
+
 Columns, in this order: `id, title, stack, category, deadline, completed,
-created, project, group, remind, notes, entered, answered, before, archived`.
-Every new column goes **last**, so header-less older exports still read by
-position.
+created, project, group, remind, notes, entered, answered, before, archived,
+modified, symbol, color, default, type`. Every new column goes **last**, so
+header-less older exports still read by position.
 
-The last five carry what a round trip used to lose silently:
+It is one wide table with empty cells where a column does not apply, because a
+CSV is one file and a spreadsheet can filter on `type` to see any one kind
+alone. Where two kinds mean the same thing they share a column: **`title`** is a
+task's title, a project's name or a category's label — what it is *called* — and
+**`category`** is, for a task or a project, the category it belongs to. The rest
+are specific to a kind:
 
-- **`entered`** — when the task arrived in its stack. Tasks are matched by id on
-  import, so without it exporting and re-importing would reset every task to
-  today.
+| | task | project | category |
+|---|---|---|---|
+| `stack`, `deadline`, `remind`, `completed`, `created`, `entered`, `answered`, `before`, `notes`, `project` | ✓ | | |
+| `group`, `archived` | | ✓ | |
+| `symbol`, `color`, `default` | | | ✓ |
+| `id`, `title`, `category`, `modified` | ✓ | ✓ | ✓ |
+
+**A project's group and archived state live on its own row only.** They used to
+be repeated on every task row, which gave one fact many places to disagree. An
+older file that still repeats them is read as before, for any project the file
+does not describe itself.
+
+Rows are written categories, then projects, then tasks, so the structure reads
+at the top of the sheet. **Import does not depend on the order**: it resolves
+categories first, then projects, then tasks, whatever order the rows are in, so a
+file sorted by hand in a spreadsheet still imports.
+
+What the columns carry that a task-only file lost silently:
+
+- **`entered`** — when the task arrived in its stack. Tasks are matched by id,
+  so without it a round trip would reset every task to today.
 - **`answered`** — when a reminder was answered. Without it a task whose
   reminder had been dealt with would come back asking again.
-- **`before`** — the stack a completed task would be reopened to. Without it
-  reopening an imported task drops it in the inbox. Ignored on any stack but
-  Completed, where it contradicts the stack and the stack wins.
-- **`archived`** — whether the task's *project* is archived, `yes` or `no`, and
-  blank when the task has no project. An empty cell is silence, never a `no`:
-  an export from before the column must not take a project out of the archive.
-- `notes` is the free text the task editor offers.
+- **`before`** — the stack a completed task would be reopened to. Ignored on any
+  stack but Completed, where it contradicts the stack and the stack wins.
+- **`archived`** — `yes` or `no` on a project row. Blank is silence, never a
+  `no`: a file that does not say must not take a project out of the archive.
+- **`symbol`, `color`, `default`** — a category's look, and which one new tasks
+  start in. A category a file declares and this device lacks is created, with
+  the icon and colour the file gives it; a bare name with neither gets a tag
+  icon and indigo, because a category still has to look like something. A task
+  naming a category *nobody declared* is still left uncategorised rather than
+  having one invented.
+- **A project with no tasks** is a row like any other, so it is no longer lost.
 
-Timestamps in the CSV are to the second, as `created` and `completed` already
-were; nothing here depends on the millisecond.
+Timestamps in the CSV are to the second; nothing here depends on the
+millisecond.
 
-**Deliberately not exported:** `modifiedAt`. Import is itself an edit, so every
-imported row is stamped now — which is what lets a corrected CSV win a sync
-against another device's older copy. Writing the old value back would make it
-lose.
+### What import does to what is already here
 
-**Not carried, because a task CSV has nowhere to put them:** a category's icon
-and colour (a task names its category by label, and an unknown label leaves the
-task uncategorised rather than inventing one with a made-up icon), and a
-project with no tasks, which appears in no row at all.
+Rows are matched **by id, then by name** (case-insensitively), and an existing
+category, project or task is updated rather than duplicated. A project can be
+**renamed** in the sheet — never onto a name another project already has, which
+would be a merge — and moved to another **category**, which takes its tasks as
+it does everywhere else, without the undo bar: an import is not something to
+take back one project at a time.
+
+**Only rows that actually changed are stamped.** This is the rule that makes a
+whole-file round trip safe. Import is an edit, but not an edit of every row in
+the file. Stamping them all would let a stale file overwrite a newer change made
+on another device in the meantime, and would turn every sync after a restore
+into a rewrite of the whole document. So:
+
+- a row **identical to what is here is left exactly as it is**, its `modified`
+  included, and writes nothing;
+- a row that **differs is stamped now**, so a corrected file wins a sync;
+- a row that is **new keeps the `modified` the file gives it**, so a restore
+  keeps its history — and gets *now* when the file has none, as a row typed by
+  hand does.
+
+Identical is judged by the second, which is all a CSV holds, and a deadline by
+the day, since that is what it is: one stored with a time of day — an imported
+one can be — reads back as midnight and is not thereby a task that changed. That
+last case was found by laying a real document over its own export; the model
+tests had used tidy data.
+
+**A file only changes what it says.** A column the file does not have, an
+unreadable date, an unknown category label, or an empty cell where empty cannot
+mean "clear" leaves the existing value alone. Empty means *clear* only for
+`category`, `project`, `deadline`, `remind`, `completed`, `answered`, `before`
+and `notes`; for the stack, the title and the timestamps it means the file has
+nothing to say, because a blank stack that moved a task to the inbox, or a blank
+`created` that made it new, would let a half-filled spreadsheet damage tasks it
+never meant to touch.
+
+**Moving a task's stack in the sheet is an arrival**, and `entered` is stamped
+now — unless the sheet also gives an `entered` date, which is how an imported
+backlog says it has been sitting there since March.
+
+**Deliberately not in the file:** deletion records, the "already imported"
+ledgers of the Reminders and Todoist importers (device bookkeeping, not data),
+`dateSemanticsVersion` and the sample flag (derived or internal). A restore
+therefore cannot delete anything by itself; only **replace** does, and it
+replaces tasks and **only tasks** — every category and project stays.
+
+The rules are `StoreDocument.importing`, a pure function in the model layer,
+because the store is not something a test may construct and this is where the
+rules a spreadsheet user depends on live.
 
 **Parse the due column leniently.** Only the app's own export uses `yyyy-MM-dd`;
 open that file in a spreadsheet and the column comes back in the user's locale,
@@ -1706,20 +1781,18 @@ timestamp — plus the device's own short and medium date styles, and normalise 
 the start of the day. A due date that silently fails to parse looks exactly like
 a task that never had one.
 
-The category is written as its *label*, and matched back case-insensitively on
-import; an unknown name leaves the task uncategorised rather than inventing a
-category. Dates are `yyyy-MM-dd`, timestamps ISO 8601.
+A category is written as its *label* on a task or project row, and matched back
+case-insensitively on import. Dates are `yyyy-MM-dd`, timestamps ISO 8601.
 
 On import, a `project`/`course`/`hashtag` column, or a title starting with
-`#CODE `, sets the project (created if new). `tag` means category. A `group` (or
-`cluster`) column puts the row's project in that group — the first row naming a
-group for a project wins — and an empty one leaves the project's group alone, so
-an older file never takes a project out of its group.
+`#CODE `, sets a task's project (created if new). `tag` means category. A
+`group` (or `cluster`) column on a project row puts it in that group, and an
+empty one leaves the project's group alone, so a file never takes a project out
+of one by leaving a cell blank.
 
 Import offers two modes, chosen before the file picker opens: **add to what is
-here**, or **replace all tasks**. Either way it matches **by id** — a task
-already present is updated, anything else is added — and clears any tombstone
-for an imported id, or a previous delete would immediately remove it again.
+here**, or **replace all tasks**. Either way it clears any tombstone for an
+imported id, or a previous delete would immediately remove it again.
 
 Refuse to replace when the file turns out to hold no usable rows: obeying would
 empty the device and put nothing back.
