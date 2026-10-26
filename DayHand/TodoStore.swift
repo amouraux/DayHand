@@ -149,7 +149,9 @@ final class TodoStore: ObservableObject {
     func move(_ item: TodoItem, to bucket: Bucket) {
         record(String(localized: "Moved to \(bucket.title)"), undoing: [item])
         update(item) { card in
+            guard card.bucket != bucket else { return }
             card.bucket = bucket
+            card.enteredStackAt = .stamp()
             card.bucketBeforeCompletion = nil
             card.completedAt = nil
             // Both dates survive the move. Nothing files a card any more, so a
@@ -564,6 +566,7 @@ final class TodoStore: ObservableObject {
         where items[index].projectID == project.id && !items[index].isCompleted {
             items[index].bucketBeforeCompletion = items[index].bucket
             items[index].bucket = .completed
+            items[index].enteredStackAt = stamp
             items[index].completedAt = stamp
             items[index].modifiedAt = stamp
         }
@@ -650,6 +653,7 @@ final class TodoStore: ObservableObject {
             guard card.bucket != .completed else { return }
             card.bucketBeforeCompletion = card.bucket
             card.bucket = .completed
+            card.enteredStackAt = .stamp()
             card.completedAt = .stamp()
         }
         // Finishing the work cancels the reminder about it, and takes it off
@@ -664,6 +668,9 @@ final class TodoStore: ObservableObject {
             guard card.bucket == .completed else { return }
             let origin = card.bucketBeforeCompletion ?? .inbox
             card.bucket = origin
+            // Reopening is an arrival like any other: the task starts sitting
+            // in that stack again from now, not from whenever it first did.
+            card.enteredStackAt = .stamp()
             card.bucketBeforeCompletion = nil
             card.completedAt = nil
         }
@@ -769,6 +776,13 @@ final class TodoStore: ObservableObject {
 
     func setNotes(_ item: TodoItem, to notes: String) {
         update(item) { $0.notes = notes }
+    }
+
+    /// Say when a task arrived in the stack it is in, for one that has been
+    /// sitting longer than the app knows. A real edit, so it is stamped and
+    /// syncs. Never later than now.
+    func setEnteredStackAt(_ item: TodoItem, to date: Date) {
+        update(item) { $0.enteredStackAt = min(date, .stamp()) }
     }
 
     func previewReminders(_ records: [TaskImportRecord], options: TaskImport.Options) throws -> TaskImport.Plan {
@@ -1008,63 +1022,26 @@ final class TodoStore: ObservableObject {
     // MARK: - CSV
 
     func exportCSV() -> String {
-        CardCSV.export(cards: items, categories: categories, projects: projects)
+        CardCSV.export(cards: items, categories: categories, projects: projects,
+                       defaultCategoryID: defaultCategoryID)
     }
 
-    struct ImportSummary { var added = 0; var updated = 0; var skipped = 0; var removed = 0 }
+    typealias ImportSummary = CSVImportSummary
 
-    /// Merges imported cards in by id: a card the app already has is updated,
-    /// anything else is added. Nothing is deleted, so an import can only ever
-    /// add to what is here.
+    /// Merges a file in. The rules are `StoreDocument.importing`, which is where
+    /// they can be tested; this only applies the result.
+    ///
+    /// Nothing is saved when nothing changed, so importing a file that is
+    /// exactly what is already here writes nothing and stamps nothing.
     @discardableResult
     func importCSV(_ text: String, replacingExisting: Bool = false) -> ImportSummary {
         let parsed = CardCSV.parse(text, categories: categories)
-        var summary = ImportSummary(skipped: parsed.skipped)
-
-        // Replacing with a file that turned out to hold no cards would wipe
-        // everything and put nothing back, so refuse rather than obey.
-        if replacingExisting && !parsed.cards.isEmpty {
-            summary.removed = items.count
-            for card in items { deletedCards[card.id.uuidString] = .stamp() }
-            items.removeAll()
-        }
-
-        for var card in parsed.cards {
-            // Named projects are matched, or created, and bring their category
-            // to a card that did not name one.
-            if let name = parsed.projectNames[card.id],
-               let project = ensureProject(named: name, categoryID: card.categoryID) {
-                card.projectID = project.id
-                if card.categoryID == nil { card.categoryID = project.categoryID }
-            }
-            if let index = items.firstIndex(where: { $0.id == card.id }) {
-                items[index] = card
-                summary.updated += 1
-            } else {
-                items.append(card)
-                summary.added += 1
-            }
-            // An imported card must not be resurrected-then-deleted by a stale
-            // tombstone from an earlier delete of the same id.
-            deletedCards.removeValue(forKey: card.id.uuidString)
-        }
-
-        // A group named in the file puts its project in that group. An empty
-        // group column leaves the project where it is, so a file from before
-        // groups never takes a project out of one.
-        var regrouped = false
-        for (projectKey, label) in parsed.projectGroups {
-            guard let project = projects.first(where: { $0.key == projectKey }) else { continue }
-            let before = project.group
-            setProjectGroup(project, to: label)
-            if self.project(id: project.id)?.group != before { regrouped = true }
-        }
-
-        if summary.added + summary.updated + summary.removed > 0 || regrouped {
-            rescheduleNotifications()
-            save()
-        }
-        return summary
+        let result = document.importing(parsed, replacing: replacingExisting)
+        guard result.document != document else { return result.summary }
+        apply(result.document)
+        rescheduleNotifications()
+        save()
+        return result.summary
     }
 
     // MARK: - Persistence and sync

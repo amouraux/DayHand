@@ -714,6 +714,10 @@ struct CardActionsSheet: View {
         var group: String?
         var remindAt: Date?
         var deadline: Date?
+        /// When the task arrived in the stack it is in. Editable for the one
+        /// case the app cannot know about: a task that has been sitting longer
+        /// than it has been here, such as one brought in from another app.
+        var entered = Date()
     }
 
     @State private var draft = Draft()
@@ -794,7 +798,7 @@ struct CardActionsSheet: View {
                             }
                         }
 
-                        Picker(selection: $draft.bucket) {
+                        Picker(selection: bucketBinding) {
                             ForEach(Bucket.quickMoveTargets) { target in
                                 Label(target.title, systemImage: target.symbolName).tag(target)
                             }
@@ -802,6 +806,17 @@ struct CardActionsSheet: View {
                             Label("Stack", systemImage: "tray.full")
                         }
                         .disabled(item.isCompleted)
+
+                        // Not for a completed task: its stack is locked, and
+                        // the date it entered Completed is when it was done,
+                        // which is a different field.
+                        if !item.isCompleted {
+                            DatePicker(selection: enteredBinding, in: ...Date(),
+                                       displayedComponents: [.date]) {
+                                Label("In this stack since", systemImage: "calendar.badge.clock")
+                            }
+                            .datePickerStyle(.compact)
+                        }
 
                         Picker(selection: $draft.categoryID) {
                             Text("None").tag(UUID?.none)
@@ -949,7 +964,8 @@ struct CardActionsSheet: View {
                           project: project.map(ProjectChoice.existing) ?? .none,
                           group: project?.group,
                           remindAt: item.remindAt,
-                          deadline: item.deadline)
+                          deadline: item.deadline,
+                          entered: item.enteredStackAt)
         draft = start
         original = start
         loaded = true
@@ -1000,6 +1016,34 @@ struct CardActionsSheet: View {
         if draft.bucket != Self.effectiveBucket(item) {
             withAnimation { store.move(item, to: draft.bucket) }
         }
+        // After the move, which stamps its own arrival as now: a date the user
+        // chose has to be the one that stands. And only when it differs, like
+        // everything else here, so opening the editor writes nothing.
+        if draft.entered != original.entered {
+            store.setEnteredStackAt(item, to: draft.entered)
+        }
+    }
+
+    /// Choosing a stack is an arrival, so the date beside it follows. Left alone
+    /// it would go on showing when the task came to the *old* stack, under the
+    /// name of the new one. Going back to where it started puts the original
+    /// date back, since nothing has then moved.
+    private var bucketBinding: Binding<Bucket> {
+        Binding(
+            get: { draft.bucket },
+            set: { chosen in
+                guard chosen != draft.bucket else { return }
+                draft.bucket = chosen
+                draft.entered = chosen == original.bucket ? original.entered : Date()
+            }
+        )
+    }
+
+    /// Never later than now: a task cannot have arrived in the future. The
+    /// picker keeps the time of day it was given, so choosing today could
+    /// otherwise land a few hours ahead.
+    private var enteredBinding: Binding<Date> {
+        Binding(get: { draft.entered }, set: { draft.entered = min($0, Date()) })
     }
 
     /// The field and the Project row are two views of one fact, so neither

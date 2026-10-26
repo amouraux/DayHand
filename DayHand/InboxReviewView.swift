@@ -28,6 +28,21 @@ struct InboxReviewView: View {
                     Text(card.title)
                         .font(.title3.weight(.semibold))
                         .textSelection(.enabled)
+                    SwiftUI.TimelineView(.periodic(from: .now, by: 60)) { context in
+                        if let days = InboxReviewSession.daysInStack(since: card.enteredStackAt, now: context.date) {
+                            Group {
+                                if days == 0 {
+                                    Text("Entered Inbox today")
+                                } else if days == 1 {
+                                    Text("In Inbox for 1 day")
+                                } else {
+                                    Text("In Inbox for \(days) days")
+                                }
+                            }
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                        }
+                    }
                     if let project = store.project(for: card) {
                         Label(project.name, systemImage: "folder")
                     }

@@ -265,13 +265,13 @@ struct SettingsView: View {
                     Button {
                         isExporting = true
                     } label: {
-                        Label("Export Tasks as CSV…", systemImage: "square.and.arrow.up")
+                        Label("Export as CSV…", systemImage: "square.and.arrow.up")
                     }
 
                     Button {
                         isChoosingImportMode = true
                     } label: {
-                        Label("Import Tasks from CSV…", systemImage: "square.and.arrow.down")
+                        Label("Import from CSV…", systemImage: "square.and.arrow.down")
                     }
                     Button {
                         isImportingReminders = true
@@ -286,7 +286,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Tasks")
                 } footer: {
-                    Text("DayHand CSV import can either add to what is here or replace it. Tasks are matched by id; categories and projects by name.")
+                    Text("DayHand CSV import can either add to what is here or replace the tasks. Rows are matched by id, then by name, and only what the file says is changed.")
                 }
 
                 Section {

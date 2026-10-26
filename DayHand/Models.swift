@@ -849,6 +849,13 @@ struct TodoItem: Identifiable, Codable, Equatable {
     /// Where the card came from, so un-completing puts it back.
     var bucketBeforeCompletion: Bucket?
     var completedAt: Date?
+    /// When the task arrived in the stack it is in now.
+    ///
+    /// `modifiedAt` cannot answer this. It is bumped by any edit, so renaming
+    /// a task that has sat in LATER since July would make it look as though it
+    /// had just moved — and the question worth asking of a list that never
+    /// nags is precisely which of its tasks have been sitting still.
+    var enteredStackAt: Date = .stamp()
     var createdAt: Date = .stamp()
     /// Last edit, used to reconcile two devices.
     var modifiedAt: Date = .stamp()
@@ -905,6 +912,12 @@ struct TodoItem: Identifiable, Codable, Equatable {
         bucketBeforeCompletion = try c.decodeIfPresent(Bucket.self, forKey: .bucketBeforeCompletion)
         completedAt = try c.decodeIfPresent(Date.self, forKey: .completedAt)
         createdAt = try c.decodeIfPresent(Date.self, forKey: .createdAt) ?? .stamp()
+        // Decoded after `createdAt`, which is its fallback: a file written
+        // before this field existed has no idea when its tasks last moved, and
+        // the day they were made is the one honest answer available. Falling
+        // back to *now* would have every task in the list claim it had just
+        // arrived, on the first launch after this shipped.
+        enteredStackAt = try c.decodeIfPresent(Date.self, forKey: .enteredStackAt) ?? createdAt
         // Files written before syncing existed have no timestamp; treat them as
         // old so a genuinely edited copy on another device wins.
         modifiedAt = try c.decodeIfPresent(Date.self, forKey: .modifiedAt) ?? .distantPast
@@ -1324,6 +1337,12 @@ enum Scheduler {
 /// live tasks means a sync deletion cannot resurrect one, and Undo brings a
 /// moved task straight back into the review. New arrivals wait for the next pass.
 struct InboxReviewSession: Codable, Equatable {
+    static func daysInStack(since entered: Date, now: Date, calendar: Calendar = .current) -> Int? {
+        guard entered <= now else { return nil }
+        return calendar.dateComponents([.day], from: calendar.startOfDay(for: entered),
+                                       to: calendar.startOfDay(for: now)).day
+    }
+
     let taskIDs: [UUID]
     private(set) var keptIDs: Set<UUID> = []
 

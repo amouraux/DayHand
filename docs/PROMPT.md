@@ -504,6 +504,65 @@ completed task carrying no date is listed after the run rather than dropped —
 `Timeline.months` can only place a task it can date, and a task must not vanish
 from the list for want of a timestamp.
 
+## How long a task has been sitting
+
+A task records **`enteredStackAt`**: when it arrived in the stack it is in now.
+It is not shown on the card or in any list. It is stored because the question
+cannot be answered afterwards — a timestamp not written at the moment of the move is gone
+— and because the helpers worth building on a list that never nags are reviews
+of a stack that has stopped moving: what has been in the inbox a fortnight,
+what has sat in NOW all week, what went to LATER in July.
+
+`modifiedAt` cannot stand in for it. It is bumped by any edit, so renaming a
+task that has not moved since July would make it look as though it had just
+arrived. `createdAt` only bounds it from the other side.
+
+Stamped wherever a bucket changes, and nowhere else: moving, completing,
+reopening, and the bulk completion that archiving a project performs. Reopening
+counts as an arrival — the task starts sitting in that stack again from now,
+not from whenever it first did.
+
+**Absent, it falls back to `createdAt`, never to now.** A file written before
+the field existed knows nothing about when its tasks last moved, and the day
+they were made is the one honest answer available; falling back to now would
+have every task in the list claim it had just arrived, on the first launch
+after this shipped. The CSV carries it as an `entered` column and falls
+back the same way, because tasks are matched by id on import — without it,
+exporting and re-importing would quietly reset every task to today.
+
+### Editing it
+
+The task editor has one row for it, under **Stack**: **In this stack since**, a
+date. It exists for the one case the app cannot know about — a task that has
+been sitting longer than it has been here, such as one brought in from another
+app — and it is the same draft as everything else in that sheet: nothing is
+written until **Done**, and **Cancel** discards it.
+
+Four rules, each there because the obvious version would be wrong:
+
+- **Choosing a stack is an arrival, so the date follows.** Move a task from
+  Later to Next in the same edit and the row reads today, not the day it reached
+  Later under the name of Next. Choosing the stack it started in puts the
+  original date back, since nothing has then moved.
+- **A date the user chose is written after the move**, which stamps its own
+  arrival as now, so the chosen one is the one that stands.
+- **Never later than now.** The picker greys out the future, and the store
+  clamps as well, because the picker keeps the time of day it was given and
+  choosing today could otherwise land a few hours ahead.
+- **Not shown for a completed task.** Its stack is locked, and the date it
+  entered Completed is when it was done, which is a different field.
+
+It may be **earlier than `created`**, and `created` is left alone. For an
+imported task the creation date can itself be wrong, and one picker silently
+rewriting a second field would be a surprise.
+
+**The importers set it from the source, not from the import.** The field
+defaults to the moment of import, which would have every task in a four-year-old
+backlog report that it had just arrived. An open task takes the date it was made
+in the other app, a finished one the date it was finished, and either falls back
+to when it was made — then, only when the source gives nothing, to the import. A
+bulk fix for tasks already imported is a CSV with an `entered` column.
+
 ## Reminders
 
 A reminder is armed on a task with a **day**, and fires a local notification.
@@ -1648,12 +1707,116 @@ sheets and floating buttons do not translate, so the layout would change.
 
 ## CSV import and export
 
-More offers **Export Tasks as CSV…** and **Import Tasks from CSV…** through
+More offers **Export as CSV…** and **Import from CSV…** through
 the system save and open panels.
 
-Columns, in this order: `id, title, stack, category, due, completed, created,
-project, group`. The last two are written **last** so header-less older exports
-still read by position.
+### One file, three kinds of row
+
+The CSV holds the whole document: a row for every **category**, every
+**project** and every **task**, each saying which it is in a final `type`
+column. A **blank `type` is a task**, so every file written before there were
+kinds of row still reads as exactly what it was.
+
+Columns, in this order: `id, title, stack, category, deadline, completed,
+created, project, group, remind, notes, entered, answered, before, archived,
+modified, symbol, color, default, type`. Every new column goes **last**, so
+header-less older exports still read by position.
+
+It is one wide table with empty cells where a column does not apply, because a
+CSV is one file and a spreadsheet can filter on `type` to see any one kind
+alone. Where two kinds mean the same thing they share a column: **`title`** is a
+task's title, a project's name or a category's label — what it is *called* — and
+**`category`** is, for a task or a project, the category it belongs to. The rest
+are specific to a kind:
+
+| | task | project | category |
+|---|---|---|---|
+| `stack`, `deadline`, `remind`, `completed`, `created`, `entered`, `answered`, `before`, `notes`, `project` | ✓ | | |
+| `group`, `archived` | | ✓ | |
+| `symbol`, `color`, `default` | | | ✓ |
+| `id`, `title`, `category`, `modified` | ✓ | ✓ | ✓ |
+
+**A project's group and archived state live on its own row only.** They used to
+be repeated on every task row, which gave one fact many places to disagree. An
+older file that still repeats them is read as before, for any project the file
+does not describe itself.
+
+Rows are written categories, then projects, then tasks, so the structure reads
+at the top of the sheet. **Import does not depend on the order**: it resolves
+categories first, then projects, then tasks, whatever order the rows are in, so a
+file sorted by hand in a spreadsheet still imports.
+
+What the columns carry that a task-only file lost silently:
+
+- **`entered`** — when the task arrived in its stack. Tasks are matched by id,
+  so without it a round trip would reset every task to today.
+- **`answered`** — when a reminder was answered. Without it a task whose
+  reminder had been dealt with would come back asking again.
+- **`before`** — the stack a completed task would be reopened to. Ignored on any
+  stack but Completed, where it contradicts the stack and the stack wins.
+- **`archived`** — `yes` or `no` on a project row. Blank is silence, never a
+  `no`: a file that does not say must not take a project out of the archive.
+- **`symbol`, `color`, `default`** — a category's look, and which one new tasks
+  start in. A category a file declares and this device lacks is created, with
+  the icon and colour the file gives it; a bare name with neither gets a tag
+  icon and indigo, because a category still has to look like something. A task
+  naming a category *nobody declared* is still left uncategorised rather than
+  having one invented.
+- **A project with no tasks** is a row like any other, so it is no longer lost.
+
+Timestamps in the CSV are to the second; nothing here depends on the
+millisecond.
+
+### What import does to what is already here
+
+Rows are matched **by id, then by name** (case-insensitively), and an existing
+category, project or task is updated rather than duplicated. A project can be
+**renamed** in the sheet — never onto a name another project already has, which
+would be a merge — and moved to another **category**, which takes its tasks as
+it does everywhere else, without the undo bar: an import is not something to
+take back one project at a time.
+
+**Only rows that actually changed are stamped.** This is the rule that makes a
+whole-file round trip safe. Import is an edit, but not an edit of every row in
+the file. Stamping them all would let a stale file overwrite a newer change made
+on another device in the meantime, and would turn every sync after a restore
+into a rewrite of the whole document. So:
+
+- a row **identical to what is here is left exactly as it is**, its `modified`
+  included, and writes nothing;
+- a row that **differs is stamped now**, so a corrected file wins a sync;
+- a row that is **new keeps the `modified` the file gives it**, so a restore
+  keeps its history — and gets *now* when the file has none, as a row typed by
+  hand does.
+
+Identical is judged by the second, which is all a CSV holds, and a deadline by
+the day, since that is what it is: one stored with a time of day — an imported
+one can be — reads back as midnight and is not thereby a task that changed. That
+last case was found by laying a real document over its own export; the model
+tests had used tidy data.
+
+**A file only changes what it says.** A column the file does not have, an
+unreadable date, an unknown category label, or an empty cell where empty cannot
+mean "clear" leaves the existing value alone. Empty means *clear* only for
+`category`, `project`, `deadline`, `remind`, `completed`, `answered`, `before`
+and `notes`; for the stack, the title and the timestamps it means the file has
+nothing to say, because a blank stack that moved a task to the inbox, or a blank
+`created` that made it new, would let a half-filled spreadsheet damage tasks it
+never meant to touch.
+
+**Moving a task's stack in the sheet is an arrival**, and `entered` is stamped
+now — unless the sheet also gives an `entered` date, which is how an imported
+backlog says it has been sitting there since March.
+
+**Deliberately not in the file:** deletion records, the "already imported"
+ledgers of the Reminders and Todoist importers (device bookkeeping, not data),
+`dateSemanticsVersion` and the sample flag (derived or internal). A restore
+therefore cannot delete anything by itself; only **replace** does, and it
+replaces tasks and **only tasks** — every category and project stays.
+
+The rules are `StoreDocument.importing`, a pure function in the model layer,
+because the store is not something a test may construct and this is where the
+rules a spreadsheet user depends on live.
 
 **Parse the due column leniently.** Only the app's own export uses `yyyy-MM-dd`;
 open that file in a spreadsheet and the column comes back in the user's locale,
@@ -1663,20 +1826,18 @@ timestamp — plus the device's own short and medium date styles, and normalise 
 the start of the day. A due date that silently fails to parse looks exactly like
 a task that never had one.
 
-The category is written as its *label*, and matched back case-insensitively on
-import; an unknown name leaves the task uncategorised rather than inventing a
-category. Dates are `yyyy-MM-dd`, timestamps ISO 8601.
+A category is written as its *label* on a task or project row, and matched back
+case-insensitively on import. Dates are `yyyy-MM-dd`, timestamps ISO 8601.
 
 On import, a `project`/`course`/`hashtag` column, or a title starting with
-`#CODE `, sets the project (created if new). `tag` means category. A `group` (or
-`cluster`) column puts the row's project in that group — the first row naming a
-group for a project wins — and an empty one leaves the project's group alone, so
-an older file never takes a project out of its group.
+`#CODE `, sets a task's project (created if new). `tag` means category. A
+`group` (or `cluster`) column on a project row puts it in that group, and an
+empty one leaves the project's group alone, so a file never takes a project out
+of one by leaving a cell blank.
 
 Import offers two modes, chosen before the file picker opens: **add to what is
-here**, or **replace all tasks**. Either way it matches **by id** — a task
-already present is updated, anything else is added — and clears any tombstone
-for an imported id, or a previous delete would immediately remove it again.
+here**, or **replace all tasks**. Either way it clears any tombstone for an
+imported id, or a previous delete would immediately remove it again.
 
 Refuse to replace when the file turns out to hold no usable rows: obeying would
 empty the device and put nothing back.
@@ -1914,3 +2075,13 @@ exclusions, the date-review opt-in, imported Notes, import, the
 backup, reload,
 repeat import after editing/deleting a task, and the Mac layout. Do not launch
 the installed Mac app or use its real data to perform these checks.
+
+### Inbox age in the review helper
+
+Below the task title, show a neutral secondary label: **Entered Inbox today**,
+**In Inbox for 1 day**, or **In Inbox for N days**, based on `enteredStackAt`.
+Count local calendar days, including across daylight-saving changes. Refresh
+while the helper stays open; hide future dates rather than show negative ages.
+No warning colour or automatic movement. The existing migration uses creation
+date for older tasks without an entry date; the helper uses that same value,
+which the user can correct in the existing task editor.

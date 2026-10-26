@@ -177,7 +177,7 @@ do {
     let p = Project(name: "ABC1234", categoryID: cat.id)
     var card = TodoItem(title: "slides, part 2", categoryID: cat.id); card.projectID = p.id
     let text = CardCSV.export(cards: [card], categories: [cat], projects: [p])
-    expect(text.hasPrefix("id,title,stack,category,deadline,completed,created,project,group,remind,notes\n"),
+    expect(text.hasPrefix("id,title,stack,category,deadline,completed,created,project,group,remind,notes,entered,answered,before,archived,modified,symbol,color,default,type\n"),
            "the deadline keeps the old date column's place; new ones go last")
     let back = CardCSV.parse(text, categories: [cat])
     expect(back.cards.first?.title == "slides, part 2", "title round-trips")
@@ -249,11 +249,17 @@ do {
     let text = CardCSV.export(cards: [c1, c2, c3], categories: [cat], projects: [grant, loose])
     let lines = text.split(separator: "\n").map(String.init)
     // Every new column goes last, so an older export still reads by position.
-    expect(lines[0].hasSuffix(",project,group,remind,notes"),
+    expect(lines[0].hasSuffix(",entered,answered,before,archived,modified,symbol,color,default,type"),
            "the newest columns are the last ones — got \(lines[0])")
-    expect(lines[1].contains(",BETA,Grants,"), "a grouped project's cards carry its group")
-    expect(lines[2].contains(",DELTA,,"), "no group: empty column")
-    expect(lines[3].hasSuffix(",,,"), "no project, no group, no reminder: empty to the end")
+    // Categories, then projects, then tasks, each saying which it is.
+    expect(lines[1].hasSuffix(",category"), "the category is a row of its own")
+    expect(lines[2].hasSuffix(",project") && lines[2].contains(",Grants,"),
+           "a project is a row of its own, and carries its group")
+    expect(lines[3].hasSuffix(",project") && !lines[3].contains("Grants"), "a project in no group says none")
+    expect(!lines[4].contains("Grants") && !lines[4].hasSuffix(",project"),
+           "a task row does not repeat its project's group — one fact, one place")
+    expect(!lines[4].hasSuffix(",category") && !lines[4].hasSuffix(",project"),
+           "and a task has a blank type, so older files read as all tasks")
 
     // An older export still carries a "reminds" column. It records something
     // that no longer exists, and is read as the unknown column it now is.
@@ -262,7 +268,9 @@ do {
     expect(withDead.cards.first?.remindAt != nil, "an older export's reminder still imports")
 
     let back = CardCSV.parse(text, categories: [cat])
-    expect(back.projectGroups == [Project.key(for: "BETA"): "Grants"], "round-trip: the group comes back, empty ones do not")
+    expect(back.projects.first { $0.name == "BETA" }?.group == "Grants", "round-trip: the group comes back")
+    expect(back.projects.first { $0.name == "DELTA" }?.group == nil, "and an empty one does not")
+    expect(back.projectGroups.isEmpty, "with nothing repeated on the task rows")
 
     let clash = CardCSV.parse("title,project,group\na,NF,Ongoing\nb,NF,Grants\nc,NF,\n", categories: [])
     expect(clash.projectGroups[Project.key(for: "NF")] == "Ongoing", "if a file disagrees with itself, the first row wins")
@@ -2098,6 +2106,346 @@ do {
     expect(restarted.remaining(in: [first, arrival]).count == 2,
            "new pass includes kept tasks and new arrivals")
     expect(InboxReviewSession(cards: []).remaining(in: []).isEmpty, "empty Inbox is a valid review")
+}
+
+// MARK: — how long a task has been sitting in its stack
+do {
+    let enc = DocumentCoding.makeEncoder(), dec = DocumentCoding.makeDecoder()
+    let made = Date(timeIntervalSince1970: 1_700_000_000)
+
+    // A file written before the field existed knows nothing about moves. The
+    // day the task was made is the one honest answer; falling back to *now*
+    // would have every task claim it had just arrived.
+    let old = #"{"cards":[{"id":"\#(UUID().uuidString)","title":"x","bucket":"later","createdAt":"2023-11-14T22:13:20.000Z"}],"categories":[]}"#
+    let loaded = try! dec.decode(StoreDocument.self, from: Data(old.utf8))
+    expect(loaded.cards[0].enteredStackAt == loaded.cards[0].createdAt,
+           "an older file falls back to when the task was made, not to now")
+
+    // A real value survives a round trip.
+    var card = TodoItem(title: "sitting", bucket: .later)
+    card.createdAt = made
+    card.enteredStackAt = Date(timeIntervalSince1970: 1_750_000_000)
+    let back = try! dec.decode(StoreDocument.self, from: try! enc.encode(StoreDocument(cards: [card])))
+    expect(back.cards[0].enteredStackAt == card.enteredStackAt,
+           "and a known arrival survives save and load")
+    expect(back.cards[0].enteredStackAt != back.cards[0].createdAt,
+           "without collapsing back onto createdAt")
+
+    // The CSV carries it too, or exporting and re-importing would reset every
+    // task to today — and tasks are matched by id, so that would overwrite.
+    let cat = CardCategory(label: "Home", symbolName: "house", color: .teal)
+    let text = CardCSV.export(cards: [card], categories: [cat], projects: [])
+    let parsed = CardCSV.parse(text, categories: [cat])
+    expect(parsed.cards.count == 1, "the row comes back")
+    expect(parsed.cards[0].enteredStackAt == card.enteredStackAt,
+           "and carries the arrival through a CSV round trip")
+
+    // An export written before the column existed must not reset anything.
+    let headerless = "id,title,stack,created\n\(card.id.uuidString),x,later,2023-11-14T22:13:20.000Z"
+    let older = CardCSV.parse(headerless, categories: [cat])
+    expect(older.cards[0].enteredStackAt == older.cards[0].createdAt,
+           "a CSV with no entered column falls back to created, not to now")
+}
+
+// MARK: — a whole document through one CSV
+do {
+    let research = CardCategory(label: "Research", symbolName: "flask", color: .indigo)
+    let home = CardCategory(label: "Home", symbolName: "house", color: .teal)
+    let whole = Date(timeIntervalSince1970: 1_750_000_000)
+
+    var shelved = Project(name: "OLDJOB", categoryID: research.id, isArchived: true, group: "Grants")
+    shelved.modifiedAt = whole
+    let current = Project(name: "NOWJOB", categoryID: home.id)
+    let empty = Project(name: "NOTHINGYET", categoryID: research.id)
+
+    var done = TodoItem(title: "finished", bucket: .completed, categoryID: research.id)
+    done.projectID = shelved.id
+    done.bucketBeforeCompletion = .later
+    done.completedAt = Date(timeIntervalSince1970: 1_760_000_000)
+    done.remindAt = Date(timeIntervalSince1970: 1_750_000_000)
+    done.reminderAnsweredAt = whole
+    done.modifiedAt = whole
+    var live = TodoItem(title: "still open", bucket: .today, categoryID: home.id)
+    live.projectID = current.id
+
+    let text = CardCSV.export(cards: [done, live], categories: [research, home],
+                              projects: [shelved, current, empty], defaultCategoryID: home.id)
+    let parsed = CardCSV.parse(text, categories: [])
+
+    // The two things a task-only file could never carry.
+    expect(parsed.categories.map(\.label) == ["Research", "Home"], "categories come back as rows")
+    expect(parsed.categories.first { $0.label == "Research" }?.symbolName == "flask", "with their icon")
+    expect(parsed.categories.first { $0.label == "Home" }?.color == .teal, "and their colour")
+    expect(parsed.categories.first { $0.isDefault }?.label == "Home", "and which is the default")
+    expect(parsed.projects.contains { $0.name == "NOTHINGYET" },
+           "a project with no tasks is no longer lost")
+
+    let oldjob = parsed.projects.first { $0.name == "OLDJOB" }
+    expect(oldjob?.archived == true && oldjob?.group == "Grants", "an archived, grouped project says so")
+    expect(parsed.projects.first { $0.name == "NOWJOB" }?.archived == false, "and a live one says it is not")
+
+    // A task names its category by label, which resolves even though no
+    // category existed here: the file declared them.
+    let byTitle = Dictionary(uniqueKeysWithValues: parsed.cards.map { ($0.title, $0) })
+    expect(byTitle["finished"]?.categoryID == parsed.categories.first { $0.label == "Research" }?.id,
+           "a task's category label resolves against the categories the file declares")
+    expect(byTitle["finished"]?.bucketBeforeCompletion == .later, "a completed task keeps where it would reopen to")
+    expect(byTitle["finished"]?.reminderAnsweredAt == whole, "an answered reminder stays answered")
+    expect(byTitle["still open"]?.bucketBeforeCompletion == nil, "a task that is not completed has nothing to reopen to")
+    expect(byTitle["finished"]?.modifiedAt == whole, "and a new row keeps the modified time the file gives it")
+
+    // Ids settle at parse time: a category this device already has keeps its id.
+    let known = CardCSV.parse(text, categories: [research])
+    expect(known.categories.first { $0.label == "Research" }?.id == research.id,
+           "a category already here keeps its identity, matched by id")
+    let byName = CardCSV.parse("type,title,symbol\ncategory,research,leaf\n", categories: [research])
+    expect(byName.categories.first?.id == research.id, "and one matched only by name does too, case aside")
+
+    // Row order does not matter: a task above the category it names still resolves.
+    let shuffled = "title,category,type\\nfirst,Garden,\\nGarden,,category\\n".replacingOccurrences(of: "\\n", with: "\n")
+    let order = CardCSV.parse(shuffled, categories: [])
+    expect(order.cards.first?.categoryID == order.categories.first?.id && order.cards.first?.categoryID != nil,
+           "rows can come in any order")
+    let twice = CardCSV.parse("type,title\ncategory,Same\ncategory,same\n", categories: [])
+    expect(twice.categories.count == 1 && twice.skipped == 1, "a category declared twice is one, and the repeat is skipped")
+    let unknownKind = CardCSV.parse("type,title\ngizmo,whatever\ntask,real\n", categories: [])
+    expect(unknownKind.cards.count == 1 && unknownKind.skipped == 1, "a row of a kind we do not know is skipped, not read as a task")
+
+    // A stack that contradicts the column wins, as it does for completedAt.
+    let contradictory = "id,title,stack,before\n\(UUID().uuidString),x,today,later"
+    expect(CardCSV.parse(contradictory, categories: []).cards[0].bucketBeforeCompletion == nil,
+           "a before-stack on a task that is not completed is ignored")
+
+    // Older files read exactly as they did.
+    let older = "id,title,stack,project\n\(UUID().uuidString),x,today,NOWJOB"
+    let old = CardCSV.parse(older, categories: [])
+    expect(old.projects.isEmpty && old.categories.isEmpty && old.cards.count == 1,
+           "a file with no type column is all tasks")
+    expect(old.projectArchived.isEmpty, "and says nothing about archiving")
+}
+
+// MARK: — laying a file over a task: only what it says changes
+do {
+    let cat = CardCategory(label: "Home", symbolName: "house", color: .teal)
+    let then = Date(timeIntervalSince1970: 1_700_000_000)
+    var task = TodoItem(title: "book flights", bucket: .later, categoryID: cat.id)
+    task.notes = "window seat"
+    task.remindAt = Date(timeIntervalSince1970: 1_750_000_000.123)    // a millisecond a CSV cannot hold
+    task.reminderAnsweredAt = Date(timeIntervalSince1970: 1_750_000_100)
+    task.modifiedAt = then
+
+    func lay(_ csv: String) -> TodoItem {
+        let parsed = CardCSV.parse(csv, categories: [cat])
+        return CardCSV.merged(task, with: parsed.cards[0], given: parsed.given[parsed.cards[0].id]!)
+    }
+    let id = task.id.uuidString
+
+    // The whole of its own export changes nothing — the millisecond included.
+    let own = CardCSV.export(cards: [task], categories: [cat])
+    var unchanged = lay(own); unchanged.modifiedAt = task.modifiedAt
+    expect(unchanged == task, "a task laid over its own export is exactly itself, to the millisecond")
+
+    // A deadline is a day. One stored with a time of day — as an imported one
+    // can be — must not read as changed just because the CSV holds the day.
+    var timed = task
+    timed.deadline = Calendar.current.date(bySettingHour: 9, minute: 30, second: 0,
+                                           of: Date(timeIntervalSince1970: 1_760_000_000))
+    let timedParsed = CardCSV.parse(CardCSV.export(cards: [timed], categories: [cat]), categories: [cat])
+    var timedBack = CardCSV.merged(timed, with: timedParsed.cards[0], given: timedParsed.given[timed.id]!)
+    timedBack.modifiedAt = timed.modifiedAt
+    expect(timedBack == timed, "a deadline with a time of day survives its own export unchanged")
+
+    // A file that never mentions a column leaves it alone.
+    let slim = lay("id,title\n\(id),book flights and hotel")
+    expect(slim.title == "book flights and hotel", "what the file says is applied")
+    expect(slim.notes == "window seat" && slim.reminderAnsweredAt == task.reminderAnsweredAt && slim.bucket == .later,
+           "and what it does not mention is kept, not blanked")
+
+    // Blank means clear only where that is what a blank cell says.
+    expect(lay("id,title,notes\n\(id),book flights,").notes == "", "an empty notes cell clears the notes")
+    expect(lay("id,title,stack\n\(id),book flights,").bucket == .later, "an empty stack cell is silence, not a move to the inbox")
+    expect(lay("id,title,created\n\(id),book flights,").createdAt == task.createdAt, "an empty created cell does not make the task new")
+    expect(lay("id,title,remind\n\(id),book flights,notadate").remindAt == task.remindAt,
+           "a date that does not parse is not a request to clear it")
+    expect(lay("id,title,category\n\(id),book flights,Nonesuch").categoryID == cat.id,
+           "an unknown category label leaves the category alone")
+
+    // Moving a task in the sheet is an arrival; saying when overrides that.
+    let moved = lay("id,title,stack\n\(id),book flights,today")
+    expect(moved.bucket == .today && moved.enteredStackAt > task.enteredStackAt,
+           "changing the stack in the file stamps a new arrival")
+    let said = lay("id,title,stack,entered\n\(id),book flights,today,2024-03-01T09:00:00Z")
+    expect(said.bucket == .today && said.enteredStackAt == Date(timeIntervalSince1970: 1_709_283_600),
+           "unless the file also says when, which is the case for an imported backlog")
+    let completed = lay("id,title,stack\n\(id),book flights,completed")
+    expect(completed.bucket == .completed && completed.completedAt != nil && completed.bucketBeforeCompletion == .later,
+           "completing it in the file records when, and where it would reopen to")
+}
+
+// MARK: — what an import does to a document
+do {
+    let then = Date(timeIntervalSince1970: 1_700_000_000)
+    let now  = Date(timeIntervalSince1970: 1_800_000_000)
+
+    let research = CardCategory(label: "Research", symbolName: "flask", color: .indigo, modifiedAt: then)
+    let home = CardCategory(label: "Home", symbolName: "house", color: .teal, modifiedAt: then)
+    let paper = Project(name: "PAPER", categoryID: research.id, group: "Manuscripts", modifiedAt: then)
+    let shelved = Project(name: "OLDJOB", categoryID: research.id, isArchived: true, modifiedAt: then)
+    let empty = Project(name: "NOTHINGYET", categoryID: home.id, modifiedAt: then)
+
+    func task(_ title: String, _ bucket: Bucket, _ project: Project?, _ category: CardCategory) -> TodoItem {
+        var t = TodoItem(title: title, bucket: bucket, categoryID: category.id)
+        t.projectID = project?.id
+        t.createdAt = then; t.enteredStackAt = then; t.modifiedAt = then
+        return t
+    }
+    let a = task("draft the intro", .today, paper, research)
+    let b = task("fix figure 3", .later, paper, research)
+    var c = task("old work", .completed, shelved, research)
+    c.completedAt = then; c.bucketBeforeCompletion = .tomorrow
+    let d = task("buy paint", .inbox, nil, home)
+
+    var doc = StoreDocument(categories: [research, home], cards: [a, b, c, d],
+                            projects: [paper, shelved, empty])
+    doc.defaultCategoryID = home.id
+    doc.defaultCategoryChangedAt = then
+
+    func csv(_ d: StoreDocument) -> String {
+        CardCSV.export(cards: d.cards, categories: d.categories, projects: d.projects,
+                       defaultCategoryID: d.defaultCategoryID)
+    }
+    func run(_ text: String, into d: StoreDocument, replacing: Bool = false) -> (document: StoreDocument, summary: CSVImportSummary) {
+        d.importing(CardCSV.parse(text, categories: d.categories), replacing: replacing, now: now)
+    }
+
+    // A document laid over itself is untouched — nothing stamped, nothing rewritten.
+    let same = run(csv(doc), into: doc)
+    expect(same.document == doc, "importing a document's own export changes nothing at all")
+    expect(same.summary.added == 0 && same.summary.updated == 0, "and reports nothing added or updated")
+
+    // One edited cell changes one task, and only that one is stamped.
+    let edited = csv(doc).replacingOccurrences(of: "fix figure 3", with: "fix figures 3 and 4")
+    let one = run(edited, into: doc)
+    expect(one.summary.updated == 1 && one.summary.added == 0, "an edited row is one update")
+    expect(one.document.cards.first { $0.id == b.id }?.title == "fix figures 3 and 4", "the edit is applied")
+    expect(one.document.cards.first { $0.id == b.id }?.modifiedAt == now, "and stamped now, so it wins a sync")
+    expect(one.document.cards.first { $0.id == a.id }?.modifiedAt == then,
+           "a row the file left alone keeps its own timestamp")
+    expect(one.document.projects == doc.projects && one.document.categories == doc.categories,
+           "and so does every project and category")
+
+    // A restore onto an empty install brings the lot, history included.
+    let fresh = run(csv(doc), into: .empty)
+    expect(fresh.document.categories.map(\.label) == ["Research", "Home"], "categories are recreated")
+    expect(fresh.document.categories.first { $0.label == "Research" }?.symbolName == "flask"
+           && fresh.document.categories.first { $0.label == "Home" }?.color == .teal,
+           "with their icon and colour")
+    expect(fresh.document.defaultCategoryID == fresh.document.categories.first { $0.label == "Home" }?.id,
+           "and the default")
+    expect(fresh.document.projects.contains { $0.name == "NOTHINGYET" }, "an empty project is recreated")
+    expect(fresh.document.projects.first { $0.name == "PAPER" }?.group == "Manuscripts", "with its group")
+    expect(fresh.document.projects.first { $0.name == "OLDJOB" }?.isArchived == true,
+           "and an archived project stays archived although tasks name it")
+    expect(fresh.document.cards.count == 4 && fresh.summary.added == 4, "every task arrives")
+    expect(fresh.document.cards.first { $0.id == c.id }?.bucketBeforeCompletion == .tomorrow,
+           "a completed task still knows where it would reopen to")
+    expect(fresh.document.cards.allSatisfy { $0.modifiedAt == then } && fresh.document.projects.allSatisfy { $0.modifiedAt == then },
+           "a restore keeps the history it was written with")
+    expect(fresh.document.cards.first { $0.id == a.id }?.projectID == fresh.document.projects.first { $0.name == "PAPER" }?.id
+           && fresh.document.cards.first { $0.id == a.id }?.categoryID == fresh.document.categories.first { $0.label == "Research" }?.id,
+           "and tasks point at the categories and projects that came with them")
+
+    // Renaming a project by its id in the sheet renames it, tasks and all.
+    let renamed = run(csv(doc).replacingOccurrences(of: ",PAPER,", with: ",THESIS,"), into: doc)
+    expect(renamed.document.projects.first { $0.id == paper.id }?.name == "THESIS", "a project can be renamed in the sheet")
+    expect(renamed.document.projects.count == doc.projects.count, "without making a second one")
+    expect(renamed.document.cards.filter { $0.projectID == paper.id }.count == 2, "and its tasks stay with it")
+
+    // Moving a project's category in the sheet takes its tasks along.
+    let moved = csv(doc).split(separator: "\n", omittingEmptySubsequences: false).map { line -> String in
+        line.contains(",OLDJOB,") && line.hasSuffix(",project") ? line.replacingOccurrences(of: ",Research,", with: ",Home,") : String(line)
+    }.joined(separator: "\n")
+    let m = run(moved, into: doc)
+    expect(m.document.projects.first { $0.id == shelved.id }?.categoryID == home.id, "a project can change category in the sheet")
+
+    // Replace affects tasks only.
+    let only = "id,title,stack\n\(UUID().uuidString),the only task,inbox\n"
+    let replaced = run(only, into: doc, replacing: true)
+    expect(replaced.document.cards.count == 1 && replaced.summary.removed == 4, "replace swaps the tasks")
+    expect(replaced.document.categories == doc.categories && replaced.document.projects == doc.projects,
+           "and leaves every category and project where it was")
+    expect(replaced.document.deletedCards.count == 4, "recording the four it removed")
+    let nothing = run("title\n", into: doc, replacing: true)
+    expect(nothing.document == doc, "a file with no tasks does not empty the document")
+
+    // A task id deleted here comes back when the file has it.
+    var deleted = doc
+    deleted.cards.removeAll { $0.id == a.id }
+    deleted.deletedCards[a.id.uuidString] = now
+    let back = run(csv(doc), into: deleted)
+    expect(back.document.cards.contains { $0.id == a.id } && back.document.deletedCards[a.id.uuidString] == nil,
+           "a task in the file is not undone by an older delete of the same id")
+
+    // Files from before projects had rows still apply their group and archive.
+    let legacy = "title,project,group,archived\nx,PAPER,Drafts,\ny,OLDJOB,,no\n"
+    let l = run(legacy, into: doc)
+    expect(l.document.projects.first { $0.id == paper.id }?.group == "Drafts", "an older file's group still applies")
+    expect(l.document.projects.first { $0.id == shelved.id }?.isArchived == false, "and so does its archive state")
+
+    // A project row beats the same fact repeated on a task row.
+    let both = "type,title,project,group\nproject,PAPER,,Final\n,z,PAPER,Drafts\n"
+    expect(run(both, into: doc).document.projects.first { $0.id == paper.id }?.group == "Final",
+           "a project's own row wins over a task row repeating it")
+
+    // Naming an archived project in a task still brings it back — typing it
+    // does — unless the file describes the project itself.
+    let typed = "title,project\nsomething,OLDJOB\n"
+    expect(run(typed, into: doc).document.projects.first { $0.id == shelved.id }?.isArchived == false,
+           "a task naming an archived project revives it, as typing the name does")
+}
+
+// MARK: — an imported task has been sitting since it was made, not since the import
+do {
+    let now = Date(timeIntervalSince1970: 1_800_000_000)
+    let made = Date(timeIntervalSince1970: 1_700_000_000)
+    let finished = Date(timeIntervalSince1970: 1_750_000_000)
+    let doc = StoreDocument.empty
+    let options = TaskImport.Options(destinations: ["l": .init()])
+
+    func imported(_ record: TaskImportRecord) -> TodoItem {
+        try! TaskImport.plan(records: [record], options: { var o = options; o.includeCompleted = true; return o }(),
+                             document: doc, now: now).document.cards[0]
+    }
+
+    let open = imported(TaskImportRecord(id: "1", listID: "l", title: "open", createdAt: made))
+    expect(open.enteredStackAt == made, "an open task has been sitting since it was made, not since the import")
+
+    let noDate = imported(TaskImportRecord(id: "2", listID: "l", title: "undated"))
+    expect(noDate.enteredStackAt == now, "with no creation date the import is the best answer there is")
+
+    let done = imported(TaskImportRecord(id: "3", listID: "l", title: "done", createdAt: made,
+                                         isCompleted: true, completedAt: finished))
+    expect(done.enteredStackAt == finished, "a finished task entered Completed when it was finished")
+    let doneUnknown = imported(TaskImportRecord(id: "4", listID: "l", title: "done, when unknown",
+                                                createdAt: made, isCompleted: true))
+    expect(doneUnknown.enteredStackAt == made, "and when that is not known, falls back to when it was made")
+}
+
+// Stack age counts calendar days, not elapsed 24-hour periods.
+do {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(identifier: "Europe/Brussels")!
+    func date(_ day: Int, _ hour: Int) -> Date {
+        calendar.date(from: DateComponents(year: 2026, month: 3, day: day, hour: hour))!
+    }
+    expect(InboxReviewSession.daysInStack(since: date(28, 23), now: date(29, 1), calendar: calendar) == 1,
+           "crossing midnight is one day even before 24 hours elapse")
+    expect(InboxReviewSession.daysInStack(since: date(28, 12), now: date(30, 12), calendar: calendar) == 2,
+           "day count survives daylight-saving transition")
+    expect(InboxReviewSession.daysInStack(since: date(29, 1), now: date(29, 12), calendar: calendar) == 0,
+           "same-day arrival is today")
+    expect(InboxReviewSession.daysInStack(since: date(30, 1), now: date(29, 12), calendar: calendar) == nil,
+           "future entry dates never show negative ages")
 }
 
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
