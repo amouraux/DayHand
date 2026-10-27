@@ -2208,9 +2208,10 @@ iPad and Mac.
 
 **Paid, two limits:**
 
-1. **More than 6 live projects.** Live means not archived, so archiving or
-   deleting one frees a slot, and un-archiving at the limit counts as creating
-   one. The limit is on *creating* a project by hand (New Project, un-archive).
+1. **More than 3 live projects.** Three are free; the fourth needs the unlock.
+   Live means not archived, so archiving or deleting one frees a slot, and
+   un-archiving at the limit counts as creating one. The limit is on *creating*
+   a project by hand (New Project, un-archive).
 2. **Completed history older than 30 days, rolling.** Measured from
    `completedAt` against today, not aligned to months, so the oldest month
    heading may show only part of its tasks. It applies everywhere finished
@@ -2223,7 +2224,7 @@ There is no category limit.
 
 **The 30-day trial.** Everything unlimited, started by the user and never
 automatically: Settings offers "Start 30-day trial". Before it starts, a screen
-states the duration, what stops when it ends (more than 6 live projects can no
+states the duration, what stops when it ends (more than 3 live projects can no
 longer be created; history beyond 30 days is collapsed), and the price of the
 unlock. It is a free price-tier-0 non-consumable named "30-day Trial", which App
 Review Guideline 3.1.1 allows for non-subscription apps; its purchase date is the
