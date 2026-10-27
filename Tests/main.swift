@@ -2581,5 +2581,84 @@ do {
            "full-review choices do not modify individual review progress")
 }
 
+// MARK: Free and paid
+
+do {
+    // The model reads the current calendar, so the zone is pinned for this block.
+    let previousZone = NSTimeZone.default
+    NSTimeZone.default = TimeZone(identifier: "Europe/Brussels")!
+    defer { NSTimeZone.default = previousZone }
+    func at(_ s: String) -> Date {
+        let f = DateFormatter()
+        f.calendar = Calendar.current; f.timeZone = Calendar.current.timeZone
+        f.dateFormat = "yyyy-MM-dd HH:mm"
+        return f.date(from: s)!
+    }
+    let now = at("2026-10-27 15:00")
+    let free = Entitlement(access: .free)
+    let unlocked = Entitlement(access: .unlocked)
+    func projects(_ names: [String], archived: [String] = []) -> [Project] {
+        names.map { Project(name: $0, categoryID: nil) }
+            + archived.map { var p = Project(name: $0, categoryID: nil); p.isArchived = true; return p }
+    }
+
+    // Projects: three live are free, the fourth is not, archived ones do not count.
+    expect(free.allowsAnotherProject(among: projects(["AAA", "BBB"]), now: now), "two live projects: a third is free")
+    expect(!free.allowsAnotherProject(among: projects(["AAA", "BBB", "CCC"]), now: now), "three live projects: a fourth needs the unlock")
+    expect(free.allowsAnotherProject(among: projects(["AAA", "BBB", "CCC"].dropLast(), archived: ["OLD1", "OLD2", "OLD3"]), now: now),
+           "archived projects do not use a slot")
+    expect(unlocked.allowsAnotherProject(among: projects((1...20).map { "P\($0)" }), now: now), "unlocked has no project limit")
+
+    // A name: a live match creates nothing, an archived match takes a slot, a new name takes a slot.
+    let full = projects(["AAA", "BBB", "CCC"], archived: ["OLD"])
+    expect(free.projectAccess(named: "aaa", among: full, now: now) == .existing, "a live match needs no slot, whatever its case")
+    expect(free.projectAccess(named: "OLD", among: full, now: now) == .needsUnlock, "bringing an archived project back needs a slot")
+    expect(free.projectAccess(named: "NEW", among: full, now: now) == .needsUnlock, "a new name at the limit needs the unlock")
+    expect(free.projectAccess(named: "  ", among: full, now: now) == .allowed, "an empty name creates nothing, so it is never blocked")
+    expect(free.projectAccess(named: "OLD", among: projects(["AAA"], archived: ["OLD"]), now: now) == .allowed,
+           "an archived project may come back while a slot is free")
+
+    // Trial: thirty days from the start, then it is the free version.
+    let start = at("2026-10-01 10:00")
+    let trial = Entitlement(access: .trial(startedAt: start))
+    expect(trial.hasFullAccess(now: at("2026-10-01 10:00")), "the trial is full access from its first moment")
+    expect(trial.hasFullAccess(now: at("2026-10-30 23:59")), "and on the last day")
+    expect(!trial.hasFullAccess(now: at("2026-10-31 10:00")), "and not once thirty days have passed")
+    expect(trial.trialDaysLeft(now: at("2026-10-01 11:00")) == 30, "a fresh trial has 30 days left")
+    expect(trial.trialDaysLeft(now: at("2026-10-30 23:00")) == 1, "the last day reads 1, never 0")
+    expect(trial.trialDaysLeft(now: at("2026-10-31 10:00")) == nil, "an ended trial has no days left")
+    expect(trial.trialDaysLeft(now: at("2026-09-20 10:00")) == 30, "a clock set back before the start never shows more than 30")
+    expect(!free.hasFullAccess(now: now) && free.trialDaysLeft(now: now) == nil, "free has no trial")
+    expect(unlocked.hasFullAccess(now: now), "unlocked has full access")
+    expect(!Entitlement(access: .trial(startedAt: start)).allowsAnotherProject(among: projects(["A1", "B2", "C3"]), now: at("2026-11-15 10:00")),
+           "after the trial the limit is back, with nothing taken away")
+    expect(Entitlement(access: .trial(startedAt: start)).allowsAnotherProject(among: projects(["A1", "B2", "C3"]), now: at("2026-10-10 10:00")),
+           "during the trial there is no limit")
+
+    // History: 30 days back from the start of today, whole days.
+    func done(_ title: String, _ when: String?) -> TodoItem {
+        var card = TodoItem(title: title, bucket: .completed)
+        card.completedAt = when.map { at($0) }
+        return card
+    }
+    let cutoff = free.historyCutoff(now: now)!
+    expect(cutoff == at("2026-09-27 00:00"), "the cutoff is the start of the day thirty days ago")
+    let cards = [
+        done("today", "2026-10-27 09:00"),
+        done("edge morning", "2026-09-27 08:00"),
+        done("just outside", "2026-09-26 23:59"),
+        done("old", "2025-01-03 09:00"),
+        done("undated", nil),
+        TodoItem(title: "open", bucket: .today),
+    ]
+    let split = free.splitHistory(cards, now: now)
+    expect(split.earlier == 2, "two finished tasks are older than the window")
+    expect(split.shown.map(\.title) == ["today", "edge morning", "undated", "open"],
+           "a task from the first day of the window stays, undated and open tasks are never held back")
+    expect(unlocked.splitHistory(cards, now: now).earlier == 0 && unlocked.historyCutoff(now: now) == nil, "unlocked shows all history")
+    expect(trial.splitHistory(cards, now: at("2026-10-15 10:00")).earlier == 0, "a running trial shows all history")
+    expect(trial.splitHistory(cards, now: at("2026-11-20 10:00")).earlier > 0, "an ended trial hides what the free version hides")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

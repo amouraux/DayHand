@@ -19,6 +19,8 @@
 		D0000000000000000000000B /* ProjectEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000B /* ProjectEditor.swift */; };
 		D0000000000000000000001A /* FilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001A /* FilterView.swift */; };
 		D0000000000000000000001B /* ReminderScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001B /* ReminderScheduler.swift */; };
+		D0000000000000000000001F /* Purchases.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001F /* Purchases.swift */; };
+		D00000000000000000000020 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000000000000000000020 /* PaywallView.swift */; };
 		D0000000000000000000000E /* InboxReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000E /* InboxReviewView.swift */; };
 		D0000000000000000000001C /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001C /* TimelineView.swift */; };
 		D0000000000000000000000C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000C /* PrivacyInfo.xcprivacy */; };
@@ -39,6 +41,8 @@
 		C00000000000000000000008 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C00000000000000000000009 /* Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync.swift; sourceTree = "<group>"; };
 		C0000000000000000000000A /* DayHand.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DayHand.entitlements; sourceTree = "<group>"; };
+		C0000000000000000000001F /* Purchases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Purchases.swift; sourceTree = "<group>"; };
+		C00000000000000000000020 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		C0000000000000000000000E /* InboxReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxReviewView.swift; sourceTree = "<group>"; };
 		C0000000000000000000001C /* TimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
 		C0000000000000000000000B /* ProjectEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectEditor.swift; sourceTree = "<group>"; };
@@ -90,6 +94,8 @@
 				C0000000000000000000000B /* ProjectEditor.swift */,
 				C0000000000000000000001A /* FilterView.swift */,
 				C0000000000000000000001B /* ReminderScheduler.swift */,
+				C0000000000000000000001F /* Purchases.swift */,
+				C00000000000000000000020 /* PaywallView.swift */,
 				C0000000000000000000000E /* InboxReviewView.swift */,
 				C0000000000000000000001C /* TimelineView.swift */,
 				C00000000000000000000002 /* Models.swift */,
@@ -212,6 +218,8 @@
 				D0000000000000000000000B /* ProjectEditor.swift in Sources */,
 				D0000000000000000000001A /* FilterView.swift in Sources */,
 				D0000000000000000000001B /* ReminderScheduler.swift in Sources */,
+				D0000000000000000000001F /* Purchases.swift in Sources */,
+				D00000000000000000000020 /* PaywallView.swift in Sources */,
 				D0000000000000000000000E /* InboxReviewView.swift in Sources */,
 				D0000000000000000000001C /* TimelineView.swift in Sources */,
 				D00000000000000000000001 /* DayHandApp.swift in Sources */,

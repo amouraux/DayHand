@@ -1252,6 +1252,121 @@ enum Timeline {
     }
 }
 
+// MARK: - Free and paid
+
+/// What this device may do. Device-local and never written to the document:
+/// the entitlement belongs to an Apple ID, and a synced file would carry one
+/// person's purchase to another.
+///
+/// Two limits, and both only ever **hide or decline creation** — nothing is
+/// deleted, and the file, the backups and the CSV export always hold
+/// everything. See "Free and paid" in docs/PROMPT.md.
+struct Entitlement: Equatable {
+    enum Access: Equatable {
+        case free
+        /// Everything, from the day the user started it.
+        case trial(startedAt: Date)
+        case unlocked
+    }
+
+    /// Live projects, which is to say not archived. Archiving frees a slot.
+    static let freeProjectLimit = 3
+    /// Finished work stays in view for this many days, counted back from today.
+    static let freeHistoryDays = 30
+    static let trialDays = 30
+
+    var access: Access
+
+    // MARK: Trial
+
+    func trialEnd(calendar: Calendar = .current) -> Date? {
+        guard case .trial(let start) = access else { return nil }
+        return calendar.date(byAdding: .day, value: Self.trialDays, to: start)
+    }
+
+    func isTrialRunning(now: Date, calendar: Calendar = .current) -> Bool {
+        guard let end = trialEnd(calendar: calendar) else { return false }
+        return now < end
+    }
+
+    /// Whole days left, counting today, so the last day reads 1 and never 0.
+    func trialDaysLeft(now: Date, calendar: Calendar = .current) -> Int? {
+        guard isTrialRunning(now: now, calendar: calendar),
+              let end = trialEnd(calendar: calendar) else { return nil }
+        let days = calendar.dateComponents([.day], from: now, to: end).day ?? 0
+        return min(max(days + 1, 1), Self.trialDays)
+    }
+
+    /// An expired trial is the free version, with nothing taken away.
+    func hasFullAccess(now: Date, calendar: Calendar = .current) -> Bool {
+        switch access {
+        case .unlocked: return true
+        case .trial: return isTrialRunning(now: now, calendar: calendar)
+        case .free: return false
+        }
+    }
+
+    // MARK: Projects
+
+    static func liveProjectCount(in projects: [Project]) -> Int {
+        projects.filter { !$0.isArchived }.count
+    }
+
+    /// Whether one more live project may be made — by creating one, or by
+    /// bringing an archived one back, which takes a slot the same way.
+    func allowsAnotherProject(among projects: [Project], now: Date) -> Bool {
+        hasFullAccess(now: now) || Self.liveProjectCount(in: projects) < Self.freeProjectLimit
+    }
+
+    enum ProjectAccess: Equatable {
+        /// A live project already has this name: nothing is created.
+        case existing
+        /// A slot is free, or none is needed.
+        case allowed
+        /// Making it would be the fourth live project on the free version.
+        case needsUnlock
+    }
+
+    /// What typing this name into a task would do. Matching is the store's own
+    /// (`Project.key`), so what is counted is what would really be made.
+    func projectAccess(named raw: String, among projects: [Project], now: Date) -> ProjectAccess {
+        let name = Project.clean(raw)
+        guard !name.isEmpty else { return .allowed }
+        let key = Project.key(for: name)
+        if projects.contains(where: { $0.key == key && !$0.isArchived }) { return .existing }
+        return allowsAnotherProject(among: projects, now: now) ? .allowed : .needsUnlock
+    }
+
+    // MARK: History
+
+    /// The oldest day of finished work that is shown, or `nil` for all of it.
+    /// A whole day, so a task finished at 08:00 thirty days ago is still there
+    /// at 20:00 today instead of vanishing mid-afternoon.
+    func historyCutoff(now: Date, calendar: Calendar = .current) -> Date? {
+        guard !hasFullAccess(now: now, calendar: calendar) else { return nil }
+        return calendar.date(byAdding: .day, value: -Self.freeHistoryDays,
+                             to: calendar.startOfDay(for: now))
+    }
+
+    /// Finished tasks split at the cutoff. A completed task with no date
+    /// cannot be placed in time and is never held back; an unfinished one is
+    /// not history and passes through untouched.
+    func splitHistory(_ cards: [TodoItem], now: Date, calendar: Calendar = .current)
+        -> (shown: [TodoItem], earlier: Int) {
+        guard let cutoff = historyCutoff(now: now, calendar: calendar) else { return (cards, 0) }
+        var shown: [TodoItem] = []
+        var earlier = 0
+        for card in cards {
+            if card.isCompleted, let done = card.completedAt, done < cutoff {
+                earlier += 1
+            } else {
+                shown.append(card)
+            }
+        }
+        return (shown, earlier)
+    }
+}
+
 // MARK: - Dates
 
 /// Date helpers. Buckets are stored on the card, so dates never decide where a

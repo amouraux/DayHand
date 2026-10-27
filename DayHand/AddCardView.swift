@@ -333,6 +333,7 @@ struct AddCardView: View {
 /// category picker, the editor writes it to the card — so all this reports is
 /// which project is now on the card.
 struct ProjectTitleField: View {
+    @EnvironmentObject private var store: TodoStore
     @Binding var title: String
     @Binding var project: ProjectChoice
     let projects: [Project]
@@ -554,7 +555,10 @@ struct ProjectTitleField: View {
                 }
                 if let name = createName {
                     Button { pick(.new(name), typedAs: firstWord) } label: {
-                        chipLabel("New project \(name)", tint: .secondary, filled: false)
+                        chipLabel(store.projectAccess(named: name) == .needsUnlock
+                                  ? String(localized: "New project \(name) · Unlock")
+                                  : "New project \(name)",
+                                  tint: .secondary, filled: false)
                     }
                     .buttonStyle(.plain)
                 }
@@ -992,8 +996,10 @@ struct CardActionsSheet: View {
         case .existing(let project):
             projectID = project.id
         case .new(let name):
-            projectID = store.ensureProject(named: name, categoryID: draft.categoryID,
-                                            group: draft.group)?.id
+            // Declined at the free limit: the task keeps the project it had
+            // rather than losing it to a name that could not be made.
+            projectID = store.ensureProjectWithinLimit(named: name, categoryID: draft.categoryID,
+                                                       group: draft.group)?.id ?? item.projectID
         }
         if projectID != item.projectID { store.setProject(item, to: projectID) }
 

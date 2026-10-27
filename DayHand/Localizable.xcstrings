@@ -18221,6 +18221,597 @@
           }
         }
       }
+    },
+    "Unlimited active projects": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unbegrenzt viele aktive Projekte"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proyectos activos ilimitados"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Projets actifs illimités"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Progetti attivi illimitati"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Onbeperkt aantal actieve projecten"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Projetos ativos ilimitados"
+          }
+        }
+      }
+    },
+    "Your whole history of finished tasks": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dein gesamter Verlauf erledigter Aufgaben"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todo tu historial de tareas terminadas"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tout l’historique de vos tâches terminées"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tutta la cronologia delle attività completate"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Je hele geschiedenis van afgeronde taken"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todo o histórico das tarefas concluídas"
+          }
+        }
+      }
+    },
+    "Unlock DayHand": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand freischalten"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desbloquear DayHand"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Débloquer DayHand"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sblocca DayHand"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand ontgrendelen"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desbloquear o DayHand"
+          }
+        }
+      }
+    },
+    "Everything you have stays yours either way: your tasks, backups and exports always hold all of it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In jedem Fall bleibt alles deins: Deine Aufgaben, Sicherungen und Exporte enthalten immer alles."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todo lo tuyo sigue siendo tuyo en cualquier caso: tus tareas, copias de seguridad y exportaciones siempre lo contienen todo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dans tous les cas, tout reste à vous : vos tâches, sauvegardes et exports contiennent toujours tout."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In ogni caso tutto resta tuo: le attività, i backup e le esportazioni contengono sempre tutto."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hoe dan ook blijft alles van jou: je taken, back-ups en exports bevatten altijd alles."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Em qualquer dos casos, tudo continua a ser seu: as tarefas, as cópias de segurança e as exportações contêm sempre tudo."
+          }
+        }
+      }
+    },
+    "Not now": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nicht jetzt"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ahora no"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas maintenant"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non ora"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Niet nu"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agora não"
+          }
+        }
+      }
+    },
+    "Unlock more projects": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mehr Projekte freischalten"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desbloquear más proyectos"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Débloquer plus de projets"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sblocca altri progetti"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ontgrendel meer projecten"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desbloquear mais projetos"
+          }
+        }
+      }
+    },
+    "Unlock your full history": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deinen ganzen Verlauf freischalten"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desbloquear todo tu historial"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Débloquer tout votre historique"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sblocca tutta la cronologia"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ontgrendel je hele geschiedenis"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desbloquear todo o histórico"
+          }
+        }
+      }
+    },
+    "The free version keeps up to %lld active projects. Your task was added without the project %@. Archive a project you have finished to make room, or unlock DayHand.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die kostenlose Version erlaubt bis zu %lld aktive Projekte. Deine Aufgabe wurde ohne das Projekt %@ hinzugefügt. Archiviere ein beendetes Projekt, um Platz zu schaffen, oder schalte DayHand frei."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La versión gratuita admite hasta %lld proyectos activos. Tu tarea se añadió sin el proyecto %@. Archiva un proyecto terminado para hacer sitio, o desbloquea DayHand."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La version gratuite permet jusqu’à %lld projets actifs. Votre tâche a été ajoutée sans le projet %@. Archivez un projet terminé pour faire de la place, ou débloquez DayHand."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La versione gratuita consente fino a %lld progetti attivi. La tua attività è stata aggiunta senza il progetto %@. Archivia un progetto concluso per fare spazio, oppure sblocca DayHand."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De gratis versie biedt plaats aan maximaal %lld actieve projecten. Je taak is toegevoegd zonder het project %@. Archiveer een afgerond project om ruimte te maken, of ontgrendel DayHand."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A versão gratuita permite até %lld projetos ativos. A sua tarefa foi adicionada sem o projeto %@. Arquive um projeto terminado para libertar espaço, ou desbloqueie o DayHand."
+          }
+        }
+      }
+    },
+    "The free version keeps up to %lld active projects. Archive a project you have finished to make room, or unlock DayHand.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die kostenlose Version erlaubt bis zu %lld aktive Projekte. Archiviere ein beendetes Projekt, um Platz zu schaffen, oder schalte DayHand frei."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La versión gratuita admite hasta %lld proyectos activos. Archiva un proyecto terminado para hacer sitio, o desbloquea DayHand."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La version gratuite permet jusqu’à %lld projets actifs. Archivez un projet terminé pour faire de la place, ou débloquez DayHand."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La versione gratuita consente fino a %lld progetti attivi. Archivia un progetto concluso per fare spazio, oppure sblocca DayHand."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De gratis versie biedt plaats aan maximaal %lld actieve projecten. Archiveer een afgerond project om ruimte te maken, of ontgrendel DayHand."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A versão gratuita permite até %lld projetos ativos. Arquive um projeto terminado para libertar espaço, ou desbloqueie o DayHand."
+          }
+        }
+      }
+    },
+    "The free version shows the last %lld days of finished tasks. Earlier ones are safe, and appear here once you unlock.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die kostenlose Version zeigt erledigte Aufgaben der letzten %lld Tage. Ältere sind sicher aufbewahrt und erscheinen hier, sobald du freischaltest."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La versión gratuita muestra las tareas terminadas de los últimos %lld días. Las anteriores están a salvo y aparecerán aquí cuando desbloquees."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La version gratuite affiche les tâches terminées des %lld derniers jours. Les plus anciennes sont en sécurité et apparaîtront ici une fois DayHand débloqué."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La versione gratuita mostra le attività completate degli ultimi %lld giorni. Quelle precedenti sono al sicuro e compariranno qui dopo lo sblocco."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De gratis versie toont afgeronde taken van de laatste %lld dagen. Oudere staan veilig en verschijnen hier zodra je ontgrendelt."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A versão gratuita mostra as tarefas concluídas dos últimos %lld dias. As anteriores estão guardadas e aparecem aqui depois de desbloquear."
+          }
+        }
+      }
+    },
+    "%lld earlier tasks · Unlock": {
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld earlier task · Unlock"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld earlier tasks · Unlock"
+                }
+              }
+            }
+          }
+        },
+        "de": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld frühere Aufgabe · Freischalten"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld frühere Aufgaben · Freischalten"
+                }
+              }
+            }
+          }
+        },
+        "es": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld tarea anterior · Desbloquear"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld tareas anteriores · Desbloquear"
+                }
+              }
+            }
+          }
+        },
+        "fr": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld tâche plus ancienne · Débloquer"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld tâches plus anciennes · Débloquer"
+                }
+              }
+            }
+          }
+        },
+        "it": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld attività precedente · Sblocca"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld attività precedenti · Sblocca"
+                }
+              }
+            }
+          }
+        },
+        "nl": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld eerdere taak · Ontgrendel"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld eerdere taken · Ontgrendel"
+                }
+              }
+            }
+          }
+        },
+        "pt-PT": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld tarefa anterior · Desbloquear"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld tarefas anteriores · Desbloquear"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "New project %@ · Unlock": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neues Projekt %@ · Freischalten"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nuevo proyecto %@ · Desbloquear"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouveau projet %@ · Débloquer"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nuovo progetto %@ · Sblocca"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nieuw project %@ · Ontgrendel"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Novo projeto %@ · Desbloquear"
+          }
+        }
+      }
+    },
+    "Testing": {
+      "shouldTranslate": false
+    },
+    "Version": {
+      "shouldTranslate": false
+    },
+    "Automatic": {
+      "shouldTranslate": false
+    },
+    "Free": {
+      "shouldTranslate": false
+    },
+    "Paid": {
+      "shouldTranslate": false
+    },
+    "DayHand": {
+      "shouldTranslate": false
+    },
+    "Only in test builds. Free applies the project and history limits on this device; Paid removes them.": {
+      "shouldTranslate": false
     }
   },
   "version": "1.1"

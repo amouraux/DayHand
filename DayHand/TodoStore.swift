@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import SwiftUI
 
@@ -30,6 +31,14 @@ final class TodoStore: ObservableObject {
         let change: StoreDocument.Change
         let couldNotRead: Bool
     }
+    /// What this device may do: free, in a trial, or unlocked. Device-local, and
+    /// deliberately not part of the document.
+    let purchases = Purchases()
+    private var purchasesChange: AnyCancellable?
+    /// Set when a project was declined while a sheet was open, so the unlock can
+    /// be offered once that sheet has gone rather than on top of it.
+    @Published var pendingPaywall: PaywallReason?
+
     private var pollTimer: Timer?
     private var lastSeenSyncDate: Date?
     /// The day the last filing pass ran for, so a window left open overnight can
@@ -48,6 +57,11 @@ final class TodoStore: ObservableObject {
 
     init(storage: DocumentStorage = DocumentStorage()) {
         self.storage = storage
+        // The store is what every view watches, so a change of version has to
+        // reach them through it.
+        purchasesChange = purchases.objectWillChange.sink { [weak self] _ in
+            self?.objectWillChange.send()
+        }
         load()
         // File dated cards before the first render. Doing this from onAppear
         // instead mutates the list mid-layout, and rows keep painting their old
@@ -392,6 +406,31 @@ final class TodoStore: ObservableObject {
 
     func cardCount(using project: Project) -> Int {
         items.filter { $0.projectID == project.id }.count
+    }
+
+    var entitlement: Entitlement { purchases.entitlement }
+
+    /// What typing this name into a task would do on this device.
+    func projectAccess(named raw: String) -> Entitlement.ProjectAccess {
+        entitlement.projectAccess(named: raw, among: projects, now: Date())
+    }
+
+    /// Whether one more live project may be made, or an archived one brought back.
+    var canAddProject: Bool {
+        entitlement.allowsAnotherProject(among: projects, now: Date())
+    }
+
+    /// `ensureProject` for a name the user typed into a task. At the free
+    /// limit it makes nothing and returns `nil`, so the task is still saved —
+    /// capture never blocks — and the unlock is offered afterwards. Imports and
+    /// the bulk conversion call `ensureProject` directly: a limit on creating
+    /// must never drop what they bring in.
+    func ensureProjectWithinLimit(named raw: String, categoryID: UUID?, group: String? = nil) -> Project? {
+        if projectAccess(named: raw) == .needsUnlock {
+            pendingPaywall = .project(name: Project.clean(raw))
+            return nil
+        }
+        return ensureProject(named: raw, categoryID: categoryID, group: group)
     }
 
     /// The project with this name, created if it does not exist yet. Typing an

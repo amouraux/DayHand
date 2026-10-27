@@ -12,9 +12,13 @@ struct TimelineView: View {
     let cards: [TodoItem]
 
     @EnvironmentObject private var store: TodoStore
+    @State private var paywall: PaywallReason?
 
     var body: some View {
-        let months = Timeline.months(of: cards)
+        // The free version shows the last 30 days; what is held back is counted
+        // and offered at the end, never silently left out.
+        let split = store.entitlement.splitHistory(cards, now: Date())
+        let months = Timeline.months(of: split.shown)
         let busiest = Timeline.busiestDay(in: months)
         let total = months.reduce(0) { $0 + $1.completedCount }
 
@@ -45,11 +49,22 @@ struct TimelineView: View {
                     }
                 }
             }
+
+            if split.earlier > 0 {
+                Section {
+                    Button {
+                        paywall = .history(earlier: split.earlier)
+                    } label: {
+                        Label(String(localized: "\(split.earlier) earlier tasks · Unlock"), systemImage: "lock")
+                    }
+                }
+            }
         }
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(item: $paywall) { PaywallView(reason: $0).environmentObject(store) }
         .overlay {
-            if months.isEmpty {
+            if months.isEmpty && split.earlier == 0 {
                 ContentUnavailableView(
                     "Nothing finished yet",
                     systemImage: "calendar",

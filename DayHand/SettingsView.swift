@@ -36,6 +36,11 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
+                // Temporary: for trying the free and the paid app on one device.
+                if store.purchases.testingAvailable {
+                    PaywallTestingSection()
+                }
+
                 Section {
                     NavigationLink {
                         StackReviewView(stack: .all).environmentObject(store)

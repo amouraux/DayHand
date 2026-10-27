@@ -10,6 +10,8 @@ struct ContentView: View {
     @State private var isAdding = false
     @State private var reviewingStack: ReviewStack?
     @State private var isShowingSettings = false
+    /// The unlock, offered when a limit of the free version is met.
+    @State private var paywall: PaywallReason?
     /// Narrows the list to the cards asking for attention, so they can be dealt
     /// with among their own stacks rather than in a sheet.
     @State private var attentionOnly = false
@@ -170,6 +172,13 @@ struct ContentView: View {
                 }
             }
             .sheet(isPresented: $isAdding) { addCardSheet }
+            .sheet(item: $paywall) { PaywallView(reason: $0).environmentObject(store) }
+            .onChange(of: isAnySheetOpen) { _, open in
+                if !open { presentPendingPaywall() }
+            }
+            .onChange(of: store.pendingPaywall) { _, _ in
+                if !isAnySheetOpen { presentPendingPaywall() }
+            }
             .sheet(item: $reviewingStack) { stack in
                 NavigationStack {
                     StackReviewView(stack: stack).environmentObject(store)
@@ -586,8 +595,8 @@ struct ContentView: View {
             case .none:                  projectID = nil
             case .existing(let project): projectID = project.id
             case .new(let name):
-                projectID = store.ensureProject(named: name, categoryID: categoryID,
-                                                group: newProjectGroup)?.id
+                projectID = store.ensureProjectWithinLimit(named: name, categoryID: categoryID,
+                                                           group: newProjectGroup)?.id
             }
             withAnimation {
                 // The sheet already resolved the default, so pass the
@@ -602,6 +611,19 @@ struct ContentView: View {
                     deadline: deadline
                 )
             }
+    }
+
+    private var isAnySheetOpen: Bool {
+        isAdding || editItem != nil || reviewingStack != nil || isFiltering || isShowingSettings
+    }
+
+    /// A project declined while a sheet was open is offered once that sheet has
+    /// gone, not on top of it, and a moment later: a sheet still sliding away
+    /// would swallow the new one.
+    private func presentPendingPaywall() {
+        guard let reason = store.pendingPaywall else { return }
+        store.pendingPaywall = nil
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { paywall = reason }
     }
 
     private func jumpToToday(_ proxy: ScrollViewProxy, animated: Bool) {
@@ -725,11 +747,18 @@ struct ContentView: View {
             // parks there permanently, blurred behind the clock.
             LazyVStack(alignment: .leading, spacing: 10) {
                 ForEach(Bucket.allCases) { bucket in
-                    let cards = cards(in: bucket)
+                    let everyCard = cards(in: bucket)
+                    // The free version lists the last 30 days of finished work.
+                    // A search is looking for something in particular, so it
+                    // still finds everything.
+                    let split = bucket == .completed && searchTerms.isEmpty
+                        ? store.entitlement.splitHistory(everyCard, now: Date())
+                        : (shown: everyCard, earlier: 0)
+                    let cards = split.shown
                     // COMPLETED is capped; every other bucket shows everything.
                     let visible = bucket == .completed ? Array(cards.prefix(completedShown)) : cards
 
-                    if !cards.isEmpty {
+                    if !cards.isEmpty || split.earlier > 0 {
                         Section {
                             // Completed is the one stack with a date on every
                             // task in it, so it is the one stack worth reading
@@ -753,6 +782,7 @@ struct ContentView: View {
 
                             if bucket == .completed {
                                 moreButton(shown: visible.count, total: cards.count)
+                                if split.earlier > 0 { earlierRow(split.earlier) }
                             }
                         } header: {
                             VStack(alignment: .leading, spacing: 4) {
@@ -925,6 +955,13 @@ struct ContentView: View {
     }
 
     // MARK: - COMPLETED paging
+
+    /// Finished tasks the free version holds back, and the way to see them.
+    private func earlierRow(_ count: Int) -> some View {
+        pagingButton(String(localized: "\(count) earlier tasks · Unlock"), symbol: "lock") {
+            paywall = .history(earlier: count)
+        }
+    }
 
     @ViewBuilder
     private func moreButton(shown: Int, total: Int) -> some View {

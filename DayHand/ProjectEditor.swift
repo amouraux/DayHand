@@ -143,6 +143,8 @@ struct ProjectEditor: View {
     /// Set while a new group is being named.
     @State private var isNamingGroup = false
     @State private var groupField = ""
+    /// Set when bringing an archived project back is declined at the free limit.
+    @State private var paywall: PaywallReason?
 
     private var project: Project? { store.project(id: projectID) }
 
@@ -157,6 +159,7 @@ struct ProjectEditor: View {
         }
         .navigationTitle(project?.name ?? "")
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(item: $paywall) { PaywallView(reason: $0).environmentObject(store) }
         .alert("New Group", isPresented: $isNamingGroup) {
             TextField("Holidays", text: $groupField)
             Button("Move") {
@@ -256,7 +259,12 @@ struct ProjectEditor: View {
             Section {
                 if project.isArchived {
                     Button {
-                        store.setProjectArchived(project, false)
+                        // Bringing one back takes a slot, like making one.
+                        if store.canAddProject {
+                            store.setProjectArchived(project, false)
+                        } else {
+                            paywall = .project(name: nil)
+                        }
                     } label: {
                         Label("Unarchive Project", systemImage: "tray.and.arrow.up")
                     }
@@ -508,6 +516,8 @@ struct NewProjectSheet: View {
     @State private var categoryID: UUID?
     @State private var group: String?
     @State private var isNamingGroup = false
+    /// Set when creating is declined at the free limit.
+    @State private var paywall: PaywallReason?
     @State private var typedGroup = ""
     @FocusState private var nameFocused: Bool
 
@@ -567,6 +577,7 @@ struct NewProjectSheet: View {
             }
             .navigationTitle("New Project")
             .navigationBarTitleDisplayMode(.inline)
+            .sheet(item: $paywall) { PaywallView(reason: $0).environmentObject(store) }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -595,6 +606,12 @@ struct NewProjectSheet: View {
 
     private func create() {
         guard canCreate else { return }
+        // At the free limit the sheet stays open, with its name still typed,
+        // and says why instead of closing on nothing.
+        guard store.projectAccess(named: name) != .needsUnlock else {
+            paywall = .project(name: nil)
+            return
+        }
         _ = store.ensureProject(named: name, categoryID: categoryID, group: group)
         dismiss()
     }

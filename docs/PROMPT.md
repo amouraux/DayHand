@@ -2193,12 +2193,21 @@ helper. Closing or relaunching resumes the full pass. A finished review does
 not imply empty stacks: kept tasks stay where they are. Start a new full
 review creates a fresh snapshot including kept tasks and new arrivals.
 
-## Free and paid (planned, not yet built)
+## Free and paid
 
 DayHand is a free app with one in-app unlock: a single non-consumable purchase,
 shared by every device on the Apple ID (universal purchase, Family Sharing on).
 There is no subscription, no account and no server. Decided 24 and 27 October
-2026; nothing here exists in code yet, and no StoreKit is linked.
+2026.
+
+**Built so far (27 October):** the entitlement rules (`Entitlement` in
+`Models.swift`, tested), both limits wherever they bite, the unlock screen, and
+a temporary test switch. **Not built yet:** the purchase, the 30-day trial and
+Restore Purchases. Until they are, `Purchases.storeAccess` is unlocked, so
+nothing is limited for anyone who has not chosen Free in the test switch.
+
+In the app the limit is worded as **active projects** (matching Organise), and
+the spec's "live" means the same thing.
 
 **Free, always:** unlimited tasks, groups and categories; the Inbox, Now,
 Waiting, Next/Later and all-tasks review helpers (they build the daily habit);
@@ -2256,3 +2265,28 @@ who imports old finished tasks, and by everyone after the trial.
 
 User-facing wording follows the task/card rule: the paywall says tasks and
 projects, never cards.
+
+**The test switch.** More → Testing offers Automatic (what the store says),
+Free and Paid, so both versions can be tried on one device. It is device-local,
+persisted in `UserDefaults`, and only exists where the app is not a customer's
+copy: in a debug build, or when StoreKit's `AppTransaction` reports a
+non-production environment (TestFlight, App Review's sandbox, Xcode). Anything
+that cannot be confirmed counts as production, so an offline first launch
+never switches it on, and a copy installed from the App Store can never use it.
+A Release build run straight from Xcode usually cannot confirm either, so use
+Debug or TestFlight. It is temporary: remove it, or hide it behind a gesture,
+before the final submission.
+
+**Where the limits bite.**
+
+- *New project* (Organise), *a project typed into a task* (the quick-add sheet
+  and the task editor), and *Unarchive Project* check the limit. A task typed
+  with a new project at the limit is still saved, without the project, and the
+  unlock is offered once the sheet has closed. The editor keeps the project the
+  task already had. The chip reads "New project X · Unlock".
+- `ensureProject` stays unrestricted: imports, sync and Convert Title Prefixes
+  call it directly and must never lose a project to a limit.
+- History is collapsed in the Completed stack, the Timeline and a project's
+  History. A search in the main list is not limited, so it still finds old
+  tasks.
+

@@ -244,6 +244,20 @@ Believing the screenshot over the timestamp costs far more than the check does.
 It cost an hour here twice over — once chasing a fix that was already correct,
 once "confirming" a filter that the running app had never contained.
 
+## Free and paid
+
+The rules live in `Entitlement` (`Models.swift`, Foundation only, tested) and
+the spec is "Free and paid" in `docs/PROMPT.md`. Three things to hold on to:
+
+- A limit only **declines creating**, never reading or editing, and
+  `ensureProject` stays unrestricted: imports, sync and Convert Title Prefixes
+  call it directly. User-typed names go through `ensureProjectWithinLimit`.
+- The entitlement is device-local (`Purchases`, reached as `store.purchases`).
+  It is never written to the document.
+- The More → Testing switch must never work in a customer's copy. It is
+  guarded by `Purchases.detectEnvironment`; do not weaken that guard, and
+  remove the switch before the final submission.
+
 ## Finishing a change
 
 Run the tests, build both platforms, then commit with a message that explains
