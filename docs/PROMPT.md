@@ -2192,3 +2192,66 @@ Save the full session under allReviewSession.v1, independent of every focused
 helper. Closing or relaunching resumes the full pass. A finished review does
 not imply empty stacks: kept tasks stay where they are. Start a new full
 review creates a fresh snapshot including kept tasks and new arrivals.
+
+## Free and paid (planned, not yet built)
+
+DayHand is a free app with one in-app unlock: a single non-consumable purchase,
+shared by every device on the Apple ID (universal purchase, Family Sharing on).
+There is no subscription, no account and no server. Decided 24 and 27 October
+2026; nothing here exists in code yet, and no StoreKit is linked.
+
+**Free, always:** unlimited tasks, groups and categories; the Inbox, Now,
+Waiting, Next/Later and all-tasks review helpers (they build the daily habit);
+sync through the user's own file; CSV import and export; backups; reminders,
+deadlines and Notes; search with no date window; Convert Title Prefixes; iPhone,
+iPad and Mac.
+
+**Paid, two limits:**
+
+1. **More than 6 live projects.** Live means not archived, so archiving or
+   deleting one frees a slot, and un-archiving at the limit counts as creating
+   one. The limit is on *creating* a project by hand (New Project, un-archive).
+2. **Completed history older than 30 days, rolling.** Measured from
+   `completedAt` against today, not aligned to months, so the oldest month
+   heading may show only part of its tasks. It applies everywhere finished
+   work is listed: the Completed stack and its More, the Timeline, and a
+   project's History. Older tasks collapse into one row, "N earlier tasks ·
+   Unlock", at the end of the list. A completed task with no date cannot be
+   placed and stays visible. Search still finds everything.
+
+There is no category limit.
+
+**The 30-day trial.** Everything unlimited, started by the user and never
+automatically: Settings offers "Start 30-day trial". Before it starts, a screen
+states the duration, what stops when it ends (more than 6 live projects can no
+longer be created; history beyond 30 days is collapsed), and the price of the
+unlock. It is a free price-tier-0 non-consumable named "30-day Trial", which App
+Review Guideline 3.1.1 allows for non-subscription apps; its purchase date is the
+start, so it follows the Apple ID across devices and survives a reinstall. It
+ends by returning to the free version, with no charge. Settings shows the days
+left quietly; nothing nags.
+
+Because the history window is also 30 days, a trial user has little to see
+behind the history limit before the trial ends: it is felt first by someone
+who imports old finished tasks, and by everyone after the trial.
+
+**Rules the implementation must hold:**
+
+1. **Capture never blocks.** A limit never stops a task being added. Declining
+   a new project says so and offers Unlock; it never fails silently.
+2. **Read and edit everything, limit only creation.** A free device over the
+   limit (after the trial, a CSV import, a refund, Family Sharing, a
+   grandfathered tester) shows and edits all its projects. CSV import, sync
+   merges and Convert Title Prefixes bring in every project whatever the limit.
+3. **Nothing is deleted or lost for non-payment.** The file, the backups and
+   CSV export always hold every task, including finished tasks the history
+   limit collapses. Collapsed rows show a count, not a blank.
+4. **TestFlight testers are grandfathered** and see everything unlocked.
+5. **Works offline.** The last verified state is trusted until StoreKit can
+   confirm again; an unverifiable expiry never takes away what was granted.
+6. **Restore Purchases** is in Settings, as the App Store requires.
+7. The limits live in one place (an entitlement the views ask), so a limit is
+   never enforced by a view guessing from counts of its own.
+
+User-facing wording follows the task/card rule: the paywall says tasks and
+projects, never cards.
