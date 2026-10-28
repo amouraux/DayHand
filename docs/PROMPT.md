@@ -2284,6 +2284,9 @@ before the final submission.
   with a new project at the limit is still saved, without the project, and the
   unlock is offered once the sheet has closed. The editor keeps the project the
   task already had. The chip reads "New project X · Unlock".
+  Over the limit (after a trial, or an import) the unlock screen states the
+  count — "You have 12 active projects; the free version keeps up to 3" — and
+  says to archive or merge until fewer than 3 are left to add one.
 - `ensureProject` stays unrestricted: imports, sync and Convert Title Prefixes
   call it directly and must never lose a project to a limit.
 - History is collapsed in the Completed stack, the Timeline and a project's

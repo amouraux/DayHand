@@ -18812,6 +18812,86 @@
     },
     "Only in test builds. Free applies the project and history limits on this device; Paid removes them.": {
       "shouldTranslate": false
+    },
+    "You have %lld active projects; the free version keeps up to %lld. To add one, archive or merge projects until you have fewer than %lld, or unlock DayHand.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du hast %lld aktive Projekte; die kostenlose Version erlaubt bis zu %lld. Um eines hinzuzufügen, archiviere oder führe Projekte zusammen, bis du weniger als %lld hast, oder schalte DayHand frei."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tienes %lld proyectos activos; la versión gratuita admite hasta %lld. Para añadir uno, archiva o fusiona proyectos hasta tener menos de %lld, o desbloquea DayHand."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vous avez %lld projets actifs ; la version gratuite en permet jusqu’à %lld. Pour en ajouter un, archivez ou fusionnez des projets jusqu’à en avoir moins de %lld, ou débloquez DayHand."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hai %lld progetti attivi; la versione gratuita ne consente fino a %lld. Per aggiungerne uno, archivia o unisci progetti finché ne hai meno di %lld, oppure sblocca DayHand."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Je hebt %lld actieve projecten; de gratis versie biedt plaats aan maximaal %lld. Archiveer of voeg projecten samen tot je er minder dan %lld hebt om er een toe te voegen, of ontgrendel DayHand."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tem %lld projetos ativos; a versão gratuita permite até %lld. Para adicionar um, arquive ou una projetos até ter menos de %lld, ou desbloqueie o DayHand."
+          }
+        }
+      }
+    },
+    "You have %lld active projects; the free version keeps up to %lld. Your task was added without the project %@. To add one, archive or merge projects until you have fewer than %lld, or unlock DayHand.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Du hast %lld aktive Projekte; die kostenlose Version erlaubt bis zu %lld. Deine Aufgabe wurde ohne das Projekt %@ hinzugefügt. Um eines hinzuzufügen, archiviere oder führe Projekte zusammen, bis du weniger als %lld hast, oder schalte DayHand frei."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tienes %lld proyectos activos; la versión gratuita admite hasta %lld. Tu tarea se añadió sin el proyecto %@. Para añadir uno, archiva o fusiona proyectos hasta tener menos de %lld, o desbloquea DayHand."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vous avez %lld projets actifs ; la version gratuite en permet jusqu’à %lld. Votre tâche a été ajoutée sans le projet %@. Pour en ajouter un, archivez ou fusionnez des projets jusqu’à en avoir moins de %lld, ou débloquez DayHand."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hai %lld progetti attivi; la versione gratuita ne consente fino a %lld. La tua attività è stata aggiunta senza il progetto %@. Per aggiungerne uno, archivia o unisci progetti finché ne hai meno di %lld, oppure sblocca DayHand."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Je hebt %lld actieve projecten; de gratis versie biedt plaats aan maximaal %lld. Je taak is toegevoegd zonder het project %@. Archiveer of voeg projecten samen tot je er minder dan %lld hebt om er een toe te voegen, of ontgrendel DayHand."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tem %lld projetos ativos; a versão gratuita permite até %lld. A sua tarefa foi adicionada sem o projeto %@. Para adicionar um, arquive ou una projetos até ter menos de %lld, ou desbloqueie o DayHand."
+          }
+        }
+      }
     }
   },
   "version": "1.1"

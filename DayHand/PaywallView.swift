@@ -74,11 +74,22 @@ struct PaywallView: View {
     }
 
     private var explanation: LocalizedStringKey {
+        // Over the limit, which a trial or an import can leave someone, the
+        // count is stated: "up to 3" alone does not tell them why they cannot
+        // add one, or how far they are from being able to.
+        let active = Entitlement.liveProjectCount(in: store.projects)
+        let limit = Entitlement.freeProjectLimit
         switch reason {
         case .project(let name?):
-            return "The free version keeps up to \(Entitlement.freeProjectLimit) active projects. Your task was added without the project \(name). Archive a project you have finished to make room, or unlock DayHand."
+            if active > limit {
+                return "You have \(active) active projects; the free version keeps up to \(limit). Your task was added without the project \(name). To add one, archive or merge projects until you have fewer than \(limit), or unlock DayHand."
+            }
+            return "The free version keeps up to \(limit) active projects. Your task was added without the project \(name). Archive a project you have finished to make room, or unlock DayHand."
         case .project(nil):
-            return "The free version keeps up to \(Entitlement.freeProjectLimit) active projects. Archive a project you have finished to make room, or unlock DayHand."
+            if active > limit {
+                return "You have \(active) active projects; the free version keeps up to \(limit). To add one, archive or merge projects until you have fewer than \(limit), or unlock DayHand."
+            }
+            return "The free version keeps up to \(limit) active projects. Archive a project you have finished to make room, or unlock DayHand."
         case .history:
             return "The free version shows the last \(Entitlement.freeHistoryDays) days of finished tasks. Earlier ones are safe, and appear here once you unlock."
         }
