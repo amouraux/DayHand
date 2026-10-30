@@ -2673,7 +2673,8 @@ do {
     let projects = [beta, empty, archived, alpha]
     let cards = [b, hidden, loose, a]
     var review = ProjectReviewSession(projects: projects, cards: cards)
-    expect(review.projectIDs == [alpha.id, beta.id], "review only nonarchived projects with unfinished work, alphabetically")
+    expect(review.projectIDs == [alpha.id, beta.id, empty.id],
+           "live projects, those with unfinished work first and alphabetically, then ones with nothing left to do")
     expect(review.currentID == alpha.id, "first project selected at start")
     review.tasks.keepInStack(a.id)
     var reassigned = a
@@ -2698,7 +2699,7 @@ do {
     expect(removed.currentID == nil, "archived current project is skipped")
     let newProject = Project(name: "NEW")
     let newCard = TodoItem(title: "New", projectID: newProject.id)
-    expect(review.remaining(projects: projects + [newProject], cards: cards + [newCard]).map(\.id) == [beta.id],
+    expect(review.remaining(projects: projects + [newProject], cards: cards + [newCard]).map(\.id) == [beta.id, empty.id],
            "new projects wait for another pass")
     let added = TodoItem(title: "Next step", bucket: .tomorrow, projectID: beta.id)
     review.tasks.includeAdded([added, added])
@@ -2709,9 +2710,25 @@ do {
     transferred.projectID = alpha.id
     expect(review.tasks.remaining(in: [transferred], buckets: StackReviewSession.allOpenBuckets).isEmpty,
            "accepting a project also marks its open tasks handled across reassignment")
+    // A project with nothing to do at the start is offered, last, until it is archived.
+    var idle = ProjectReviewSession(projects: projects, cards: cards)
+    idle.advance(projects: projects, cards: cards)
+    idle.advance(projects: projects, cards: cards)
+    expect(idle.currentID == empty.id, "a project with nothing left to do is reviewed after the active ones")
+    var archivedEmpty = empty
+    archivedEmpty.isArchived = true
+    idle.reconcile(projects: [alpha, beta, archivedEmpty, archived], cards: cards)
+    expect(idle.currentID == nil, "archiving it from the overview ends the pass")
+    let idleBack = try! JSONDecoder().decode(ProjectReviewSession.self, from: JSONEncoder().encode(ProjectReviewSession(projects: projects, cards: cards)))
+    expect(idleBack.projectIDs.contains(empty.id) && idleBack.remaining(projects: projects, cards: cards).map(\.id).contains(empty.id),
+           "the idle project survives a resume")
+    let oldJSON = "{\"projectIDs\":[\"\(alpha.id)\"],\"reviewedIDs\":[],\"currentID\":\"\(alpha.id)\",\"tasks\":{\"taskIDs\":[],\"keptIDs\":[]}}"
+    expect((try? JSONDecoder().decode(ProjectReviewSession.self, from: Data(oldJSON.utf8))) != nil,
+           "a project review saved before idle projects existed still decodes")
     var skipEmpty = ProjectReviewSession(projects: projects, cards: cards)
     skipEmpty.advance(projects: projects, cards: [a])
-    expect(skipEmpty.currentID == nil, "upcoming projects emptied elsewhere are skipped")
+    expect(skipEmpty.currentID == empty.id,
+           "a project emptied elsewhere is skipped, so the pass moves on to the one that was already idle")
     var edited = a
     edited.title = "Live title"
     expect(ProjectReviewSession(projects: projects, cards: cards).tasks.remaining(in: [edited], buckets: StackReviewSession.allOpenBuckets).first?.title == "Live title",

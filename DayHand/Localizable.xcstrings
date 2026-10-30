@@ -19098,47 +19098,6 @@
         }
       }
     },
-    "Projects with unfinished tasks are reviewed one at a time. New projects will be included in your next pass.": {
-      "extractionState": "manual",
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Les projets avec des tâches inachevées sont revus un par un. Les nouveaux projets seront inclus au prochain passage."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Projecten met onvoltooide taken worden één voor één doorgenomen. Nieuwe projecten komen bij de volgende ronde aan bod."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Projekte mit offenen Aufgaben werden einzeln durchgesehen. Neue Projekte kommen beim nächsten Durchgang hinzu."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Los proyectos con tareas pendientes se revisan uno a uno. Los nuevos se incluirán en la próxima revisión."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "I progetti con attività non completate vengono rivisti uno alla volta. I nuovi progetti saranno inclusi nel prossimo giro."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Os projetos com tarefas por concluir são revistos um de cada vez. Os novos projetos serão incluídos na próxima revisão."
-          }
-        }
-      }
-    },
     "Start a new project review": {
       "extractionState": "manual",
       "localizations": {
@@ -19218,87 +19177,23 @@
             "state": "translated",
             "value": "Projetos restantes nesta revisão: %lld"
           }
-        }
-      }
-    },
-    "No unfinished tasks. You can archive this project from Edit project.": {
-      "extractionState": "manual",
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aucune tâche inachevée. Vous pouvez archiver ce projet depuis Modifier le projet."
-          }
         },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Geen onvoltooide taken. Je kunt dit project archiveren via Project bewerken."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Keine offenen Aufgaben. Du kannst dieses Projekt unter Projekt bearbeiten archivieren."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No hay tareas pendientes. Puedes archivar este proyecto desde Editar proyecto."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nessuna attività non completata. Puoi archiviare il progetto da Modifica progetto."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sem tarefas por concluir. Pode arquivar este projeto em Editar projeto."
-          }
-        }
-      }
-    },
-    "Only projects with unfinished tasks are included. Tasks without a project stay in the task reviews.": {
-      "extractionState": "manual",
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Seuls les projets avec des tâches inachevées sont inclus. Les tâches sans projet restent dans les révisions de tâches."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Alleen projecten met onvoltooide taken worden meegenomen. Taken zonder project blijven in de takenrondes."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nur Projekte mit offenen Aufgaben werden berücksichtigt. Aufgaben ohne Projekt bleiben in der Aufgabendurchsicht."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Solo se incluyen proyectos con tareas pendientes. Las tareas sin proyecto siguen en las revisiones de tareas."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sono inclusi solo i progetti con attività non completate. Le attività senza progetto restano nelle revisioni delle attività."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "São incluídos apenas projetos com tarefas por concluir. As tarefas sem projeto ficam nas revisões de tarefas."
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld project left in this review"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld projects left in this review"
+                }
+              }
+            }
           }
         }
       }
@@ -19668,6 +19563,126 @@
           "stringUnit": {
             "state": "translated",
             "value": "Voltar ao projeto"
+          }
+        }
+      }
+    },
+    "No unfinished tasks. If this project is over, archive it.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine offenen Aufgaben. Wenn dieses Projekt beendet ist, archiviere es."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay tareas pendientes. Si este proyecto ha terminado, archívalo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune tâche inachevée. Si ce projet est terminé, archivez-le."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessuna attività non completata. Se il progetto è concluso, archivialo."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geen onvoltooide taken. Is dit project afgerond, archiveer het dan."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sem tarefas por concluir. Se este projeto terminou, arquive-o."
+          }
+        }
+      }
+    },
+    "Projects with nothing left to do come last, so you can archive them. Tasks without a project stay in the task reviews.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Projekte ohne offene Aufgaben kommen zuletzt, damit du sie archivieren kannst. Aufgaben ohne Projekt bleiben in der Aufgabendurchsicht."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los proyectos sin nada pendiente van al final, para que puedas archivarlos. Las tareas sin proyecto siguen en las revisiones de tareas."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les projets sans rien à faire viennent en dernier, pour que vous puissiez les archiver. Les tâches sans projet restent dans les révisions de tâches."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I progetti senza nulla da fare vengono per ultimi, così puoi archiviarli. Le attività senza progetto restano nelle revisioni delle attività."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Projecten zonder openstaand werk komen als laatste, zodat je ze kunt archiveren. Taken zonder project blijven in de takenrondes."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os projetos sem nada por fazer vêm no fim, para os poder arquivar. As tarefas sem projeto ficam nas revisões de tarefas."
+          }
+        }
+      }
+    },
+    "Your projects are reviewed one at a time. New projects will be included in your next pass.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deine Projekte werden einzeln durchgesehen. Neue Projekte kommen beim nächsten Durchgang hinzu."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tus proyectos se revisan uno a uno. Los nuevos se incluirán en la próxima revisión."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vos projets sont revus un par un. Les nouveaux projets seront inclus au prochain passage."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I tuoi progetti vengono rivisti uno alla volta. I nuovi progetti saranno inclusi nel prossimo giro."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Je projecten worden één voor één doorgenomen. Nieuwe projecten komen bij de volgende ronde aan bod."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Os seus projetos são revistos um de cada vez. Os novos projetos serão incluídos na próxima revisão."
           }
         }
       }

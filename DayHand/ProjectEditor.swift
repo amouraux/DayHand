@@ -651,7 +651,7 @@ struct ProjectReviewView: View {
                     ContentUnavailableView {
                         Label("Project review finished", systemImage: "checkmark.circle")
                     } description: {
-                        Text("Projects with unfinished tasks are reviewed one at a time. New projects will be included in your next pass.")
+                        Text("Your projects are reviewed one at a time. New projects will be included in your next pass.")
                     } actions: {
                         Button("Start a new project review") { start() }
                             .buttonStyle(.borderedProminent)
@@ -704,8 +704,16 @@ struct ProjectReviewView: View {
                     }
                     observations(tasks)
                     if tasks.isEmpty {
-                        Text("No unfinished tasks. You can archive this project from Edit project.")
+                        Text("No unfinished tasks. If this project is over, archive it.")
                             .foregroundStyle(.secondary)
+                        // Nothing is open, so there is nothing to confirm, as in
+                        // the editor. Archiving ends the visit and moves on.
+                        Button {
+                            store.setProjectArchived(project, true)
+                        } label: {
+                            Label("Archive Project", systemImage: "archivebox")
+                        }
+                        .buttonStyle(.bordered)
                     }
                     ForEach(StackReviewSession.allOpenBuckets) { bucket in
                         let cards = store.items(in: bucket).filter { $0.projectID == project.id }
@@ -727,7 +735,7 @@ struct ProjectReviewView: View {
                         Label("History", systemImage: "calendar.day.timeline.left")
                     }
                     .disabled(!store.items.contains { $0.projectID == project.id && $0.isCompleted })
-                    Text("Only projects with unfinished tasks are included. Tasks without a project stay in the task reviews.")
+                    Text("Projects with nothing left to do come last, so you can archive them. Tasks without a project stay in the task reviews.")
                         .font(.footnote).foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: 600, alignment: .leading)

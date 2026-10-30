@@ -2297,9 +2297,14 @@ before the final submission.
 ## Review projects
 
 More → Review offers **Review projects** separately from Review all tasks.
-Snapshot nonarchived projects with unfinished tasks, alphabetically by name;
-Now, Next, Later, Waiting and Inbox all count as unfinished. Unassigned tasks
-stay in the task helpers. New projects wait for another pass. Progress is
+Snapshot nonarchived projects, alphabetically by name, those with unfinished
+tasks first (Now, Next, Later, Waiting and Inbox all count as unfinished) and
+then those with nothing left to do, which are offered last so a finished project
+can be archived — which also frees one of a free version's three places. An
+idle project's overview offers Archive Project, with no confirmation since
+nothing is open; archiving ends its visit. A project emptied elsewhere during
+the pass is still skipped. Unassigned tasks stay in the task helpers. New
+projects wait for another pass. Progress is
 saved locally under projectReviewSession.v1, including nested task decisions.
 
 Each overview shows project/category/group, counts per stack, unfinished tasks
@@ -2321,7 +2326,7 @@ already reviewed task cannot show it twice under a later project. Existing
 individual/full task-review progress is untouched. Returning from any edit or
 nested review leaves the same overview visible. Completing its last task leaves
 an empty overview so the user can inspect it or archive it before continuing.
-Future empty projects, removed projects and archived projects are skipped.
+Projects emptied elsewhere mid-pass, removed projects and archived projects are skipped.
 Looks right marks that project's remaining tasks handled and advances. Undo
 remains available, including on the final screen. Local review state never
 changes task entry dates or the synced document.

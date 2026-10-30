@@ -1509,18 +1509,26 @@ struct StackReviewSession: Codable, Equatable {
 /// titles and membership; removed projects cannot be resurrected by resuming.
 struct ProjectReviewSession: Codable, Equatable {
     let projectIDs: [UUID]
+    /// Live projects with nothing left to do when the pass began. They come
+    /// last and stay eligible while empty — a finished project is the one a
+    /// review most wants to archive, and archiving frees a free-version slot.
+    /// Optional so a session saved before this existed still decodes.
+    private var idleIDs: Set<UUID>? = nil
     private(set) var reviewedIDs: Set<UUID> = []
     private(set) var currentID: UUID?
     var tasks: StackReviewSession
 
     init(projects: [Project], cards: [TodoItem]) {
         let open = Set(cards.filter { !$0.isCompleted }.compactMap(\.projectID))
-        let eligible = projects.filter { !$0.isArchived && open.contains($0.id) }
+        let live = projects.filter { !$0.isArchived }
             .sorted { lhs, rhs in
                 let order = lhs.name.localizedStandardCompare(rhs.name)
                 return order == .orderedSame ? lhs.id.uuidString < rhs.id.uuidString : order == .orderedAscending
             }
-        projectIDs = eligible.map(\.id)
+        let active = live.filter { open.contains($0.id) }
+        let idle = live.filter { !open.contains($0.id) }
+        projectIDs = (active + idle).map(\.id)
+        idleIDs = Set(idle.map(\.id))
         currentID = projectIDs.first
         let ids = Set(projectIDs)
         tasks = StackReviewSession(cards: cards.filter { $0.projectID.map(ids.contains) == true },
@@ -1532,7 +1540,9 @@ struct ProjectReviewSession: Codable, Equatable {
         let live = Dictionary(projects.filter { !$0.isArchived }.map { ($0.id, $0) },
                               uniquingKeysWith: { first, _ in first })
         return projectIDs.compactMap { id in
-            guard !reviewedIDs.contains(id), open.contains(id) else { return nil }
+            // A project emptied elsewhere mid-pass is skipped, but one that was
+            // already idle at the start is part of the pass.
+            guard !reviewedIDs.contains(id), open.contains(id) || idleIDs?.contains(id) == true else { return nil }
             return live[id]
         }
     }
