@@ -2293,3 +2293,35 @@ before the final submission.
   History. A search in the main list is not limited, so it still finds old
   tasks.
 
+
+## Review projects
+
+More → Review offers **Review projects** separately from Review all tasks.
+Snapshot nonarchived projects with unfinished tasks, alphabetically by name;
+Now, Next, Later, Waiting and Inbox all count as unfinished. Unassigned tasks
+stay in the task helpers. New projects wait for another pass. Progress is
+saved locally under projectReviewSession.v1, including nested task decisions.
+
+Each overview shows project/category/group, counts per stack, unfinished tasks
+grouped by stack and optional History (the existing entitlement-aware timeline).
+Task rows reuse normal edit, completion and swipe controls. Neutral observations
+flag all-Later work, Waiting without Now/Next, and Inbox tasks to organise.
+The question is **Does this project have a clear way forward?** Pinned actions:
+Looks right — next project; Add a task; Review these tasks; Edit project.
+
+Add uses the existing composer with the current project and category selected,
+respecting normal project creation limits. Explicitly added tasks join the
+nested review; unrelated incoming tasks do not extend its snapshot. Edit project
+reuses existing controls including confirmed Complete and Archive; there is no
+new bulk defer or silently destructive archive action. History opens separately.
+
+Review these tasks reuses the shared full task helper scoped to this project's
+live tasks. Its decisions are shared across the project pass, so reassigning an
+already reviewed task cannot show it twice under a later project. Existing
+individual/full task-review progress is untouched. Returning from any edit or
+nested review leaves the same overview visible. Completing its last task leaves
+an empty overview so the user can inspect it or archive it before continuing.
+Future empty projects, removed projects and archived projects are skipped.
+Looks right marks that project's remaining tasks handled and advances. Undo
+remains available, including on the final screen. Local review state never
+changes task entry dates or the synced document.

@@ -100,9 +100,13 @@ struct NowReviewView: View {
 /// a thumb learns them once; the one the task is already in becomes "keep".
 struct StackReviewView: View {
     let stack: ReviewStack
+    let projectID: UUID?
+    private let sharedSession: Binding<StackReviewSession?>?
 
-    init(stack: ReviewStack) {
+    init(stack: ReviewStack, projectID: UUID? = nil, sharedSession: Binding<StackReviewSession?>? = nil) {
         self.stack = stack
+        self.projectID = projectID
+        self.sharedSession = sharedSession
         // Preserve the existing keys and keep each helper's progress independent.
         _savedSession = AppStorage(wrappedValue: "", "\(stack.rawValue)ReviewSession.v1")
     }
@@ -114,8 +118,11 @@ struct StackReviewView: View {
     @State private var editing: TodoItem?
     @State private var deleting: TodoItem?
 
-    private var remaining: [TodoItem] { session?.remaining(in: store.items, buckets: stack.buckets) ?? [] }
-    private var stackCount: Int { store.items.filter { stack.buckets.contains($0.bucket) }.count }
+    private var scopedCards: [TodoItem] {
+        store.items.filter { projectID == nil || $0.projectID == projectID }
+    }
+    private var remaining: [TodoItem] { session?.remaining(in: scopedCards, buckets: stack.buckets) ?? [] }
+    private var stackCount: Int { scopedCards.filter { stack.buckets.contains($0.bucket) }.count }
 
     /// Wide enough to read, not so wide that a Mac window stretches a handful
     /// of buttons across the whole screen.
@@ -134,10 +141,14 @@ struct StackReviewView: View {
                 finished
             }
         }
-        .navigationTitle(stack.title)
+        .navigationTitle(projectID == nil ? stack.title : String(localized: "Review project tasks"))
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             guard session == nil else { return }
+            if let sharedSession {
+                session = sharedSession.wrappedValue
+                return
+            }
             if let data = savedSession.data(using: .utf8),
                let restored = try? JSONDecoder().decode(StackReviewSession.self, from: data) {
                 session = restored
@@ -278,7 +289,7 @@ struct StackReviewView: View {
                 .background(Color.secondary.opacity(0.10), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
             }
 
-            Text(stack.scopeNote)
+            Text(projectID == nil ? stack.scopeNote : "Tasks in this project only.")
                 .font(.footnote)
                 .foregroundStyle(.tertiary)
                 .padding(.top, 4)
@@ -428,7 +439,9 @@ struct StackReviewView: View {
                 Label(stackCount == 0 ? stack.emptyTitle : "Review finished",
                       systemImage: stackCount == 0 ? stack.bucket.symbolName : "checkmark.circle")
             } description: {
-                if stack == .all {
+                if projectID != nil {
+                    Text("Task review finished. Return to the project overview to decide whether it has a clear way forward.")
+                } else if stack == .all {
                     Text(stackCount == 0
                         ? "There are no open tasks to review."
                         : "Your full review is finished. Tasks you kept remain in their stacks. New arrivals can be reviewed in the next pass.")
@@ -450,7 +463,7 @@ struct StackReviewView: View {
                         : "Tasks you are still working on remain in Now. New arrivals will be included in your next review.")
                 }
             } actions: {
-                if stackCount > 0 {
+                if stackCount > 0 && sharedSession == nil {
                     Button(stack.restartTitle) { start() }
                         .buttonStyle(.borderedProminent)
                 }
@@ -462,7 +475,7 @@ struct StackReviewView: View {
     // MARK: - Session
 
     private func liveCard(_ id: UUID) -> TodoItem? {
-        store.items.first { $0.id == id && stack.buckets.contains($0.bucket) }
+        scopedCards.first { $0.id == id && stack.buckets.contains($0.bucket) }
     }
 
     private func keep(_ card: TodoItem) {
@@ -480,6 +493,10 @@ struct StackReviewView: View {
     }
 
     private func persist() {
+        if let sharedSession {
+            sharedSession.wrappedValue = session
+            return
+        }
         guard let session, let data = try? JSONEncoder().encode(session),
               let text = String(data: data, encoding: .utf8) else { return }
         savedSession = text

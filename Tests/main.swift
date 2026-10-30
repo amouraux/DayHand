@@ -2660,5 +2660,63 @@ do {
     expect(trial.splitHistory(cards, now: at("2026-11-20 10:00")).earlier > 0, "an ended trial hides what the free version hides")
 }
 
+// Project review keeps the overview stable and shares task decisions.
+do {
+    let alpha = Project(name: "ALPHA")
+    let beta = Project(name: "BETA")
+    let empty = Project(name: "EMPTY")
+    let archived = Project(name: "ARCHIVED", isArchived: true)
+    let a = TodoItem(title: "A", bucket: .today, projectID: alpha.id)
+    let b = TodoItem(title: "B", bucket: .waiting, projectID: beta.id)
+    let hidden = TodoItem(title: "Archived", projectID: archived.id)
+    let loose = TodoItem(title: "Loose")
+    let projects = [beta, empty, archived, alpha]
+    let cards = [b, hidden, loose, a]
+    var review = ProjectReviewSession(projects: projects, cards: cards)
+    expect(review.projectIDs == [alpha.id, beta.id], "review only nonarchived projects with unfinished work, alphabetically")
+    expect(review.currentID == alpha.id, "first project selected at start")
+    review.tasks.keepInStack(a.id)
+    var reassigned = a
+    reassigned.projectID = beta.id
+    expect(!review.tasks.remaining(in: [reassigned, b], buckets: StackReviewSession.allOpenBuckets).contains { $0.id == a.id },
+           "a kept task reassigned to another project is not reviewed twice")
+    var finished = a
+    finished.bucket = .completed
+    review.reconcile(projects: projects, cards: [finished, b])
+    expect(review.currentID == alpha.id, "finishing last task retains the displayed project for inspection or archive")
+    review.advance(projects: projects, cards: [finished, b])
+    expect(review.currentID == beta.id, "accepting overview advances to next project")
+    let restored = try! JSONDecoder().decode(ProjectReviewSession.self, from: JSONEncoder().encode(review))
+    expect(restored == review, "project position and nested task decisions survive resume")
+    var removed = restored
+    removed.reconcile(projects: [alpha], cards: cards)
+    expect(removed.currentID == nil, "deleted current project is skipped without resurrection")
+    var archivedBeta = beta
+    archivedBeta.isArchived = true
+    removed = restored
+    removed.reconcile(projects: [alpha, archivedBeta], cards: cards)
+    expect(removed.currentID == nil, "archived current project is skipped")
+    let newProject = Project(name: "NEW")
+    let newCard = TodoItem(title: "New", projectID: newProject.id)
+    expect(review.remaining(projects: projects + [newProject], cards: cards + [newCard]).map(\.id) == [beta.id],
+           "new projects wait for another pass")
+    let added = TodoItem(title: "Next step", bucket: .tomorrow, projectID: beta.id)
+    review.tasks.includeAdded([added, added])
+    expect(review.tasks.remaining(in: [added], buckets: StackReviewSession.allOpenBuckets).count == 1,
+           "explicitly added next step joins nested review exactly once")
+    review.advance(projects: projects, cards: [added, b])
+    var transferred = added
+    transferred.projectID = alpha.id
+    expect(review.tasks.remaining(in: [transferred], buckets: StackReviewSession.allOpenBuckets).isEmpty,
+           "accepting a project also marks its open tasks handled across reassignment")
+    var skipEmpty = ProjectReviewSession(projects: projects, cards: cards)
+    skipEmpty.advance(projects: projects, cards: [a])
+    expect(skipEmpty.currentID == nil, "upcoming projects emptied elsewhere are skipped")
+    var edited = a
+    edited.title = "Live title"
+    expect(ProjectReviewSession(projects: projects, cards: cards).tasks.remaining(in: [edited], buckets: StackReviewSession.allOpenBuckets).first?.title == "Live title",
+           "nested review resolves current task content")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)
