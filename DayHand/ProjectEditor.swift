@@ -621,6 +621,7 @@ struct NewProjectSheet: View {
 /// adding a next step and a nested review all return to this same overview.
 struct ProjectReviewView: View {
     @EnvironmentObject private var store: TodoStore
+    @Environment(\.dismiss) private var dismiss
     @AppStorage("projectReviewSession.v1") private var savedSession = ""
     @State private var session: ProjectReviewSession?
     @State private var editingTask: TodoItem?
@@ -666,6 +667,26 @@ struct ProjectReviewView: View {
         }
         .navigationTitle("Review projects")
         .navigationBarTitleDisplayMode(.inline)
+        // The system's back chevron leaves the review, which reads as "go back
+        // to the project I just left". So the chevron does that, and leaving is
+        // a cross at the other end. Dimmed on the first project rather than
+        // hidden, so the bar does not change shape between one project and
+        // the next.
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button { goBack() } label: {
+                    Label("Previous project", systemImage: "chevron.backward")
+                }
+                .disabled(session?.canGoBack != true)
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                Button { dismiss() } label: {
+                    Label("Close", systemImage: "xmark")
+                }
+                .keyboardShortcut(.cancelAction)
+            }
+        }
         .onAppear {
             guard session == nil else { return }
             if let data = savedSession.data(using: .utf8),
@@ -764,16 +785,6 @@ struct ProjectReviewView: View {
                         .disabled(tasks.isEmpty)
                     action("Edit project", symbol: "pencil", project: project, kind: .edit)
                 }
-                // Always present, and dimmed on the first project, so the buttons
-                // above never move between one project and the next.
-                Button {
-                    goBack()
-                } label: {
-                    Label("Previous project", systemImage: "chevron.backward")
-                        .font(.subheadline)
-                }
-                .buttonStyle(.borderless)
-                .disabled(session?.canGoBack != true)
             }
             .padding(16)
             .frame(maxWidth: 600)
