@@ -43,6 +43,11 @@ struct SettingsView: View {
 
                 Section {
                     NavigationLink {
+                        ProjectReviewView().environmentObject(store)
+                    } label: {
+                        Label("Review projects", systemImage: "paperclip")
+                    }
+                    NavigationLink {
                         StackReviewView(stack: .all).environmentObject(store)
                     } label: {
                         LabeledContent {

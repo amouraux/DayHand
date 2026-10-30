@@ -616,3 +616,238 @@ struct NewProjectSheet: View {
         dismiss()
     }
 }
+
+/// A project overview remains visible until the user accepts it. Task edits,
+/// adding a next step and a nested review all return to this same overview.
+struct ProjectReviewView: View {
+    @EnvironmentObject private var store: TodoStore
+    @AppStorage("projectReviewSession.v1") private var savedSession = ""
+    @State private var session: ProjectReviewSession?
+    @State private var editingTask: TodoItem?
+    @State private var presentation: Presentation?
+
+    private struct Presentation: Identifiable {
+        enum Kind: String { case add, tasks, edit, history }
+        let project: Project
+        let kind: Kind
+        var id: String { "\(project.id)-\(kind.rawValue)" }
+    }
+
+    private var project: Project? {
+        session?.currentID.flatMap { id in store.projects.first { $0.id == id && !$0.isArchived } }
+    }
+
+    private func openTasks(_ id: UUID) -> [TodoItem] {
+        store.items.filter { $0.projectID == id && !$0.isCompleted }
+    }
+
+    var body: some View {
+        ZStack {
+            Color(.systemGroupedBackground).ignoresSafeArea()
+            if let project {
+                overview(project)
+            } else if session != nil {
+                VStack(spacing: 0) {
+                    ContentUnavailableView {
+                        Label("Project review finished", systemImage: "checkmark.circle")
+                    } description: {
+                        Text("Projects with unfinished tasks are reviewed one at a time. New projects will be included in your next pass.")
+                    } actions: {
+                        Button("Start a new project review") { start() }
+                            .buttonStyle(.borderedProminent)
+                    }
+                    UndoBanner(bottomPadding: 16).environmentObject(store)
+                }
+            }
+        }
+        .navigationTitle("Review projects")
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            guard session == nil else { return }
+            if let data = savedSession.data(using: .utf8),
+               let restored = try? JSONDecoder().decode(ProjectReviewSession.self, from: data) {
+                session = restored
+                reconcile()
+            } else { start() }
+        }
+        .onChange(of: session) { _, _ in persist() }
+        .onChange(of: store.items) { _, _ in reconcile() }
+        .onChange(of: store.projects) { _, _ in reconcile() }
+        .sheet(item: $editingTask) { card in
+            CardActionsSheet(itemID: card.id).environmentObject(store)
+        }
+        .sheet(item: $presentation) { selected in
+            presented(selected)
+        }
+    }
+
+    private func overview(_ project: Project) -> some View {
+        let tasks = openTasks(project.id)
+        let remaining = session?.remaining(projects: store.projects, cards: store.items) ?? []
+        let count = remaining.filter { $0.id != project.id }.count + 1
+        return VStack(spacing: 0) {
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 14) {
+                    Text("\(count) projects left in this review")
+                        .font(.subheadline).foregroundStyle(.secondary)
+                    Text(project.name).font(.title2.weight(.semibold))
+                    if let category = store.categories.first(where: { $0.id == project.categoryID }) {
+                        Label(category.label, systemImage: category.symbolName)
+                            .foregroundStyle(category.color.prefixTint)
+                    }
+                    if let group = project.group { Label(group, systemImage: "folder") }
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 100))], alignment: .leading, spacing: 8) {
+                        ForEach(StackReviewSession.allOpenBuckets) { bucket in
+                            Label("\(bucket.title) \(tasks.filter { $0.bucket == bucket }.count)", systemImage: bucket.symbolName)
+                                .font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+                    observations(tasks)
+                    if tasks.isEmpty {
+                        Text("No unfinished tasks. You can archive this project from Edit project.")
+                            .foregroundStyle(.secondary)
+                    }
+                    ForEach(StackReviewSession.allOpenBuckets) { bucket in
+                        let cards = store.items(in: bucket).filter { $0.projectID == project.id }
+                        if !cards.isEmpty {
+                            Text(bucket.title).font(.headline).accessibilityAddTraits(.isHeader)
+                            ForEach(cards) { card in
+                                CardRow(item: card, category: store.category(for: card),
+                                    onTap: { editingTask = card },
+                                    onToggle: { store.toggleCompleted(card) },
+                                    onMove: { store.move(card, to: card.bucket.forwardDestination) },
+                                    onEdit: { editingTask = card })
+                                    .id("\(card.id)-\(card.bucket.rawValue)")
+                            }
+                        }
+                    }
+                    Button {
+                        presentation = Presentation(project: project, kind: .history)
+                    } label: {
+                        Label("History", systemImage: "calendar.day.timeline.left")
+                    }
+                    .disabled(!store.items.contains { $0.projectID == project.id && $0.isCompleted })
+                    Text("Only projects with unfinished tasks are included. Tasks without a project stay in the task reviews.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: 600, alignment: .leading)
+                .frame(maxWidth: .infinity)
+                .padding(20)
+            }
+            .id(project.id)
+            UndoBanner(bottomPadding: 8).environmentObject(store)
+            VStack(spacing: 10) {
+                Text("Does this project have a clear way forward?")
+                    .font(.headline).frame(maxWidth: .infinity, alignment: .leading)
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
+                    Button {
+                        session?.advance(projects: store.projects, cards: store.items)
+                    } label: {
+                        Label("Looks right — next project", systemImage: "checkmark")
+                            .frame(maxWidth: .infinity, minHeight: 48)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    action("Add a task", symbol: "plus", project: project, kind: .add)
+                    action("Review these tasks", symbol: "square.stack.3d.up", project: project, kind: .tasks)
+                        .disabled(tasks.isEmpty)
+                    action("Edit project", symbol: "pencil", project: project, kind: .edit)
+                }
+            }
+            .padding(16)
+            .frame(maxWidth: 600)
+            .frame(maxWidth: .infinity)
+            .background(.bar)
+        }
+    }
+
+    @ViewBuilder private func observations(_ tasks: [TodoItem]) -> some View {
+        if !tasks.isEmpty && tasks.allSatisfy({ $0.bucket == .later }) {
+            Text("All remaining tasks are in Later.").foregroundStyle(.secondary)
+        }
+        if tasks.contains(where: { $0.bucket == .waiting }) &&
+            !tasks.contains(where: { $0.bucket == .today || $0.bucket == .tomorrow }) {
+            Text("This project has tasks in Waiting, but none in Now or Next.").foregroundStyle(.secondary)
+        }
+        if tasks.contains(where: { $0.bucket == .inbox }) {
+            Text("There are tasks in Inbox still to organise.").foregroundStyle(.secondary)
+        }
+    }
+
+    private func action(_ title: LocalizedStringKey, symbol: String, project: Project,
+                        kind: Presentation.Kind) -> some View {
+        Button {
+            presentation = Presentation(project: project, kind: kind)
+        } label: {
+            Label(title, systemImage: symbol).frame(maxWidth: .infinity, minHeight: 48)
+        }
+        .buttonStyle(.bordered)
+    }
+
+    @ViewBuilder private func presented(_ selected: Presentation) -> some View {
+        if selected.kind == .add {
+            AddCardView(categories: store.categories, projects: store.projects,
+                projectLastUsed: store.projectLastUsed, projectsInUse: store.projectsInUse,
+                defaultCategoryID: selected.project.categoryID, defaultProject: selected.project,
+                onAdd: addTask)
+                .environmentObject(store)
+        } else {
+            NavigationStack {
+                Group {
+                    switch selected.kind {
+                    case .tasks:
+                        StackReviewView(stack: .all, projectID: selected.project.id, sharedSession: Binding(
+                            get: { session?.tasks },
+                            set: { if let tasks = $0 { session?.tasks = tasks } }
+                        )).environmentObject(store)
+                    case .edit:
+                        ProjectEditor(projectID: selected.project.id).environmentObject(store)
+                    case .history:
+                        TimelineView(title: selected.project.name,
+                            cards: store.items.filter { $0.projectID == selected.project.id && $0.isCompleted })
+                            .environmentObject(store)
+                    case .add: EmptyView()
+                    }
+                }
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Back to project") { presentation = nil }
+                            .keyboardShortcut(.cancelAction)
+                    }
+                }
+            }
+        }
+    }
+
+    private func addTask(title: String, bucket: Bucket, categoryID: UUID?, projectChoice: ProjectChoice,
+                         newProjectGroup: String?, remindAt: Date?, deadline: Date?) {
+        let projectID: UUID?
+        switch projectChoice {
+        case .none: projectID = nil
+        case .existing(let project): projectID = store.project(id: project.id)?.id
+        case .new(let name):
+            projectID = store.ensureProjectWithinLimit(named: name, categoryID: categoryID, group: newProjectGroup)?.id
+        }
+        let previousIDs = Set(store.items.map(\.id))
+        store.add(title: title, bucket: bucket, categoryID: .some(categoryID), projectID: projectID,
+                  remindAt: remindAt, deadline: deadline)
+        let projectIDs = Set(session?.projectIDs ?? [])
+        session?.tasks.includeAdded(store.items.filter {
+            !previousIDs.contains($0.id) && $0.projectID.map(projectIDs.contains) == true
+        })
+    }
+
+    private func start() {
+        let orderedCards = StackReviewSession.allOpenBuckets.flatMap { store.items(in: $0) }
+        session = ProjectReviewSession(projects: store.projects, cards: orderedCards)
+    }
+
+    private func reconcile() {
+        session?.reconcile(projects: store.projects, cards: store.items)
+    }
+
+    private func persist() {
+        guard let session, let data = try? JSONEncoder().encode(session),
+              let text = String(data: data, encoding: .utf8) else { return }
+        savedSession = text
+    }
+}

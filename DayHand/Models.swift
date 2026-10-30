@@ -1460,7 +1460,7 @@ struct StackReviewSession: Codable, Equatable {
                                        to: calendar.startOfDay(for: now)).day
     }
 
-    let taskIDs: [UUID]
+    private(set) var taskIDs: [UUID]
     private(set) var keptIDs: Set<UUID> = []
     // A combined pass remembers each original stack. A move between Next and
     // Later is a decision, while Undo restores eligibility without extra state.
@@ -1488,8 +1488,71 @@ struct StackReviewSession: Codable, Equatable {
         return taskIDs.compactMap { keptIDs.contains($0) ? nil : live[$0] }
     }
 
+    /// Only explicitly added tasks join a running project review. Sync arrivals
+    /// still wait for the next pass, so the queue cannot grow on its own.
+    mutating func includeAdded(_ cards: [TodoItem]) {
+        for card in cards where !card.isCompleted && !taskIDs.contains(card.id) {
+            taskIDs.append(card.id)
+            originalBuckets?[card.id] = card.bucket
+        }
+    }
+
     mutating func keepInStack(_ id: UUID) {
         guard taskIDs.contains(id) else { return }
         keptIDs.insert(id)
+    }
+}
+
+// MARK: - Project review
+
+/// Project order and task decisions belong to one local pass. Live data supplies
+/// titles and membership; removed projects cannot be resurrected by resuming.
+struct ProjectReviewSession: Codable, Equatable {
+    let projectIDs: [UUID]
+    private(set) var reviewedIDs: Set<UUID> = []
+    private(set) var currentID: UUID?
+    var tasks: StackReviewSession
+
+    init(projects: [Project], cards: [TodoItem]) {
+        let open = Set(cards.filter { !$0.isCompleted }.compactMap(\.projectID))
+        let eligible = projects.filter { !$0.isArchived && open.contains($0.id) }
+            .sorted { lhs, rhs in
+                let order = lhs.name.localizedStandardCompare(rhs.name)
+                return order == .orderedSame ? lhs.id.uuidString < rhs.id.uuidString : order == .orderedAscending
+            }
+        projectIDs = eligible.map(\.id)
+        currentID = projectIDs.first
+        let ids = Set(projectIDs)
+        tasks = StackReviewSession(cards: cards.filter { $0.projectID.map(ids.contains) == true },
+                                   buckets: StackReviewSession.allOpenBuckets)
+    }
+
+    func remaining(projects: [Project], cards: [TodoItem]) -> [Project] {
+        let open = Set(cards.filter { !$0.isCompleted }.compactMap(\.projectID))
+        let live = Dictionary(projects.filter { !$0.isArchived }.map { ($0.id, $0) },
+                              uniquingKeysWith: { first, _ in first })
+        return projectIDs.compactMap { id in
+            guard !reviewedIDs.contains(id), open.contains(id) else { return nil }
+            return live[id]
+        }
+    }
+
+    mutating func reconcile(projects: [Project], cards: [TodoItem]) {
+        // Keep the displayed project after its last task is completed, so the
+        // user can inspect the result or archive it before choosing Next.
+        if let id = currentID, !reviewedIDs.contains(id),
+           projects.contains(where: { $0.id == id && !$0.isArchived }) { return }
+        currentID = remaining(projects: projects, cards: cards).first?.id
+    }
+
+    mutating func advance(projects: [Project], cards: [TodoItem]) {
+        if let id = currentID {
+            reviewedIDs.insert(id)
+            for card in cards where card.projectID == id && !card.isCompleted {
+                tasks.keepInStack(card.id)
+            }
+        }
+        currentID = nil
+        reconcile(projects: projects, cards: cards)
     }
 }
