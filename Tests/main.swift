@@ -2761,5 +2761,67 @@ do {
            "without categories every project is still visited")
 }
 
+// Project review can go back to a project that was just accepted.
+do {
+    let one = Project(name: "ONE")
+    let two = Project(name: "TWO")
+    let three = Project(name: "THREE")
+    let projects = [one, two, three]
+    let a = TodoItem(title: "a", bucket: .today, projectID: one.id)
+    let b = TodoItem(title: "b", bucket: .waiting, projectID: two.id)
+    let c = TodoItem(title: "c", bucket: .later, projectID: three.id)
+    let cards = [a, b, c]
+    let nested = StackReviewSession.allOpenBuckets
+
+    var review = ProjectReviewSession(projects: projects, cards: cards)
+    expect(!review.canGoBack, "nothing to go back to at the start")
+    let first = review.currentID!
+    review.advance(projects: projects, cards: cards)
+    expect(review.canGoBack && review.currentID != first, "accepting a project makes going back possible")
+    review.goBack(projects: projects)
+    expect(review.currentID == first, "going back returns to the project just accepted")
+    expect(review.tasks.remaining(in: cards, buckets: nested).contains { $0.projectID == first },
+           "and its tasks are open to review again")
+    expect(!review.canGoBack, "one step back at a time")
+
+    // A task kept by the nested review before the project was accepted stays kept.
+    var kept = ProjectReviewSession(projects: projects, cards: cards)
+    let current = kept.currentID!
+    let currentTask = cards.first { $0.projectID == current }!
+    kept.tasks.keepInStack(currentTask.id)
+    kept.advance(projects: projects, cards: cards)
+    kept.goBack(projects: projects)
+    expect(!kept.tasks.remaining(in: cards, buckets: nested).contains { $0.id == currentTask.id },
+           "going back does not undo a decision made earlier in the visit")
+
+    // From the finished screen, back reaches the last project; steps stack.
+    var finished = ProjectReviewSession(projects: projects, cards: cards)
+    for _ in 0..<3 { finished.advance(projects: projects, cards: cards) }
+    expect(finished.currentID == nil && finished.canGoBack, "after the last project the pass is finished, and back is available")
+    let last = finished.projectIDs.last!
+    finished.goBack(projects: projects)
+    expect(finished.currentID == last, "back from the finished screen returns to the final project")
+    finished.goBack(projects: projects)
+    expect(finished.currentID == finished.projectIDs[1], "and again to the one before")
+
+    // An archived project is passed over.
+    var skip = ProjectReviewSession(projects: projects, cards: cards)
+    skip.advance(projects: projects, cards: cards)
+    var archivedFirst = projects.first { $0.id == first }!
+    archivedFirst.isArchived = true
+    let now = projects.map { $0.id == first ? archivedFirst : $0 }
+    skip.goBack(projects: now)
+    expect(skip.currentID != first && !skip.canGoBack, "a project archived since is not returned to")
+
+    // Resume keeps the trail, and a session saved before it existed still decodes.
+    var resumed = ProjectReviewSession(projects: projects, cards: cards)
+    resumed.advance(projects: projects, cards: cards)
+    let back = try! JSONDecoder().decode(ProjectReviewSession.self, from: JSONEncoder().encode(resumed))
+    expect(back.canGoBack && back == resumed, "the trail survives a resume")
+    let oldJSON = "{\"projectIDs\":[\"\(one.id)\"],\"reviewedIDs\":[],\"currentID\":\"\(one.id)\",\"tasks\":{\"taskIDs\":[],\"keptIDs\":[]}}"
+    let old = try? JSONDecoder().decode(ProjectReviewSession.self, from: Data(oldJSON.utf8))
+    expect(old != nil && old?.canGoBack == false, "a session saved before going back existed still decodes")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

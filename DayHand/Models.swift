@@ -1514,9 +1514,16 @@ struct StackReviewSession: Codable, Equatable {
         }
     }
 
-    mutating func keepInStack(_ id: UUID) {
-        guard taskIDs.contains(id) else { return }
-        keptIDs.insert(id)
+    /// Whether this call newly marked the task, so a caller can later undo
+    /// exactly what it did and nothing an earlier decision had already done.
+    @discardableResult
+    mutating func keepInStack(_ id: UUID) -> Bool {
+        guard taskIDs.contains(id) else { return false }
+        return keptIDs.insert(id).inserted
+    }
+
+    mutating func unkeep(_ ids: [UUID]) {
+        keptIDs.subtract(ids)
     }
 }
 
@@ -1531,6 +1538,18 @@ struct ProjectReviewSession: Codable, Equatable {
     /// review most wants to archive, and archiving frees a free-version slot.
     /// Optional so a session saved before this existed still decodes.
     private var idleIDs: Set<UUID>? = nil
+    /// Each accepted project, newest last, with the tasks that accepting it
+    /// marked handled: enough to take the acceptance back, which is how a
+    /// review returns to a project someone has just remembered something about.
+    /// Optional so a session saved before this existed still decodes.
+    private var trail: [Visit]? = nil
+
+    struct Visit: Codable, Equatable {
+        let projectID: UUID
+        let handledIDs: [UUID]
+    }
+
+    var canGoBack: Bool { !(trail ?? []).isEmpty }
     private(set) var reviewedIDs: Set<UUID> = []
     private(set) var currentID: UUID?
     var tasks: StackReviewSession
@@ -1575,11 +1594,28 @@ struct ProjectReviewSession: Codable, Equatable {
     mutating func advance(projects: [Project], cards: [TodoItem]) {
         if let id = currentID {
             reviewedIDs.insert(id)
+            var handled: [UUID] = []
             for card in cards where card.projectID == id && !card.isCompleted {
-                tasks.keepInStack(card.id)
+                if tasks.keepInStack(card.id) { handled.append(card.id) }
             }
+            trail = (trail ?? []) + [Visit(projectID: id, handledIDs: handled)]
         }
         currentID = nil
         reconcile(projects: projects, cards: cards)
+    }
+
+    /// Back to the project accepted last, with its tasks open to review again.
+    /// Works from the finished screen too. A project archived or deleted since
+    /// is passed over, as it would be going forward.
+    mutating func goBack(projects: [Project]) {
+        var visits = trail ?? []
+        defer { trail = visits }
+        while let visit = visits.popLast() {
+            guard projects.contains(where: { $0.id == visit.projectID && !$0.isArchived }) else { continue }
+            reviewedIDs.remove(visit.projectID)
+            tasks.unkeep(visit.handledIDs)
+            currentID = visit.projectID
+            return
+        }
     }
 }

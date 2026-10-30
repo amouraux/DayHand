@@ -655,6 +655,10 @@ struct ProjectReviewView: View {
                     } actions: {
                         Button("Start a new project review") { start() }
                             .buttonStyle(.borderedProminent)
+                        if session?.canGoBack == true {
+                            Button("Previous project") { goBack() }
+                                .buttonStyle(.bordered)
+                        }
                     }
                     UndoBanner(bottomPadding: 16).environmentObject(store)
                 }
@@ -760,6 +764,16 @@ struct ProjectReviewView: View {
                         .disabled(tasks.isEmpty)
                     action("Edit project", symbol: "pencil", project: project, kind: .edit)
                 }
+                // Always present, and dimmed on the first project, so the buttons
+                // above never move between one project and the next.
+                Button {
+                    goBack()
+                } label: {
+                    Label("Previous project", systemImage: "chevron.backward")
+                        .font(.subheadline)
+                }
+                .buttonStyle(.borderless)
+                .disabled(session?.canGoBack != true)
             }
             .padding(16)
             .frame(maxWidth: 600)
@@ -842,6 +856,10 @@ struct ProjectReviewView: View {
         session?.tasks.includeAdded(store.items.filter {
             !previousIDs.contains($0.id) && $0.projectID.map(projectIDs.contains) == true
         })
+    }
+
+    private func goBack() {
+        session?.goBack(projects: store.projects)
     }
 
     private func start() {

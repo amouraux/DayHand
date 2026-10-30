@@ -2322,6 +2322,14 @@ nested review; unrelated incoming tasks do not extend its snapshot. Edit project
 reuses existing controls including confirmed Complete and Archive; there is no
 new bulk defer or silently destructive archive action. History opens separately.
 
+**Previous project** sits under the pinned actions, dimmed on the first project
+so the buttons above never move, and on the finished screen. It takes back the
+last acceptance: that project becomes current again, and the tasks that
+accepting it marked handled are open to the nested review once more, while any
+decision made earlier in the visit stays. It can be repeated back to the
+start. A project archived or deleted since is passed over. The trail is saved
+with the session, and a session saved before it existed still loads.
+
 Review these tasks reuses the shared full task helper scoped to this project's
 live tasks. Its decisions are shared across the project pass, so reassigning an
 already reviewed task cannot show it twice under a later project. Existing
