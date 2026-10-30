@@ -440,6 +440,23 @@ enum ProjectGroups {
         return Layout(groups: groups, ungrouped: loose.sorted(by: byName))
     }
 
+    /// Projects in the order the sidebar lists them: categories in their own
+    /// order, projects with none (or one that no longer exists) last, and
+    /// inside each its groups alphabetically and then the projects in no group.
+    static func sidebarOrder(_ projects: [Project], categories: [CardCategory]) -> [Project] {
+        let known = Set(categories.map(\.id))
+        var ordered: [Project] = []
+        for category in categories.map({ Optional($0.id) }) + [nil] {
+            let members = projects.filter { project in
+                guard let category else { return project.categoryID.map { !known.contains($0) } ?? true }
+                return project.categoryID == category
+            }
+            let layout = layout(of: members)
+            ordered += layout.groups.flatMap(\.projects) + layout.ungrouped
+        }
+        return ordered
+    }
+
     /// The group names already used in a category, for the "Move to Group" menu.
     static func names(in categoryID: UUID?, projects: [Project]) -> [String] {
         layout(of: projects.filter { $0.categoryID == categoryID }).groups.map(\.name)
@@ -1518,13 +1535,13 @@ struct ProjectReviewSession: Codable, Equatable {
     private(set) var currentID: UUID?
     var tasks: StackReviewSession
 
-    init(projects: [Project], cards: [TodoItem]) {
+    /// Projects are visited in the sidebar's order — category, then group, then
+    /// name — so a pass moves through one context at a time rather than
+    /// hopping between a course and a grant. It is also the order the user
+    /// already knows, which keeps it predictable between passes.
+    init(projects: [Project], cards: [TodoItem], categories: [CardCategory] = []) {
         let open = Set(cards.filter { !$0.isCompleted }.compactMap(\.projectID))
-        let live = projects.filter { !$0.isArchived }
-            .sorted { lhs, rhs in
-                let order = lhs.name.localizedStandardCompare(rhs.name)
-                return order == .orderedSame ? lhs.id.uuidString < rhs.id.uuidString : order == .orderedAscending
-            }
+        let live = ProjectGroups.sidebarOrder(projects.filter { !$0.isArchived }, categories: categories)
         let active = live.filter { open.contains($0.id) }
         let idle = live.filter { !open.contains($0.id) }
         projectIDs = (active + idle).map(\.id)

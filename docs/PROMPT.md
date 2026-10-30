@@ -2297,14 +2297,16 @@ before the final submission.
 ## Review projects
 
 More → Review offers **Review projects** separately from Review all tasks.
-Snapshot nonarchived projects, alphabetically by name, those with unfinished
-tasks first (Now, Next, Later, Waiting and Inbox all count as unfinished) and
-then those with nothing left to do, which are offered last so a finished project
-can be archived — which also frees one of a free version's three places. An
-idle project's overview offers Archive Project, with no confirmation since
-nothing is open; archiving ends its visit. A project emptied elsewhere during
-the pass is still skipped. Unassigned tasks stay in the task helpers. New
-projects wait for another pass. Progress is
+Snapshot nonarchived projects in the sidebar's order: categories in their own
+order (projects with none last), and inside each its groups alphabetically,
+then the projects in no group. A pass therefore moves through one context at a
+time, in the order the user already knows. Projects with unfinished tasks (Now,
+Next, Later, Waiting and Inbox all count as unfinished) come first; those with
+nothing left to do come last, so a finished project can be archived, which also
+frees one of the free version's three places. An idle project's overview offers
+Archive Project, with no confirmation since nothing is open, and archiving ends
+its visit. A project emptied elsewhere during the pass is still skipped.
+Unassigned tasks stay in the task helpers. New projects wait for another pass. Progress is
 saved locally under projectReviewSession.v1, including nested task decisions.
 
 Each overview shows project/category/group, counts per stack, unfinished tasks

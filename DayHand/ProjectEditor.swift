@@ -846,7 +846,8 @@ struct ProjectReviewView: View {
 
     private func start() {
         let orderedCards = StackReviewSession.allOpenBuckets.flatMap { store.items(in: $0) }
-        session = ProjectReviewSession(projects: store.projects, cards: orderedCards)
+        session = ProjectReviewSession(projects: store.projects, cards: orderedCards,
+                                      categories: store.categories)
     }
 
     private func reconcile() {

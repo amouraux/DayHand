@@ -2735,5 +2735,31 @@ do {
            "nested review resolves current task content")
 }
 
+// Project review visits projects in the sidebar's order.
+do {
+    let research = CardCategory(label: "Research", symbolName: "flask", color: .indigo)
+    let teaching = CardCategory(label: "Teaching", symbolName: "graduationcap", color: .purple)
+    let categories = [teaching, research]
+    let zeta = Project(name: "ZETA", categoryID: teaching.id, group: "Courses")
+    let alpha = Project(name: "ALPHA", categoryID: teaching.id)
+    let beta = Project(name: "BETA", categoryID: teaching.id, group: "Courses")
+    let grant = Project(name: "GRANT", categoryID: research.id, group: "Grants")
+    let paper = Project(name: "PAPER", categoryID: research.id)
+    let loose = Project(name: "AAA")
+    let orphan = Project(name: "ORPHAN", categoryID: UUID())
+    let done = Project(name: "DONE", categoryID: teaching.id)
+    let all = [loose, paper, orphan, zeta, grant, alpha, beta, done]
+    let order = ProjectGroups.sidebarOrder(all, categories: categories).map(\.name)
+    expect(order == ["BETA", "ZETA", "ALPHA", "DONE", "GRANT", "PAPER", "AAA", "ORPHAN"],
+           "categories in their own order, then groups, then ungrouped, with no category last")
+    let cards = all.filter { $0.id != done.id }.map { TodoItem(title: $0.name, bucket: .today, projectID: $0.id) }
+    let session = ProjectReviewSession(projects: all, cards: cards, categories: categories)
+    expect(session.projectIDs.map { id in all.first { $0.id == id }!.name }
+           == ["BETA", "ZETA", "ALPHA", "GRANT", "PAPER", "AAA", "ORPHAN", "DONE"],
+           "the review follows that order, with the project that has nothing to do last")
+    expect(ProjectReviewSession(projects: all, cards: cards).projectIDs.count == all.count,
+           "without categories every project is still visited")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)
