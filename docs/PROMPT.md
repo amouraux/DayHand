@@ -2408,3 +2408,16 @@ Projects emptied elsewhere mid-pass, removed projects and archived projects are 
 Looks right marks that project's remaining tasks handled and advances. Undo
 remains available, including on the final screen. Local review state never
 changes task entry dates or the synced document.
+
+
+## User help website
+
+`docs/help/` provides static English user documentation, linked from the homepage.
+It covers getting started, stacks and dates, reviews, sync, imports/backups,
+free/paid access and support. Shared styling is in `help.css`; pages work without
+JavaScript and support small screens, keyboard navigation and dark mode.
+Keep instructions aligned with the shipping UI. Label planned purchases and
+trials explicitly until available. Support routes are TestFlight beta feedback
+and public GitHub Issues; never ask users to publish task files or credentials.
+The proposed App Store Support URL is `/DayHand/help/support.html`; verify it
+after deployment. Pages deploy from main, not from a feature-branch push.
