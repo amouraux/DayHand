@@ -31,10 +31,10 @@ the thing arrives. **Nothing returns it automatically.** "The quote came — whe
 do I do this?" is a real decision, and restoring the task to wherever it was
 before would answer it wrongly, because the context has moved on.
 
-**Waiting does not count as addressed.** A reminder on a waiting task — "chase
-the co-author on Friday" — is the best use a reminder has, and when it arrives
-there is something to do. So the flag goes on gathering it, which quietly turns
-the flag into *what do I need to chase?* alongside *what do I need to start?*.
+**A reminder on a waiting task is the best use a reminder has** — "chase the
+co-author on Friday" — and when it arrives there is something to do. The flag
+gathers it like any other, which makes the flag *what do I need to chase?*
+alongside *what do I need to start?*.
 
 **Adding a stack is safe for a device that has not updated.** `decodeIfPresent`
 answers nil for a raw value it does not recognise, so an older build reads
@@ -67,7 +67,7 @@ exists to protect. There is one date, and optionally its far end:
 
 - **Remind me** (a day) — when to *pick the task up*. It fires a
   notification, colours the task's edge as it approaches, orders the task
-  inside its stack, and is what the flag gathers. Offered first, because for
+  inside its stack, and is what the flag shows. Offered first, because for
   most tasks it is the only date worth having.
 - **Deadline** (a day) — when the work must be *finished*, for a job of more
   than a day. Shown on the task and nothing else: it colours nothing and fires
@@ -593,11 +593,16 @@ notification away is how a notification is got rid of, not how a decision is
 made, so the reminder is still waiting afterwards.
 
 **There is one way in.** The **badged flag beside the jump-to-Today button**
-narrows the task list to what is still to be settled: a **red** reminder — due
-today, or come and gone — on a task **still sitting in Inbox or Later**. It
-wears the same flag the tasks do, it appears only while something is on it, and
-the tasks show up in their own stacks where they can be moved, ticked off or
-swiped like anything else.
+narrows the task list to every task wearing a coloured edge: **red**, a reminder
+that has arrived — due today, or come and gone — and **orange**, one arriving
+within three days. From every stack that still has work in it, so Now, Next,
+Waiting, Later and Inbox alike. Within each stack the red ones come first. The
+**number on the flag counts the red ones**, which is to say the reminders that
+have arrived; orange ones are shown when it is opened but not counted, because
+a count that included them would almost never read zero. It wears the same flag
+the tasks do, it appears while any task wears a colour, and the tasks show up in
+their own stacks where they can be moved, ticked off or swiped like anything
+else.
 
 **Opening a notification opens that task.** The notification carries the task's
 id. Opening it clears whatever narrows the list — the flag, a category or
@@ -609,22 +614,14 @@ launches the app is held until the list exists, so it is not lost. A task
 completed or deleted in the meantime is ignored. Swiping a notification away
 still changes nothing.
 
-**The stack is the answer, so filing a task takes it off the flag.** A task in
-Today is one the user has already decided to do today; flagging it would be the
-app asking a question it has been given the answer to, and the number would
-never go down however much work got done. Moving a task to Today or Tomorrow
-drops it from the count while leaving its red edge alone — it is still today's
-work, it is simply no longer an open question. Moving it back to Later brings
-it back, which is right: that is un-deciding.
-
-Read from where the task *is*, not from a record of what was done to it, so the
-reason a task is or is not flagged is visible on screen. And it is not the app
-having a view about where a dated task belongs: nothing files anything, and a
-task reminded today may live in Later as long as the user likes — it is just
-still on the list of things to settle.
-
-So every flagged task carries a red edge, but not every red task is flagged.
-The count is a subset of the colour, never the other way round.
+**The flag and the edge are one thing.** A task is on the flag exactly when it
+wears a colour, so a task in Now with a reminder that arrived last week is on
+the flag, and a task you just moved is not taken off it. The flag used to leave
+out a task already in Today or Tomorrow, on the idea that filing a task answers
+its reminder; that made the flag a queue of questions, and made the colour on a
+task in Now mean something different from the flag. Whether a reminder has been
+*answered* belongs to the icon badge, below, which counts only what still needs
+an answer.
 
 There was a second way in — a bell in the button row opening a review sheet
 that answered reminders one at a time — and it was dropped. The two sets were
@@ -673,13 +670,11 @@ four natural answers belong — Keep here, Move, Remind me, Complete.
 **Orange is deliberately left out of the review and the icon.** A task three
 days off is being shown, not asked about.
 
-The flag and the stacks keep their own rules until the flag is reworked; the
-icon below counts only what still needs an answer.
-
 **The app icon counts reminders that have arrived and not been answered,** in any
 stack. Moving, completing, keeping or deleting a task takes it off. It is no
-longer the flag's number: the flag gathers what is red, and the icon counts
-what is still waiting.
+not the flag's number: the flag shows everything that wears a colour and counts
+what is red, answered or not, while the icon counts what is still waiting. The
+two will sometimes differ, and that is the point.
 
 Each scheduled notification carries the badge the icon should show **once it
 fires**: the reminders waiting for an answer at that moment, itself included.

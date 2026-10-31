@@ -98,7 +98,9 @@ and the `confirmationDialog` (phone), which are separate code paths and easy to
 update by half; `CardMenu` holds the rules for both.
 
 The app icon counts reminders that have arrived and are **unanswered**
-(`Reminders.unansweredCount`); the flag is a different, wider thing.
+(`Reminders.unansweredCount`). The flag is a different thing: it shows every
+unfinished task wearing a red or orange edge, in any stack (`Attention`), and
+its number counts the red ones. They differ on purpose.
 
 Dismissing the notification is explicitly not an answer — see
 `UNUserNotificationCenterDelegate` in `ReminderScheduler.swift`, which posts

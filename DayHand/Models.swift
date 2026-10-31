@@ -1008,45 +1008,51 @@ enum Urgency: Equatable {
     }
 }
 
-/// The cards asking to be dealt with: a reminder that has arrived, on a card
-/// still sitting in Inbox or Later.
+/// What the flag button gathers: every task the list draws a coloured edge on.
 ///
-/// **The stack is the answer.** A card in Today is one the user has already
-/// decided to do today; flagging it would be the app asking a question it has
-/// already been given the answer to, and the count would never go down however
-/// much work got done. Filing a card is what takes it off the flag, which
-/// makes the number worth acting on.
+/// **Red** is a reminder that has arrived — today, or come and gone — and
+/// **orange** one still to come within three days. Both, from every stack that
+/// still has work in it, so the flag and the edges are one thing: if a task wears
+/// a colour, the flag shows it, and the number on the flag counts the red ones,
+/// which is to say the ones that have arrived.
 ///
-/// This is read from where the card *is*, not from a timestamp recording what
-/// was done to it — so the reason a card is or is not flagged is visible on
-/// screen, and moving one back to Later flags it again, which is right: that
-/// is un-deciding.
+/// It used to leave out a task already in Now or Next, on the idea that filing
+/// a task answers its reminder. That made the flag a queue of questions, and
+/// the colour on a task in Now a different thing from the flag; moving a task
+/// now changes nothing here. The question of whether a reminder has been
+/// *answered* belongs to the icon badge (`Reminders.unansweredCount`), which
+/// counts only what still needs one.
 ///
-/// Note it does not mean the app has a view about where a dated card belongs.
-/// Nothing files anything, and a card reminded today may live in Later for as
-/// long as the user likes — it is simply still on the list of things to settle.
-///
-/// Orange is deliberately left out. A card three days off is being shown, not
-/// asked about, and a list of things to deal with now loses its meaning the
-/// moment it also contains things to deal with later.
+/// Orange is shown but not counted. A task three days off is being shown, not
+/// asked about, and a count that included it would almost never read zero.
 enum Attention {
-    static func needed(_ card: TodoItem, now: Date = Date(),
-                       calendar: Calendar = .current) -> Bool {
-        guard !card.bucket.isAddressed else { return false }
+    /// Whether the flag shows this task: a reminder, red or orange, on an
+    /// unfinished task.
+    static func isFlagged(_ card: TodoItem, now: Date = Date(),
+                          calendar: Calendar = .current) -> Bool {
+        guard !card.isCompleted else { return false }
+        return Urgency.of(card.remindAt, now: now, calendar: calendar) != .none
+    }
+
+    /// Red: the reminder has arrived. This is what the number on the flag counts.
+    static func isRed(_ card: TodoItem, now: Date = Date(),
+                      calendar: Calendar = .current) -> Bool {
+        guard !card.isCompleted else { return false }
         return Urgency.of(card.remindAt, now: now, calendar: calendar).isRed
     }
 
-    /// How many cards are on the flag at `now`.
-    ///
-    /// Takes the moment rather than assuming the present, because the icon
-    /// badge has to be decided in advance: a notification fired while the app
-    /// is closed carries the number the icon should then show, and that is
-    /// this function evaluated at the moment it fires. The set only changes on
-    /// its own as days turn, which is knowable ahead of time — the rest needs
-    /// the user, and the app corrects the count the moment it is opened.
+    /// The number on the flag: how many tasks wear a red edge.
     static func count(in cards: [TodoItem], now: Date = Date(),
                       calendar: Calendar = .current) -> Int {
-        cards.filter { needed($0, now: now, calendar: calendar) }.count
+        cards.filter { isRed($0, now: now, calendar: calendar) }.count
+    }
+
+    /// Red before orange, each keeping the order it came in, so the flag's view
+    /// puts what has arrived above what is coming within each stack.
+    static func redFirst(_ cards: [TodoItem], now: Date = Date(),
+                         calendar: Calendar = .current) -> [TodoItem] {
+        cards.filter { isRed($0, now: now, calendar: calendar) }
+            + cards.filter { !isRed($0, now: now, calendar: calendar) }
     }
 }
 

@@ -136,7 +136,7 @@ struct ContentView: View {
                     HStack(spacing: 12) {
                         // Only while something is waiting: a count of nothing
                         // is not worth a permanent control.
-                        if waitingCount > 0 || attentionOnly {
+                        if hasFlagged || attentionOnly {
                             attentionFilterButton
                         }
                         todayButton(proxy)
@@ -396,7 +396,7 @@ struct ContentView: View {
     private func cards(in bucket: Bucket) -> [TodoItem] {
         var all = store.items(in: bucket)
         if attentionOnly {
-            all = all.filter { Attention.needed($0) }
+            all = Attention.redFirst(all.filter { Attention.isFlagged($0) })
         }
         if isFiltered {
             all = all.filter {
@@ -416,10 +416,12 @@ struct ContentView: View {
 
     private var isFiltered: Bool { !filterCategoryIDs.isEmpty || !filterProjectIDs.isEmpty }
 
-    /// Cards whose reminder has arrived and that are still sitting in Inbox
-    /// or Later. Filing one into Today takes it off the count, which is what
-    /// makes the number worth acting on.
-    private var waitingCount: Int { Attention.count(in: store.items) }
+    /// The number on the flag: tasks wearing a red edge, whatever stack they are
+    /// in. Orange ones are shown when the flag is opened but not counted.
+    private var redCount: Int { Attention.count(in: store.items) }
+
+    /// Whether any task wears a colour, which is when the flag is worth having.
+    private var hasFlagged: Bool { store.items.contains { Attention.isFlagged($0) } }
 
     /// Narrowed by either means, for the empty state.
     private var isNarrowed: Bool { isFiltered || attentionOnly || !searchTerms.isEmpty }
@@ -698,10 +700,10 @@ struct ContentView: View {
         }
     }
 
-    /// Shows what is still to be settled: a reminder that has arrived, on a
-    /// card still in Inbox or Later. They appear in their own stacks, where
-    /// they can be moved, ticked off or swiped like anything else — and doing
-    /// any of that takes them off the flag.
+    /// Shows the tasks wearing a coloured edge: red (a reminder has arrived)
+    /// above orange (one is coming within three days), in their own stacks,
+    /// where they can be moved, ticked off or swiped like anything else. The
+    /// number on it counts the red ones.
     private var attentionFilterButton: some View {
         Button {
             withAnimation(.easeInOut(duration: 0.2)) {
@@ -727,8 +729,8 @@ struct ContentView: View {
                 // glass into one layer that lands on top of a child's own
                 // overlay, and the count ends up half-swallowed by the disc.
                 .overlay(alignment: .topTrailing) {
-                    if waitingCount > 0 && !attentionOnly {
-                        Text("\(waitingCount)")
+                    if redCount > 0 && !attentionOnly {
+                        Text("\(redCount)")
                             .font(.caption2.weight(.bold))
                             .monospacedDigit()
                             .foregroundStyle(.white)
@@ -740,7 +742,7 @@ struct ContentView: View {
                 }
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(attentionOnly ? "Show all tasks" : "Show tasks to address")
+        .accessibilityLabel(attentionOnly ? "Show all tasks" : "Show tasks with reminders")
     }
 
     private var settingsButton: some View {
@@ -879,9 +881,9 @@ struct ContentView: View {
                       Bucket.allCases.allSatisfy({ cards(in: $0).isEmpty }) {
                 if attentionOnly && searchTerms.isEmpty && !isFiltered {
                     ContentUnavailableView(
-                        "Nothing to address",
+                        "No reminders to show",
                         systemImage: "flag",
-                        description: Text("Nothing due is still sitting in Inbox or Later.")
+                        description: Text("Tasks whose reminder has arrived, or arrives within three days, appear here.")
                     )
                 } else if searchTerms.isEmpty {
                     ContentUnavailableView(

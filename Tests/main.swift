@@ -824,47 +824,49 @@ do {
     var done = card("collect the keys", .completed, remind: "2026-09-26 09:00")
     done.bucket = .completed
 
-    expect(Attention.needed(overdue, now: now, calendar: calendar),
-           "a reminder that came and went asks to be picked up")
-    expect(Attention.needed(thisMorning, now: now, calendar: calendar), "so does one that fired today")
-    expect(Attention.needed(thisEvening, now: now, calendar: calendar),
-           "and one set for later today, which the review has not got yet")
-    expect(Reminders.isOutstanding(thisEvening, now: now),
-           "and it is waiting for an answer from the start of its day, as the red edge is")
-    expect(!Attention.needed(tomorrow, now: now, calendar: calendar),
-           "tomorrow is orange — being shown, not asked about")
-    expect(!Attention.needed(distant, now: now, calendar: calendar), "and a distant one is neither")
-    // Already in Today: the user has said when they will do it, so the flag
-    // has no question left to ask. The card still wears its red edge.
-    expect(!Attention.needed(running, now: now, calendar: calendar),
-           "a card already filed into Today is not still to be settled")
-    expect(Urgency.of(running.remindAt, now: now, calendar: calendar).isRed,
-           "though it is still red, which is what says it is today's work")
-    expect(!Attention.needed(done, now: now, calendar: calendar),
+    expect(Attention.isFlagged(overdue, now: now, calendar: calendar),
+           "a reminder that came and went is on the flag")
+    expect(Attention.isFlagged(thisMorning, now: now, calendar: calendar), "so is one that fired today")
+    expect(Attention.isFlagged(thisEvening, now: now, calendar: calendar),
+           "and one set for later today, which is red from the morning")
+    expect(Attention.isFlagged(tomorrow, now: now, calendar: calendar),
+           "tomorrow is orange, which the flag shows too")
+    expect(!Attention.isFlagged(distant, now: now, calendar: calendar), "while a distant one wears no colour")
+    // The flag is whatever the list draws an edge on, in any stack: a task
+    // already in Today is no longer left off for having been filed.
+    expect(Attention.isFlagged(running, now: now, calendar: calendar),
+           "a card already filed into Today is still red, so it is still on the flag")
+    expect(Urgency.of(running.remindAt, now: now, calendar: calendar).isRed, "which is what says it is today's work")
+    expect(!Attention.isFlagged(done, now: now, calendar: calendar),
            "and a finished card asks for nothing, however late it was")
 
     let all = [overdue, thisMorning, thisEvening, tomorrow, distant, running, done]
-    expect(Attention.count(in: all, now: now) == 3, "so the badge reads three")
+    expect(Attention.count(in: all, now: now) == 4, "the number counts the red ones only: four")
+    expect(all.filter { Attention.isFlagged($0, now: now, calendar: calendar) }.count == 5,
+           "while the flag shows five, the orange one among them")
 
-    // Every flagged card is one the list draws a red edge on. Not the other
-    // way round any more: filing a card into Today keeps the edge and drops
-    // the flag, which is the whole point — the number goes down as work is
-    // decided about.
-    for item in all where Attention.needed(item, now: now, calendar: calendar) {
-        expect(Urgency.of(item.remindAt, now: now, calendar: calendar).isRed,
-               "the flag never counts a card the user can see no mark on")
-        expect(!item.bucket.isAddressed, "and never one already filed")
+    // The flag and the edge are one thing: every flagged card wears a colour,
+    // and every red card is flagged.
+    for item in all {
+        let colour = Urgency.of(item.remindAt, now: now, calendar: calendar)
+        expect(Attention.isFlagged(item, now: now, calendar: calendar) == (!item.isCompleted && colour != .none),
+               "\(item.title): flagged exactly when it wears a colour")
+        if Attention.isRed(item, now: now, calendar: calendar) {
+            expect(Attention.isFlagged(item, now: now, calendar: calendar), "a red card is always flagged")
+        }
     }
 
-    // Filing it is what clears it, and un-filing brings it back.
+    // Moving a card no longer changes the flag: the stack is not the answer.
     var settled = overdue
     settled.bucket = .today
-    expect(!Attention.needed(settled, now: now, calendar: calendar), "filing it settles it")
-    settled.bucket = .tomorrow
-    expect(!Attention.needed(settled, now: now, calendar: calendar), "Tomorrow counts as decided too")
-    settled.bucket = .later
-    expect(Attention.needed(settled, now: now, calendar: calendar),
-           "and putting it back in Later is un-deciding, so it asks again")
+    expect(Attention.isFlagged(settled, now: now, calendar: calendar), "filing it leaves it on the flag")
+    expect(Attention.count(in: [settled], now: now) == 1, "and in the count, since it is still red")
+
+    // Red above orange, each in the order it came.
+    let mixed = [tomorrow, overdue, thisMorning]
+    expect(Attention.redFirst(mixed, now: now, calendar: calendar).map { $0.title }
+           == ["renew the passports", "chase the letter", "book the hall"],
+           "the red ones lead and keep their order, the orange one follows")
 }
 
 // MARK: X — a deadline with no start becomes the day to start
@@ -905,7 +907,7 @@ do {
     expect(after.cards[0].reminderAnsweredAt == at("2026-09-20 09:00"),
            "a moment already past arrives answered, so a year of old dates is not a backlog")
     expect(!Reminders.isOutstanding(after.cards[0], now: now), "so the review stays empty")
-    expect(Attention.needed(after.cards[0], now: now, calendar: calendar),
+    expect(Attention.isFlagged(after.cards[0], now: now, calendar: calendar),
            "but the card is still red, which is the part worth seeing")
 
     expect(after.cards[1].remindAt == at("2026-10-20 09:00"), "a date still to come is promoted too")
@@ -1022,8 +1024,8 @@ do {
            "but the date stays — moving a card keeps both fields, as it always has")
     expect(Urgency.of(card.remindAt, now: now, calendar: calendar).isRed,
            "so it keeps its red edge: it is still today's work")
-    expect(!Attention.needed(card, now: now, calendar: calendar),
-           "but it is off the flag — moving it was the decision the flag was asking for")
+    expect(Attention.isFlagged(card, now: now, calendar: calendar),
+           "and it stays on the flag, which gathers what wears a colour")
 
     // A new day re-arms it, and the old answer must not carry over to the new ask.
     var rearmed = card
@@ -1048,7 +1050,7 @@ do {
     ReminderAnswer.clear.apply(to: &cleared, now: now)
     expect(cleared.remindAt == nil, "clearing takes the date with it")
     expect(cleared.deadline == at("2026-10-31 00:00"), "and leaves the deadline alone")
-    expect(!Attention.needed(cleared, now: now, calendar: calendar),
+    expect(!Attention.isFlagged(cleared, now: now, calendar: calendar),
            "so the edge goes too — nothing is asking for this card any more")
 
     // Completing already answered it, and still does.
@@ -1119,7 +1121,7 @@ do {
     }
 }
 
-// MARK: AC — the icon badge is the flag's count, worked out ahead of time
+// MARK: AC — the icon badge counts what is waiting, worked out ahead of time
 do {
     var calendar = Calendar(identifier: .gregorian)
     calendar.timeZone = TimeZone(identifier: "Europe/Brussels")!
@@ -1131,7 +1133,7 @@ do {
     }
     let now = at("2026-10-01 09:00")
     func count(_ cards: [TodoItem], _ moment: Date) -> Int {
-        Attention.count(in: cards, now: moment, calendar: calendar)
+        Reminders.unansweredCount(in: cards, now: moment, calendar: calendar)
     }
 
     func card(_ title: String, _ bucket: Bucket, _ remind: String) -> TodoItem {
@@ -1141,21 +1143,23 @@ do {
     let already = card("chase the letter", .later, "2026-10-01 08:00")   // red now
     let noon = card("ring the surveyor", .inbox, "2026-10-01 12:00")     // red now: same day
     let tomorrow = card("book the hall", .later, "2026-10-02 09:00")     // orange now
-    let filed = card("write the grant case", .today, "2026-10-02 09:00") // never counts
+    let filed = card("write the grant case", .today, "2026-10-02 09:00") // counts from its day, in any stack
     let cards = [already, noon, tomorrow, filed]
 
-    expect(count(cards, now) == 2, "two are red and unfiled this morning")
+    expect(count(cards, now) == 2, "two reminders are red and unanswered this morning")
 
     // The badge a notification carries is this function at the moment it
     // fires, which is why the whole set has to be handed to the scheduler.
     expect(count(cards, at("2026-10-01 12:00")) == 2,
            "a reminder arriving on a card already red adds nothing to the count")
-    expect(count(cards, at("2026-10-02 09:00")) == 3,
-           "and tomorrow's card counts from the moment its day starts")
-    expect(count(cards, at("2026-10-02 00:01")) == 3,
+    expect(count(cards, at("2026-10-02 09:00")) == 4,
+           "and tomorrow's two count from the moment their day starts")
+    expect(count(cards, at("2026-10-02 00:01")) == 4,
            "which is midnight, not the reminder's hour — no notification announces that")
-    expect(count(cards, at("2026-10-09 09:00")) == 3,
-           "the filed one never joins, however late it gets")
+    var answered = cards
+    ReminderAnswer.keep.apply(to: &answered[0], now: now)
+    expect(count(answered, at("2026-10-09 09:00")) == 3,
+           "an answered reminder stays off the count however late it gets")
 
     // The old arithmetic was "those waiting, plus this one, plus everything
     // before it". These are the two cases that breaks on.
@@ -1163,11 +1167,14 @@ do {
     expect(count(cards, at("2026-10-01 12:00")) != running,
            "a running total would have over-counted the reminder on an already-red card")
 
-    // Filing or finishing a card takes it off, and only the app being opened
-    // can see that — which is why it corrects the badge on launch.
+    // Answering or finishing a card takes it off, and only the app being opened
+    // can see that — which is why it corrects the badge on launch. Filing a card
+    // answers it (the store stamps the answer on a move), so this is what a move
+    // leaves behind.
     var settled = cards
     settled[0].bucket = .today
-    expect(count(settled, now) == 1, "filing one drops the count the app will set on opening")
+    settled[0].reminderAnsweredAt = now
+    expect(count(settled, now) == 1, "answering one drops the count the app will set on opening")
     settled[1].bucket = .completed
     expect(count(settled, now) == 0, "and finishing the other empties it")
 }
@@ -1183,7 +1190,7 @@ do {
         return f.date(from: s)!
     }
     let now = at("2026-10-03 09:00")
-    func flagged(_ c: TodoItem) -> Bool { Attention.needed(c, now: now, calendar: calendar) }
+    func flagged(_ c: TodoItem) -> Bool { Attention.isFlagged(c, now: now, calendar: calendar) }
 
     // The flag and the review agree about when a reminder has arrived: at the
     // start of its day, which is also when the edge turns red.
@@ -1259,7 +1266,7 @@ do {
                           remindAt: at("2026-10-03 17:00"))
     expect(Urgency.of(legacy.remindAt, now: now, calendar: calendar).isRed,
            "it is red on its day whatever hour it holds")
-    expect(Attention.needed(legacy, now: now, calendar: calendar), "and the flag gathers it")
+    expect(Attention.isFlagged(legacy, now: now, calendar: calendar), "and the flag gathers it")
     legacy.remindAt = Scheduler.reminderTime(on: legacy.remindAt!, calendar: calendar)
     expect(legacy.remindAt == at("2026-10-03 09:00"), "editing its date snaps it to the hour")
 }
@@ -1292,14 +1299,14 @@ do {
            "Waiting is not an answer — somebody else still has it")
     var chase = TodoItem(title: "chase the co-author", bucket: .waiting,
                          remindAt: at("2026-10-04 09:00"))
-    expect(Attention.needed(chase, now: now, calendar: calendar),
+    expect(Attention.isFlagged(chase, now: now, calendar: calendar),
            "so a reminder that has arrived on a waiting card is still flagged")
     expect(Reminders.isOutstanding(chase, now: now, calendar: calendar),
            "and is waiting for an answer, which Keep here gives without moving it")
 
     // A waiting card with nothing due is quiet. That is the relief it buys.
     let parked = TodoItem(title: "quote from the supplier", bucket: .waiting)
-    expect(!Attention.needed(parked, now: now, calendar: calendar),
+    expect(!Attention.isFlagged(parked, now: now, calendar: calendar),
            "a waiting card with no reminder asks for nothing at all")
 
     // It survives a save, and a build that has never heard of it is not harmed.

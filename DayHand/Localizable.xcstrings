@@ -7232,47 +7232,6 @@
         }
       }
     },
-    "Nothing due is still sitting in Inbox or Later.": {
-      "comment": "Empty state detail for the flag filter",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nichts Fälliges liegt noch im Eingang oder in Später."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nada que venza sigue en la bandeja de entrada ni en Más tarde."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rien d’échu ne traîne encore dans la boîte de réception ou dans Plus tard."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Niente in scadenza è rimasto in Entrata o in Più tardi."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Niets wat aan de beurt is, staat nog in Postvak in of Later."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nada por tratar continua na caixa de entrada nem em Mais tarde."
-          }
-        }
-      }
-    },
     "Nothing finished": {
       "localizations": {
         "de": {
@@ -7511,47 +7470,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nada transita: as tarefas ficam onde as puser"
-          }
-        }
-      }
-    },
-    "Nothing to address": {
-      "comment": "Empty state when the attention filter finds nothing",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nichts zu erledigen"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nada que atender"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Rien à traiter"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Niente da affrontare"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Niets te doen"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nada a tratar"
           }
         }
       }
@@ -9180,47 +9098,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mostrar todas as tarefas"
-          }
-        }
-      }
-    },
-    "Show tasks to address": {
-      "comment": "Accessibility label for the attention filter button",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Aufgaben zum Erledigen anzeigen"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mostrar tareas por atender"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Afficher les tâches à traiter"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mostra le attività da affrontare"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Taken om aan te pakken tonen"
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mostrar tarefas a tratar"
           }
         }
       }
@@ -20161,6 +20038,126 @@
           "stringUnit": {
             "state": "translated",
             "value": "Já passaram as %@ de hoje, por isso não chegará nenhuma notificação. A tarefa aparece como devida desde já."
+          }
+        }
+      }
+    },
+    "No reminders to show": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keine Erinnerungen anzuzeigen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay recordatorios que mostrar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun rappel à afficher"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nessun promemoria da mostrare"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geen herinneringen om te tonen"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sem lembretes para mostrar"
+          }
+        }
+      }
+    },
+    "Tasks whose reminder has arrived, or arrives within three days, appear here.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aufgaben, deren Erinnerung eingetroffen ist oder innerhalb von drei Tagen eintrifft, erscheinen hier."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aquí aparecen las tareas cuyo recordatorio ha llegado o llegará en los próximos tres días."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les tâches dont le rappel est arrivé, ou arrive dans les trois jours, apparaissent ici."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qui compaiono le attività il cui promemoria è arrivato o arriva entro tre giorni."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taken waarvan de herinnering is aangekomen, of binnen drie dagen aankomt, verschijnen hier."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aqui aparecem as tarefas cujo lembrete já chegou ou chega nos próximos três dias."
+          }
+        }
+      }
+    },
+    "Show tasks with reminders": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aufgaben mit Erinnerungen zeigen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar tareas con recordatorios"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher les tâches avec rappels"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostra le attività con promemoria"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taken met herinneringen tonen"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar tarefas com lembretes"
           }
         }
       }
