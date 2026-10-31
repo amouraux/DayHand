@@ -136,7 +136,7 @@ App Store version. TestFlight changes alone do not establish that baseline.
 | Field | Value / action |
 | --- | --- |
 | Marketing URL | https://amouraux.github.io/DayHand/ |
-| Support URL | Proposed: https://amouraux.github.io/DayHand/ — verify its support contact route before submission; GitHub issues: https://github.com/amouraux/DayHand/issues |
+| Support URL | https://amouraux.github.io/DayHand/help/support.html — verify after the Help pages are deployed from main |
 | Privacy Policy URL | **TO COMPLETE:** no dedicated published policy has been established in this repository |
 | Copyright | **TO COMPLETE:** `2026 [confirmed rights holder]`; do not assume the rights holder from Git author details |
 | Public App Store link | **TO COMPLETE after the record’s numeric Apple ID and availability are confirmed**; this is distinct from the TestFlight link |
