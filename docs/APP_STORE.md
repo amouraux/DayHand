@@ -1,6 +1,6 @@
 # DayHand — App Store submission information
 
-Last reviewed: 25 October 2026. English master copy.
+Last reviewed: 31 October 2026. Source reviewed: `ffb1b71` (main). English master copy.
 
 Use this file to prepare the public App Store listing and production submission
 for iPhone/iPad and Mac. For beta distribution, use [TESTFLIGHT.md](TESTFLIGHT.md).
@@ -20,10 +20,10 @@ in App Store Connect before editing them.
 | Field | Proposed value / action |
 | --- | --- |
 | Name | `DayHand` — 7 characters; limit 30 |
-| Subtitle | `Tasks for your life and work` — 28 characters; limit 30 |
+| Subtitle | `Tasks beyond the calendar` — 25 characters; limit 30 |
 | Primary language | English; **TO CONFIRM** the existing App Store Connect locale |
 | Primary category | Productivity; matches the Mac category declared in the project |
-| Secondary category | **OWNER DECISION:** leave unset unless another category genuinely fits |
+| Secondary category | Leave unset; Productivity is the relevant category |
 | Platforms | iOS (iPhone and iPad) and macOS (Mac Catalyst); confirm both in the same app record |
 | Bundle ID | `com.andremouraux.tnt` in the current project; confirm against the existing record |
 | SKU | **TO COMPLETE:** copy the existing record’s SKU; do not invent or replace it |
@@ -44,82 +44,95 @@ Use this English copy for each platform where it accurately describes the
 selected build. Translate metadata separately for other storefront languages;
 the seven UI languages do not automatically create translated store listings.
 
-### Promotional Text — draft, limit 170 characters
+### Promotional Text — 162 characters; limit 170
 
-Keep tasks in Now, Next, Later and Waiting. Set purposeful reminders and deadlines, and work across iPhone, iPad and Mac through your own iCloud Drive.
+Give every task a place: Now, Next, Later or Waiting. Capture ideas in Inbox, review your priorities, and let work take the time it needs on iPhone, iPad and Mac.
 
-### Description — draft, limit 4,000 characters
+### Description — 2,729 characters; limit 4,000
 
-Organise your tasks around your life and your objectives, not the calendar.
+Preparing a talk, planning a trip, building a feature, renovating a room — real work often takes several days or weeks. DayHand lets a task stay active for as long as it takes. Leaving it unticked tonight does not mean you have fallen behind.
 
-Preparing a talk, writing a manuscript, building a feature, renovating a room — real work often takes several days. DayHand lets a task stay active for as long as it takes. Leaving it unticked tonight does not mean you have failed to finish today’s list.
-
-Inspired by Kanban, DayHand adapts the simplicity of cards and stacks to managing your life and work.
+Inspired by Kanban, DayHand brings the simplicity of cards and stacks to your life, work and objectives. Organise tasks around what you intend to do, with dates when they serve a purpose.
 
 A PLACE FOR EVERY TASK
 
-• Inbox: capture a task and decide where it belongs when you are ready, or choose its stack as you add it.
-• Now: what you are actively working on, even if it takes days or weeks.
+• Inbox: capture a task when it comes to mind and decide where it belongs later. You can also choose its stack as you add it.
+• Now: what you are actively working on, for as long as it takes.
 • Next: what you intend to pick up next.
 • Later: ideas and tasks you are keeping for the future.
-• Waiting: work held up by a reply, a delivery, feedback, or something else you need before you can continue.
+• Waiting: work that needs a reply, delivery, decision or someone else’s contribution before you can continue.
 
-You decide when a task moves. Nothing rolls over automatically. Tick it off when the work is finished and it goes to Completed.
+You decide when tasks move. Complete them when the work is finished.
 
 DATES WITH A PURPOSE
 
-Reminders bring a task back to your attention on a chosen day, with a notification and a coloured edge. Add an optional deadline alongside a reminder when there is a genuine finish date. Neither moves a task or marks it completed. The deadline stays visible as a finish date; it does not send a separate alert.
+A reminder brings a task back to your attention on a chosen day. A deadline records when the work really needs to be finished. Dates never move tasks automatically. Reminders provide notifications and coloured edges; deadlines display the finish date without a separate alert.
 
 KEEP RELATED WORK TOGETHER
 
-Give tasks a project, organise broad areas of your life with categories, and gather related projects into groups. Search task titles, project names and group names. Filter the work you want to see, and archive finished projects while keeping their tasks accessible.
+Use projects for related tasks, categories for broad areas of your life, and groups to gather projects. Add notes to keep useful details with a task. Search and filter your work, and archive finished projects while retaining their tasks.
+
+MAKE ROOM TO THINK
+
+Review helpers guide you through Inbox, Now, Waiting, and Next and Later. Decide what belongs where, what is still active, and what can move forward. Review all tasks in one pass without seeing them again simply because you moved them. Stop and resume when it suits you.
+
+Review projects one by one to check that each has a clear way forward. Add a next step, review its tasks, or archive a finished project.
 
 SEE WHAT YOU HAVE ACCOMPLISHED
 
-Review completed work from this week or last week. Browse your all-time completion timeline by month and day, or open an individual project’s History. Keep a record of what you finished alongside the work still ahead.
+Browse completed tasks in a timeline organised by month and day, or open a project’s History. Your finished work stays connected to the work still ahead.
 
 ONE APP ACROSS YOUR DEVICES
 
-Built for iPhone, iPad and Mac from the start. A shared file in your own iCloud Drive keeps your tasks in sync without a DayHand account or server. Choose that same file on each device once, then work on your tasks wherever you are.
+Designed for iPhone, iPad and Mac from the start. Choose the same file in your own iCloud Drive on each device to keep your tasks in sync. Your data stays in your own files, with no DayHand account or server.
 
-YOUR TASKS STAY YOURS
+BRING YOUR TASKS WITH YOU
 
-Keep automatic backups on days you open the app, take extra backups by hand, and share a copy somewhere safer. CSV import and export let you bring tasks in or take them with you.
+Import from Apple Reminders or Todoist CSV exports, or use DayHand’s CSV import and export. Imports bring a copy into DayHand; they do not create ongoing sync with the original app. Automatic local backups and manual backups help you keep a recoverable copy of your work.
 
 Available in English, French, Dutch, German, Spanish, Italian and Portuguese.
 
-### Keywords — draft, limit 100 bytes
+### Free and paid paragraph — append only when purchases are ready
+
+Free to use with unlimited tasks, categories and groups, up to three active projects, and the last 30 days of completed history. Review helpers, notes, reminders, imports, exports, backups and sync are included. A single one-time purchase unlocks unlimited active projects and full completed history across your iPhone, iPad and Mac using the same Apple Account. No subscription. Archived projects do not count towards the free limit, and your tasks are never deleted because you stay on the free version.
+
+**Maintainer note — not listing copy:** the main description above describes
+implemented features. Append the free/paid paragraph only after StoreKit
+purchase and restoration work on both platforms. The combined description and paragraph total 3,236 characters, including
+the separating blank line (limit 4,000). The current build defaults to unlocked access; do not
+publish it with copy suggesting these are already functioning purchases.
+The planned trial is deliberately omitted from public copy until implemented
+and tested. Section 8 records its intended metadata and behaviour.
+
+### Keywords — limit 100 bytes
 
 ```text
-todo,tasks,kanban,projects,reminders,deadlines,organise,work,personal,planner,checklist
+todo,kanban,projects,reminders,deadlines,organise,work,personal,planner,checklist,notes,productivity
 ```
 
-This is a starting proposal, not keyword research or a ranking guarantee.
-Use commas, avoid duplicate terms already covered by the app name, and do not
-include competitors’ names. Recheck the byte count after translation.
+English search terms avoid repeating DayHand and the subtitle’s words. This is
+a starting set, not a ranking claim. Recheck the byte count after translation.
 
-### What’s New in This Version
+### What’s New in This Version — limit 4,000 characters
 
-For a first App Store release, do not invent an update history; use the field
-only if App Store Connect requests it. For subsequent releases, write actual
-changes since the previous public release, within the 4,000-character limit.
-TestFlight changes are not automatically changes since the last App Store release.
+First App Store release: leave this field empty where App Store Connect permits.
+There is no previous public release against which to describe changes.
 
-Template — replace before use:
+If introductory release text is requested, use:
 
 ```text
-[The main user-visible change in this release.]
-
-• [Another change actually included in this build.]
-• [A specific fix or improvement, if applicable.]
+Welcome to DayHand. Give tasks a place in Inbox, Now, Next, Later or Waiting, review your tasks and projects, and keep your work together across iPhone, iPad and Mac.
 ```
+
+For subsequent releases, replace this with changes since the previous public
+App Store version. TestFlight changes alone do not establish that baseline.
 
 ### URLs and copyright
 
 | Field | Value / action |
 | --- | --- |
 | Marketing URL | https://amouraux.github.io/DayHand/ |
-| Support URL | **TO CONFIRM:** publish a reachable support page with a clear contact route. The current homepage links to GitHub issue reporting; verify that it meets the intended support needs before using it. |
+| Support URL | Proposed: https://amouraux.github.io/DayHand/ — verify its support contact route before submission; GitHub issues: https://github.com/amouraux/DayHand/issues |
 | Privacy Policy URL | **TO COMPLETE:** no dedicated published policy has been established in this repository |
 | Copyright | **TO COMPLETE:** `2026 [confirmed rights holder]`; do not assume the rights holder from Git author details |
 | Public App Store link | **TO COMPLETE after the record’s numeric Apple ID and availability are confirmed**; this is distinct from the TestFlight link |
@@ -160,13 +173,14 @@ and the slots shown in App Store Connect when exporting. Apple currently allows
 
 ### Proposed screenshot story
 
-1. **Your tasks are not a daily deadline:** show Now, Next, Later and Waiting.
-2. **Capture first, decide when ready:** show Inbox and new-task creation.
-3. **Keep work together:** show projects, categories, groups and filtering.
-4. **Give dates a purpose:** show a reminder and a genuine deadline.
-5. **See what you finished:** show the weekly review or completion timeline.
-6. **One app across your devices:** show the appropriate interface for each
-   platform without implying an iPad screenshot is the Mac app.
+1. **Tasks beyond the calendar:** show a task remaining in Now across several days.
+2. **A place for every task:** show Inbox, Now, Next, Later and Waiting with clear examples.
+3. **Keep related work together:** show projects, categories, groups and task notes.
+4. **Dates with a purpose:** show a reminder and a genuine deadline.
+5. **Find your next step:** show a task helper’s question and actions.
+6. **Give every project a way forward:** show the project review overview.
+7. **See what you have accomplished:** show the completion timeline, with the correct free/paid state.
+8. **Your tasks across your devices:** use actual platform-specific interfaces.
 
 Use invented demo tasks and the actual shipping interface. Keep captions short,
 accurate and readable on a phone. Do not show unavailable paid features, private
@@ -203,9 +217,20 @@ Tap + to create a task. Tasks start in Inbox unless another stack is selected. T
 
 A reminder requests a notification on a selected day and controls the task’s coloured edge. Notification permission is requested when reminders are scheduled. A deadline is an additional displayed finish date; it does not create a separate notification.
 
-Filter opens projects, categories and groups. A project’s information button opens its editor and History. More (the ellipsis button) contains weekly reviews, All time completion history, category settings, sync, CSV import/export and backups.
+Filter opens projects, categories and groups. A project’s information button opens its editor and History. More (the ellipsis button) contains Review projects, Review all tasks, individual stack helpers, Timeline, category settings, sync, import/export and backups. Helpers save progress locally. The all-tasks helper avoids repeating tasks moved during the same pass. Project review lets you inspect tasks, add a task, review that project’s tasks, edit the project and return to a previous project.
 
 To test sync, use More → Create Sync File on one device and save the file in your iCloud Drive. On another device using the same iCloud Drive, use More → Use Existing Sync File and select that file. Choose Merge With This Device to retain tasks from both devices. No DayHand account or server is used.
+
+Import from Apple Reminders requests permission to read reminders and lets the reviewer select what to import. Import from Todoist reads a CSV export. These are one-way imports, not continuous connections to those services. Use sample data when reviewing either importer.
+
+**Purchase review notes — complete before a paid launch:** the source currently
+contains the free/paid rules and unlock screen, but its purchase action is a
+stub and automatic access is unlocked. Before submission, implement and test
+purchase, Restore Purchases and the intended trial; replace this maintainer
+note with the actual product identifiers and reviewer steps. The intended free
+limits are three active projects and 30 days of completed history. Older tasks
+remain in the data, backups and exports, and are searchable. No task capture is
+blocked. Remove the temporary Testing control from the production review flow.
 
 ## 6. App Privacy, age rating and compliance
 
@@ -250,37 +275,56 @@ optional labels as a substitute for testing.
 
 ## 8. Pricing, purchases and availability — owner decisions
 
-### Current implementation versus proposed business model
+### Current implementation and launch plan
 
-The reviewed source has no implemented purchase flow or paid limits. The
-session’s proposed model is a free download with one non-consumable purchase
-that unlocks the app across iPhone, iPad and Mac on the same Apple Account.
-It is a plan, not a feature of the current build.
+Implemented: free/paid entitlement rules, a three-active-project limit, a
+rolling 30-day completed-history limit, the unlock screen and a test switch.
+Not yet implemented: the StoreKit purchase, Restore Purchases, and the
+user-started 30-day trial. `Purchases.storeAccess` currently defaults to unlocked.
 
-| Decision / field | Status |
+The launch plan in `PROMPT.md` is a free download with one non-consumable unlock,
+shared across iPhone, iPad and Mac on the same Apple Account, with Family Sharing.
+There is no subscription or category limit. This supersedes the earlier
+four-category/five-project and paid-weekly-review proposals.
+
+| Decision / field | Value / action |
 | --- | --- |
-| Launch with or without the paid unlock | **OWNER DECISION** |
-| Free allowances | Proposed: 4 categories, 5 unarchived projects; unlimited tasks |
-| Review access | Proposed: This week free; Last week paid. **OWNER DECISION:** where All time and project History belong |
-| Unlock name / product identifier | **TO COMPLETE** if implemented; use one shared product across platform versions |
-| Purchase type | Proposed non-consumable, one-time purchase; no subscription |
-| Price and storefront equivalents | **OWNER DECISION**; no price has been selected |
-| Family Sharing for the purchase | **OWNER DECISION**; distinct from the purchaser restoring on their own devices |
-| App download price | Proposed free if the in-app unlock is adopted; **TO CONFIRM** |
-| Distribution method | **OWNER DECISION:** public App Store distribution for the intended launch |
+| App download price | Free for the planned launch |
+| Free allowances | Unlimited tasks, categories and groups; three active projects; 30 days of completed history |
+| Included features | All task and project review helpers, notes, reminders, deadlines, sync, imports/exports and backups |
+| Paid unlock | Unlimited active projects and full completed history |
+| Archived projects | Do not count towards the limit; archiving frees a place |
+| Purchase type | Non-consumable, single one-time purchase |
+| Unlock display name | `DayHand Unlimited` — 17 characters; proposed store name |
+| Unlock description | `Unlimited active projects and full completed history on all your devices.` — 73 characters |
+| Product identifier | **TO COMPLETE:** configure one stable product ID shared across platforms; no identifier is wired into source yet |
+| Price and storefront equivalents | **OWNER DECISION:** no price selected; public copy intentionally avoids an amount |
+| Family Sharing | Planned enabled, as recorded in `PROMPT.md`; configure and test in App Store Connect |
+| Restore Purchases | Required implementation work; expose in Settings and test on both platforms |
+| Trial | Planned, user-started 30-day unlimited access; returns to free without a charge |
+| Trial product display name | `30-day Trial` — planned separate zero-price non-consumable |
+| Trial product description | `Try unlimited projects and full completed history for 30 days. No charge.` |
+| Trial product identifier | **TO COMPLETE:** configure with StoreKit implementation; never invent a live identifier here |
+| Trial start and expiry | Use the verified transaction date across devices; explain the end conditions before starting |
+| TestFlight access | Grandfathered access is planned; confirm entitlement implementation before claiming it |
+| Distribution method | Public App Store release planned |
 | Countries / regions and launch date | **OWNER DECISION** |
-| Release option | **OWNER DECISION:** manual, automatic after approval, or scheduled option where available |
+| Release option | **OWNER DECISION:** choose the release option in App Store Connect |
 
-If the unlock is included, also complete its display name, description,
-localisations, price, review screenshot and review notes in App Store Connect.
-Implement and test purchase, restoration and cross-device entitlement handling;
-include the first in-app purchase with the app submission as required by Apple.
-Update the product description and review notes to explain the exact free/paid
-boundary before submitting. Do not advertise the upgrade while it is unimplemented.
+For each in-app purchase, complete localisations, price, review screenshot and
+review notes. The unlock’s review screenshot should show the purchase screen
+and the two benefits. Trial review notes should explain initiation, expiry,
+restoration and the absence of an automatic charge. Verify Apple’s current
+submission requirements when configuring these products.
 
-If charging for the app or an in-app purchase, confirm the relevant agreements,
-tax and banking setup in App Store Connect. Do not enter financial or private
-contact details into this public file.
+Do not publish trial or purchase claims until the submitted build implements
+them. Verify universal purchase and restoration on iPhone/iPad and Mac, and
+Family Sharing separately. The free version retains existing tasks and projects;
+manual creation above the limit is restricted, while imports, sync and exports
+preserve the complete data. Search can find older completed tasks.
+
+Confirm the relevant agreements, tax and banking setup privately in App Store
+Connect. Account-specific values and financial details do not belong here.
 
 ## 9. Submission record and final checks
 
@@ -301,7 +345,8 @@ contact details into this public file.
 
 ## 10. Apple references
 
-Checked on 25 October 2026. Apple’s current UI and documentation take precedence
+Text-field limits rechecked on 31 October 2026. Remaining submission references
+were collected on 25 October 2026. Apple’s current UI and documentation take precedence
 if fields, limits or required assets change.
 
 - [App information](https://developer.apple.com/help/app-store-connect/reference/app-information/app-information/)
