@@ -1,6 +1,6 @@
 # DayHand — App Store submission information
 
-Last reviewed: 31 October 2026. Source reviewed: `ffb1b71` (main). English master copy.
+Last reviewed: 31 October 2026. Source reviewed: `fdd1dcd` (main). English master copy.
 
 Use this file to prepare the public App Store listing and production submission
 for iPhone/iPad and Mac. For beta distribution, use [TESTFLIGHT.md](TESTFLIGHT.md).
@@ -48,7 +48,7 @@ the seven UI languages do not automatically create translated store listings.
 
 Give every task a place: Now, Next, Later or Waiting. Capture ideas in Inbox, review your priorities, and let work take the time it needs on iPhone, iPad and Mac.
 
-### Description — 3,431 characters; limit 4,000
+### Description — 3,438 characters; limit 4,000
 
 Your task manager asks which day. Your work takes as long as it takes.
 
@@ -70,11 +70,11 @@ A PLACE FOR EVERY TASK
 • Later: ideas and tasks you are keeping for the future.
 • Waiting: work that needs someone or something else before you can continue.
 
-A clean layout keeps your tasks visible in their stacks. On Mac, the sidebar lets you browse categories, groups and projects and focus on the work you want to see. You decide when tasks move and when they are complete.
+On Mac and iPad, a sidebar lets you browse categories, groups and projects and focus on the work you want to see. You decide when tasks move and when they are complete.
 
 DATES WITH A PURPOSE
 
-Sometimes a task does need a date. Set a reminder to bring it back to your attention, and a deadline when there is a genuine finish date. Reminders provide notifications and coloured edges; deadlines display the finish date without a separate alert. Dates never move tasks automatically.
+Sometimes a task does need a date. A reminder brings a task back to your attention with a notification and a coloured edge, and tapping the notification opens the task. A deadline shows a genuine finish date without a separate alert. The flag button gathers every task with a coloured edge, from any stack. Dates never move tasks automatically.
 
 KEEP RELATED WORK TOGETHER
 
@@ -102,7 +102,7 @@ Free to use with unlimited tasks, categories and groups, up to three active proj
 
 **Maintainer note — not listing copy:** the main description above describes
 implemented features. Append the free/paid paragraph only after StoreKit
-purchase and restoration work on both platforms. The combined description and paragraph total 3,920 characters, including
+purchase and restoration work on both platforms. The combined description and paragraph total 3,927 characters, including
 the separating blank line (limit 4,000). The current build defaults to unlocked access; do not
 publish it with copy suggesting these are already functioning purchases.
 The planned trial is deliberately omitted from public copy until implemented
@@ -217,9 +217,9 @@ to the developer’s personal Apple Account or tasks.
 
 DayHand is a personal task manager for iPhone, iPad and Mac. No app account or demo login is required. Core task management can be reviewed without setting up sync.
 
-Tap + to create a task. Tasks start in Inbox unless another stack is selected. Tap a task to move it between stacks or choose Edit. The circular checkbox completes or reopens a task. Dates never move tasks automatically.
+Tap + to create a task. Tasks start in Inbox unless another stack is selected. Tap a task to move it between stacks, keep it where it is, set a reminder, complete it or choose Edit. The circular checkbox completes or reopens a task. Dates never move tasks automatically.
 
-A reminder requests a notification on a selected day and controls the task’s coloured edge. Notification permission is requested when reminders are scheduled. A deadline is an additional displayed finish date; it does not create a separate notification.
+A reminder requests a notification on a selected day (at 9:00) and controls the task’s coloured edge; tapping the notification opens that task. Notification permission is requested when reminders are scheduled. The flag button gathers every task with a coloured edge, from any stack, and its number counts the red ones. The app icon badge counts only reminders that have arrived and not yet been answered. A deadline is an additional displayed finish date; it does not create a separate notification.
 
 Filter opens projects, categories and groups. A project’s information button opens its editor and History. More (the ellipsis button) contains Review projects, Review all tasks, individual stack helpers, Timeline, category settings, sync, import/export and backups. Helpers save progress locally. The all-tasks helper avoids repeating tasks moved during the same pass. Project review lets you inspect tasks, add a task, review that project’s tasks, edit the project and return to a previous project.
 
@@ -310,7 +310,7 @@ four-category/five-project and paid-weekly-review proposals.
 | Trial product description | `Try unlimited projects and full completed history for 30 days. No charge.` |
 | Trial product identifier | **TO COMPLETE:** configure with StoreKit implementation; never invent a live identifier here |
 | Trial start and expiry | Use the verified transaction date across devices; explain the end conditions before starting |
-| TestFlight access | Grandfathered access is planned; confirm entitlement implementation before claiming it |
+| TestFlight access | Grandfathered access is planned (`PROMPT.md`, rule 4); confirm entitlement implementation before claiming it. **Caution:** App Review also runs in a non-production sandbox, so a rule of “non-production environment means unlocked” would hide the limits from the reviewer and the purchase from the review screenshots. Settle how testers are recognised (for example Apple’s offer codes for in-app purchases — **TO CONFIRM** availability) before relying on environment detection |
 | Distribution method | Public App Store release planned |
 | Countries / regions and launch date | **OWNER DECISION** |
 | Release option | **OWNER DECISION:** choose the release option in App Store Connect |
