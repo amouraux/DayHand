@@ -48,48 +48,43 @@ the seven UI languages do not automatically create translated store listings.
 
 Give every task a place: Now, Next, Later or Waiting. Capture ideas in Inbox, review your priorities, and let work take the time it needs on iPhone, iPad and Mac.
 
-### Description — 3,353 characters; limit 4,000
+### Description — 3,431 characters; limit 4,000
 
 Your task manager asks which day. Your work takes as long as it takes.
 
-Preparing a talk, planning a trip, building a feature, renovating a room — much of what matters cannot fit neatly into a daily checklist. Yet many task managers encourage you to assign a date before you know when the work will happen. When that day passes, unfinished tasks become overdue, and you spend time rescheduling work that is still progressing -- also generates frustration and perception that we are late, overdue, not on track which is not the case --
+Preparing a talk, planning a trip, building a feature, renovating a room — much of what matters cannot fit neatly into a daily checklist. Yet many task managers encourage you to assign a date before you know when the work will happen. When that day passes, unfinished tasks become overdue. You reschedule them and feel behind, even when the work is progressing as it should.
 
-DayHand lets a task stay active for as long as it takes - without ... --. Organise your life and work around what you are doing Now, what comes Next, what belongs Later, and what is Waiting for someone or something  -- indeed, often, completion of a project includes tasks are beyond your control, because you are waiting for feedback or other -- rather than setting up complex sharing and teams, just a waiting stack -- Capture new tasks in Inbox until you are ready to decide.
+DayHand lets a task stay active for as long as it takes, without having to assign it a new day each morning. Organise your life and work around what you are doing Now, what comes Next, and what belongs Later. Capture new tasks in Inbox until you are ready to decide.
 
+Some work depends on someone else. Waiting gives tasks awaiting feedback, a delivery or a decision a place of their own. Keep track of your part without having to set up a shared team workspace.
 
-And when your lists need a rethink, guided reviews help you make decisions -- On the Mac version, sidebar which allows, on all devices, helpers that work well ... --. Where does this new task belong? Am I still working on this? Can this move forward? Is it still relevant? Review tasks one at a time, or walk through your projects to make sure each has a clear next step. Stop whenever you need to and resume where you left off.
+And when your lists need a rethink, guided reviews help you make decisions. Where does this task belong? Am I still working on this? Can this move forward? Is it still relevant? Review tasks one at a time, or walk through your projects to check that each has a clear next step. The helpers work on iPhone, iPad and Mac, and save your place on the device you are using.
 
--- Sometimes, tasks do need a reminder, a date -- Use a reminder when you want to bring something back to your attention, and a deadline when there is a genuine finish date. You decide when a task moves.
-
-Inspired by Kanban, adapted -- finetuned -- to everyday task management -- from simple list of tasks to complex project management with ... --.
+Inspired by Kanban and fine-tuned for everyday task management, DayHand grows from a simple task list into a way to organise projects across your life and work.
 
 A PLACE FOR EVERY TASK
 
-• Inbox: capture a task when it comes to mind and decide where it belongs later. You can also choose its stack as you add it.
+• Inbox: capture first, decide when you are ready.
 • Now: what you are actively working on, for as long as it takes.
 • Next: what you intend to pick up next.
 • Later: ideas and tasks you are keeping for the future.
-• Waiting: work that needs a reply, delivery, decision or someone else’s contribution before you can continue.
+• Waiting: work that needs someone or something else before you can continue.
 
-You decide when tasks move. Complete them when the work is finished.
-
---should we mention the clean UI, with the stacks and the sidebar? --
+A clean layout keeps your tasks visible in their stacks. On Mac, the sidebar lets you browse categories, groups and projects and focus on the work you want to see. You decide when tasks move and when they are complete.
 
 DATES WITH A PURPOSE
 
-A reminder brings a task back to your attention on a chosen day. A deadline records when the work really needs to be finished. Dates never move tasks automatically. Reminders provide notifications and coloured edges; deadlines display the finish date without a separate alert.
+Sometimes a task does need a date. Set a reminder to bring it back to your attention, and a deadline when there is a genuine finish date. Reminders provide notifications and coloured edges; deadlines display the finish date without a separate alert. Dates never move tasks automatically.
 
 KEEP RELATED WORK TOGETHER
 
-Use projects for related tasks, categories for broad areas of your life, and groups to gather projects. Add notes to keep useful details with a task. Search and filter your work, and archive finished projects while retaining their tasks.
+Use projects for related tasks, categories for broad areas of your life, and groups to gather projects. Add notes, search and filter your work, and archive finished projects while retaining their tasks.
 
-REVIEW AT YOUR OWN PACE
-
-Review Inbox, Now, Waiting, or Next and Later separately, or review all tasks in one pass without repeating tasks you have moved. Project reviews let you add a next step, review related tasks, or archive a finished project.
+Review a single stack or all your tasks without repeating tasks you have moved during that pass. Project reviews let you add a next step, review related tasks, or archive a finished project.
 
 SEE WHAT YOU HAVE ACCOMPLISHED
 
-Browse completed tasks in a timeline organised by month and day, or open a project’s History. Your finished work stays connected to the work still ahead.
+Browse completed tasks in a timeline organised by month and day, or open a project’s History.
 
 ONE APP ACROSS YOUR DEVICES
 
@@ -97,17 +92,17 @@ Designed for iPhone, iPad and Mac from the start. Choose the same file in your o
 
 BRING YOUR TASKS WITH YOU
 
-Import from Apple Reminders or Todoist CSV exports, or use DayHand’s CSV import and export. Imports bring a copy into DayHand; they do not create ongoing sync with the original app. Automatic local backups and manual backups help you keep a recoverable copy of your work.
+Import from Apple Reminders or Todoist CSV exports, or use DayHand’s CSV import and export. Imports copy tasks into DayHand without ongoing sync to the original app. Automatic local backups and manual backups help you keep a recoverable copy.
 
 Available in English, French, Dutch, German, Spanish, Italian and Portuguese.
 
 ### Free and paid paragraph — append only when purchases are ready
 
-Free to use with unlimited tasks, categories and groups, up to three active projects, and the last 30 days of completed history. Review helpers, notes, reminders, imports, exports, backups and sync are included. A single one-time purchase unlocks unlimited active projects and full completed history across your iPhone, iPad and Mac using the same Apple Account. No subscription. Archived projects do not count towards the free limit, and your tasks are never deleted because you stay on the free version -- because you stay, is that clear? --.
+Free to use with unlimited tasks, categories and groups, up to three active projects, and the last 30 days of completed history. Review helpers, notes, reminders, imports, exports, backups and sync are included. A single one-time purchase unlocks unlimited active projects and full completed history across your iPhone, iPad and Mac using the same Apple Account. No subscription. Archived projects do not count towards the free limit, and nothing is deleted if you choose not to upgrade.
 
 **Maintainer note — not listing copy:** the main description above describes
 implemented features. Append the free/paid paragraph only after StoreKit
-purchase and restoration work on both platforms. The combined description and paragraph total 3,860 characters, including
+purchase and restoration work on both platforms. The combined description and paragraph total 3,920 characters, including
 the separating blank line (limit 4,000). The current build defaults to unlocked access; do not
 publish it with copy suggesting these are already functioning purchases.
 The planned trial is deliberately omitted from public copy until implemented
