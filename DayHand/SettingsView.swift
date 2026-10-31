@@ -28,6 +28,8 @@ struct SettingsView: View {
     @State private var replaceOnSync = false
     @State private var isConfirmingDeleteAll = false
     @State private var pendingRestore: BackupFile?
+    /// An automatic backup the user asked to delete, held for confirmation.
+    @State private var pendingBackupDeletion: BackupFile?
 
     private func caption(_ text: String) -> some View {
         Text(text).font(.caption).foregroundStyle(.secondary)
@@ -396,21 +398,29 @@ struct SettingsView: View {
                             // runs the first and the second is reachable only
                             // by stopping halfway, which is no way to find it.
                             //
-                            // Only the ones taken by hand: the automatic three
-                            // rotate, so removing one buys nothing and the next
-                            // open puts it back.
-                            //
                             // `allowsFullSwipe` is off because the file is
                             // removed, not trashed. A full swipe is too easy a
                             // way to lose the copy someone made on purpose,
                             // and the tap is the confirmation.
                             .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                                if backup.kind.isManual {
-                                    Button(role: .destructive) {
-                                        withAnimation { store.deleteBackup(backup) }
-                                    } label: {
-                                        Label("Delete", systemImage: "trash")
-                                    }
+                                Button(role: .destructive) {
+                                    delete(backup)
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
+                            // A swipe needs a finger, and the Mac has a pointer:
+                            // there, the same three actions were unreachable.
+                            // On the phone it is a press and hold.
+                            .contextMenu {
+                                Button { pendingRestore = backup } label: {
+                                    Label("Restore", systemImage: "arrow.uturn.backward")
+                                }
+                                ShareLink(item: backup.url) {
+                                    Label("Share", systemImage: "square.and.arrow.up")
+                                }
+                                Button(role: .destructive) { delete(backup) } label: {
+                                    Label("Delete", systemImage: "trash")
                                 }
                             }
                         }
@@ -418,7 +428,11 @@ struct SettingsView: View {
                 } header: {
                     Text("Backups")
                 } footer: {
-                    Text("Three are kept automatically — yesterday, the day before, and about a week ago — and every one you take by hand, under its date. Each file is named for this device (\(store.backupDeviceName)), so copies from two devices can sit side by side. Tap one to restore it, swipe left to share it somewhere safer, or swipe right to delete one you took by hand.")
+                    #if targetEnvironment(macCatalyst)
+                    Text("Three backups are kept automatically — from yesterday, the day before and about a week ago — plus every one you take by hand, under its date. Click a backup to restore it. Right-click it to share or delete it. Each file is named for this device (\(store.backupDeviceName)), so copies from two devices can sit side by side.")
+                    #else
+                    Text("Three backups are kept automatically — from yesterday, the day before and about a week ago — plus every one you take by hand, under its date. Tap a backup to restore it. Swipe it, or press and hold, to share or delete it. Each file is named for this device (\(store.backupDeviceName)), so copies from two devices can sit side by side.")
+                    #endif
                 }
 
                 Section {
@@ -488,6 +502,22 @@ struct SettingsView: View {
                 Button("Cancel", role: .cancel) { }
             } message: { backup in
                 Text("The \(store.cardCount) tasks here will be replaced by the \(backup.cardCount) in this backup. Categories and projects come back too.")
+            }
+            .confirmationDialog(
+                "Delete this backup?",
+                isPresented: Binding(
+                    get: { pendingBackupDeletion != nil },
+                    set: { if !$0 { pendingBackupDeletion = nil } }
+                ),
+                titleVisibility: .visible,
+                presenting: pendingBackupDeletion
+            ) { backup in
+                Button("Delete", role: .destructive) {
+                    withAnimation { store.deleteBackup(backup) }
+                }
+                Button("Cancel", role: .cancel) { }
+            } message: { _ in
+                Text("This is one of the automatic backups. They are replaced as the days pass, but until then there is no copy from that day.")
             }
             .alert("Delete all tasks?", isPresented: $isConfirmingDeleteAll) {
                 Button("Delete All", role: .destructive) {
@@ -622,6 +652,17 @@ struct SettingsView: View {
 
     private func present(_ show: @escaping () -> Void) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: show)
+    }
+
+    /// One you took by hand is removed at once, as the swipe always did. An
+    /// automatic one is asked about first: it is the copy from that day, and
+    /// nothing else holds it until the rotation catches up.
+    private func delete(_ backup: BackupFile) {
+        if backup.kind.isManual {
+            withAnimation { store.deleteBackup(backup) }
+        } else {
+            pendingBackupDeletion = backup
+        }
     }
 
     private func beginImport(replacing: Bool) {

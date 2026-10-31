@@ -10527,47 +10527,6 @@
         }
       }
     },
-    "Three are kept automatically — yesterday, the day before, and about a week ago — and every one you take by hand, under its date. Each file is named for this device (%@), so copies from two devices can sit side by side. Tap one to restore it, swipe left to share it somewhere safer, or swipe right to delete one you took by hand.": {
-      "comment": "Footer under the Backups section",
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Drei werden automatisch aufbewahrt — gestern, vorgestern und etwa vor einer Woche — und jede, die Sie von Hand anlegen, unter ihrem Datum. Jede Datei trägt den Namen dieses Geräts (%@), damit Kopien von zwei Geräten nebeneinander liegen können. Tippen Sie auf eine, um sie wiederherzustellen, wischen Sie nach links, um sie sicherer abzulegen, oder nach rechts, um eine von Hand angelegte zu löschen."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Se conservan tres automáticamente — ayer, anteayer y hace una semana aproximadamente — y todas las que hagas a mano, bajo su fecha. Cada archivo lleva el nombre de este dispositivo (%@), para que las copias de dos dispositivos puedan convivir. Toca una para restaurarla, desliza a la izquierda para compartirla en un lugar más seguro o a la derecha para eliminar una que hayas hecho a mano."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Trois sont conservées automatiquement — hier, avant-hier et il y a environ une semaine — ainsi que chacune de celles que vous faites à la main, à sa date. Chaque fichier porte le nom de cet appareil (%@), pour que les copies de deux appareils puissent coexister. Touchez-en une pour la restaurer, glissez vers la gauche pour la mettre à l’abri ailleurs, ou vers la droite pour supprimer une copie faite à la main."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tre vengono conservate automaticamente — ieri, l’altro ieri e circa una settimana fa — e ognuna di quelle che fai a mano, alla sua data. Ogni file porta il nome di questo dispositivo (%@), così le copie di due dispositivi possono stare affiancate. Tocca una copia per ripristinarla, scorri verso sinistra per metterla al sicuro altrove, o verso destra per eliminarne una fatta a mano."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Er worden er automatisch drie bewaard — gisteren, eergisteren en ongeveer een week geleden — en elke die je met de hand maakt, op zijn datum. Elk bestand draagt de naam van dit apparaat (%@), zodat kopieën van twee apparaten naast elkaar kunnen staan. Tik op een kopie om die terug te zetten, veeg naar links om hem elders veilig te stellen, of naar rechts om er een te verwijderen die je zelf hebt gemaakt."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Três são mantidas automaticamente — ontem, anteontem e há cerca de uma semana — e todas as que fizer à mão, na sua data. Cada ficheiro tem o nome deste dispositivo (%@), para que as cópias de dois dispositivos possam ficar lado a lado. Toque numa para a restaurar, deslize para a esquerda para a guardar noutro local mais seguro, ou para a direita para eliminar uma que tenha feito à mão."
-          }
-        }
-      }
-    },
     "Title": {
       "localizations": {
         "de": {
@@ -19763,6 +19722,166 @@
           "stringUnit": {
             "state": "translated",
             "value": "Fechar"
+          }
+        }
+      }
+    },
+    "Three backups are kept automatically — from yesterday, the day before and about a week ago — plus every one you take by hand, under its date. Tap a backup to restore it. Swipe it, or press and hold, to share or delete it. Each file is named for this device (%@), so copies from two devices can sit side by side.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drei Sicherungen werden automatisch aufbewahrt — von gestern, vorgestern und von vor etwa einer Woche — dazu jede, die Sie von Hand anlegen, unter ihrem Datum. Tippen Sie auf eine Sicherung, um sie wiederherzustellen. Wischen Sie darüber oder halten Sie sie gedrückt, um sie zu teilen oder zu löschen. Jede Datei trägt den Namen dieses Geräts (%@), damit Kopien von zwei Geräten nebeneinander liegen können."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se conservan tres copias automáticamente — de ayer, anteayer y hace una semana aproximadamente — además de todas las que hagas a mano, bajo su fecha. Toca una copia para restaurarla. Desliza sobre ella, o mantenla pulsada, para compartirla o eliminarla. Cada archivo lleva el nombre de este dispositivo (%@), para que las copias de dos dispositivos puedan convivir."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trois sauvegardes sont conservées automatiquement — celles d’hier, d’avant-hier et d’il y a environ une semaine — ainsi que chacune de celles que vous faites à la main, à sa date. Touchez une sauvegarde pour la restaurer. Glissez dessus, ou maintenez-la appuyée, pour la partager ou la supprimer. Chaque fichier porte le nom de cet appareil (%@), pour que les copies de deux appareils puissent coexister."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tre copie vengono conservate automaticamente — di ieri, dell’altro ieri e di circa una settimana fa — più tutte quelle che fai a mano, alla loro data. Tocca una copia per ripristinarla. Scorri sopra di essa, o tienila premuta, per condividerla o eliminarla. Ogni file porta il nome di questo dispositivo (%@), così le copie di due dispositivi possono stare affiancate."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Er worden automatisch drie back-ups bewaard — van gisteren, eergisteren en ongeveer een week geleden — plus elke back-up die je met de hand maakt, onder zijn datum. Tik op een back-up om die terug te zetten. Veeg erover, of houd hem ingedrukt, om hem te delen of te verwijderen. Elk bestand draagt de naam van dit apparaat (%@), zodat kopieën van twee apparaten naast elkaar kunnen staan."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "São mantidas automaticamente três cópias de segurança — de ontem, de anteontem e de há cerca de uma semana — e todas as que fizer à mão, na sua data. Toque numa cópia para a restaurar. Deslize sobre ela, ou mantenha-a premida, para a partilhar ou eliminar. Cada ficheiro tem o nome deste dispositivo (%@), para que as cópias de dois dispositivos possam ficar lado a lado."
+          }
+        }
+      }
+    },
+    "Three backups are kept automatically — from yesterday, the day before and about a week ago — plus every one you take by hand, under its date. Click a backup to restore it. Right-click it to share or delete it. Each file is named for this device (%@), so copies from two devices can sit side by side.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Drei Sicherungen werden automatisch aufbewahrt — von gestern, vorgestern und von vor etwa einer Woche — dazu jede, die Sie von Hand anlegen, unter ihrem Datum. Klicken Sie auf eine Sicherung, um sie wiederherzustellen. Klicken Sie mit der rechten Maustaste darauf, um sie zu teilen oder zu löschen. Jede Datei trägt den Namen dieses Geräts (%@), damit Kopien von zwei Geräten nebeneinander liegen können."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se conservan tres copias automáticamente — de ayer, anteayer y hace una semana aproximadamente — además de todas las que hagas a mano, bajo su fecha. Haz clic en una copia para restaurarla. Haz clic derecho sobre ella para compartirla o eliminarla. Cada archivo lleva el nombre de este dispositivo (%@), para que las copias de dos dispositivos puedan convivir."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trois sauvegardes sont conservées automatiquement — celles d’hier, d’avant-hier et d’il y a environ une semaine — ainsi que chacune de celles que vous faites à la main, à sa date. Cliquez sur une sauvegarde pour la restaurer. Faites-y un clic droit pour la partager ou la supprimer. Chaque fichier porte le nom de cet appareil (%@), pour que les copies de deux appareils puissent coexister."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tre copie vengono conservate automaticamente — di ieri, dell’altro ieri e di circa una settimana fa — più tutte quelle che fai a mano, alla loro data. Fai clic su una copia per ripristinarla. Fai clic con il tasto destro per condividerla o eliminarla. Ogni file porta il nome di questo dispositivo (%@), così le copie di due dispositivi possono stare affiancate."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Er worden automatisch drie back-ups bewaard — van gisteren, eergisteren en ongeveer een week geleden — plus elke back-up die je met de hand maakt, onder zijn datum. Klik op een back-up om die terug te zetten. Klik met de rechtermuisknop om hem te delen of te verwijderen. Elk bestand draagt de naam van dit apparaat (%@), zodat kopieën van twee apparaten naast elkaar kunnen staan."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "São mantidas automaticamente três cópias de segurança — de ontem, de anteontem e de há cerca de uma semana — e todas as que fizer à mão, na sua data. Clique numa cópia para a restaurar. Clique com o botão direito para a partilhar ou eliminar. Cada ficheiro tem o nome deste dispositivo (%@), para que as cópias de dois dispositivos possam ficar lado a lado."
+          }
+        }
+      }
+    },
+    "Delete this backup?": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Sicherung löschen?"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Eliminar esta copia?"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer cette sauvegarde ?"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eliminare questa copia?"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deze back-up verwijderen?"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eliminar esta cópia?"
+          }
+        }
+      }
+    },
+    "This is one of the automatic backups. They are replaced as the days pass, but until then there is no copy from that day.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dies ist eine der automatischen Sicherungen. Sie werden mit den Tagen ersetzt, doch bis dahin gibt es keine Kopie von diesem Tag."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es una de las copias automáticas. Se reemplazan con el paso de los días, pero hasta entonces no habrá copia de ese día."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "C’est l’une des sauvegardes automatiques. Elles sont remplacées au fil des jours, mais d’ici là il n’y aura pas de copie de ce jour."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "È una delle copie automatiche. Vengono sostituite con il passare dei giorni, ma fino ad allora non ci sarà una copia di quel giorno."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dit is een van de automatische back-ups. Ze worden in de loop van de dagen vervangen, maar tot die tijd is er geen kopie van die dag."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "É uma das cópias automáticas. São substituídas com o passar dos dias, mas até lá não haverá cópia desse dia."
           }
         }
       }

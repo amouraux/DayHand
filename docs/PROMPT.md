@@ -1872,12 +1872,19 @@ leading one. They were both on the trailing edge to begin with, where a full
 swipe runs the first and the second is reachable only by stopping halfway,
 which is no way to find it.
 
-**Delete is offered only for the ones taken by hand.** The automatic three
-rotate, so removing one buys nothing and the next opening puts it back; a
-hand-made copy is the only kind whose going is permanent, and so the only kind
-worth a button. Its edge sets `allowsFullSwipe` to false, because the file is
-removed rather than trashed: a full swipe is too easy a way to lose the copy
-someone made on purpose, and the tap is the confirmation.
+**Any backup can be deleted; an automatic one is asked about first.** Delete
+was once offered only for the ones taken by hand, on the reasoning that the
+automatic three rotate and come back. But there are cases where the user wants
+one gone, and a copy from that day does not come back until the rotation
+catches up, so it is asked about: "Delete this backup?", saying so. A hand-made
+copy is removed at once, as before. The leading edge sets `allowsFullSwipe` to
+false, because the file is removed rather than trashed: a full swipe is too
+easy a way to lose a copy, and the tap is the confirmation.
+
+**The same three actions are in a context menu** — Restore, Share, Delete — on
+every backup. A swipe needs a finger, and on the Mac, where the pointer cannot
+swipe, they were unreachable. It is right-click there and press and hold on the
+phone, and the footer says which, in words that differ by platform.
 
 ### The name is the backup
 
@@ -1918,7 +1925,8 @@ Files the earlier version wrote under fixed names are renamed on first launch
 rather than left behind, so updating never loses a copy.
 
 More lists them with their age and task count; tapping one restores it behind a
-confirmation, and a swipe shares it somewhere safer or deletes a manual one.
+confirmation, and a swipe or a context menu shares it somewhere safer or
+deletes it.
 
 Restoring is a rescue, so it has to win: stamp the restored tasks as edited now
 and clear their tombstones, or the very delete being undone will simply reapply
