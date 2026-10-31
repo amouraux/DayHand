@@ -1330,7 +1330,7 @@ final class DocumentStorage {
 
     static func encodeDocument(_ document: StoreDocument) -> Data? { encode(document) }
 
-    fileprivate static func decode(_ data: Data) -> StoreDocument? {
+    static func decode(_ data: Data) -> StoreDocument? {
         let decoder = DocumentCoding.makeDecoder()
 
         if let document = try? decoder.decode(StoreDocument.self, from: data) {

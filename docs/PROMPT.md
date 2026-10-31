@@ -1897,6 +1897,14 @@ with the app unopened should still rotate exactly once.
 on the same day replaces the first, so pressing the button is never a way to
 fill the disk.
 
+**Restore From File…** replaces this device's tasks with a DayHand file chosen
+by hand — a copy from another device, one kept in Files, or a prepared data
+set for screenshots. It differs from *Use Existing Sync File* in the way that
+matters: it only reads. Nothing is linked, so the device keeps saving where it
+did and never writes back to the chosen file. It restores exactly as a backup
+does (categories and projects too, every task stamped as edited now), asks
+first with the counts, and says why when the file is not DayHand's.
+
 **One swipe action per edge**: share on the trailing edge, delete on the
 leading one. They were both on the trailing edge to begin with, where a full
 swipe runs the first and the second is reachable only by stopping halfway,

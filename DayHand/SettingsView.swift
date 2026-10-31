@@ -28,6 +28,9 @@ struct SettingsView: View {
     @State private var replaceOnSync = false
     @State private var isConfirmingDeleteAll = false
     @State private var pendingRestore: BackupFile?
+    @State private var isChoosingRestoreFile = false
+    /// A file picked by hand, read and waiting for the user to confirm.
+    @State private var pendingFileRestore: FileRestore?
     /// An automatic backup the user asked to delete, held for confirmation.
     @State private var pendingBackupDeletion: BackupFile?
 
@@ -350,6 +353,12 @@ struct SettingsView: View {
                         Label("Back Up Now", systemImage: "arrow.down.document")
                     }
 
+                    Button {
+                        present { isChoosingRestoreFile = true }
+                    } label: {
+                        Label("Restore From File…", systemImage: "doc.badge.arrow.up")
+                    }
+
                     let backups = store.availableBackups()
                     let mine = store.backupDeviceName
                     if backups.isEmpty {
@@ -502,6 +511,30 @@ struct SettingsView: View {
                 Button("Cancel", role: .cancel) { }
             } message: { backup in
                 Text("The \(store.cardCount) tasks here will be replaced by the \(backup.cardCount) in this backup. Categories and projects come back too.")
+            }
+            .fileImporter(
+                isPresented: $isChoosingRestoreFile,
+                // Broad for the same reason as the sync file picker.
+                allowedContentTypes: [.json, .plainText, .text, .data]
+            ) { result in
+                chooseRestoreFile(result)
+            }
+            .alert(
+                "Restore this file?",
+                isPresented: Binding(
+                    get: { pendingFileRestore != nil },
+                    set: { if !$0 { pendingFileRestore = nil } }
+                ),
+                presenting: pendingFileRestore
+            ) { file in
+                Button("Restore", role: .destructive) {
+                    let count = withAnimation { store.restore(file.document) }
+                    reportTitle = "Restore"
+                    importReport = String(localized: "Restored \(count) tasks from “\(file.name)”.")
+                }
+                Button("Cancel", role: .cancel) { }
+            } message: { file in
+                Text("The \(store.cardCount) tasks here will be replaced by the \(file.document.cards.count) in this file. Categories and projects come back too.")
             }
             .confirmationDialog(
                 "Delete this backup?",
@@ -662,6 +695,26 @@ struct SettingsView: View {
             withAnimation { store.deleteBackup(backup) }
         } else {
             pendingBackupDeletion = backup
+        }
+    }
+
+    /// The picked file lives outside the app, so its access has to be opened
+    /// and closed explicitly. It is read now and applied only on confirmation.
+    private func chooseRestoreFile(_ result: Result<URL, Error>) {
+        reportTitle = "Restore"
+        switch result {
+        case .failure(let error):
+            importReport = "Could not open that file.\n\n\(error.localizedDescription)"
+        case .success(let url):
+            let scoped = url.startAccessingSecurityScopedResource()
+            defer { if scoped { url.stopAccessingSecurityScopedResource() } }
+
+            guard let data = try? Data(contentsOf: url),
+                  let document = store.document(from: data) else {
+                importReport = String(localized: "That file could not be read as DayHand tasks.")
+                return
+            }
+            pendingFileRestore = FileRestore(document: document, name: url.lastPathComponent)
         }
     }
 
@@ -904,4 +957,10 @@ struct SyncFileDocument: FileDocument {
     func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
         FileWrapper(regularFileWithContents: data)
     }
+}
+
+/// A file chosen for restoring, decoded and held until the user agrees.
+private struct FileRestore {
+    let document: StoreDocument
+    let name: String
 }

@@ -969,7 +969,18 @@ final class TodoStore: ObservableObject {
     @discardableResult
     func restore(from file: BackupFile) -> Int {
         guard let backup = storage.readBackup(at: file.url) else { return 0 }
+        return restore(backup)
+    }
 
+    /// A DayHand file the user picked, which may have been taken on another
+    /// device or sit outside the backup folder. Nil if it is not one.
+    func document(from data: Data) -> StoreDocument? { DocumentStorage.decode(data) }
+
+    /// The same replacement, from a document already read — a backup, or a
+    /// file chosen by hand. Unlike choosing a sync file, nothing is linked: the
+    /// device keeps saving where it did.
+    @discardableResult
+    func restore(_ backup: StoreDocument) -> Int {
         var restored = backup.cards
         let stamp = Date.stamp()
         for index in restored.indices {
