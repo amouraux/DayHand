@@ -48,11 +48,19 @@ the seven UI languages do not automatically create translated store listings.
 
 Give every task a place: Now, Next, Later or Waiting. Capture ideas in Inbox, review your priorities, and let work take the time it needs on iPhone, iPad and Mac.
 
-### Description — 2,729 characters; limit 4,000
+### Description — 3,353 characters; limit 4,000
 
-Preparing a talk, planning a trip, building a feature, renovating a room — real work often takes several days or weeks. DayHand lets a task stay active for as long as it takes. Leaving it unticked tonight does not mean you have fallen behind.
+Your task manager asks which day. Your work takes as long as it takes.
 
-Inspired by Kanban, DayHand brings the simplicity of cards and stacks to your life, work and objectives. Organise tasks around what you intend to do, with dates when they serve a purpose.
+Preparing a talk, planning a trip, building a feature, renovating a room — much of what matters cannot fit neatly into a daily checklist. Yet many task managers encourage you to assign a date before you know when the work will happen. When that day passes, unfinished tasks become overdue, and you spend time rescheduling work that is still progressing.
+
+DayHand lets a task stay active for as long as it takes. Organise your life and work around what you are doing Now, what comes Next, what belongs Later, and what is Waiting for someone or something. Capture new tasks in Inbox until you are ready to decide.
+
+And when your lists need a rethink, guided reviews help you make decisions. Where does this new task belong? Am I still working on this? Can this move forward? Is it still relevant? Review tasks one at a time, or walk through your projects to make sure each has a clear next step. Stop whenever you need to and resume where you left off.
+
+Use a reminder when you want to bring something back to your attention, and a deadline when there is a genuine finish date. You decide when a task moves.
+
+Inspired by Kanban, adapted to everyday task management.
 
 A PLACE FOR EVERY TASK
 
@@ -72,11 +80,9 @@ KEEP RELATED WORK TOGETHER
 
 Use projects for related tasks, categories for broad areas of your life, and groups to gather projects. Add notes to keep useful details with a task. Search and filter your work, and archive finished projects while retaining their tasks.
 
-MAKE ROOM TO THINK
+REVIEW AT YOUR OWN PACE
 
-Review helpers guide you through Inbox, Now, Waiting, and Next and Later. Decide what belongs where, what is still active, and what can move forward. Review all tasks in one pass without seeing them again simply because you moved them. Stop and resume when it suits you.
-
-Review projects one by one to check that each has a clear way forward. Add a next step, review its tasks, or archive a finished project.
+Review Inbox, Now, Waiting, or Next and Later separately, or review all tasks in one pass without repeating tasks you have moved. Project reviews let you add a next step, review related tasks, or archive a finished project.
 
 SEE WHAT YOU HAVE ACCOMPLISHED
 
@@ -98,7 +104,7 @@ Free to use with unlimited tasks, categories and groups, up to three active proj
 
 **Maintainer note — not listing copy:** the main description above describes
 implemented features. Append the free/paid paragraph only after StoreKit
-purchase and restoration work on both platforms. The combined description and paragraph total 3,236 characters, including
+purchase and restoration work on both platforms. The combined description and paragraph total 3,860 characters, including
 the separating blank line (limit 4,000). The current build defaults to unlocked access; do not
 publish it with copy suggesting these are already functioning purchases.
 The planned trial is deliberately omitted from public copy until implemented
