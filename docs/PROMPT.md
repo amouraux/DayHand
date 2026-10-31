@@ -1487,7 +1487,14 @@ whatever the filter has already chosen, and the empty state says so.
 The sheet behind the ellipsis, in order: **Review** (Inbox helper),
 **Completed** (timeline), **Categories**, **Convert Title Prefixes into Projects…** when there is
 something to convert, **New tasks** (the default category), **Appearance**, **Language**,
-**Sync**, **CSV**, and **Backups**.
+**Sync**, **CSV**, **Backups**, and **Help**.
+
+**Help** is the last section: one row, "Help and support", that opens the help
+pages (`docs/help/`, served from the site) in the browser, and a footer line
+with the version and build. The page is the support URL as well, and it asks
+people for the version and build, which nothing else in the app shows. The link
+needs a connection by design: bundling the pages would go stale. They are in
+English only. The footer is not translated, being a name and two numbers.
 
 **Appearance** is Automatic, Light or Dark, a segmented control in More. Automatic
 hands the choice back to the system; the other two override it for this app only,

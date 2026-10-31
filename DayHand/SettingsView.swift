@@ -468,6 +468,22 @@ struct SettingsView: View {
                 } footer: {
                     Text("Removes every task on this device. Categories are kept. If a sync file is in use, the deletion reaches your other devices too.")
                 }
+
+                Section {
+                    Link(destination: Self.helpURL) {
+                        LabeledContent {
+                            Image(systemName: "arrow.up.right").foregroundStyle(.secondary)
+                        } label: {
+                            Label("Help and support", systemImage: "questionmark.circle")
+                        }
+                    }
+                } header: {
+                    Text("Help")
+                } footer: {
+                    // The support page asks for the version and build, and
+                    // nothing else in the app says which this is.
+                    Text(verbatim: Self.versionLine)
+                }
             }
             .environment(\.editMode, $categoryEdit)
             .navigationTitle("More")
@@ -695,6 +711,15 @@ struct SettingsView: View {
         #endif
         guard let url else { return }
         UIApplication.shared.open(url)
+    }
+
+    private static let helpURL = URL(string: "https://amouraux.github.io/DayHand/help/")!
+
+    private static var versionLine: String {
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "?"
+        let build = info?["CFBundleVersion"] as? String ?? "?"
+        return "DayHand \(version) (\(build))"
     }
 
     private func present(_ show: @escaping () -> Void) {
