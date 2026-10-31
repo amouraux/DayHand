@@ -3,11 +3,13 @@ import SwiftUI
 @main
 struct DayHandApp: App {
     @StateObject private var store = TodoStore()
+    @AppStorage(Appearance.key) private var appearance = Appearance.automatic
 
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(store)
+                .preferredColorScheme(appearance.colorScheme)
                 .onAppear { Self.tidyMacTitlebar() }
         }
         // Replacing the group rather than adding to it: the system's own Undo

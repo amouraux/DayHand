@@ -27,6 +27,7 @@ struct SettingsView: View {
     @State private var replaceOnImport = false
     @State private var replaceOnSync = false
     @State private var isConfirmingDeleteAll = false
+    @AppStorage(Appearance.key) private var appearance = Appearance.automatic
     @State private var pendingRestore: BackupFile?
     @State private var isChoosingRestoreFile = false
     /// A file picked by hand, read and waiting for the user to confirm.
@@ -217,6 +218,19 @@ struct SettingsView: View {
                     Text("New tasks")
                 } footer: {
                     Text("New tasks start with this category. You can still change it on the task.")
+                }
+
+                Section {
+                    Picker("Appearance", selection: $appearance) {
+                        Text("Automatic").tag(Appearance.automatic)
+                        Text("Light").tag(Appearance.light)
+                        Text("Dark").tag(Appearance.dark)
+                    }
+                    .pickerStyle(.segmented)
+                } header: {
+                    Text("Appearance")
+                } footer: {
+                    Text("Automatic follows your device's setting.")
                 }
 
                 Section {
@@ -979,3 +993,21 @@ private struct FileRestore {
     let document: StoreDocument
     let name: String
 }
+
+/// Light, dark, or whatever the device is set to. Kept on this device alone: a
+/// phone in the evening and a Mac in daylight are not a disagreement to sync.
+enum Appearance: String {
+    case automatic, light, dark
+
+    static let key = "appearance"
+
+    /// Nil hands the choice back to the system.
+    var colorScheme: ColorScheme? {
+        switch self {
+        case .automatic: return nil
+        case .light: return .light
+        case .dark: return .dark
+        }
+    }
+}
+

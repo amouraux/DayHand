@@ -1486,8 +1486,14 @@ whatever the filter has already chosen, and the empty state says so.
 
 The sheet behind the ellipsis, in order: **Review** (Inbox helper),
 **Completed** (timeline), **Categories**, **Convert Title Prefixes into Projects…** when there is
-something to convert, **New tasks** (the default category), **Language**,
+something to convert, **New tasks** (the default category), **Appearance**, **Language**,
 **Sync**, **CSV**, and **Backups**.
+
+**Appearance** is Automatic, Light or Dark, a segmented control in More. Automatic
+hands the choice back to the system; the other two override it for this app only,
+at the root (`preferredColorScheme`), so sheets and popovers follow too. It is
+kept on the device in `UserDefaults` and never in the document: a phone used in
+the evening and a Mac used in daylight are not a disagreement for sync to settle.
 
 **On the Mac it is a popover, not a sheet**, anchored to the button. A sheet is
 modal: nothing behind it can be clicked, so neither clicking outside nor
