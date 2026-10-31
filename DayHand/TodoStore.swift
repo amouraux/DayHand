@@ -11,7 +11,9 @@ import SwiftUI
 /// until then the date only reorders it within its bucket.
 @MainActor
 final class TodoStore: ObservableObject {
-    @Published private(set) var items: [TodoItem] = []
+    @Published private(set) var items: [TodoItem] = [] {
+        didSet { scheduleReminderSync() }
+    }
     /// The categories the user has defined, in the order they appear.
     @Published private(set) var categories: [CardCategory] = []
     /// Projects — a trip, a client, a paper — in the order they were created.
@@ -355,6 +357,27 @@ final class TodoStore: ObservableObject {
     /// reminder fires for a card that was finished last week.
     func rescheduleNotifications() {
         ReminderScheduler.shared.sync(to: items)
+    }
+
+    private var reminderSyncTask: Task<Void, Never>?
+
+    /// Any change to the tasks can change what should be pending — a reminder
+    /// set on a new task, a reopened one, a move that takes a task off the
+    /// badge — and patching each call site is how one was missed: adding a task
+    /// with a reminder, moving one and reopening one never refreshed it, and
+    /// the gap hid until the app next came to the front. So the schedule follows
+    /// the tasks themselves.
+    ///
+    /// A moment later rather than at once: typing a note, a review pass or an
+    /// import is a burst of changes, and the schedule is rewritten wholesale,
+    /// so one rewrite after the burst does what a dozen would.
+    private func scheduleReminderSync() {
+        reminderSyncTask?.cancel()
+        reminderSyncTask = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(400))
+            guard !Task.isCancelled else { return }
+            self?.rescheduleNotifications()
+        }
     }
 
     // MARK: - Projects

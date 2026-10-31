@@ -72,6 +72,8 @@ final class ReminderScheduler: NSObject, UNUserNotificationCenterDelegate {
     ///   come. The badge each notification carries is the flag's count at the
     ///   moment that notification fires, and working that out needs the lot.
     func sync(to cards: [TodoItem], now: Date = Date()) {
+        generation += 1
+        let mine = generation
         let wanted = Reminders.scheduled(in: cards, now: now)
             .compactMap { card -> (TodoItem, Date)? in
                 guard let at = card.remindAt else { return nil }
@@ -84,39 +86,55 @@ final class ReminderScheduler: NSObject, UNUserNotificationCenterDelegate {
         guard !wanted.isEmpty else { return }
 
         requestPermissionIfNeeded { [weak self] granted in
-            guard granted, let self else { return }
-            // Again: the first attempt above ran before there was permission
-            // to show a badge at all. Belt and braces rather than a proven
-            // fix — a brand-new install still shows no badge until its second
-            // launch, which looks like the system not accepting one in the
-            // same session the permission was granted. It corrects itself,
-            // and nothing is wrong by the time a reminder matters.
-            self.setBadge(Attention.count(in: cards, now: now))
-
-            for (card, at) in wanted {
-                let content = UNMutableNotificationContent()
-                content.title = card.title
-                content.body = String(localized: "Move it, or keep it where it is.",
-                                      comment: "Notification body for a reminder")
-                content.sound = .default
-                // What the flag will read once this has fired. Not a running
-                // total: a card whose reminder arrives while it already sits
-                // in Today adds nothing, and one that turns red at midnight
-                // adds itself without any notification to announce it.
-                content.badge = NSNumber(value: Attention.count(in: cards, now: at))
-                // Carries the card so opening the notification can go straight
-                // to it rather than to the top of the list.
-                content.userInfo = ["card": card.id.uuidString]
-
-                let parts = Calendar.current.dateComponents(
-                    [.year, .month, .day, .hour, .minute], from: at)
-                let request = UNNotificationRequest(
-                    identifier: card.id.uuidString,
-                    content: content,
-                    trigger: UNCalendarNotificationTrigger(dateMatching: parts, repeats: false)
-                )
-                self.centre.add(request)
+            // Back on the main queue, and only if nothing newer has asked
+            // since: two rewrites in quick succession would otherwise each add
+            // their own set after the other had cleared, leaving a reminder
+            // pending for a task that was finished in between.
+            DispatchQueue.main.async {
+                guard let self, self.generation == mine else { return }
+                self.schedule(wanted, in: cards, now: now, granted: granted)
             }
+        }
+    }
+
+    /// Bumped by every `sync`, so a late permission answer can tell it has been
+    /// overtaken.
+    private var generation = 0
+
+    private func schedule(_ wanted: [(TodoItem, Date)], in cards: [TodoItem],
+                          now: Date, granted: Bool) {
+        guard granted else { return }
+        // Again: the first attempt in `sync` ran before there was permission
+        // to show a badge at all. Belt and braces rather than a proven fix — a
+        // brand-new install still shows no badge until its second launch,
+        // which looks like the system not accepting one in the same session
+        // the permission was granted. It corrects itself, and nothing is wrong
+        // by the time a reminder matters.
+        setBadge(Attention.count(in: cards, now: now))
+
+        for (card, at) in wanted {
+            let content = UNMutableNotificationContent()
+            content.title = card.title
+            content.body = String(localized: "Move it, or keep it where it is.",
+                                  comment: "Notification body for a reminder")
+            content.sound = .default
+            // What the flag will read once this has fired. Not a running
+            // total: a card whose reminder arrives while it already sits in
+            // Today adds nothing, and one that turns red at midnight adds
+            // itself without any notification to announce it.
+            content.badge = NSNumber(value: Attention.count(in: cards, now: at))
+            // Carries the card so opening the notification can go straight to
+            // it rather than to the top of the list.
+            content.userInfo = ["card": card.id.uuidString]
+
+            let parts = Calendar.current.dateComponents(
+                [.year, .month, .day, .hour, .minute], from: at)
+            let request = UNNotificationRequest(
+                identifier: card.id.uuidString,
+                content: content,
+                trigger: UNCalendarNotificationTrigger(dateMatching: parts, repeats: false)
+            )
+            centre.add(request)
         }
     }
 

@@ -691,10 +691,21 @@ keep the date I can no longer see".
 
 Completing or deleting a task cancels its reminders.
 
-Pending notifications are rewritten wholesale from the tasks after every change
-that could affect them, rather than patched one at a time — the set is a
-handful, and a schedule that has drifted from the tasks is how a reminder ends
-up firing for a task finished last week. Permission is asked the first time a
+Pending notifications are rewritten wholesale from the tasks, rather than
+patched one at a time — the set is a handful, and a schedule that has drifted
+from the tasks is how a reminder ends up firing for a task finished last week.
+
+**The schedule follows the tasks themselves.** Any change to the list of tasks
+schedules a rewrite shortly afterwards (a burst of edits, such as typing a note,
+a review pass or an import, is one rewrite), and completing, deleting and
+answering a reminder rewrite at once. It used to rely on each call site
+remembering to ask, and several did not: adding a task with a reminder, moving
+one and reopening one never refreshed it, so a stale badge or a missing
+notification could wait until the app next came to the front. A late answer to
+the permission question is ignored if a newer rewrite has started since, so two
+quick rewrites cannot leave a reminder pending for a task finished in between.
+
+Permission is asked the first time a
 reminder is actually set, not at launch: a permission sheet in front of an
 empty list is a question about nothing. If it is refused, reminders still
 appear in the review; only the notification is lost.
