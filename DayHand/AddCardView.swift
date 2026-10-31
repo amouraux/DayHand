@@ -1170,3 +1170,41 @@ struct CardActionsSheet: View {
         )
     }
 }
+
+/// "Pick a date…" from the reminder menu: a day on a calendar, for when none of
+/// the presets is the one meant. Only a day is asked for — the hour is the same
+/// for every reminder.
+struct ReminderDateSheet: View {
+    let itemID: UUID
+
+    @EnvironmentObject private var store: TodoStore
+    @Environment(\.dismiss) private var dismiss
+    @State private var day = Scheduler.defaultReminderTime()
+
+    var body: some View {
+        NavigationStack {
+            DatePicker("Date", selection: $day, in: Date()..., displayedComponents: .date)
+                .datePickerStyle(.graphical)
+                .labelsHidden()
+                .padding(.horizontal)
+                .navigationTitle("Remind me")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button("Cancel") { dismiss() }
+                            .keyboardShortcut(.cancelAction)
+                    }
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Set") {
+                            if let item = store.items.first(where: { $0.id == itemID }) {
+                                withAnimation { store.remind(item, on: day) }
+                            }
+                            dismiss()
+                        }
+                    }
+                }
+            Spacer(minLength: 0)
+        }
+        .presentationDetents([.medium, .large])
+    }
+}

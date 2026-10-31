@@ -745,25 +745,23 @@ do {
     expect(!Reminders.isOutstanding(moved, now: now), "answering stops it asking")
     expect(moved.remindAt == fired, "without throwing the date away")
 
-    var snoozed = card
-    ReminderAnswer.snooze.apply(to: &snoozed, now: now, calendar: calendar)
-    expect(snoozed.bucket == .later, "snoozing moves nothing")
-    expect(snoozed.remindAt == at("2026-10-02 08:00"), "it asks again at the same time tomorrow")
+    // "Keep here" answers the reminder and changes nothing else.
+    var kept = card
+    ReminderAnswer.keep.apply(to: &kept, now: now)
+    expect(kept.bucket == .later && kept.remindAt == fired, "keeping moves nothing and keeps the date")
+    expect(!Reminders.isOutstanding(kept, now: now), "and the reminder stops asking")
 
-    // Counted from now, not from the reminder. A week-old reminder snoozed by
-    // adding a day would land in the past, go quiet and never ask again —
-    // which reads exactly like the button having eaten the card.
-    var stale = card; stale.remindAt = at("2026-09-24 08:00")
-    ReminderAnswer.snooze.apply(to: &stale, now: now, calendar: calendar)
-    expect(stale.remindAt == at("2026-10-02 08:00"), "a long-ignored reminder still lands tomorrow")
-    expect(Reminders.isOutstanding(stale, now: at("2026-10-02 09:00")), "and asks again then")
-    expect(!Reminders.isOutstanding(snoozed, now: now), "and is quiet until then")
-    expect(Reminders.isOutstanding(snoozed, now: at("2026-10-02 09:00")),
+    // Giving it another day sets a new reminder, which starts unanswered: the
+    // answer given to the last one is from before this one's day.
+    var again = kept
+    again.remindAt = at("2026-10-02 09:00")
+    expect(!Reminders.isOutstanding(again, now: now), "a reminder for tomorrow is quiet until tomorrow")
+    expect(Reminders.isOutstanding(again, now: at("2026-10-02 09:00")),
            "then it is waiting again — the answer given was to the last one")
 
     var cleared = card
     cleared.deadline = at("2026-10-09 00:00")
-    ReminderAnswer.clear.apply(to: &cleared, now: now, calendar: calendar)
+    ReminderAnswer.clear.apply(to: &cleared, now: now)
     expect(cleared.remindAt == nil, "clearing removes the reminder")
     expect(cleared.deadline == at("2026-10-09 00:00"), "and leaves the deadline alone")
     expect(cleared.bucket == .later, "and moves nothing")
@@ -831,8 +829,8 @@ do {
     expect(Attention.needed(thisMorning, now: now, calendar: calendar), "so does one that fired today")
     expect(Attention.needed(thisEvening, now: now, calendar: calendar),
            "and one set for later today, which the review has not got yet")
-    expect(!Reminders.isOutstanding(thisEvening, now: now),
-           "the flag is wider than the review, on purpose")
+    expect(Reminders.isOutstanding(thisEvening, now: now),
+           "and it is waiting for an answer from the start of its day, as the red edge is")
     expect(!Attention.needed(tomorrow, now: now, calendar: calendar),
            "tomorrow is orange — being shown, not asked about")
     expect(!Attention.needed(distant, now: now, calendar: calendar), "and a distant one is neither")
@@ -1027,19 +1025,27 @@ do {
     expect(!Attention.needed(card, now: now, calendar: calendar),
            "but it is off the flag — moving it was the decision the flag was asking for")
 
-    // Snooze re-arms, and the old answer must not carry over to the new ask.
-    var snoozed = card
-    ReminderAnswer.snooze.apply(to: &snoozed, now: now, calendar: calendar)
-    expect(snoozed.remindAt == at("2026-10-02 08:00"), "snoozing asks again tomorrow")
-    expect(snoozed.bucket == .today, "and moves nothing")
-    expect(!Reminders.isOutstanding(snoozed, now: now), "quiet until then")
-    expect(Reminders.isOutstanding(snoozed, now: at("2026-10-02 09:00")),
+    // A new day re-arms it, and the old answer must not carry over to the new ask.
+    var rearmed = card
+    rearmed.remindAt = at("2026-10-02 09:00")
+    expect(rearmed.bucket == .today, "giving it another day moves nothing")
+    expect(!Reminders.isOutstanding(rearmed, now: now), "quiet until then")
+    expect(Reminders.isOutstanding(rearmed, now: at("2026-10-02 09:00")),
            "then asking again — the answer given was to the previous one")
+
+    // An answer given on the day counts even before the hour: the edge and the
+    // review both start at midnight, so dealing with it at eight is dealing
+    // with it.
+    var early = TodoItem(title: "ring the surveyor", bucket: .waiting, remindAt: at("2026-10-01 09:00"))
+    early.reminderAnsweredAt = at("2026-10-01 08:00")
+    expect(Reminders.isAnswered(early, calendar: calendar), "an answer at eight answers a reminder for nine")
+    early.reminderAnsweredAt = at("2026-09-30 23:59")
+    expect(!Reminders.isAnswered(early, calendar: calendar), "but one from the day before does not")
 
     // Clearing is the way to silence a reminder for good.
     var cleared = card
     cleared.deadline = at("2026-10-31 00:00")
-    ReminderAnswer.clear.apply(to: &cleared, now: now, calendar: calendar)
+    ReminderAnswer.clear.apply(to: &cleared, now: now)
     expect(cleared.remindAt == nil, "clearing takes the date with it")
     expect(cleared.deadline == at("2026-10-31 00:00"), "and leaves the deadline alone")
     expect(!Attention.needed(cleared, now: now, calendar: calendar),
@@ -1177,43 +1183,38 @@ do {
         return f.date(from: s)!
     }
     let now = at("2026-10-03 09:00")
-    func snooze(_ c: TodoItem) -> Bool { Reminders.canSnooze(c, now: now, calendar: calendar) }
     func flagged(_ c: TodoItem) -> Bool { Attention.needed(c, now: now, calendar: calendar) }
 
-    // The two cases the old gate got wrong, both reachable in a normal day.
-    var laterToday = TodoItem(title: "ring the surveyor", bucket: .inbox,
+    // The flag and the review agree about when a reminder has arrived: at the
+    // start of its day, which is also when the edge turns red.
+    let laterToday = TodoItem(title: "ring the surveyor", bucket: .inbox,
                               remindAt: at("2026-10-03 17:00"))
     expect(flagged(laterToday), "a reminder due this afternoon is on the flag from the morning")
-    expect(!Reminders.isOutstanding(laterToday, now: now), "without having fired yet")
-    expect(snooze(laterToday), "and it can still be pushed to tomorrow")
+    expect(Reminders.isOutstanding(laterToday, now: now), "and waiting for an answer from the morning too")
 
     var answeredThenBack = TodoItem(title: "chase the letter", bucket: .later,
                                     remindAt: at("2026-10-03 08:00"))
     answeredThenBack.reminderAnsweredAt = at("2026-10-03 08:30")   // moved, then moved back
     expect(flagged(answeredThenBack), "a card dealt with and put back in Later is on the flag again")
     expect(!Reminders.isOutstanding(answeredThenBack, now: now), "with its answer still stamped")
-    expect(snooze(answeredThenBack), "and it must offer the same choices as any other flagged card")
 
-    // The invariant that was broken: nothing the flag shows is without a snooze.
-    for card in [laterToday, answeredThenBack] {
-        expect(!flagged(card) || snooze(card), "a flagged card always offers snooze")
-    }
+    // The icon counts what is waiting for an answer, in any stack.
+    let working = TodoItem(title: "write the case", bucket: .today, remindAt: at("2026-10-03 08:00"))
+    let cards = [laterToday, answeredThenBack, working]
+    expect(Reminders.unansweredCount(in: cards, now: now) == 2,
+           "two reminders are waiting, one of them on a task already in Now")
+    var keptWorking = working
+    ReminderAnswer.keep.apply(to: &keptWorking, now: now)
+    expect(Reminders.unansweredCount(in: [laterToday, answeredThenBack, keptWorking], now: now) == 1,
+           "keeping it takes it off the icon")
 
-    // Still excluded, for the reason the word demands.
-    let nextWeek = TodoItem(title: "plan the trip", bucket: .later,
-                            remindAt: at("2026-10-10 09:00"))
-    expect(!snooze(nextWeek), "a reminder still to come is not snoozed — tomorrow is earlier than it")
+    // Still excluded: not arrived, finished, or no reminder at all.
+    let nextWeek = TodoItem(title: "plan the trip", bucket: .later, remindAt: at("2026-10-10 09:00"))
+    expect(!Reminders.isOutstanding(nextWeek, now: now), "a reminder still to come is not waiting")
     var done = laterToday; done.bucket = .completed
-    expect(!snooze(done), "and a finished card has nothing to be reminded about")
-    let dateless = TodoItem(title: "tidy the loft", bucket: .inbox)
-    expect(!snooze(dateless), "nor has one with no reminder at all")
-
-    // Snoozing always lands later than now, which is the point of excluding
-    // the future ones.
-    for card in [laterToday, answeredThenBack] {
-        let next = Reminders.again(after: card.remindAt!, now: now, calendar: calendar)
-        expect(next != nil && next! > now, "snoozing \(card.title) moves it forward, never back")
-    }
+    expect(!Reminders.isOutstanding(done, now: now), "and a finished card has nothing to be reminded about")
+    expect(!Reminders.isOutstanding(TodoItem(title: "tidy the loft", bucket: .inbox), now: now),
+           "nor has one with no reminder at all")
 }
 
 // MARK: AE — a reminder is a day, fired at a fixed hour
@@ -1240,11 +1241,16 @@ do {
     expect(Scheduler.defaultReminderTime(now) > now,
            "and never a moment that has already gone by")
 
-    // Snoozing keeps the hour, so a day-granular reminder stays day-granular.
-    let tomorrow = Reminders.again(after: Scheduler.reminderTime(on: at("2026-10-03 09:00"),
-                                                                 calendar: calendar),
-                                   now: now, calendar: calendar)
-    expect(tomorrow == at("2026-10-04 09:00"), "snoozing lands on the next day at nine")
+    // The days "Remind me…" offers are whole days from today, at the same hour.
+    expect(ReminderPreset.tomorrow.day(from: now, calendar: calendar) == at("2026-10-04 00:00"),
+           "tomorrow is the next day")
+    expect(ReminderPreset.inThreeDays.day(from: now, calendar: calendar) == at("2026-10-06 00:00"),
+           "in three days is three days on")
+    expect(ReminderPreset.inAWeek.day(from: now, calendar: calendar) == at("2026-10-10 00:00"),
+           "in a week is seven")
+    expect(Scheduler.reminderTime(on: ReminderPreset.tomorrow.day(from: now, calendar: calendar),
+                                  calendar: calendar) == at("2026-10-04 09:00"),
+           "and the reminder lands on that day at nine")
 
     // A reminder set by an older version at some other hour is left alone: it
     // fires when it was told to, and moving it would be a change nobody asked
@@ -1288,8 +1294,8 @@ do {
                          remindAt: at("2026-10-04 09:00"))
     expect(Attention.needed(chase, now: now, calendar: calendar),
            "so a reminder that has arrived on a waiting card is still flagged")
-    expect(Reminders.canSnooze(chase, now: now, calendar: calendar),
-           "and can be pushed to tomorrow like any other")
+    expect(Reminders.isOutstanding(chase, now: now, calendar: calendar),
+           "and is waiting for an answer, which Keep here gives without moving it")
 
     // A waiting card with nothing due is quiet. That is the relief it buys.
     let parked = TodoItem(title: "quote from the supplier", bucket: .waiting)
@@ -1706,13 +1712,29 @@ do {
     expect(menu(plain).filter { $0 == .delete }.count == 1, "and is offered once, not twice")
 
     // Reminders add two, and only when they apply.
-    expect(!menu(plain).contains(.snooze), "no reminder, nothing to snooze")
+    expect(menu(plain).contains(.setReminder) && !menu(plain).contains(.changeReminder),
+           "no reminder, so one can be set, and nothing is offered to change")
     expect(!menu(plain).contains(.clearReminder), "and nothing to clear")
+    expect(!menu(plain).contains(.keepHere), "or to keep")
+    expect(menu(plain).contains(.complete), "Complete is offered, since a notification opens this menu")
     var reminded = TodoItem(title: "reminded")
     reminded.remindAt = Date().addingTimeInterval(60 * 60 * 24 * 7)
     expect(menu(reminded).contains(.clearReminder), "a reminder can always be cleared")
-    expect(menu(reminded).contains(.snooze) == Reminders.canSnooze(reminded),
-           "snooze follows the same rule the flag uses to gather the card")
+    expect(menu(reminded).contains(.changeReminder) && !menu(reminded).contains(.setReminder),
+           "and changed rather than set")
+    expect(!menu(reminded).contains(.keepHere), "a reminder still to come has nothing to keep")
+    var arrived = TodoItem(title: "arrived")
+    arrived.remindAt = Date().addingTimeInterval(-60 * 60 * 24)
+    expect(menu(arrived).contains(.keepHere), "Keep here is offered once a reminder has arrived")
+    arrived.reminderAnsweredAt = Date()
+    expect(!menu(arrived).contains(.keepHere), "and not once it has been answered")
+    var finished = TodoItem(title: "finished"); finished.bucket = .completed
+    expect(!menu(finished).contains(.complete), "a finished task is not offered Complete")
+    let listed = menu(arrived)
+    let change = listed.firstIndex(of: .changeReminder)!
+    let complete = listed.firstIndex(of: .complete)!
+    let edit = listed.firstIndex(of: .edit)!
+    expect(change < complete && complete < edit, "reminder actions come before Complete, and Complete before Edit")
 
     // Filtering is either/or, never both.
     expect(menu(plain, project: true).contains(.showOnlyProject),

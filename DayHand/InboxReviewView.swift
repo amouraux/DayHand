@@ -479,6 +479,9 @@ struct StackReviewView: View {
     }
 
     private func keep(_ card: TodoItem) {
+        // Keeping is a decision, so it answers a reminder that is waiting on
+        // this task. When there is none it changes nothing.
+        store.keepHere(card)
         session?.keepInStack(card.id)
         persist()
     }

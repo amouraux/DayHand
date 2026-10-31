@@ -89,10 +89,16 @@ A moment already past arrives answered, so old dates do not create a backlog.
 A reminder stops asking when the user answers it, and **dealing with the card
 is an answer**: `TodoStore.move` stamps `reminderAnsweredAt` while keeping
 `remindAt`, so the card stops nagging but keeps its red edge for the rest of
-the day. Completing or deleting answers it too. Only Snooze and Clear are about
-the reminder alone, and they live on the card's menu — in **both** the popover
-(Mac/iPad) and the `confirmationDialog` (phone), which are separate code paths
-and easy to update by half.
+the day. Completing or deleting answers it too, and so does **Keep here** — "it
+is still Waiting" is a decision. An answer counts if it was given on the
+reminder's day or later (`Reminders.isAnswered`), so giving a card another day
+needs no bookkeeping. Keep here, Remind me… and Clear are about the reminder
+alone, and they live on the card's menu — in **both** the popover (Mac/iPad)
+and the `confirmationDialog` (phone), which are separate code paths and easy to
+update by half; `CardMenu` holds the rules for both.
+
+The app icon counts reminders that have arrived and are **unanswered**
+(`Reminders.unansweredCount`); the flag is a different, wider thing.
 
 Dismissing the notification is explicitly not an answer — see
 `UNUserNotificationCenterDelegate` in `ReminderScheduler.swift`, which posts

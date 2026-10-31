@@ -568,7 +568,7 @@ bulk fix for tasks already imported is a CSV with an `entered` column.
 A reminder is armed on a task with a **day**, and fires a local notification.
 
 **Not a time.** The whole app thinks in days — the edge colours by day, the flag
-gathers by day, snooze means tomorrow — and being asked for an hour you did not
+gathers by day, and "remind me" offers days — and being asked for an hour you did not
 care about is a question with no right answer. A notification has to go off at
 some point, so they all go off at **nine**, which is when a day's work gets
 looked at. The picker shows a date and nothing else.
@@ -627,54 +627,56 @@ Moving a task, completing it or deleting it is an answer. The user has decided
 what to do with it; nothing should still be asking.
 
 **Answered is not cleared.** A move keeps both dates — that rule has not
-changed — so the task holds on to its reminder and stays red for the rest of
-the day. It is still today's work; it just is not a question any more. The flag
-goes on showing it after you have moved it, which is right: the flag is the
-day, not a queue of unanswered questions.
+changed — so the task holds on to its reminder and keeps its red edge. The red
+edge is the day, not a queue of unanswered questions, and it stays.
 
-The only two things that are about the reminder rather than the task live on
-the task's own menu, beside Edit and the four stacks:
+**An answer counts if it was given on the reminder's day or later,** not only
+after the hour the reminder fires: the edge and the review both start at
+midnight, so dealing with a task at eight for a nine o'clock reminder is dealing
+with it. An answer from before the reminder's day belongs to an earlier
+reminder, which is why giving a task another day needs no bookkeeping: the new
+reminder starts unanswered.
 
-- **Snooze until tomorrow**, shown for any reminder that has **arrived** — red,
-  which starts at the beginning of its day. Not "waiting on an answer", which is
-  narrower and leaves tasks the flag is showing with no snooze on them: a
-  reminder set for five this afternoon is on the flag from the morning without
-  having fired, and a task dealt with and then put back in Later is on the flag
-  again with its answer still stamped. **Anything the flag gathers offers the
-  choices that go with it** — one predicate, so the two cannot drift apart.
-  A reminder still to come is excluded, because "until tomorrow" would move it
-  *earlier*, which is not what the word means.
+The things that are about the reminder rather than the task live on the task's
+own menu, between the four stacks and Edit:
+
+- **Keep here**, shown once a reminder has arrived and not been answered. "I
+  checked with the contractor, it is still Waiting" is a decision, and the app
+  should not need the task to move to hear it. It answers the reminder and
+  changes nothing else. The review helpers' **Keep** does the same: it answers a
+  reminder that is waiting on the task, and when there is none it changes
+  nothing, so a Keep is never an edit that did not need to be.
+- **Remind me…** for a task with no reminder, **Change reminder…** for one that
+  has one. It opens the days people actually mean — **Tomorrow, In 3 days, In a
+  week** — and **Pick a date…**, which opens a calendar; the editor is not
+  needed. Each sets a new reminder, at the usual hour. This replaces
+  "Snooze until tomorrow", which could only ever mean tomorrow.
 - **Clear the reminder**, shown whenever there is one. This is how a reminder is
   silenced for good, and it takes the red edge with it.
 
-**Orange is deliberately left out.** A task three days off is being shown, not
-asked about, and a list of things to deal with now loses its meaning the moment
-it also contains things to deal with later.
+**Complete** is also on the menu, after the reminder actions and before Edit.
+It was only a tick on the row, but the menu a notification opens is where the
+four natural answers belong — Keep here, Move, Remind me, Complete.
 
-Both appear only while there is something to count; a count of nothing is not
-worth a permanent control.
+**Orange is deliberately left out of the review and the icon.** A task three
+days off is being shown, not asked about.
 
-**The app icon carries the flag's number**, and exactly that: two numbers
-meaning nearly the same thing is how you end up with an icon saying 1 beside a
-button saying 0.
+The flag and the stacks keep their own rules until the flag is reworked; the
+icon below counts only what still needs an answer.
+
+**The app icon counts reminders that have arrived and not been answered,** in any
+stack. Moving, completing, keeping or deleting a task takes it off. It is no
+longer the flag's number: the flag gathers what is red, and the icon counts
+what is still waiting.
 
 Each scheduled notification carries the badge the icon should show **once it
-fires** — the flag's count evaluated at that moment, not a running total. It
-has to be worked out in advance, because nothing can update a badge while the
-app is closed, and it is knowable: a task joins the flagged set when its
-reminder's day begins and leaves it only when someone files or finishes it. So
-a reminder arriving on a task already red adds nothing, and a task that turns
-red at midnight adds itself with no notification to announce it. The app
-corrects the count the moment it is opened. That count is the only thing that says something is waiting without the
-app being opened, which is exactly what an unanswered reminder needs. Each
-scheduled notification carries the badge the icon should show once it has fired — those already waiting, plus itself and
-everything before it — and the app corrects the number the moment it is opened.
-
-**Snooze** asks again at the same time of day tomorrow, counted from **now**,
-not from the reminder. A reminder left alone for a week is the usual case, and
-adding a day to it would land in the past: the task would go quiet and never
-ask again, which reads exactly like the button having eaten it. The task does
-not move.
+fires**: the reminders waiting for an answer at that moment, itself included.
+It has to be worked out in advance, because nothing can update a badge while the
+app is closed, and it is knowable: a reminder joins the count when its day
+begins and leaves it only when someone answers it. The app corrects the count
+the moment it is opened. That count is the only thing that says something is
+waiting without the app being opened, which is exactly what an unanswered
+reminder needs.
 
 **Clearing** leaves the **deadline exactly as it was**: the job may still have
 a day it must be finished by, and the editor offers the field again the moment
@@ -1414,17 +1416,18 @@ What a task offers is **one list** — `CardMenu.actions(for:isFiltered:hasProje
 — and the three places that show it decide only how to draw it: the phone's
 dialog plainly, the Mac and iPad popover with the stack colours, the Mac's
 right-click menu with symbols. The stacks it is not already in come first, so
-the common move stays one tap with nothing in the way; then the reminder, if it
-has one; then Edit; then the filter item.
+the common move stays one tap with nothing in the way; then the reminder
+actions (Keep here, Remind me… or Change reminder…, Clear the reminder); then
+Complete and Edit; then the filter item.
 
 Each surface used to carry its own hand-written copy, which is the hazard this
-file already names about Snooze and Clear living in two code paths. They
+file already names about the reminder actions living in two code paths. They
 drifted exactly as predicted: the right-click menu was written with Edit and
 Show Only and never learned the rest, so the Mac's richer gesture gave the
 poorer menu. The rule is in the model layer now, where a test can say that a
-task in Next is not offered Next, that Snooze follows the same rule the flag
-uses to gather the task, and that Show All replaces Show Only rather than
-joining it.
+task in Next is not offered Next, that Keep here appears only for a reminder
+that has arrived and not been answered, and that Show All replaces Show Only
+rather than joining it.
 
 **Edit is on every surface, always.** A menu that will move a task but not open
 it reads as broken — Finder puts Open in both places for the same reason.

@@ -333,9 +333,15 @@ enum CardMenu {
     enum Action: Equatable {
         /// A stack this card is not already in.
         case move(Bucket)
-        /// Only once a reminder has arrived.
-        case snooze
+        /// A reminder has arrived and has not been answered, and the card is
+        /// where it belongs.
+        case keepHere
+        /// Opens the days to choose from. Which of the two it is depends on
+        /// whether the card has a reminder, because the words differ.
+        case setReminder
+        case changeReminder
         case clearReminder
+        case complete
         case edit
         /// Narrow to this card's project; never offered while a filter is on.
         case showOnlyProject
@@ -350,12 +356,15 @@ enum CardMenu {
         case delete
     }
 
-    static func actions(for card: TodoItem, isFiltered: Bool, hasProject: Bool) -> [Action] {
+    static func actions(for card: TodoItem, isFiltered: Bool, hasProject: Bool,
+                        now: Date = Date(), calendar: Calendar = .current) -> [Action] {
         // The stacks it is not in come first, so the common move stays one
         // tap with nothing in the way.
         var actions = Bucket.quickMoveTargets.filter { $0 != card.bucket }.map(Action.move)
-        if Reminders.canSnooze(card) { actions.append(.snooze) }
+        if Reminders.isOutstanding(card, now: now, calendar: calendar) { actions.append(.keepHere) }
+        actions.append(card.remindAt == nil ? .setReminder : .changeReminder)
         if card.remindAt != nil { actions.append(.clearReminder) }
+        if !card.isCompleted { actions.append(.complete) }
         actions.append(.edit)
         if isFiltered { actions.append(.showAll) }
         else if hasProject { actions.append(.showOnlyProject) }
@@ -1045,38 +1054,43 @@ enum Attention {
 ///
 /// A reminder leaves this list for one reason only: the user said what to do
 /// with the card. Swiping the notification away is not an answer — it is how
-/// a notification is got rid of, not how a decision is made — so the review
-/// goes on holding it until one of the three choices is made.
+/// a notification is got rid of, not how a decision is made — so the reminder
+/// goes on being asked about until one of the answers is given.
 enum Reminders {
-    static func isOutstanding(_ card: TodoItem, now: Date = Date()) -> Bool {
-        guard !card.isCompleted, let at = card.remindAt else { return false }
-        guard at <= now else { return false }
-        // Answered before this reminder was due means it was a previous one:
-        // re-arming for tomorrow must not arrive already answered.
-        guard let answered = card.reminderAnsweredAt else { return true }
-        return answered < at
+    /// Whether the reminder on this card has been answered. An answer counts if
+    /// it was given on the reminder's day or later, not only after the hour it
+    /// fires: the red edge and the review both start at midnight, so someone
+    /// who deals with a card at eight for a nine o'clock reminder has dealt
+    /// with it. An answer to an earlier reminder — before this one's day — is
+    /// not an answer to it, which is why re-arming needs no bookkeeping.
+    static func isAnswered(_ card: TodoItem, calendar: Calendar = .current) -> Bool {
+        guard let remindAt = card.remindAt, let answered = card.reminderAnsweredAt else { return false }
+        return answered >= calendar.startOfDay(for: remindAt)
     }
 
-    /// Whether "snooze until tomorrow" means anything for this card.
-    ///
-    /// The reminder has to have *arrived* — red, which starts at the beginning
-    /// of its day. Deliberately not "unanswered", which is a narrower thing and
-    /// was the wrong gate: a reminder set for five this afternoon is on the
-    /// flag from the morning without having fired, and a card dealt with and
-    /// then put back in Later is on the flag again with its answer still
-    /// stamped. Both appeared under the flag offering no snooze at all.
-    ///
-    /// A reminder still to come is excluded, because tomorrow at the same time
-    /// would move it *earlier*, which is not what the word means.
-    static func canSnooze(_ card: TodoItem, now: Date = Date(),
-                          calendar: Calendar = .current) -> Bool {
-        guard !card.isCompleted else { return false }
-        return Urgency.of(card.remindAt, now: now, calendar: calendar).isRed
+    /// A reminder that has arrived and has not been answered: the one the badge
+    /// counts and "Keep here" settles. Arrived means red, so this starts when
+    /// the edge does, at the beginning of the reminder's day.
+    static func isOutstanding(_ card: TodoItem, now: Date = Date(),
+                              calendar: Calendar = .current) -> Bool {
+        guard !card.isCompleted, card.remindAt != nil else { return false }
+        guard Urgency.of(card.remindAt, now: now, calendar: calendar).isRed else { return false }
+        return !isAnswered(card, calendar: calendar)
     }
 
-    static func outstanding(in cards: [TodoItem], now: Date = Date()) -> [TodoItem] {
-        cards.filter { isOutstanding($0, now: now) }
+    static func outstanding(in cards: [TodoItem], now: Date = Date(),
+                            calendar: Calendar = .current) -> [TodoItem] {
+        cards.filter { isOutstanding($0, now: now, calendar: calendar) }
             .sorted { ($0.remindAt ?? .distantPast) < ($1.remindAt ?? .distantPast) }
+    }
+
+    /// How many reminders are waiting for an answer at `now`. The number on the
+    /// app icon: it goes down when something is answered, whatever stack the
+    /// task sits in. Takes the moment, like `Attention.count`, because a
+    /// notification carries the number the icon should show once it has fired.
+    static func unansweredCount(in cards: [TodoItem], now: Date = Date(),
+                                calendar: Calendar = .current) -> Int {
+        cards.filter { isOutstanding($0, now: now, calendar: calendar) }.count
     }
 
     /// The reminders a notification should be pending for: armed, in the
@@ -1087,20 +1101,23 @@ enum Reminders {
             return at > now
         }
     }
+}
 
-    /// "Snooze" — the same time of day, tomorrow.
-    ///
-    /// Tomorrow counted from *now*, not from the reminder. A reminder left
-    /// unanswered for a week is the usual case, and adding a day to it would
-    /// land in the past: the card would go quiet and never ask again, which
-    /// reads exactly like the button having eaten it.
-    static func again(after at: Date, now: Date = Date(),
-                      calendar: Calendar = .current) -> Date? {
-        let time = calendar.dateComponents([.hour, .minute], from: at)
-        guard let tomorrow = calendar.date(byAdding: .day, value: 1,
-                                           to: calendar.startOfDay(for: now)) else { return nil }
-        return calendar.date(bySettingHour: time.hour ?? 9, minute: time.minute ?? 0,
-                             second: 0, of: tomorrow)
+/// The days "Remind me…" offers without opening the editor. Each is a whole
+/// day, counted from today: the hour is the reminder hour, as for every other.
+enum ReminderPreset: CaseIterable, Equatable {
+    case tomorrow, inThreeDays, inAWeek
+
+    var days: Int {
+        switch self {
+        case .tomorrow: return 1
+        case .inThreeDays: return 3
+        case .inAWeek: return 7
+        }
+    }
+
+    func day(from now: Date = Date(), calendar: Calendar = .current) -> Date {
+        calendar.date(byAdding: .day, value: days, to: calendar.startOfDay(for: now)) ?? now
     }
 }
 
@@ -1108,32 +1125,33 @@ enum Reminders {
 ///
 /// Moving the card is not in here, and neither is completing it: both are
 /// answers, but they are things the user does to the *card*, and the card
-/// already knows how to do them. Only these two are about the reminder alone.
+/// already knows how to do them. Giving it another day is not in here either:
+/// that sets a new reminder, which starts unanswered. Only these two are about
+/// the reminder alone.
 ///
-/// Doing nothing is deliberately not in here either. Leaving a reminder alone
-/// is the absence of an answer, not one of them, which is exactly why it goes
-/// on asking — the same reason dismissing a notification changes nothing.
+/// Doing nothing is deliberately not in here. Leaving a reminder alone is the
+/// absence of an answer, not one of them, which is exactly why it goes on
+/// asking — the same reason dismissing a notification changes nothing.
 enum ReminderAnswer: Equatable {
-    /// Ask again at the same time tomorrow. The card does not move.
-    case snooze
+    /// "Keep here": the card is in the right stack and the reminder has been
+    /// seen. Nothing but the answer changes — "I checked, it is still Waiting"
+    /// is a decision, and the app should not need the card to move to hear it.
+    case keep
     /// Done with the reminder. The deadline is left exactly as it was: the
     /// job may still have a day it must be finished by, and the editor offers
     /// it again the moment a reminder is set.
     case clear
 
     /// Applied here rather than in the store so it can be tested.
-    func apply(to card: inout TodoItem, now: Date, calendar: Calendar = .current) {
+    func apply(to card: inout TodoItem, now: Date) {
         switch self {
-        case .snooze:
-            card.remindAt = card.remindAt.flatMap {
-                Reminders.again(after: $0, now: now, calendar: calendar)
-            }
+        case .keep:
+            break
         case .clear:
             card.remindAt = nil
         }
         card.reminderAnsweredAt = now
     }
-
 }
 
 // MARK: - Looking back at what got done

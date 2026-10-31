@@ -81,7 +81,7 @@ final class ReminderScheduler: NSObject, UNUserNotificationCenterDelegate {
             }
             .sorted { $0.1 < $1.1 }
 
-        setBadge(Attention.count(in: cards, now: now))
+        setBadge(Reminders.unansweredCount(in: cards, now: now))
         centre.removeAllPendingNotificationRequests()
         guard !wanted.isEmpty else { return }
 
@@ -110,7 +110,7 @@ final class ReminderScheduler: NSObject, UNUserNotificationCenterDelegate {
         // which looks like the system not accepting one in the same session
         // the permission was granted. It corrects itself, and nothing is wrong
         // by the time a reminder matters.
-        setBadge(Attention.count(in: cards, now: now))
+        setBadge(Reminders.unansweredCount(in: cards, now: now))
 
         for (card, at) in wanted {
             let content = UNMutableNotificationContent()
@@ -118,11 +118,11 @@ final class ReminderScheduler: NSObject, UNUserNotificationCenterDelegate {
             content.body = String(localized: "Move it, or keep it where it is.",
                                   comment: "Notification body for a reminder")
             content.sound = .default
-            // What the flag will read once this has fired. Not a running
-            // total: a card whose reminder arrives while it already sits in
-            // Today adds nothing, and one that turns red at midnight adds
-            // itself without any notification to announce it.
-            content.badge = NSNumber(value: Attention.count(in: cards, now: at))
+            // What the icon should read once this has fired: the reminders
+            // waiting for an answer, itself included. Not the flag's number —
+            // the flag gathers everything the list draws red, answered or
+            // not, and the icon counts only what still needs an answer.
+            content.badge = NSNumber(value: Reminders.unansweredCount(in: cards, now: at))
             // Carries the card so opening the notification can go straight to
             // it rather than to the top of the list.
             content.userInfo = ["card": card.id.uuidString]
@@ -138,10 +138,9 @@ final class ReminderScheduler: NSObject, UNUserNotificationCenterDelegate {
         }
     }
 
-    /// The one number on the icon, and the same one the flag shows: cards
-    /// whose reminder has arrived that are still sitting in Inbox or Later.
-    /// Two numbers meaning nearly the same thing is how you end up with an
-    /// icon saying 1 and a button saying 0.
+    /// The one number on the icon: reminders that have arrived and are still
+    /// waiting for an answer. Moving, completing or keeping a task answers it,
+    /// and the number goes down.
     func setBadge(_ count: Int) {
         // On the main queue always: the permission callback arrives on one of
         // the notification centre's own queues, and anything touching the icon
@@ -179,6 +178,16 @@ extension Urgency {
         case .none:        return nil
         case .approaching: return .orange
         case .due, .overdue: return .red
+        }
+    }
+}
+
+extension ReminderPreset {
+    var title: LocalizedStringKey {
+        switch self {
+        case .tomorrow: return "Tomorrow"
+        case .inThreeDays: return "In 3 days"
+        case .inAWeek: return "In a week"
         }
     }
 }

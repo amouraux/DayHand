@@ -220,6 +220,22 @@ final class TodoStore: ObservableObject {
         rescheduleNotifications()
     }
 
+    /// "Keep here": the reminder has been seen and the task is in the right
+    /// stack. Does nothing when there is no reminder waiting, so the review
+    /// helpers can call it on every Keep without every Keep becoming an edit —
+    /// an answer is a real edit, stamped and synced, and a task with nothing
+    /// to answer should not be touched.
+    func keepHere(_ item: TodoItem) {
+        guard let live = items.first(where: { $0.id == item.id }),
+              Reminders.isOutstanding(live) else { return }
+        answerReminder(live, .keep)
+    }
+
+    /// Ask again on one of the days "Remind me…" offers.
+    func remind(_ item: TodoItem, on day: Date) {
+        setReminder(item, at: day)
+    }
+
 
 
     // MARK: - The day turning underneath an open window

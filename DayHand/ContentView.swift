@@ -7,6 +7,10 @@ struct ContentView: View {
     @State private var stackPickItem: TodoItem?
     /// The card being edited in full, from a right swipe.
     @State private var editItem: TodoItem?
+    /// The card whose reminder is being set from the menu, and the one for which
+    /// a date is being picked by hand. Two steps, because a dialog cannot nest.
+    @State private var remindPickItem: TodoItem?
+    @State private var datePickItem: TodoItem?
     @State private var isAdding = false
     @State private var reviewingStack: ReviewStack?
     @State private var isShowingSettings = false
@@ -236,6 +240,31 @@ struct ContentView: View {
                     } label: { look.title }
                 }
                 Button("Cancel", role: .cancel) { }
+            }
+            // "Remind me…": the days people actually mean, without the editor.
+            .confirmationDialog(
+                remindPickItem?.title ?? "",
+                isPresented: Binding(
+                    get: { remindPickItem != nil },
+                    set: { if !$0 { remindPickItem = nil } }
+                ),
+                titleVisibility: .visible,
+                presenting: remindPickItem
+            ) { card in
+                ForEach(ReminderPreset.allCases, id: \.days) { preset in
+                    Button(preset.title) {
+                        withAnimation { store.remind(card, on: preset.day()) }
+                    }
+                }
+                // One hop: a sheet presented from a dialog's own action is
+                // swallowed while that dialog is still dismissing.
+                Button("Pick a date…") {
+                    DispatchQueue.main.async { datePickItem = card }
+                }
+                Button("Cancel", role: .cancel) { }
+            }
+            .sheet(item: $datePickItem) { card in
+                ReminderDateSheet(itemID: card.id).environmentObject(store)
             }
             .onChange(of: scenePhase) { _, phase in
                 // A Mac window that is not frontmost is still a window the
@@ -922,9 +951,19 @@ struct ContentView: View {
         case .move(let target):
             return (Text(target.title), target.symbolName, target.tint, target.lightWash,
                     { withAnimation { store.move(card, to: target) } })
-        case .snooze:
-            return (Text("Snooze until tomorrow"), "bell.badge", .accentColor, 0,
-                    { withAnimation { store.answerReminder(card, .snooze) } })
+        case .keepHere:
+            return (Text("Keep here"), "checkmark", .accentColor, 0,
+                    { withAnimation { store.keepHere(card) } })
+        case .setReminder:
+            // One hop, as for Edit: the dialog it opens would be swallowed.
+            return (Text("Remind me…"), "bell", .accentColor, 0,
+                    { DispatchQueue.main.async { remindPickItem = card } })
+        case .changeReminder:
+            return (Text("Change reminder…"), "bell", .accentColor, 0,
+                    { DispatchQueue.main.async { remindPickItem = card } })
+        case .complete:
+            return (Text("Complete"), "checkmark.circle", .accentColor, 0,
+                    { withAnimation { store.complete(card) } })
         case .clearReminder:
             return (Text("Clear the reminder"), "bell.slash", .secondary, 0,
                     { withAnimation { store.answerReminder(card, .clear) } })
@@ -956,8 +995,8 @@ struct ContentView: View {
         func rank(_ action: CardMenu.Action) -> Int {
             switch action {
             case .move: return 0
-            case .snooze, .clearReminder: return 1
-            case .edit, .showOnlyProject, .showAll: return 2
+            case .keepHere, .setReminder, .changeReminder, .clearReminder: return 1
+            case .complete, .edit, .showOnlyProject, .showAll: return 2
             case .delete: return 3
             }
         }
