@@ -2884,5 +2884,25 @@ do {
     expect(old != nil && old?.canGoBack == false, "a session saved before going back existed still decodes")
 }
 
+// A file chosen for syncing is written into, so one that is not ours is refused.
+do {
+    func kind(_ s: String) -> DocumentStorage.SyncFileContents { DocumentStorage.classify(Data(s.utf8)) }
+    expect(kind("") == .empty, "a zero-byte file is empty")
+    expect(kind(" \n\t ") == .empty, "whitespace alone is empty")
+
+    let ours = DocumentCoding.makeEncoder()
+    let saved = try! ours.encode(StoreDocument(categories: CardCategory.defaults, cards: [TodoItem(title: "x")]))
+    expect(DocumentStorage.classify(saved) == .dayHand, "a saved document is recognised")
+    expect(kind("{\"cards\":[],\"categories\":[]}") == .dayHand, "a document with no tasks is still ours")
+    expect(kind("[]") == .dayHand, "a bare empty list, as before syncing existed, is ours")
+
+    expect(kind("{}") == .other, "an empty object says nothing about being ours")
+    expect(kind("{\"name\":\"somebody's settings\"}") == .other, "another program's JSON is not ours")
+    expect(kind("{\"cards\":\"nope\"}") == .other, "a document that claims to be ours but cannot be read is refused")
+    expect(kind("[1,2,3]") == .other, "a list that is not tasks is not ours")
+    expect(kind("id,title\n1,hello") == .other, "a CSV is not ours")
+    expect(DocumentStorage.classify(Data([0xFF, 0xD8, 0xFF, 0xE0])) == .other, "binary data is not ours")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

@@ -936,6 +936,8 @@ final class TodoStore: ObservableObject {
         return storage.syncFileName != nil
     }
 
+    func inspectSyncFile(at url: URL) -> DocumentStorage.SyncFileContents? { storage.inspectSyncFile(at: url) }
+
     /// Whether adopting a file would actually bring anything with it, so the UI
     /// can warn before replacing local cards with an empty one.
     func syncFileHasContent(at url: URL) -> Bool {

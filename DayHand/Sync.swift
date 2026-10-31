@@ -1201,6 +1201,21 @@ final class DocumentStorage {
         return StoreDocument.merging(([found].compactMap { $0 }) + conflicts)
     }
 
+    /// Read a candidate file just far enough to say what it is. Nil when it
+    /// cannot be read at all, which is not the same as empty.
+    func inspectSyncFile(at url: URL) -> SyncFileContents? {
+        let scoped = url.startAccessingSecurityScopedResource()
+        defer { if scoped { url.stopAccessingSecurityScopedResource() } }
+        DocumentStorage.materialise(url)
+
+        var contents: SyncFileContents?
+        var coordinationError: NSError?
+        NSFileCoordinator().coordinate(readingItemAt: url, options: [], error: &coordinationError) { readURL in
+            if let data = try? Data(contentsOf: readURL) { contents = DocumentStorage.classify(data) }
+        }
+        return contents
+    }
+
     /// Point the app at `url` from now on, and hand back whatever it already
     /// holds so the caller can merge rather than overwrite.
     func adoptSyncFile(at url: URL) -> StoreDocument? {
@@ -1329,6 +1344,31 @@ final class DocumentStorage {
     // MARK: Coding
 
     static func encodeDocument(_ document: StoreDocument) -> Data? { encode(document) }
+
+    /// What a file offered for syncing turns out to hold. Syncing writes into
+    /// it from then on, so anything that is neither empty nor ours would be
+    /// overwritten: a spreadsheet, a photo, somebody's other JSON.
+    enum SyncFileContents: Equatable {
+        case empty
+        case dayHand
+        case other
+    }
+
+    /// Whitespace alone counts as empty — a file just made in Files. Something
+    /// must also *say* it is a DayHand document: the decoder takes any object
+    /// (every key is optional, so older files load), which would let `{}` or
+    /// somebody's settings file through.
+    static func classify(_ data: Data) -> SyncFileContents {
+        if data.allSatisfy({ [0x20, 0x09, 0x0A, 0x0D].contains($0) }) { return .empty }
+        guard let json = try? JSONSerialization.jsonObject(with: data) else { return .other }
+        let claimsToBeOurs: Bool
+        if let object = json as? [String: Any] {
+            claimsToBeOurs = ["cards", "categories", "projects"].contains { object[$0] != nil }
+        } else {
+            claimsToBeOurs = json is [Any]    // a file from before syncing: a bare array
+        }
+        return claimsToBeOurs && decode(data) != nil ? .dayHand : .other
+    }
 
     static func decode(_ data: Data) -> StoreDocument? {
         let decoder = DocumentCoding.makeDecoder()

@@ -1555,6 +1555,18 @@ would push straight back into the file being adopted and erase the very tasks
 just taken from it. Drop them and their tombstones instead. Refuse to replace
 from a file holding no tasks.
 
+**A file that is not ours is refused before anything else.** Syncing writes into
+the file from then on, so choosing a spreadsheet, a photo or another program's
+JSON would overwrite it. The picked file must be empty (a zero-byte or
+whitespace-only file just made in Files, which the device then seeds) or a
+DayHand document. A document is recognised by *saying* so — a top-level `cards`,
+`categories` or `projects`, or a bare list as before syncing existed — and then
+decoding, because the decoder alone accepts any object (every key is optional,
+so older files load) and `{}` would pass. Anything else is declined by name,
+with nothing changed and no link made. A file that cannot be read at all is
+declined too; it is not the same as empty. A file just created by *Create Sync
+File* is ours and is not checked. This is `DocumentStorage.classify`, tested.
+
 **Delete All Tasks** sits behind a confirmation naming the count. That one *does*
 tombstone, so it reaches the other device. Categories survive it.
 

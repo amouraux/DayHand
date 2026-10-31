@@ -20457,6 +20457,46 @@
           }
         }
       }
+    },
+    "“%@” does not look like a DayHand file, so it was not used. Syncing would have overwritten what it holds. Nothing was changed.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„%@“ sieht nicht wie eine DayHand-Datei aus und wurde deshalb nicht verwendet. Beim Synchronisieren wäre ihr Inhalt überschrieben worden. Es wurde nichts geändert."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«%@» no parece un archivo de DayHand, así que no se ha usado. Al sincronizar se habría sobrescrito su contenido. No se ha cambiado nada."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "« %@ » ne ressemble pas à un fichier DayHand ; il n’a donc pas été utilisé. La synchronisation aurait écrasé son contenu. Rien n’a été modifié."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«%@» non sembra un file di DayHand, quindi non è stato usato. La sincronizzazione ne avrebbe sovrascritto il contenuto. Non è stato modificato nulla."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” lijkt niet op een DayHand-bestand en is daarom niet gebruikt. Synchroniseren had de inhoud overschreven. Er is niets gewijzigd."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«%@» não parece um ficheiro do DayHand, por isso não foi utilizado. A sincronização teria substituído o seu conteúdo. Não foi alterado nada."
+          }
+        }
+      }
     }
   },
   "version": "1.1"

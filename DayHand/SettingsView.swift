@@ -733,6 +733,21 @@ struct SettingsView: View {
         case .failure(let error):
             syncReport = "Could not use that file.\n\n\(error.localizedDescription)"
         case .success(let url):
+            // Syncing writes into the file, so one that holds something else
+            // would be overwritten. A new file we just made is ours already.
+            if !creating {
+                switch store.inspectSyncFile(at: url) {
+                case .none:
+                    syncReport = "That file could not be opened for syncing."
+                    return
+                case .some(.other):
+                    syncReport = String(localized: "“\(url.lastPathComponent)” does not look like a DayHand file, so it was not used. Syncing would have overwritten what it holds. Nothing was changed.")
+                    return
+                case .some(.empty), .some(.dayHand):
+                    break
+                }
+            }
+
             // Replacing with a file that holds nothing would leave the device
             // empty for no reason, so fall back to merging and say so.
             let hasContent = store.syncFileHasContent(at: url)
