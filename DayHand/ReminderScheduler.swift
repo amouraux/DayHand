@@ -9,7 +9,7 @@ import UserNotifications
 /// the cards is fixed by handing it the cards again.
 extension Notification.Name {
     /// Posted when a reminder notification is opened, so the app can show the
-    /// review rather than just coming to the front.
+    /// task it was about rather than just coming to the front.
     static let reminderOpened = Notification.Name("DayHandReminderOpened")
 }
 
@@ -26,14 +26,31 @@ final class ReminderScheduler: NSObject, UNUserNotificationCenterDelegate {
         centre.delegate = self
     }
 
-    /// Opening a notification asks for the review. Swiping one away does not:
-    /// that is how a notification is got rid of, not how a decision is made,
-    /// so the reminder is still waiting afterwards.
+    /// The task a notification was opened for, held until the window can act on
+    /// it. A notification that launches the app is answered before there is a
+    /// list to show it in, so a post alone would be missed.
+    private(set) var openedCardID: UUID?
+
+    /// Hands over the task a notification named, once.
+    func takeOpenedCard() -> UUID? {
+        defer { openedCardID = nil }
+        return openedCardID
+    }
+
+    /// Opening a notification asks for the task it was about. Swiping one away
+    /// does not: that is how a notification is got rid of, not how a decision is
+    /// made, so the reminder is still waiting afterwards.
     func userNotificationCenter(_ centre: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler done: @escaping () -> Void) {
         if response.actionIdentifier == UNNotificationDefaultActionIdentifier {
-            NotificationCenter.default.post(name: .reminderOpened, object: nil)
+            let id = (response.notification.request.content.userInfo["card"] as? String)
+                .flatMap(UUID.init(uuidString:))
+            // The centre calls back on a queue of its own.
+            DispatchQueue.main.async {
+                self.openedCardID = id
+                NotificationCenter.default.post(name: .reminderOpened, object: nil)
+            }
         }
         done()
     }
@@ -88,7 +105,7 @@ final class ReminderScheduler: NSObject, UNUserNotificationCenterDelegate {
                 // adds itself without any notification to announce it.
                 content.badge = NSNumber(value: Attention.count(in: cards, now: at))
                 // Carries the card so opening the notification can go straight
-                // to the review rather than to the top of the list.
+                // to it rather than to the top of the list.
                 content.userInfo = ["card": card.id.uuidString]
 
                 let parts = Calendar.current.dateComponents(

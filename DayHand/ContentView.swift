@@ -197,18 +197,17 @@ struct ContentView: View {
                 )
                 .environmentObject(store)
             }
-            // Opening a notification narrows to the day's work rather than
-            // landing at the top of the list. The notification was a question
-            // about one card, and this is the list that card is in. Outside
-            // the Catalyst guard below, because a Mac notification opens the
-            // app the same way.
+            // Opening a notification shows the task it was about. It used to
+            // narrow to the flag instead, which leaves out a task sitting in
+            // Now or Next, and any search or project filter could hide the
+            // task as well. Outside the Catalyst guard below, because a Mac
+            // notification opens the app the same way.
             .onReceive(NotificationCenter.default.publisher(for: .reminderOpened)) { _ in
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    attentionOnly = true
-                    filterCategoryIDs = []
-                    filterProjectIDs = []
-                }
+                showNotifiedTask(proxy)
             }
+            // A notification that launched the app was answered before this
+            // list existed, so the post above was never heard.
+            .task { showNotifiedTask(proxy) }
             #if !targetEnvironment(macCatalyst)
             .sheet(isPresented: $isShowingSettings) {
                 SettingsView().environmentObject(store)
@@ -624,6 +623,39 @@ struct ContentView: View {
         guard let reason = store.pendingPaywall else { return }
         store.pendingPaywall = nil
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { paywall = reason }
+    }
+
+    /// Bring the task a notification named into view, and open the menu a tap
+    /// on it would: Move, Remind, Complete are the answers the reminder asked
+    /// for. Whatever narrowed the list — the flag, a project, a search — is
+    /// cleared first, since it could be hiding the very task.
+    private func showNotifiedTask(_ proxy: ScrollViewProxy) {
+        guard let id = ReminderScheduler.shared.takeOpenedCard(),
+              let card = store.items.first(where: { $0.id == id }), !card.isCompleted else { return }
+
+        // A sheet left open would cover the list, or swallow the menu.
+        isShowingSettings = false
+        isAdding = false
+        isFiltering = false
+        editItem = nil
+        reviewingStack = nil
+        withAnimation(.easeInOut(duration: 0.2)) {
+            attentionOnly = false
+            filterCategoryIDs = []
+            filterProjectIDs = []
+            isSearching = false
+            query = ""
+        }
+        // The rows exist only once the list has been laid out again, and the
+        // menu needs its row on screen to anchor to.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+            withAnimation { proxy.scrollTo("\(card.id)-\(card.bucket.rawValue)", anchor: .center) }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                if let live = store.items.first(where: { $0.id == id }), !live.isCompleted {
+                    stackPickItem = live
+                }
+            }
+        }
     }
 
     private func jumpToToday(_ proxy: ScrollViewProxy, animated: Bool) {

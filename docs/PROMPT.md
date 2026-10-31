@@ -585,8 +585,17 @@ narrows the task list to what is still to be settled: a **red** reminder — due
 today, or come and gone — on a task **still sitting in Inbox or Later**. It
 wears the same flag the tasks do, it appears only while something is on it, and
 the tasks show up in their own stacks where they can be moved, ticked off or
-swiped like anything else. Opening the notification goes there, since the
-notification was a question about one task and that is the list the task is in.
+swiped like anything else.
+
+**Opening a notification opens that task.** The notification carries the task's
+id. Opening it clears whatever narrows the list — the flag, a category or
+project filter, a search, an open sheet — scrolls to the task in its own stack
+and opens the menu a tap on it opens, which is where the answers are. It used to
+narrow to the flag, which leaves out a task in Now or Next though those can fire
+too, and a search or filter could hide the task as well. A notification that
+launches the app is held until the list exists, so it is not lost. A task
+completed or deleted in the meantime is ignored. Swiping a notification away
+still changes nothing.
 
 **The stack is the answer, so filing a task takes it off the flag.** A task in
 Today is one the user has already decided to do today; flagging it would be the
