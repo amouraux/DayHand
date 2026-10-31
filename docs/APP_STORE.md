@@ -52,15 +52,16 @@ Give every task a place: Now, Next, Later or Waiting. Capture ideas in Inbox, re
 
 Your task manager asks which day. Your work takes as long as it takes.
 
-Preparing a talk, planning a trip, building a feature, renovating a room — much of what matters cannot fit neatly into a daily checklist. Yet many task managers encourage you to assign a date before you know when the work will happen. When that day passes, unfinished tasks become overdue, and you spend time rescheduling work that is still progressing.
+Preparing a talk, planning a trip, building a feature, renovating a room — much of what matters cannot fit neatly into a daily checklist. Yet many task managers encourage you to assign a date before you know when the work will happen. When that day passes, unfinished tasks become overdue, and you spend time rescheduling work that is still progressing -- also generates frustration and perception that we are late, overdue, not on track which is not the case --
 
-DayHand lets a task stay active for as long as it takes. Organise your life and work around what you are doing Now, what comes Next, what belongs Later, and what is Waiting for someone or something. Capture new tasks in Inbox until you are ready to decide.
+DayHand lets a task stay active for as long as it takes - without ... --. Organise your life and work around what you are doing Now, what comes Next, what belongs Later, and what is Waiting for someone or something  -- indeed, often, completion of a project includes tasks are beyond your control, because you are waiting for feedback or other -- rather than setting up complex sharing and teams, just a waiting stack -- Capture new tasks in Inbox until you are ready to decide.
 
-And when your lists need a rethink, guided reviews help you make decisions. Where does this new task belong? Am I still working on this? Can this move forward? Is it still relevant? Review tasks one at a time, or walk through your projects to make sure each has a clear next step. Stop whenever you need to and resume where you left off.
 
-Use a reminder when you want to bring something back to your attention, and a deadline when there is a genuine finish date. You decide when a task moves.
+And when your lists need a rethink, guided reviews help you make decisions -- On the Mac version, sidebar which allows, on all devices, helpers that work well ... --. Where does this new task belong? Am I still working on this? Can this move forward? Is it still relevant? Review tasks one at a time, or walk through your projects to make sure each has a clear next step. Stop whenever you need to and resume where you left off.
 
-Inspired by Kanban, adapted to everyday task management.
+-- Sometimes, tasks do need a reminder, a date -- Use a reminder when you want to bring something back to your attention, and a deadline when there is a genuine finish date. You decide when a task moves.
+
+Inspired by Kanban, adapted -- finetuned -- to everyday task management -- from simple list of tasks to complex project management with ... --.
 
 A PLACE FOR EVERY TASK
 
@@ -71,6 +72,8 @@ A PLACE FOR EVERY TASK
 • Waiting: work that needs a reply, delivery, decision or someone else’s contribution before you can continue.
 
 You decide when tasks move. Complete them when the work is finished.
+
+--should we mention the clean UI, with the stacks and the sidebar? --
 
 DATES WITH A PURPOSE
 
@@ -100,7 +103,7 @@ Available in English, French, Dutch, German, Spanish, Italian and Portuguese.
 
 ### Free and paid paragraph — append only when purchases are ready
 
-Free to use with unlimited tasks, categories and groups, up to three active projects, and the last 30 days of completed history. Review helpers, notes, reminders, imports, exports, backups and sync are included. A single one-time purchase unlocks unlimited active projects and full completed history across your iPhone, iPad and Mac using the same Apple Account. No subscription. Archived projects do not count towards the free limit, and your tasks are never deleted because you stay on the free version.
+Free to use with unlimited tasks, categories and groups, up to three active projects, and the last 30 days of completed history. Review helpers, notes, reminders, imports, exports, backups and sync are included. A single one-time purchase unlocks unlimited active projects and full completed history across your iPhone, iPad and Mac using the same Apple Account. No subscription. Archived projects do not count towards the free limit, and your tasks are never deleted because you stay on the free version -- because you stay, is that clear? --.
 
 **Maintainer note — not listing copy:** the main description above describes
 implemented features. Append the free/paid paragraph only after StoreKit
