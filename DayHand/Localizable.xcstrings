@@ -20124,6 +20124,46 @@
           }
         }
       }
+    },
+    "It is already past %@ today, so no notification will come. The task shows as due now.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Es ist heute schon nach %@, deshalb kommt keine Benachrichtigung. Die Aufgabe erscheint sofort als fällig."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ya han pasado las %@ de hoy, así que no llegará ninguna notificación. La tarea aparece como pendiente desde ahora."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il est déjà plus de %@ aujourd’hui, donc aucune notification ne viendra. La tâche apparaît comme due dès maintenant."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sono già passate le %@ di oggi, quindi non arriverà nessuna notifica. L’attività risulta in scadenza da subito."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Het is vandaag al na %@, dus er komt geen melding. De taak wordt meteen als actueel getoond."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Já passaram as %@ de hoje, por isso não chegará nenhuma notificação. A tarefa aparece como devida desde já."
+          }
+        }
+      }
     }
   },
   "version": "1.1"

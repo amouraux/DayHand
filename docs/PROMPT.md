@@ -573,6 +573,18 @@ care about is a question with no right answer. A notification has to go off at
 some point, so they all go off at **nine**, which is when a day's work gets
 looked at. The picker shows a date and nothing else.
 
+**Today, after nine.** A reminder set for today once nine o'clock has passed
+cannot fire: there is no moment left to fire at. Nothing is lost — the red edge
+and the review start at midnight, so the task shows as due the moment it is set
+— but the only other sign would be a notification that never arrives, so the
+date picker says so: "It is already past 9:00 today, so no notification will
+come. The task shows as due now." The same note appears under every date picker
+for a reminder (new task, edit, and Pick a date…), only for today and only when
+the hour has gone. A reminder already on a task keeps the hour it was set with,
+so the note follows that hour, not nine, until its date is changed. The hour is
+not configurable: it would be one more setting about something the app has
+deliberately made a day, not a time.
+
 A reminder set by an earlier version at some other hour keeps it: it fires when
 it was told to, and moving it would be a change nobody asked for. Everything
 that reads a reminder reads its day, so it behaves like any other; editing its

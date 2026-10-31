@@ -2757,6 +2757,38 @@ do {
            "nested review resolves current task content")
 }
 
+// A reminder set for today after its hour cannot fire, and the editor says so.
+do {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(identifier: "Europe/Brussels")!
+    func at(_ s: String) -> Date {
+        let f = DateFormatter()
+        f.calendar = calendar; f.timeZone = calendar.timeZone
+        f.dateFormat = "yyyy-MM-dd HH:mm"
+        return f.date(from: s)!
+    }
+    func misses(_ date: String, _ now: String, keeping: String? = nil) -> Bool {
+        Scheduler.reminderMissesToday(at(date), keeping: keeping.map(at), now: at(now), calendar: calendar)
+    }
+    expect(misses("2026-10-31 00:00", "2026-10-31 10:00"), "today, after nine: it cannot fire")
+    expect(misses("2026-10-31 13:42", "2026-10-31 09:00"), "at nine exactly it has already gone")
+    expect(!misses("2026-10-31 00:00", "2026-10-31 08:59"), "today, before nine: it still will")
+    expect(!misses("2026-11-01 00:00", "2026-10-31 23:00"), "tomorrow is never missed")
+    expect(!misses("2026-10-30 00:00", "2026-10-31 10:00"), "and only today is said aloud, not a past day")
+
+    // A reminder an older version left at another hour keeps it until its date changes.
+    expect(!misses("2026-10-31 17:00", "2026-10-31 10:00", keeping: "2026-10-31 17:00"),
+           "a reminder kept at five o'clock still fires at five")
+    expect(misses("2026-10-31 17:00", "2026-10-31 18:00", keeping: "2026-10-31 17:00"),
+           "and has missed it after five")
+    expect(misses("2026-10-31 17:00", "2026-10-31 10:00", keeping: "2026-10-30 17:00"),
+           "while a changed date is snapped to nine, which has gone")
+    expect(Scheduler.firingTime(of: at("2026-10-31 17:00"), keeping: at("2026-10-31 17:00"), calendar: calendar)
+           == at("2026-10-31 17:00"), "the time an unchanged reminder fires is the one it holds")
+    expect(Scheduler.firingTime(of: at("2026-10-31 17:00"), calendar: calendar) == at("2026-10-31 09:00"),
+           "a new one fires at nine")
+}
+
 // Project review visits projects in the sidebar's order.
 do {
     let research = CardCategory(label: "Research", symbolName: "flask", color: .indigo)

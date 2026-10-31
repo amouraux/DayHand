@@ -197,6 +197,7 @@ struct AddCardView: View {
                         DatePicker("Date", selection: $remindAt,
                                    displayedComponents: [.date])
                             .datePickerStyle(.compact)
+                        ReminderTimingNote(date: remindAt)
 
                         Toggle(isOn: $hasDeadline.animation(.easeInOut(duration: 0.2))) {
                             Label("Deadline", systemImage: "flag.checkered")
@@ -840,6 +841,7 @@ struct CardActionsSheet: View {
                             DatePicker("Date", selection: reminderBinding,
                                        displayedComponents: [.date])
                                 .datePickerStyle(.compact)
+                            ReminderTimingNote(date: reminderBinding.wrappedValue, original: item.remindAt)
                         }
 
                         // Shown once there is a day to start from — or when
@@ -1183,28 +1185,55 @@ struct ReminderDateSheet: View {
 
     var body: some View {
         NavigationStack {
-            DatePicker("Date", selection: $day, in: Date()..., displayedComponents: .date)
-                .datePickerStyle(.graphical)
-                .labelsHidden()
+            // Scrolls, so the note under the calendar is never cut off in the
+            // half-height sheet.
+            ScrollView {
+                VStack(spacing: 8) {
+                    DatePicker("Date", selection: $day, in: Date()..., displayedComponents: .date)
+                        .datePickerStyle(.graphical)
+                        .labelsHidden()
+                    ReminderTimingNote(date: day)
+                }
                 .padding(.horizontal)
-                .navigationTitle("Remind me")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel") { dismiss() }
-                            .keyboardShortcut(.cancelAction)
-                    }
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Set") {
-                            if let item = store.items.first(where: { $0.id == itemID }) {
-                                withAnimation { store.remind(item, on: day) }
-                            }
-                            dismiss()
+                .padding(.bottom, 24)
+            }
+            .navigationTitle("Remind me")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                        .keyboardShortcut(.cancelAction)
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Set") {
+                        if let item = store.items.first(where: { $0.id == itemID }) {
+                            withAnimation { store.remind(item, on: day) }
                         }
+                        dismiss()
                     }
                 }
-            Spacer(minLength: 0)
+            }
         }
         .presentationDetents([.medium, .large])
+    }
+}
+
+/// Under a reminder's date: says so when the day picked is today and the hour
+/// has passed, because the other way to find out is a notification that never
+/// arrives.
+struct ReminderTimingNote: View {
+    let date: Date
+    var original: Date? = nil
+
+    var body: some View {
+        if Scheduler.reminderMissesToday(date, keeping: original) {
+            let time = Scheduler.firingTime(of: date, keeping: original)
+                .formatted(date: .omitted, time: .shortened)
+            Text("It is already past \(time) today, so no notification will come. The task shows as due now.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .fixedSize(horizontal: false, vertical: true)
+        }
     }
 }

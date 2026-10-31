@@ -1436,6 +1436,24 @@ enum Scheduler {
                       of: calendar.startOfDay(for: day)) ?? day
     }
 
+    /// The moment a reminder picked as `date` will fire. A reminder already on a
+    /// task keeps the time it was set with — an older version, or an import,
+    /// may have left one at another hour — so only a changed date is snapped.
+    static func firingTime(of date: Date, keeping original: Date? = nil,
+                           calendar: Calendar = .current) -> Date {
+        original == date ? date : reminderTime(on: date, calendar: calendar)
+    }
+
+    /// Whether a reminder set for today has already missed its hour. No
+    /// notification can fire for it, but nothing is lost: the red edge and the
+    /// review start at midnight, so the task shows as due now. Worth saying out
+    /// loud, because the only other sign is a notification that never comes.
+    static func reminderMissesToday(_ date: Date, keeping original: Date? = nil,
+                                    now: Date = Date(), calendar: Calendar = .current) -> Bool {
+        guard calendar.isDate(date, inSameDayAs: now) else { return false }
+        return firingTime(of: date, keeping: original, calendar: calendar) <= now
+    }
+
     /// A reminder's opening suggestion: tomorrow. Not today, which may already
     /// have gone off before the sheet is closed.
     static func defaultReminderTime(_ now: Date = Date()) -> Date {
