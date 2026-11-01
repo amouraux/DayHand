@@ -477,6 +477,13 @@ struct SettingsView: View {
                             Label("Help and support", systemImage: "questionmark.circle")
                         }
                     }
+                    Link(destination: Self.privacyURL) {
+                        LabeledContent {
+                            Image(systemName: "arrow.up.right").foregroundStyle(.secondary)
+                        } label: {
+                            Label("Privacy policy", systemImage: "hand.raised")
+                        }
+                    }
                 } header: {
                     Text("Help")
                 } footer: {
@@ -714,6 +721,9 @@ struct SettingsView: View {
     }
 
     private static let helpURL = URL(string: "https://amouraux.github.io/DayHand/help/")!
+
+    // App Store Connect asks for this same address; keep the two in step.
+    private static let privacyURL = URL(string: "https://amouraux.github.io/DayHand/privacy.html")!
 
     private static var versionLine: String {
         let info = Bundle.main.infoDictionary

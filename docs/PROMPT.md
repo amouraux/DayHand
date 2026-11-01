@@ -2437,5 +2437,5 @@ notifications, Apple services, support disclosures and data controls. It is
 linked from the homepage and every Help footer. The optional Privacy Choices
 URL uses `#choices`. Keep purchase statements aligned with the shipped StoreKit
 implementation; planned flows must not be described as already available.
-Website publication requires merging to main. An in-app policy link remains
-part of the App Store submission checklist.
+The More sheet's Help section links to it, under "Help and support".
+Website publication requires merging to main.

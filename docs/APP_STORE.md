@@ -251,8 +251,7 @@ Resolve them against the actual shipping build and the owner’s circumstances.
   for support/feedback handling and any future analytics or purchase changes.
 - **Privacy policy:** `docs/privacy.html` covers storage, sync, imports, notifications,
   support, retention and deletion. Publish it from main and verify its URL before
-  entering it in App Store Connect. Add an easily accessible link inside the app
-  before submission. The bundled
+  entering it in App Store Connect. The app links to it from More → Help. The bundled
   `PrivacyInfo.xcprivacy` is a technical manifest, not a public privacy policy.
 - **Age rating:** complete the current questionnaire, including any capability
   questions presented. Do not hard-code a rating from the app’s productivity category.
