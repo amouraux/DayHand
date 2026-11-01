@@ -138,8 +138,8 @@ not an edit and must lose to one.
 English, French, Dutch, German, Spanish, Italian, Portuguese (`pt-PT` and
 `pt-BR`, translated separately), Japanese, Korean, Swedish, Danish, Norwegian
 (Bokmål, `nb`), Finnish and Polish, through a String Catalog. The
-homepage, privacy policy and support page are translated too; the help guides
-are still English only.
+homepage, privacy policy and Help and support page are translated too, the
+how-to guides included.
 
 **More** carries a **Language** picker: Automatic, then each language under its
 own name ("Deutsch", "日本語"), which is never translated, so that someone in a
@@ -2474,12 +2474,19 @@ Website publication requires merging to main.
 
 All three exist in every language the app has, at `docs/<folder>/index.html`,
 `privacy.html` and `help.html`, with folders `de es fr it nl pt-pt pt-br ja ko sv
-da nb fi pl`. The translated help page holds the troubleshooting and the contact routes; the
-how-to guides are English only, and it says so and links to them. Every translation ends by saying the English page prevails, because a
-privacy policy that differs between languages is a liability.
+da nb fi pl`. The translated help page is the whole English page: the how-to guides, the
+troubleshooting and the contact routes. Every translation ends by saying the
+English page prevails, because a policy or manual that differs between languages
+is a liability.
 
 The pages are generated. The privacy and troubleshooting text lives in
-`scripts/web-translations/web_<code>.py` and `make_pages.py` writes the HTML;
+`scripts/web-translations/web_<code>.py` and `make_pages.py` writes the HTML. The
+how-to guides live in `guide_<code>.py`: `docs/help/index.html` is cut into 142
+numbered units (headings, paragraphs, list items, definition terms), and each
+language supplies one string per unit, in order, keeping the same inline markup;
+`make_help.py` checks the shape and the `{tokens}` that stand for button and
+stack names. The English page gaining or losing a paragraph shifts the numbering,
+so the script stops on a count mismatch;
 the homepage is cut into units listed in `home_units.py`, filled from
 `home_<code>.py` by `make_home.py`, so `docs/index.html` stays the one source of
 structure and styling. If its English text changes and no longer matches a unit,

@@ -196,6 +196,12 @@ def help_page(code, D, tok, ccode):
         return s
     ul1 = "<ul>\n" + "\n".join(f"<li>{fill(x)}</li>" for x in S_["N"]) + "\n</ul>"
     ul2 = "<ul>\n" + "\n".join(f"<li>{fill(x)}</li>" for x in S_["T"]) + "\n</ul>"
+    try:
+        gm = importlib.import_module("guide_" + code.replace("-", "_"))
+    except ImportError:
+        gm = None
+    if gm:
+        return help_page_full(code, D, tok, ccode, gm)
     glabel, gnote = GUIDES[code]
     nav = "".join(f'<a href="#{i}">{n}</a>' for i, n in zip(["missing-tasks", "notifications", "contact"], D["nav"]))
     nav += f'<a href="../help/" hreflang="en" lang="en">{glabel}</a>'
@@ -240,6 +246,90 @@ def help_page(code, D, tok, ccode):
 <aside>{fill(S_["aside"])}</aside>
 {p(fill(S_["C3"]))}
 <p>{D["note"].replace("<en>", '<a href="../help/" hreflang="en" lang="en">').replace("</en>", "</a>")}</p>
+<footer>{D["footer_text"]}<br>
+<a href="privacy.html">{f[1]}</a> · <a href="../index.html">{f[2]}</a></footer>
+</main>
+</div>
+</body></html>
+'''
+
+
+def help_page_full(code, D, tok, ccode, gm):
+    """The whole Help page in one language: the guides, then troubleshooting and contact."""
+    import html as htmllib
+    import make_help
+    english = open(f"{ROOT}/docs/help/index.html").read()
+    units = make_help.english_units(english)
+    problems = make_help.check(code, [gm.G[i] for i in sorted(gm.G)], units)
+    if problems:
+        raise SystemExit("\n".join(problems[:8]))
+    ui = {}
+    for name, key in make_help.UI.items():
+        v = word(ccode, key) if name == "edit_plain" else cat[key]["localizations"][ccode]["stringUnit"]["value"]
+        ui[name] = htmllib.escape(v, quote=False)
+    guides = make_help.guide_sections(english, [gm.G[i] for i in sorted(gm.G)], ui)
+    T = lambda s: s.format(**tok)
+    S_ = D["S"]
+    def fill(s):
+        s = T(s)
+        s = s.replace("<sync>", '<a href="#sync-troubleshooting">').replace("</sync>", "</a>")
+        s = s.replace("<col>", '<a href="#colours">').replace("</col>", "</a>")
+        s = s.replace("<imp>", '<a href="#data">').replace("</imp>", "</a>")
+        s = s.replace("<new>", '<a href="https://github.com/amouraux/DayHand/issues/new">').replace("</new>", "</a>")
+        s = s.replace("<all>", '<a href="https://github.com/amouraux/DayHand/issues">').replace("</all>", "</a>")
+        return s
+    ul1 = "<ul>\n" + "\n".join(f"<li>{fill(x)}</li>" for x in S_["N"]) + "\n</ul>"
+    ul2 = "<ul>\n" + "\n".join(f"<li>{fill(x)}</li>" for x in S_["T"]) + "\n</ul>"
+    ids = ["getting-started", "stacks-and-dates", "reviews", "sync", "data", "free-and-paid", "troubleshooting", "contact"]
+    nav = "".join(f'<a href="#{i}">{n}</a>' for i, n in zip(ids, gm.NAV))
+    intro = gm.INTRO.replace("<t>", '<a href="#troubleshooting">').replace("</t>", "</a>").replace("<c>", '<a href="#contact">').replace("</c>", "</a>")
+    note = gm.NOTE.replace("<en>", '<a href="../help/" hreflang="en" lang="en">').replace("</en>", "</a>")
+    title = word(ccode, "Help and support")
+    f = D["footer"]
+    hdr = header("help", code, "../", word(ccode, "Help"), word(ccode, "Privacy policy"), D["langs_label"])
+    return f'''<!doctype html>
+<html lang="{D["html_lang"]}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{title} — DayHand</title>
+<meta name="description" content="{D["desc"]}">
+<link rel="icon" href="../icon.png">
+<link rel="stylesheet" href="../help/help.css">
+<link rel="canonical" href="{BASE}/{code}/help.html">
+{alternates("help")}
+</head>
+<body>
+<a class="skip" href="#main">{D["skip"]}</a>
+{hdr}
+<div class="layout">
+<nav aria-label="{D["nav_aria"]}">{nav}</nav>
+<main id="main">
+<p class="eyebrow">{D["eyebrow"]}</p>
+<h1>{title}</h1>
+<p class="lead">{intro}</p>
+{guides}
+<section id="troubleshooting">
+<h2>{gm.TRB}</h2>
+<p class="lead">{D["lead"]}</p>
+<h3 id="missing-tasks">{D["h2"][0]}</h3>
+{p(fill(S_["M1"]))}
+{p(fill(S_["M2"]))}
+<h3 id="notifications">{D["h2"][1]}</h3>
+{ul1}
+{p(fill(S_["N_after"]))}
+<h3 id="imports-differ">{D["h2"][2]}</h3>
+{p(fill(S_["X1"]))}
+</section>
+<section id="contact">
+<h2>{gm.CONTACT}</h2>
+{p(fill(S_["C1"]))}
+{p(fill(S_["C2"]))}
+{ul2}
+<aside>{fill(S_["aside"])}</aside>
+{p(fill(S_["C3"]))}
+</section>
+<p>{note}</p>
 <footer>{D["footer_text"]}<br>
 <a href="privacy.html">{f[1]}</a> · <a href="../index.html">{f[2]}</a></footer>
 </main>
