@@ -2470,7 +2470,8 @@ the script** — it also keeps the language list and the `hreflang` links on the
 English pages current. The translations were written in one pass and need a
 native reader before they are relied on.
 
-Finding the right language: each page opens with a list of all its languages;
+Finding the right language: the left-hand menu of each page ends with a
+collapsible Languages group listing all of them;
 the homepage footer lists the translated privacy policies; and `docs/lang.js`,
 loaded only by the two English pages that have translations, offers a banner
 in the reader's own language when their first browser language is one of the

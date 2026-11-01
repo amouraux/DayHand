@@ -61,16 +61,16 @@ def alternates(page):
 
 
 def switcher(page, current, label, rel):
-    """rel: path prefix from the page to docs/ ('../' for a translation, '' or '../' for English)."""
+    """The language list that ends the left-hand menu. rel: path from the page to docs/."""
     items = []
     en_href = (rel + "privacy.html") if page == "privacy" else (rel + "help/support.html")
-    items.append("English" if current == "en" else f'<a href="{en_href}" hreflang="en" lang="en">English</a>')
+    items.append('<span aria-current="page" lang="en">English</span>' if current == "en" else f'<a href="{en_href}" hreflang="en" lang="en">English</a>')
     for folder, hl, _, name in LANGS:
         if folder == current:
-            items.append(name)
+            items.append(f'<span aria-current="page" lang="{hl}">{name}</span>')
         else:
             items.append(f'<a href="{rel}{folder}/{page}.html" hreflang="{hl}" lang="{hl}">{name}</a>')
-    return f'<nav class="langs" aria-label="{label}">' + " · ".join(items) + "</nav>"
+    return f'<details class="langs"><summary>{label}</summary>' + "".join(items) + "</details>"
 
 
 def p(x):
@@ -122,12 +122,12 @@ def privacy(code, D, tok):
 <div class="layout">
 <nav aria-label="{D["nav_aria"]}">
 {nav}
+{switcher("privacy", code, D["langs_label"], "../")}
 </nav>
 <main id="main">
 <p class="eyebrow">{D["eyebrow"]}</p>
 <h1>{D["h1"]}</h1>
 <p class="lead">{D["lead"]}</p>
-{switcher("privacy", code, D["langs_label"], "../")}
 {chr(10).join(body)}
 <p>{note}</p>
 <footer><a href="../help/" hreflang="en" lang="en">{f[0]}</a> · <a href="support.html">{f[1]}</a> · <a href="../index.html">{f[2]}</a></footer>
@@ -171,12 +171,11 @@ def support(code, D, tok):
 <a class="skip" href="#main">{D["skip"]}</a>
 <header><a class="brand" href="../index.html"><img src="../icon.png" alt="" width="36" height="36">DayHand</a><a href="../help/" hreflang="en" lang="en">Help</a></header>
 <div class="layout">
-<nav aria-label="{D["nav_aria"]}">{nav}</nav>
+<nav aria-label="{D["nav_aria"]}">{nav}{switcher("support", code, D["langs_label"], "../")}</nav>
 <main id="main">
 <p class="eyebrow">{D["eyebrow"]}</p>
 <h1>{D["h1"]}</h1>
 <p class="lead">{D["lead"]}</p>
-{switcher("support", code, D["langs_label"], "../")}
 <h2 id="missing-tasks">{D["h2"][0]}</h2>
 {p(fill(S_["M1"]))}
 {p(fill(S_["M2"]))}
@@ -206,9 +205,10 @@ def patch_english():
         s = open(path).read()
         s = re.sub(r'<link rel="alternate"[^\n]*\n', "", s)
         s = re.sub(r'<nav class="langs".*?</nav>\n?', "", s, flags=re.S)
+        s = re.sub(r'<details class="langs".*?</details>\n?', "", s, flags=re.S)
         s = re.sub(r'<script src="[^"]*lang\.js"[^>]*></script>\n?', "", s)
         s = s.replace("</head>", alternates(page) + "\n</head>", 1)
-        s = re.sub(r'(<p class="lead">.*?</p>\n)', lambda m: m.group(1) + switcher(page, "en", "Languages", rel) + "\n", s, count=1, flags=re.S)
+        s = s.replace("</nav>", switcher(page, "en", "Languages", rel) + "</nav>", 1)
         s = s.replace("</body>", f'<script src="{rel}lang.js" data-page="{page}" defer></script>\n</body>', 1)
         open(path, "w").write(s)
 
