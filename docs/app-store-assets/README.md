@@ -1,6 +1,6 @@
 # DayHand App Store creative
 
-`dayhand-universal.png`: 5244 × 2950 PNG for Header and Search Results, English artwork. Generated with the built-in image generation tool, then resampled to Apple's required universal dimensions. Check both placements using App Store Connect Preview before submission; this is conceptual brand artwork, not an app screenshot.
+`dayhand-universal.png`: 5244 × 2950 PNG, English artwork, for the 16:9 row of Apple's Product page header and Search results placements (opaque, no alpha). Generated with the built-in image generation tool, then resampled to that size. Check both placements using App Store Connect Preview before submission; this is conceptual brand artwork, not an app screenshot.
 
 Apple specifications: https://developer.apple.com/help/app-store-connect/reference/app-information/creative-assets-specifications
 

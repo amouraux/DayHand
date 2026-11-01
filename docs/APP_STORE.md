@@ -42,13 +42,13 @@ mean every field or screenshot is automatically copied to both platforms.
 
 Use this English copy for each platform where it accurately describes the
 selected build. Translate metadata separately for other storefront languages;
-the seven UI languages do not automatically create translated store listings.
+the app's languages do not automatically create translated store listings.
 
 ### Promotional Text — 156 characters; limit 170
 
 A familiar task manager with a refreshing approach: organise work into Now, Next, Later and Waiting, with guided reviews to help you decide what comes next.
 
-### Description — 3,426 characters; limit 4,000
+### Description — 3,489 characters; limit 4,000
 
 Your task manager asks which day. Your work takes as long as it takes.
 
@@ -94,7 +94,7 @@ BRING YOUR TASKS WITH YOU
 
 Import from Apple Reminders or Todoist CSV exports, or use DayHand’s CSV import and export. Imports copy tasks into DayHand without ongoing sync to the original app. Automatic local backups and manual backups help you keep a recoverable copy.
 
-Available in English, French, Dutch, German, Spanish, Italian, Portuguese (Portugal and Brazil), Japanese, Korean, Swedish, Danish, Norwegian, Finnish and Polish.
+Available in English, French, Dutch, German, Spanish, Italian, Portuguese, Japanese, Korean, Swedish, Danish, Norwegian, Finnish and Polish.
 
 ### Free and paid paragraph — append only when purchases are ready
 
@@ -102,7 +102,7 @@ Free to use with unlimited tasks, categories and groups, up to three active proj
 
 **Maintainer note — not listing copy:** the main description above describes
 implemented features. Append the free/paid paragraph only after StoreKit
-purchase and restoration work on both platforms. The combined description and paragraph total 3,915 characters, including
+purchase and restoration work on both platforms. The combined description and paragraph total 3,978 characters, including
 the separating blank line (limit 4,000). The current build defaults to unlocked access; do not
 publish it with copy suggesting these are already functioning purchases.
 The planned trial is deliberately omitted from public copy until implemented
