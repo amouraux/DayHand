@@ -99,6 +99,10 @@ do {
     expect(ProjectConversion.split("SOLO") == nil, "a one-word title is never emptied")
     expect(ProjectConversion.looksLikeCode("NF") && ProjectConversion.looksLikeCode("ABC1234"), "NF and ABC1234 are codes")
     expect(!ProjectConversion.looksLikeCode("Payer") && !ProjectConversion.looksLikeCode("A"), "Payer and A are not")
+    expect(!ProjectConversion.looksLikeCode("旅行") && !ProjectConversion.looksLikeCode("航空券"),
+           "words in a script without case are not codes")
+    expect(ProjectConversion.looksLikeCode("旅行2026") && ProjectConversion.looksLikeCode("ÉCOLE"),
+           "a digit still makes a code, and accented capitals count")
 }
 
 // Optional: point the suite at a real data file to check it still decodes.

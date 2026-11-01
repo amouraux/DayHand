@@ -795,8 +795,11 @@ enum ProjectConversion {
         let letters = word.filter(\.isLetter)
         guard word.count >= 2, !letters.isEmpty else { return false }
         let hasDigit = word.contains(where: \.isNumber)
-        let noLowercase = !letters.contains(where: \.isLowercase)
-        return noLowercase || hasDigit
+        // "No lowercase" has to mean capitals, not merely the absence of
+        // lowercase: Japanese, Korean and Chinese have no case at all, and
+        // without this every word in those languages would look like a code.
+        let allCapitals = letters.contains(where: \.isUppercase) && !letters.contains(where: \.isLowercase)
+        return allCapitals || hasDigit
     }
 
     static func candidates(cards: [TodoItem], existing: [Project]) -> [Candidate] {

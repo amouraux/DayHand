@@ -94,7 +94,7 @@ BRING YOUR TASKS WITH YOU
 
 Import from Apple Reminders or Todoist CSV exports, or use DayHand’s CSV import and export. Imports copy tasks into DayHand without ongoing sync to the original app. Automatic local backups and manual backups help you keep a recoverable copy.
 
-Available in English, French, Dutch, German, Spanish, Italian and Portuguese.
+Available in English, French, Dutch, German, Spanish, Italian, Portuguese (Portugal and Brazil) and Japanese.
 
 ### Free and paid paragraph — append only when purchases are ready
 

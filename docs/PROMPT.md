@@ -135,8 +135,9 @@ not an edit and must lose to one.
 
 ## Languages
 
-English, French, Dutch, German, Spanish, Italian and Portuguese, through a
-String Catalog.
+English, French, Dutch, German, Spanish, Italian, Portuguese (`pt-PT` and
+`pt-BR`, translated separately) and Japanese, through a String Catalog. The
+help pages and privacy policy are still English only.
 
 **More** carries a **Language** row showing the language the app is being read
 in, which opens the system's own per-app language screen. Nothing is
@@ -159,12 +160,18 @@ Three things are easy to miss:
   leaves what is already there alone, because renaming someone's categories
   behind their back would be worse than a mixed-language page.
 - **The word for a task, per language**: *Aufgabe*, *tarea*, *tâche*,
-  *attività*, *taak*, *tarefa*. Never the language's word for a card. Renaming
+  *attività*, *taak*, *tarefa* (Brazil too), *タスク*. Never the language's word for a card. Renaming
   the English and leaving the translations is the easy half of a rename: the
   key changes, every translation keeps the old noun, and the app goes on
   calling them cards in six languages while English says task. German
   addresses the reader as **Sie**, Portuguese in the third person; Spanish,
-  Italian and Dutch are informal; French uses **vous**.
+  Italian and Dutch are informal; French uses **vous**; Japanese uses the polite
+  です／ます form and 「」 for quoted names. Brazilian Portuguese says *backup*,
+  *arquivo*, *excluir*, *mesclar* and *Ajustes* where Portugal says *cópia de
+  segurança*, *ficheiro*, *eliminar*, *unir* and *Definições*.
+- **Scripts without case need care in the model layer.** `looksLikeCode` asks
+  for capitals, not merely for no lowercase, or every Japanese word would be
+  offered as a project code by Convert Title Prefixes.
 - **A translation that reorders arguments must use `%1$@`-style specifiers.**
   Several languages put the count before the name in "%@'s %lld tasks move to
   %@", and without the positions the name is read as the number. A string with
