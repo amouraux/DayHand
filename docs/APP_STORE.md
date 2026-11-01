@@ -44,11 +44,11 @@ Use this English copy for each platform where it accurately describes the
 selected build. Translate metadata separately for other storefront languages;
 the seven UI languages do not automatically create translated store listings.
 
-### Promotional Text — 162 characters; limit 170
+### Promotional Text — 156 characters; limit 170
 
-Give every task a place: Now, Next, Later or Waiting. Capture ideas in Inbox, review your priorities, and let work take the time it needs on iPhone, iPad and Mac.
+A familiar task manager with a refreshing approach: organise work into Now, Next, Later and Waiting, with guided reviews to help you decide what comes next.
 
-### Description — 3,375 characters; limit 4,000
+### Description — 3,426 characters; limit 4,000
 
 Your task manager asks which day. Your work takes as long as it takes.
 
@@ -60,7 +60,7 @@ Some work depends on someone else. Waiting gives tasks awaiting feedback, a deli
 
 And when your lists need a rethink, guided reviews help you make decisions. Where does this task belong? Am I still working on this? Can this move forward? Is it still relevant? Review tasks one at a time, or walk through your projects to check that each has a clear next step.
 
-If you already use a task manager, DayHand will feel both familiar and refreshing. Projects, notes, reminders and search work as you expect, but nothing goes overdue. Inspired by Kanban, it grows from a simple task list into a way to organise your life and work.
+If you already use a task manager, DayHand will feel familiar: tasks, projects, notes and reminders. What feels refreshing is organising work around your intentions, with room for tasks to take several days and guided reviews to help you reconsider what matters. Inspired by Kanban, adapted to your life and work.
 
 A PLACE FOR EVERY TASK
 
@@ -102,7 +102,7 @@ Free to use with unlimited tasks, categories and groups, up to three active proj
 
 **Maintainer note — not listing copy:** the main description above describes
 implemented features. Append the free/paid paragraph only after StoreKit
-purchase and restoration work on both platforms. The combined description and paragraph total 3,864 characters, including
+purchase and restoration work on both platforms. The combined description and paragraph total 3,915 characters, including
 the separating blank line (limit 4,000). The current build defaults to unlocked access; do not
 publish it with copy suggesting these are already functioning purchases.
 The planned trial is deliberately omitted from public copy until implemented
