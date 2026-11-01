@@ -222,7 +222,14 @@ tasks, or unsupported claims about instant sync or time tracking.
 **Screenshot sets in the repository** (English interface, invented demo data from
 `Tests/make_demo.py`, status bar at 9:41, taken on the simulator):
 
-- `docs/screenshots/appstore/iphone-6.9/` — seven iPhone shots at 1320 × 2868.
+- `docs/screenshots/appstore/iphone-6.3/` — seven iPhone shots at 1206 × 2622, taken
+  on an iPhone 17. **This is the set App Store Connect requires**: the
+  "iPhone with Dynamic Island (medium display)" slot, 6.1″/6.3″, accepts 1179 × 2556
+  or 1206 × 2622 (and the landscape equivalents). Same seven screens and order as
+  below; alpha removed.
+- `docs/screenshots/appstore/iphone-6.9/` — the same seven at 1320 × 2868, taken on an
+  iPhone 17 Pro Max. Optional: the large-display slot is not required when the
+  medium one is supplied, and a medium set is not scaled up from it by hand.
 - `docs/screenshots/appstore/ipad-13/` — seven iPad shots at 2752 × 2064
   (landscape, the layout with the Organise sidebar), in the same order: Now with
   the project sidebar, reminders (the flag filter), task actions, the review
