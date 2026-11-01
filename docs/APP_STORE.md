@@ -219,6 +219,21 @@ Use invented demo tasks and the actual shipping interface. Keep captions short,
 accurate and readable on a phone. Do not show unavailable paid features, private
 tasks, or unsupported claims about instant sync or time tracking.
 
+**Screenshot sets in the repository** (English interface, invented demo data from
+`Tests/make_demo.py`, status bar at 9:41, taken on the simulator):
+
+- `docs/screenshots/appstore/iphone-6.9/` — seven iPhone shots at 1320 × 2868.
+- `docs/screenshots/appstore/ipad-13/` — seven iPad shots at 2752 × 2064
+  (landscape, the layout with the Organise sidebar), in the same order: Now with
+  the project sidebar, reminders (the flag filter), task actions, the review
+  helper, the timeline, the project review, and dark mode. Apple accepts
+  2752 × 2064 or 2064 × 2752 for the 13-inch iPad slot.
+
+The More sheet is deliberately not shown: its Testing control must be removed
+before submission, and until then no screenshot should include it. The Mac set
+still has to be taken on a real Mac. The `-EN` in the iPad file names marks the
+language of the interface; localised sets would carry their own suffix.
+
 The existing `docs/screenshots/iphone.png` and `ipad.png` are illustrative older
 beta screenshots. There is no current Mac screenshot in that folder. Refresh
 assets before submission; do not treat website images as an approved current
