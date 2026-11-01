@@ -2469,3 +2469,10 @@ what the screen says. **Change the English page, change the translations, run
 the script** — it also keeps the language list and the `hreflang` links on the
 English pages current. The translations were written in one pass and need a
 native reader before they are relied on.
+
+Finding the right language: each page opens with a list of all its languages;
+the homepage footer lists the translated privacy policies; and `docs/lang.js`,
+loaded only by the two English pages that have translations, offers a banner
+in the reader's own language when their first browser language is one of the
+fourteen. It is a banner and never a redirect, and dismissing it is remembered
+in `localStorage` (the page works if that is blocked).

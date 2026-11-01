@@ -127,9 +127,9 @@ def privacy(code, D, tok):
 <p class="eyebrow">{D["eyebrow"]}</p>
 <h1>{D["h1"]}</h1>
 <p class="lead">{D["lead"]}</p>
+{switcher("privacy", code, D["langs_label"], "../")}
 {chr(10).join(body)}
 <p>{note}</p>
-{switcher("privacy", code, D["langs_label"], "../")}
 <footer><a href="../help/" hreflang="en" lang="en">{f[0]}</a> · <a href="support.html">{f[1]}</a> · <a href="../index.html">{f[2]}</a></footer>
 </main></div>
 </body></html>
@@ -176,6 +176,7 @@ def support(code, D, tok):
 <p class="eyebrow">{D["eyebrow"]}</p>
 <h1>{D["h1"]}</h1>
 <p class="lead">{D["lead"]}</p>
+{switcher("support", code, D["langs_label"], "../")}
 <h2 id="missing-tasks">{D["h2"][0]}</h2>
 {p(fill(S_["M1"]))}
 {p(fill(S_["M2"]))}
@@ -191,7 +192,6 @@ def support(code, D, tok):
 <aside>{fill(S_["aside"])}</aside>
 {p(fill(S_["C3"]))}
 <p>{D["note"].replace("<en>", '<a href="../help/support.html" hreflang="en" lang="en">').replace("</en>", "</a>")}</p>
-{switcher("support", code, D["langs_label"], "../")}
 <footer>{D["footer_text"]}<br>
 <a href="support.html">{f[0]}</a> · <a href="privacy.html">{f[1]}</a> · <a href="../index.html">{f[2]}</a></footer>
 </main>
@@ -201,17 +201,15 @@ def support(code, D, tok):
 
 
 def patch_english():
-    """Adds the alternates and the language list to the English pages, once."""
-    css = f"{ROOT}/docs/help/help.css"
-    c = open(css).read()
-    if ".langs" not in c:
-        open(css, "a").write("\n.langs{font-size:.9rem;margin:1.6rem 0 .4rem;line-height:1.9}\n.langs a{white-space:nowrap}\n")
+    """Adds the alternates, the language list and the banner script to the English pages, once."""
     for page, path, rel in (("privacy", f"{ROOT}/docs/privacy.html", ""), ("support", f"{ROOT}/docs/help/support.html", "../")):
         s = open(path).read()
         s = re.sub(r'<link rel="alternate"[^\n]*\n', "", s)
         s = re.sub(r'<nav class="langs".*?</nav>\n?', "", s, flags=re.S)
+        s = re.sub(r'<script src="[^"]*lang\.js"[^>]*></script>\n?', "", s)
         s = s.replace("</head>", alternates(page) + "\n</head>", 1)
-        s = s.replace("<footer>", switcher(page, "en", "Languages", rel) + "\n<footer>", 1)
+        s = re.sub(r'(<p class="lead">.*?</p>\n)', lambda m: m.group(1) + switcher(page, "en", "Languages", rel) + "\n", s, count=1, flags=re.S)
+        s = s.replace("</body>", f'<script src="{rel}lang.js" data-page="{page}" defer></script>\n</body>', 1)
         open(path, "w").write(s)
 
 
