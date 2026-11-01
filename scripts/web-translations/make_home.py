@@ -88,8 +88,8 @@ def privacy_line(label, rel, current):
 
 
 def strip_generated(html):
-    html = re.sub(r"<!--langmenu-->.*?<!--/langmenu-->", "", html, flags=re.S)
-    html = re.sub(r"/\*langmenu\*/.*?/\*/langmenu\*/", "", html, flags=re.S)
+    html = re.sub(r"\n  <!--langmenu-->.*?<!--/langmenu-->", "", html, flags=re.S)
+    html = re.sub(r"  /\*langmenu\*/.*?/\*/langmenu\*/\n", "", html, flags=re.S)
     html = re.sub(r"<!--alt-->.*?<!--/alt-->\n?", "", html, flags=re.S)
     html = re.sub(r"<!--privacy-->.*?<!--/privacy-->", "@@privacy@@", html, flags=re.S)
     html = re.sub(r"<p>Privacy policy: .*?</p>", "@@privacy@@", html, flags=re.S)
@@ -122,7 +122,7 @@ def template():
     body = body[body.index("<body"):]
     for t in re.findall(r">([^<>]+)<", body):
         t = t.strip()
-        if re.search(r"[A-Za-z]{2,}", t) and not t.startswith("@@") and t != "DayHand":
+        if re.search(r"[A-Za-z]{2,}", t) and not t.startswith("@@") and t not in ("DayHand", "iPhone", "iPad", "Mac"):
             sys.exit(f"untranslated text left in docs/index.html: {t[:90]!r}")
     return html
 
@@ -132,7 +132,7 @@ def build(folder, hl, ccode, name, tmpl):
     H, M = mod.H, mod.META
     tok = {k: catalog(ccode, e) for e, k in STACKS}
     tok["more"] = catalog(ccode, "More")
-    tok["existing"] = catalog(ccode, "Use Existing Sync File…").rstrip("…").strip()
+    tok["language"] = catalog(ccode, "Language")
     html = tmpl
     missing = [k for k, _ in UNITS if k not in H]
     if missing:
@@ -149,8 +149,6 @@ def build(folder, hl, ccode, name, tmpl):
     html = re.sub(r'(<meta property="og:description" content=")[^"]*"', lambda m: m.group(1) + M["og_desc"] + '"', html, count=1)
     html = html.replace('content="https://amouraux.github.io/DayHand/"', f'content="{BASE}/{folder}/"')
     html = html.replace('<link rel="canonical" href="https://amouraux.github.io/DayHand/">', f'<link rel="canonical" href="{BASE}/{folder}/">')
-    html = re.sub(r'(<img src="screenshots/iphone\.png" alt=")[^"]*"', lambda m: m.group(1) + M["alt_iphone"] + '"', html)
-    html = re.sub(r'(<img src="screenshots/ipad\.png" alt=")[^"]*"', lambda m: m.group(1) + M["alt_ipad"] + '"', html)
     # paths: the page lives one folder down; help becomes the translated help page
     html = html.replace('href="help/"', 'href="help.html"')
     html = html.replace('href="icon.png"', 'href="../icon.png"').replace('src="icon.png"', 'src="../icon.png"')

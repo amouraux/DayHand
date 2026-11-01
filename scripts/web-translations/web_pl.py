@@ -32,7 +32,7 @@ PRIVACY = {
 ],
 "C7": "Dane aktywnych zadań są przechowywane, dopóki ich nie zmienisz lub nie usuniesz. Automatyczne kopie zapasowe rotują; kopie ręczne i kopie, które udostępnisz, pozostają, dopóki nie zostaną zastąpione lub usunięte. Zapisy usunięć używane do synchronizacji mogą zachować identyfikatory zadań i daty usunięcia, ale nie treść zadań. Usunięcie aplikacji nie usuwa osobno zapisanych plików iCloud, eksportów ani kopii na innych urządzeniach.",
 "C8": "Nie ma konta DayHand do zamknięcia. Twórca nie może pobrać ani zdalnie usunąć plików zadań, które znajdują się wyłącznie na Twoich urządzeniach lub w Twoim koncie przechowywania.",
-"U1": "W sprawie pytań o tę politykę lub wniosku dotyczącego prywatności skontaktuj się z twórcą DayHand przez <s>stronę pomocy</s>. W trakcie bety możesz wysyłać opinie przez TestFlight. Do ogólnych pytań i zgłoszeń błędów dostępny jest też GitHub Issues.",
+"U1": "W sprawie pytań o tę politykę lub wniosku dotyczącego prywatności skontaktuj się z twórcą DayHand przez <s>stronę pomocy</s>. Do ogólnych pytań i zgłoszeń błędów dostępny jest też GitHub Issues.",
 "U2": "Jeśli wyślesz opinię, raport diagnostyczny lub wiadomość do pomocy, twórca otrzyma informacje, które dołączysz, oraz informacje dostarczane przez dany kanał, takie jak adres kontaktowy, dane urządzenia czy załączniki. Te informacje służą do odpowiedzi, diagnozowania problemów i ulepszania DayHand. Dane z pomocy mogą być przechowywane tak długo, jak jest to potrzebne do rozwiązania sprawy i jej dalszego śledzenia; aby poprosić o usunięcie przekazanych informacji, skontaktuj się z twórcą tym samym kanałem. Apple i GitHub zarządzają własnymi kopiami i ich przechowywaniem zgodnie z własnymi politykami.",
 "U3": "<strong>Zgłoszenia na GitHubie są publiczne.</strong> Nie publikuj tam prywatnych zadań, kopii zapasowych, danych logowania ani danych osobowych. Jeśli to możliwe, użyj zmyślonego przykładu. W przypadku wniosku dotyczącego prywatności zacznij bez danych wrażliwych i zapytaj o odpowiedni sposób dalszego kontaktu.",
 "W1": "Ta strona internetowa jest hostowana w GitHub Pages. Nie dodaje skryptów analitycznych ani plików cookie reklamowych. GitHub może przetwarzać informacje o połączeniu, takie jak adresy IP i dzienniki żądań, aby obsługiwać i zabezpieczać hosting. GitHub Issues i linki zewnętrzne podlegają politykom odpowiednich dostawców: <g>oświadczenie o ochronie prywatności GitHub</g> i <apple>polityka prywatności Apple</apple>.",
@@ -57,7 +57,6 @@ SUPPORT = {
 "h2": ["Nie mogę znaleźć swoich zadań", "Przypomnienie nie zadziałało", "Zaimportowane zadania wyglądają inaczej", "Opowiedz mi o tym"],
 "S": {
 "M1": "Najpierw wyczyść wyszukiwanie, filtry kategorii i projektu oraz flagę. Potem zajrzyj do pozostałych stosów i do sekcji {timeline}; odhaczone zadanie jest tam. Jeśli drugie urządzenie pokazuje coś innego, przeczytaj <sync>listę kontrolną synchronizacji</sync>, zanim cokolwiek zastąpisz lub przywrócisz.",
-"M2": "Jeśli przeszedłeś z wersji na Maca zbudowanej samodzielnie na wersję z TestFlight, aplikacja trzyma dane w innym miejscu i dlatego startuje pusta. Nic nie przepadło. Jeśli używałeś pliku synchronizacji iCloud, wybierz {existing} i wskaż ten sam plik, używając opcji {merge}.",
 "N": [
 "Czy powiadomienia są dozwolone dla DayHand w ustawieniach systemu? Czy tryb skupienia ich nie wstrzymuje?",
 "Przypomnienia dzwonią o 9:00 w danym dniu. Przy przypomnieniu na dziś ustawionym po 9:00 powiadomienie już nie przyjdzie.",
@@ -66,7 +65,7 @@ SUPPORT = {
 ],
 "N_after": "Jeśli flaga i plakietka na ikonie pokazują różne liczby, to celowe. <col>Oto dlaczego</col>.",
 "X1": "Każdy import ma swoje ograniczenia dotyczące dat, zadań cyklicznych i dodatkowych szczegółów. <imp>Przewodnik po imporcie</imp> je wylicza. Najpierw zajrzyj do sekcji {notes} zadania: to, czego DayHand nie mógł umieścić, zwykle jest tam zachowane jako tekst.",
-"C1": "DayHand tworzy jedna osoba, więc nie ma okienka z biletami. W czasie bety użyj opcji <strong>Wyślij opinię o wersji beta</strong> w TestFlight. Możesz też <new>otworzyć zgłoszenie na GitHubie</new> — w sprawie błędu, pytania lub pomysłu. Wymaga to konta GitHub; czytanie tych stron nie.",
+"C1": "DayHand tworzy jedna osoba, więc nie ma okienka z biletami. Najlepiej skontaktować się ze mną, <new>otwierając zgłoszenie na GitHubie</new> — w sprawie błędu, pytania lub pomysłu. Wymaga to konta GitHub; czytanie tych stron nie.",
 "C2": "Bardzo pomaga, jeśli napiszesz:",
 "T": [
 "swoje urządzenie, wersję systemu oraz wersję i numer kompilacji DayHand;",
@@ -80,6 +79,6 @@ SUPPORT = {
 "en_mark": "(po angielsku)",
 "note": "Ta strona jest tłumaczeniem angielskiej <en>strony pomocy</en>. Linkowane przewodniki są po angielsku.",
 "langs_label": "Języki",
-"footer_text": "Napisane na betę, październik 2026. Jeśli przycisk na Twoim ekranie nazywa się inaczej, aplikacja poszła naprzód, a ta strona nie — daj mi znać.",
+"footer_text": "Ostatnia aktualizacja: listopad 2026. Jeśli przycisk na Twoim ekranie nazywa się inaczej, aplikacja poszła naprzód, a ta strona nie — daj mi znać.",
 "footer": ["Wsparcie", "Polityka prywatności", "Wróć do DayHand"],
 }

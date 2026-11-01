@@ -2449,14 +2449,27 @@ goes wrong, and how to reach me. It was eight pages once; the old addresses
 matching section. Shared styling is in `help.css`; pages work without
 JavaScript and support small screens, keyboard navigation and dark mode.
 Keep instructions aligned with the shipping UI. Label planned purchases and
-trials explicitly until available. Support routes are TestFlight beta feedback
-and public GitHub Issues; never ask users to publish task files or credentials.
+trials explicitly until available. The support route is public GitHub Issues,
+which the Help page and the homepage footer link to; never ask users to publish
+task files or credentials.
 The App Store Support URL is `/DayHand/help/`; verify it after deployment. Pages
 deploy from main, not from a feature-branch push.
 
 Every page carries the same header: the brand on the left, and on the right Help,
 Privacy and a **Languages** menu that goes to the same page in another language.
 The homepage has the menu alone in its top right corner.
+
+The homepage is written for the released app. Its first row is **Download on the
+App Store** (iPhone and iPad), **Download on the Mac App Store**, **Help &
+support** and **Privacy**. The two download links are `href="#"` in
+`docs/index.html` until the listing is live; paste the URLs there and run
+`make_home.py`, and every translated page follows. The TestFlight links live in
+one section at the bottom, "Test upcoming versions", and nowhere else; problems
+in a beta go to GitHub Issues like any others. The homepage says nothing about
+purchases while they are not built (see "Free and paid"). Its screenshots are the
+App Store sets, resized into `docs/screenshots/web/` (iPhone 440 px wide, iPad and
+Mac about 1000), seven per device in the order of the listing, with no alt text
+because each has a visible caption.
 
 
 ## Public privacy policy
@@ -2492,7 +2505,9 @@ the homepage is cut into units listed in `home_units.py`, filled from
 structure and styling. If its English text changes and no longer matches a unit,
 the script stops and names it. Stack names in the homepage are the app's own
 words, read from `Localizable.xcstrings`. The homepage screenshots show the
-English interface and the pages say so; localised ones are a separate job. Button names in the policy ("More → Sync →
+English interface and the pages say so; localised ones are a separate job. The
+screenshot captions, the device blurbs and the "Guided reviews" section are units
+like the rest. Button names in the policy ("More → Sync →
 Stop Using This File") are read from `Localizable.xcstrings`, so the page says
 what the screen says. **Change the English page, change the translations, run
 the scripts** — it also keeps the shared header, the `hreflang` links and the redirect pages

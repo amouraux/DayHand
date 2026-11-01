@@ -120,36 +120,22 @@
   @media (min-width: 720px) { .wide-idea { grid-column: 1 / -1; } }
 
   /* ---------- screenshots ---------- */
-  .shots { display: grid; gap: 34px; grid-template-columns: 1fr; align-items: end; }
-  @media (min-width: 760px) { .shots { grid-template-columns: 1fr 1fr; } }
-  figure { margin: 0; text-align: center; }
+  .device { margin: 0 0 38px; }
+  .device h3 { margin: 0 0 4px; font-size: 19px; letter-spacing: -.012em; }
+  .device-blurb { margin: 0 0 14px; color: var(--ink-soft); font-size: 15.5px; }
+  /* A scrolling strip rather than a grid of 21 pictures; each device shows
+     its seven screens in the order the App Store listing does. */
+  .strip { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory;
+    padding: 4px 2px 14px; -webkit-overflow-scrolling: touch; }
+  .strip figure { flex: none; scroll-snap-align: start; margin: 0; text-align: center; }
+  .strip.phone figure { width: 210px; }
+  .strip.ipad figure { width: min(78vw, 440px); }
+  .strip.mac figure { width: min(86vw, 560px); }
   figure img {
     width: 100%; height: auto; display: block;
     border-radius: 16px; border: 1px solid var(--line); box-shadow: var(--shadow);
   }
-  figure.phone { max-width: 320px; margin-inline: auto; }
-  figcaption { margin-top: 14px; margin-bottom: 8px; color: var(--ink-soft); font-size: 14.5px; }
-  figcaption b { color: var(--ink); font-weight: 600; }
-  .wide { grid-column: 1 / -1; }
-
-  /* ---------- install ---------- */
-  .install { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-  .task {
-    background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
-    padding: 26px; box-shadow: var(--shadow);
-  }
-  .task h3 { margin: 0 0 6px; font-size: 19px; letter-spacing: -.012em; }
-  .task .req { color: var(--ink-soft); font-size: 14px; margin: 0 0 16px; }
-  .task p { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 18px; }
-  .task .steps { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 18px; padding-left: 20px; }
-  .task .steps li { margin-bottom: 7px; }
-  .task .steps li:last-child { margin-bottom: 0; }
-  /* The thing you would otherwise only find out by hitting it. */
-  .task .aside {
-    font-size: 14px; border-left: 2px solid var(--line);
-    padding-left: 12px; margin: 0 0 18px;
-  }
-  .task .btn { display: inline-flex; }
+  figcaption { margin-top: 10px; color: var(--ink-soft); font-size: 14.5px; }
 
   /* One task’s journey, including the pauses and changes of priority. */
   .walk {
@@ -176,13 +162,6 @@
     color: var(--ink-soft); font-size: 15px;
   }
 
-  .notice {
-    max-width: 640px; margin: 22px auto 0; padding: 16px 18px;
-    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
-    color: var(--ink-soft); font-size: 14.5px; line-height: 1.5;
-  }
-  .notice b { color: var(--ink); }
-
   footer.wrap {
     border-top: 1px solid var(--line); margin-top: 24px;
     padding: 34px 16px 64px; text-align: center;
@@ -199,19 +178,12 @@
     max-width: 62ch; margin: 22px auto 0; text-align: center;
     color: var(--ink-soft); font-size: 15px;
   }
-  details.notice { text-align: left; }
-  details.notice summary { cursor: pointer; color: var(--ink); font-weight: 600; }
-  details.notice p { margin: 12px 0 0; }
+  .section-note a { color: var(--today); }
   a:focus-visible, summary:focus-visible { outline: 3px solid var(--today); outline-offset: 4px; }
   @media (max-width: 480px) {
     header.wrap { padding-top: 42px; }
     section.wrap { padding-top: 42px; padding-bottom: 42px; }
   }
-  
-  
-  
-  
-  
   /*langmenu*/
   .langmenu { position: absolute; top: 14px; right: 16px; z-index: 5; font-size: 14px; text-align: left; }
   .langmenu summary { list-style: none; cursor: pointer; background: var(--panel); color: var(--ink-soft);
@@ -255,22 +227,21 @@
 
 <header class="wrap">
   <!--langmenu--><details class="langmenu"><summary>Kielet</summary><div class="langlist"><a href="../index.html" hreflang="en" lang="en">English</a><a href="../de/index.html" hreflang="de" lang="de">Deutsch</a><a href="../es/index.html" hreflang="es" lang="es">Español</a><a href="../fr/index.html" hreflang="fr" lang="fr">Français</a><a href="../it/index.html" hreflang="it" lang="it">Italiano</a><a href="../nl/index.html" hreflang="nl" lang="nl">Nederlands</a><a href="../pt-pt/index.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a><a href="../pt-br/index.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a><a href="../ja/index.html" hreflang="ja" lang="ja">日本語</a><a href="../ko/index.html" hreflang="ko" lang="ko">한국어</a><a href="../sv/index.html" hreflang="sv" lang="sv">Svenska</a><a href="../da/index.html" hreflang="da" lang="da">Dansk</a><a href="../nb/index.html" hreflang="nb" lang="nb">Norsk bokmål</a><span aria-current="page" lang="fi">Suomi</span><a href="../pl/index.html" hreflang="pl" lang="pl">Polski</a></div></details><!--/langmenu-->
-  
-  
-  
-  
-  
   <img class="icon" src="../icon.png" alt="DayHand" width="132" height="132">
   <h1>DayHand</h1>
   <p class="tagline">Järjestä tehtäväsi elämäsi ja tavoitteidesi ympärille, ei kalenterin.</p>
-  <p class="sub">Esitelmän valmistelu, käsikirjoituksen kirjoittaminen, ominaisuuden rakentaminen, huoneen remontointi – suurin osa oikeasta työstä ei synny eikä valmistu yhtenä tiettynä päivänä. Kun suunnittelet kaiken yhden päivän ympärille, keskeneräisestä työstä voi tulla luettelo uudelleen ajoitettavista asioista. Niin siirtelet päivämääriä tai pilkot tehtävän osiin, jotta sovellus olisi samaa mieltä todellisuuden kanssa.</p>
-  <p class="sub">DayHand antaa tehtävän yksinkertaisesti pysyä aktiivisena niin kauan kuin se vie. Useita päiviä kestävä työ on yhä käynnissä olevaa työtä – se, ettet rastita sitä tänä iltana, ei tarkoita, ettet olisi saanut tämän päivän listaa valmiiksi.</p>
+  <p class="sub">Esitelmän valmistelu, matkan suunnittelu, ominaisuuden rakentaminen, huoneen remontti – suuri osa siitä, mikä on tärkeää, ei mahdu siististi päivittäiseen tarkistuslistaan. Silti monet tehtävänhallintasovellukset kehottavat antamaan päivämäärän ennen kuin tiedät, milloin työ tehdään. Kun se päivä on mennyt, keskeneräiset tehtävät erääntyvät. Siirrät niitä ja tunnet olevasi jäljessä, vaikka työ etenisi niin kuin pitääkin.</p>
+  <p class="sub">DayHand antaa tehtävän pysyä aktiivisena niin kauan kuin se tarvitsee, ilman että sille tarvitsee antaa uutta päivää joka aamu. Järjestä elämäsi ja työsi sen ympärille, mitä teet nyt (”Nyt”), mikä tulee seuraavaksi (”Seuraavaksi”) ja mikä kuuluu myöhemmäksi (”Myöhemmin”). Kirjaa uudet tehtävät kohtaan ”Saapuneet”, kunnes olet valmis päättämään.</p>
+  <p class="sub">Jos käytät jo tehtävänhallintasovellusta, DayHand tuntuu tutulta: tehtäviä, projekteja, muistiinpanoja ja muistutuksia. Virkistävää on järjestää työ aikeidesi mukaan, niin että on tilaa usean päivän tehtäville ja ohjatuille läpikäynneille, jotka auttavat arvioimaan uudelleen, mikä on tärkeää.</p>
+  <!-- The two download links stay "#" until the app is live; paste the App
+       Store and Mac App Store URLs here and rebuild the translated pages. -->
   <div class="cta">
-    <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">Liity betaan<small>iPhone ja iPad · TestFlight</small>
+    <a class="btn btn-primary" href="#">Lataa App Storesta<small>iPhone &amp; iPad · iOS 17 tai uudempi</small>
     </a>
-    <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Liity Mac-betaan<small>macOS · TestFlight</small>
+    <a class="btn btn-primary" href="#">Lataa Mac App Storesta<small>Mac · macOS 14 tai uudempi</small>
     </a>
     <a class="btn btn-secondary" href="help.html">Ohje ja tuki<small>Miten se toimii ja mitä tehdä, kun se ei toimi</small></a>
+    <a class="btn btn-secondary" href="privacy.html">Tietosuoja<small>Tehtäväsi pysyvät omissa tiedostoissasi</small></a>
   </div>
 </header>
 
@@ -363,6 +334,21 @@
   </div>
 </section>
 
+<section class="wrap" id="reviews" aria-labelledby="reviews-heading">
+  <h2 id="reviews-heading">Ohjatut läpikäynnit, kun listasi kaipaavat uutta katsetta</h2>
+  <p class="section-intro">Minne tämä tehtävä kuuluu? Teenkö tätä vielä? Voiko tämä edetä? Onko tämä yhä ajankohtainen? Läpikäynti esittää yhden kysymyksen kerrallaan, jotta päätät sen sijaan, että selaisit pitkää listaa.</p>
+  <div class="ideas">
+    <div class="idea i-review">
+      <h3>Tehtävien läpikäynti</h3>
+      <p>Käy läpi yksi pino tai kaikki tehtäväsi ilman, että käsittelet uudelleen tehtäviä, jotka siirsit kierroksen aikana. Jätä tehtävä paikalleen, siirrä se, muokkaa sitä tai merkitse se valmiiksi.</p>
+    </div>
+    <div class="idea i-keep">
+      <h3>Projektien läpikäynti</h3>
+      <p>Käy projektisi läpi varmistaaksesi, että jokaisella on selkeä seuraava askel. Lisää puuttuva askel, käy läpi projektin tehtävät tai arkistoi valmis projekti.</p>
+    </div>
+  </div>
+</section>
+
 <section class="wrap" id="history" aria-labelledby="history-heading">
   <h2 id="history-heading">Näe, mitä olet saanut aikaan ajan mittaan</h2>
   <p class="section-intro">Tehtävälista on vain osa kuvaa. DayHand pitää myös kirjaa työstä, jonka saat valmiiksi.</p>
@@ -381,20 +367,110 @@
 
 <section class="wrap" id="screens" aria-labelledby="screens-heading">
   <h2 id="screens-heading">Yksi sovellus kaikilla laitteillasi</h2>
-  <p class="section-intro">Rakennettu alusta alkaen iPhonelle, iPadille ja Macille. Työskentele samojen tehtävien parissa kaikilla Apple-laitteillasi, yhtenäisellä käyttökokemuksella, joka sopii jokaiseen näyttöön.</p>
-  <div class="shots">
-    <figure class="phone">
-      <img src="../screenshots/iphone.png" alt="Esimerkkinäkymä DayHandin betasta iPhonella, tehtävät järjestettyinä pinoihin (käyttöliittymä englanniksi)"
-           loading="lazy" width="1206" height="2622">
-      <figcaption><b>iPhone</b> – tehtävät pinoissa, valinnaisilla projektimerkinnöillä.</figcaption>
-    </figure>
-    <figure>
-      <img src="../screenshots/ipad.png" alt="Esimerkkinäkymä DayHandin betasta iPadilla, projektisuodattimen sivupalkki tehtävälistan vieressä (käyttöliittymä englanniksi)"
-           loading="lazy" width="2064" height="2752">
-      <figcaption><b>iPad</b> – sivupalkki pitää projektit tehtäviesi vieressä. Mac käyttää samaa asettelua ikkunassa, jonka kokoa voi muuttaa.</figcaption>
-    </figure>
+  <p class="section-intro">Suunniteltu alusta asti iPhonelle, iPadille ja Macille. Valitse jokaisella laitteella sama tiedosto omasta iCloud Drivestasi pitääksesi tehtäväsi synkronoituina.</p>
+  <div class="device">
+    <h3>iPhone</h3>
+    <p class="device-blurb">Tehtävät pinoissa, valinnaisin projektitunnistein.</p>
+    <div class="strip phone">
+      <figure>
+        <img src="../screenshots/web/iphone-01-now.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>Nyt</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-02-reminders.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>Muistutukset</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-03-task-actions.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>Tehtävän toiminnot</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-04-review-helper.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>Läpikäyntiapuri</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-05-timeline.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>Aikajana</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-06-project-review.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>Projektin läpikäynti</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-07-dark-mode.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>Tumma tila</figcaption>
+      </figure>
+    </div>
   </div>
-  <p class="section-note">Esimerkkinäkymiä betasta englanninkielisellä käyttöliittymällä; asettelu ja säätimet voivat poiketa nykyisissä versioissa.</p>
+  <div class="device">
+    <h3>iPad</h3>
+    <p class="device-blurb">Sivupalkki pitää luokat, ryhmät ja projektit tehtäviesi vieressä.</p>
+    <div class="strip ipad">
+      <figure>
+        <img src="../screenshots/web/ipad-01-now.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>Nyt</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-02-reminders.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>Muistutukset</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-03-task-actions.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>Tehtävän toiminnot</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-04-review-helper.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>Läpikäyntiapuri</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-05-timeline.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>Aikajana</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-06-project-review.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>Projektin läpikäynti</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-07-dark-mode.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>Tumma tila</figcaption>
+      </figure>
+    </div>
+  </div>
+  <div class="device">
+    <h3>Mac</h3>
+    <p class="device-blurb">Sama sivupalkkiasettelu ikkunassa, jonka kokoa voi muuttaa.</p>
+    <div class="strip mac">
+      <figure>
+        <img src="../screenshots/web/mac-01-now.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>Nyt</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-02-reminders.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>Muistutukset</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-03-task-actions.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>Tehtävän toiminnot</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-04-review-helper.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>Läpikäyntiapuri</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-05-timeline.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>Aikajana</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-06-project-review.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>Projektin läpikäynti</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-07-dark-mode.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>Tumma tila</figcaption>
+      </figure>
+    </div>
+  </div>
+  <p class="section-note">Kuvakaappaukset esittävät englanninkielistä versiota. DayHand noudattaa laitteesi kieltä tai kohdassa Lisää → Kieli valitsemaasi kieltä.</p>
 </section>
 
 <section class="wrap" id="use-cases" aria-labelledby="use-cases-heading">
@@ -440,45 +516,26 @@
     </div>
     <div class="idea i-review wide-idea">
       <h3>Varmuuskopiot ja tie ulos</h3>
-      <p>Automaattiset varmuuskopiot otetaan päivinä, jolloin avaat sovelluksen, ja kolme kiertävää kopiota säilytetään. Ota lisävarmuuskopioita käsin, palauta aiempi kopio tai jaa kopio turvallisempaan paikkaan. CSV-tuonnin ja -viennin avulla tuot tehtäviä sisään tai otat ne mukaasi.</p>
+      <p>Automaattiset varmuuskopiot tehdään päivinä, jolloin avaat sovelluksen, ja kolme kopiota kiertää. Tee lisävarmuuskopioita käsin, palauta aiempi kopio tai jaa kopio turvallisempaan paikkaan. Tuo tehtäviä Applen Muistutuksista tai Todoistin CSV-viennistä, tai käytä DayHandin omaa CSV-tuontia ja -vientiä. Tuonnit ovat kopioita, eikä alkuperäisen sovelluksen kanssa synkronoida jatkuvasti.</p>
     </div>
   </div>
 </section>
 
-<section class="wrap" id="get-dayhand" aria-labelledby="install-heading">
-  <h2 id="install-heading">Kokeile DayHandin betaa</h2>
-  <p class="section-intro">Saatavilla Applen TestFlightin kautta iPhonelle, iPadille ja Macille.</p>
-  <div class="install">
-    <div class="task">
-      <h3>iPhone ja iPad</h3>
-      <p class="req">iOS / iPadOS 17 tai uudempi</p>
-      <ol class="steps">
-        <li>Asenna Applen <b>TestFlight</b> App Storesta.</li>
-        <li>Avaa alla oleva beta-linkki iPhonellasi tai iPadillasi.</li>
-        <li>Hyväksy kutsu ja asenna DayHand.</li>
-      </ol>
-      <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">Liity betaan</a>
-    </div>
-    <div class="task">
-      <h3>Mac</h3>
-      <p class="req">macOS 14 tai uudempi</p>
-      <ol class="steps">
-        <li>Asenna <b>TestFlight</b> Mac App Storesta.</li>
-        <li>Avaa sama beta-linkki alla Macillasi.</li>
-        <li>Hyväksy kutsu ja asenna DayHand.</li>
-      </ol>
-      <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Liity Mac-betaan</a>
-    </div>
+<section class="wrap" id="beta" aria-labelledby="beta-heading">
+  <h2 id="beta-heading">Kokeile tulevia versioita</h2>
+  <p class="section-intro">DayHand on myös Applen TestFlightissa, jossa voit kokeilla uusia versioita ennen kuin ne tulevat App Storeen. Asenna Applen TestFlight-sovellus ja avaa sitten laitteesi linkki. Beta-versiot voivat olla vähemmän viimeisteltyjä kuin julkaistu sovellus.</p>
+  <div class="cta">
+    <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Liity betaan<small>iPhone ja iPad · TestFlight</small>
+    </a>
+    <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Liity Mac-betaan<small>macOS · TestFlight</small>
+    </a>
   </div>
-  <details class="notice">
-    <summary>Tuletko vanhemmasta, itse rakentamastasi Mac-versiosta?</summary>
-    <p>TestFlight-sovellus tallentaa tietonsa eri paikkaan. Jos se avautuu ilman tehtäviä, vanha tiedostosi on yhä siellä, missä se oli. Jos synkronoit iCloud Driven kautta, avaa <b>Lisää → Käytä olemassa olevaa synkronointitiedostoa</b> ja valitse sama tiedosto uudelleen saadaksesi tehtäväsi takaisin.</p>
-  </details>
+  <p class="section-note">Löysitkö ongelman betassa? <a href="https://github.com/amouraux/DayHand/issues/new">Ilmoita siitä GitHubissa</a>.</p>
 </section>
 </main>
 
 <footer class="wrap">
-  <p>Jokin epäselvää? <a href="help.html">Ohjesivut</a> kattavat suurimman osan. Muuten lähetä beta-palautetta TestFlightissa tai <a href="https://github.com/amouraux/DayHand/issues/new">ilmoita ongelmasta GitHubissa</a>.</p>
+  <p>Jokin epäselvää? <a href="help.html">Ohjesivut</a> kattavat suurimman osan. Muussa tapauksessa <a href="https://github.com/amouraux/DayHand/issues/new">ilmoita ongelmasta GitHubissa</a>.</p>
   <p>Suomeksi, englanniksi, ranskaksi, hollanniksi, saksaksi, espanjaksi, italiaksi, portugaliksi (Portugali ja Brasilia), japaniksi, koreaksi, ruotsiksi, tanskaksi, norjaksi ja puolaksi.</p>
   <!--privacy--><p>Tietosuojakäytäntö: <a href="../privacy.html" hreflang="en" lang="en">English</a> · <a href="../de/privacy.html" hreflang="de" lang="de">Deutsch</a> · <a href="../es/privacy.html" hreflang="es" lang="es">Español</a> · <a href="../fr/privacy.html" hreflang="fr" lang="fr">Français</a> · <a href="../it/privacy.html" hreflang="it" lang="it">Italiano</a> · <a href="../nl/privacy.html" hreflang="nl" lang="nl">Nederlands</a> · <a href="../pt-pt/privacy.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a> · <a href="../pt-br/privacy.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a> · <a href="../ja/privacy.html" hreflang="ja" lang="ja">日本語</a> · <a href="../ko/privacy.html" hreflang="ko" lang="ko">한국어</a> · <a href="../sv/privacy.html" hreflang="sv" lang="sv">Svenska</a> · <a href="../da/privacy.html" hreflang="da" lang="da">Dansk</a> · <a href="../nb/privacy.html" hreflang="nb" lang="nb">Norsk bokmål</a> · <a href="../fi/privacy.html" hreflang="fi" lang="fi">Suomi</a> · <a href="../pl/privacy.html" hreflang="pl" lang="pl">Polski</a></p><!--/privacy-->
   <p>Tehty SwiftUI:lla · <a href="https://github.com/amouraux/DayHand">Lähdekoodi GitHubissa</a></p>

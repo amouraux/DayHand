@@ -120,36 +120,22 @@
   @media (min-width: 720px) { .wide-idea { grid-column: 1 / -1; } }
 
   /* ---------- screenshots ---------- */
-  .shots { display: grid; gap: 34px; grid-template-columns: 1fr; align-items: end; }
-  @media (min-width: 760px) { .shots { grid-template-columns: 1fr 1fr; } }
-  figure { margin: 0; text-align: center; }
+  .device { margin: 0 0 38px; }
+  .device h3 { margin: 0 0 4px; font-size: 19px; letter-spacing: -.012em; }
+  .device-blurb { margin: 0 0 14px; color: var(--ink-soft); font-size: 15.5px; }
+  /* A scrolling strip rather than a grid of 21 pictures; each device shows
+     its seven screens in the order the App Store listing does. */
+  .strip { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory;
+    padding: 4px 2px 14px; -webkit-overflow-scrolling: touch; }
+  .strip figure { flex: none; scroll-snap-align: start; margin: 0; text-align: center; }
+  .strip.phone figure { width: 210px; }
+  .strip.ipad figure { width: min(78vw, 440px); }
+  .strip.mac figure { width: min(86vw, 560px); }
   figure img {
     width: 100%; height: auto; display: block;
     border-radius: 16px; border: 1px solid var(--line); box-shadow: var(--shadow);
   }
-  figure.phone { max-width: 320px; margin-inline: auto; }
-  figcaption { margin-top: 14px; margin-bottom: 8px; color: var(--ink-soft); font-size: 14.5px; }
-  figcaption b { color: var(--ink); font-weight: 600; }
-  .wide { grid-column: 1 / -1; }
-
-  /* ---------- install ---------- */
-  .install { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-  .task {
-    background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
-    padding: 26px; box-shadow: var(--shadow);
-  }
-  .task h3 { margin: 0 0 6px; font-size: 19px; letter-spacing: -.012em; }
-  .task .req { color: var(--ink-soft); font-size: 14px; margin: 0 0 16px; }
-  .task p { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 18px; }
-  .task .steps { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 18px; padding-left: 20px; }
-  .task .steps li { margin-bottom: 7px; }
-  .task .steps li:last-child { margin-bottom: 0; }
-  /* The thing you would otherwise only find out by hitting it. */
-  .task .aside {
-    font-size: 14px; border-left: 2px solid var(--line);
-    padding-left: 12px; margin: 0 0 18px;
-  }
-  .task .btn { display: inline-flex; }
+  figcaption { margin-top: 10px; color: var(--ink-soft); font-size: 14.5px; }
 
   /* One task’s journey, including the pauses and changes of priority. */
   .walk {
@@ -176,13 +162,6 @@
     color: var(--ink-soft); font-size: 15px;
   }
 
-  .notice {
-    max-width: 640px; margin: 22px auto 0; padding: 16px 18px;
-    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
-    color: var(--ink-soft); font-size: 14.5px; line-height: 1.5;
-  }
-  .notice b { color: var(--ink); }
-
   footer.wrap {
     border-top: 1px solid var(--line); margin-top: 24px;
     padding: 34px 16px 64px; text-align: center;
@@ -199,19 +178,12 @@
     max-width: 62ch; margin: 22px auto 0; text-align: center;
     color: var(--ink-soft); font-size: 15px;
   }
-  details.notice { text-align: left; }
-  details.notice summary { cursor: pointer; color: var(--ink); font-weight: 600; }
-  details.notice p { margin: 12px 0 0; }
+  .section-note a { color: var(--today); }
   a:focus-visible, summary:focus-visible { outline: 3px solid var(--today); outline-offset: 4px; }
   @media (max-width: 480px) {
     header.wrap { padding-top: 42px; }
     section.wrap { padding-top: 42px; padding-bottom: 42px; }
   }
-  
-  
-  
-  
-  
   /*langmenu*/
   .langmenu { position: absolute; top: 14px; right: 16px; z-index: 5; font-size: 14px; text-align: left; }
   .langmenu summary { list-style: none; cursor: pointer; background: var(--panel); color: var(--ink-soft);
@@ -255,22 +227,21 @@
 
 <header class="wrap">
   <!--langmenu--><details class="langmenu"><summary>言語</summary><div class="langlist"><a href="../index.html" hreflang="en" lang="en">English</a><a href="../de/index.html" hreflang="de" lang="de">Deutsch</a><a href="../es/index.html" hreflang="es" lang="es">Español</a><a href="../fr/index.html" hreflang="fr" lang="fr">Français</a><a href="../it/index.html" hreflang="it" lang="it">Italiano</a><a href="../nl/index.html" hreflang="nl" lang="nl">Nederlands</a><a href="../pt-pt/index.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a><a href="../pt-br/index.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a><span aria-current="page" lang="ja">日本語</span><a href="../ko/index.html" hreflang="ko" lang="ko">한국어</a><a href="../sv/index.html" hreflang="sv" lang="sv">Svenska</a><a href="../da/index.html" hreflang="da" lang="da">Dansk</a><a href="../nb/index.html" hreflang="nb" lang="nb">Norsk bokmål</a><a href="../fi/index.html" hreflang="fi" lang="fi">Suomi</a><a href="../pl/index.html" hreflang="pl" lang="pl">Polski</a></div></details><!--/langmenu-->
-  
-  
-  
-  
-  
   <img class="icon" src="../icon.png" alt="DayHand" width="132" height="132">
   <h1>DayHand</h1>
   <p class="tagline">カレンダーではなく、暮らしと目標を軸にタスクを整理しましょう。</p>
-  <p class="sub">講演の準備、原稿の執筆、機能の開発、部屋の改装。本当の仕事の多くは、ある特定の日に始まり、その日に終わるものではありません。すべてを日付に合わせて計画すると、終わらなかった仕事は予定を組み直す作業の山になりがちです。そこで日付を動かしたり、タスクを細切れにしたりして、アプリを現実に合わせることになります。</p>
-  <p class="sub">DayHandでは、タスクは必要なだけそのまま進行中にしておけます。何日もかかる仕事は、ずっと「作業中」です。今夜チェックを入れなかったからといって、今日のリストを終えられなかったわけではありません。</p>
+  <p class="sub">講演の準備、旅行の計画、機能の開発、部屋の改装。大切なことの多くは、毎日のチェックリストにきれいには収まりません。それでも多くのタスク管理アプリは、作業がいつ行われるかわかる前に日付を割り当てるよう促します。その日が過ぎると、終わっていないタスクは期限切れになります。予定を組み直し、作業が順調に進んでいても遅れているように感じてしまいます。</p>
+  <p class="sub">DayHandでは、毎朝新しい日を割り当てなくても、タスクは必要なだけアクティブなままでいられます。今取り組んでいること(「今」)、次に来ること(「次」)、あとのこと(「あとで」)を軸に、生活と仕事を整理しましょう。新しいタスクは、決める準備ができるまで「インボックス」に書き留めておけます。</p>
+  <p class="sub">すでにタスク管理アプリを使っているなら、DayHandはなじみ深く感じられるはずです。タスク、プロジェクト、メモ、リマインダーがあります。新鮮なのは、自分の意図を軸に仕事を整理することです。数日かかるタスクの余地があり、何が大切かを見直すための案内付きレビューもあります。</p>
+  <!-- The two download links stay "#" until the app is live; paste the App
+       Store and Mac App Store URLs here and rebuild the translated pages. -->
   <div class="cta">
-    <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">ベータ版に参加<small>iPhone＆iPad · TestFlight</small>
+    <a class="btn btn-primary" href="#">App Storeからダウンロード<small>iPhone &amp; iPad · iOS 17以降</small>
     </a>
-    <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Mac版ベータに参加<small>macOS · TestFlight</small>
+    <a class="btn btn-primary" href="#">Mac App Storeからダウンロード<small>Mac · macOS 14以降</small>
     </a>
     <a class="btn btn-secondary" href="help.html">ヘルプとサポート<small>使い方と、うまくいかないときの対処</small></a>
+    <a class="btn btn-secondary" href="privacy.html">プライバシー<small>タスクはあなた自身のファイルに残ります</small></a>
   </div>
 </header>
 
@@ -363,6 +334,21 @@
   </div>
 </section>
 
+<section class="wrap" id="reviews" aria-labelledby="reviews-heading">
+  <h2 id="reviews-heading">案内付きレビュー:リストを見直したいときに</h2>
+  <p class="section-intro">これはどこに置くべき?まだ取り組んでいる?先に進められる?まだ関係がある?レビューは一度に1つだけ質問するので、長いリストをスクロールするのではなく、その場で決められます。</p>
+  <div class="ideas">
+    <div class="idea i-review">
+      <h3>タスクをレビューする</h3>
+      <p>1つのスタックまたはすべてのタスクを見直せます。その巡回の途中で移動したタスクが繰り返し出てくることはありません。タスクをそのままにする、移動する、編集する、完了するのいずれかを選びます。</p>
+    </div>
+    <div class="idea i-keep">
+      <h3>プロジェクトをレビューする</h3>
+      <p>プロジェクトを順に見て、それぞれに明確な次の一歩があるか確認します。足りない一歩を追加する、プロジェクトの関連タスクを見直す、終わったプロジェクトをアーカイブする、といったことができます。</p>
+    </div>
+  </div>
+</section>
+
 <section class="wrap" id="history" aria-labelledby="history-heading">
   <h2 id="history-heading">時間をかけて成し遂げたことを見る</h2>
   <p class="section-intro">やることのリストは、全体像の一部にすぎません。DayHandは、終えた仕事の記録も残します。</p>
@@ -381,20 +367,110 @@
 
 <section class="wrap" id="screens" aria-labelledby="screens-heading">
   <h2 id="screens-heading">すべてのデバイスで、ひとつのアプリ</h2>
-  <p class="section-intro">最初からiPhone、iPad、Mac向けに作られています。Appleのデバイスのどれでも同じタスクで作業でき、画面ごとにぴったり合う、一貫した使い心地です。</p>
-  <div class="shots">
-    <figure class="phone">
-      <img src="../screenshots/iphone.png" alt="DayHandベータ版のiPhone画面の例。タスクがスタックに整理されている（画面は英語表記）"
-           loading="lazy" width="1206" height="2622">
-      <figcaption><b>iPhone</b> — スタックに並ぶタスクと、任意のプロジェクトラベル。</figcaption>
-    </figure>
-    <figure>
-      <img src="../screenshots/ipad.png" alt="DayHandベータ版のiPad画面の例。タスク一覧の横にプロジェクトのフィルタのサイドバーがある（画面は英語表記）"
-           loading="lazy" width="2064" height="2752">
-      <figcaption><b>iPad</b> — サイドバーがプロジェクトをタスクの横に保ちます。Macではサイズを変更できるウインドウで同じレイアウトを使います。</figcaption>
-    </figure>
+  <p class="section-intro">最初からiPhone、iPad、Mac向けに設計されています。各デバイスで自分のiCloud Drive内の同じファイルを選ぶと、タスクが同期されます。</p>
+  <div class="device">
+    <h3>iPhone</h3>
+    <p class="device-blurb">スタックに分かれたタスクと、任意のプロジェクトラベル。</p>
+    <div class="strip phone">
+      <figure>
+        <img src="../screenshots/web/iphone-01-now.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>今</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-02-reminders.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>リマインダー</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-03-task-actions.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>タスクの操作</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-04-review-helper.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>レビューアシスタント</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-05-timeline.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>タイムライン</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-06-project-review.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>プロジェクトのレビュー</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-07-dark-mode.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>ダークモード</figcaption>
+      </figure>
+    </div>
   </div>
-  <p class="section-note">ベータ版の画面例（英語表記）です。現在のバージョンとはレイアウトや操作が異なる場合があります。</p>
+  <div class="device">
+    <h3>iPad</h3>
+    <p class="device-blurb">サイドバーに、カテゴリ、グループ、プロジェクトがタスクと並んで表示されます。</p>
+    <div class="strip ipad">
+      <figure>
+        <img src="../screenshots/web/ipad-01-now.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>今</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-02-reminders.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>リマインダー</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-03-task-actions.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>タスクの操作</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-04-review-helper.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>レビューアシスタント</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-05-timeline.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>タイムライン</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-06-project-review.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>プロジェクトのレビュー</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-07-dark-mode.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>ダークモード</figcaption>
+      </figure>
+    </div>
+  </div>
+  <div class="device">
+    <h3>Mac</h3>
+    <p class="device-blurb">同じサイドバーのレイアウトを、サイズ変更できるウインドウで。</p>
+    <div class="strip mac">
+      <figure>
+        <img src="../screenshots/web/mac-01-now.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>今</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-02-reminders.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>リマインダー</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-03-task-actions.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>タスクの操作</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-04-review-helper.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>レビューアシスタント</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-05-timeline.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>タイムライン</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-06-project-review.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>プロジェクトのレビュー</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-07-dark-mode.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>ダークモード</figcaption>
+      </figure>
+    </div>
+  </div>
+  <p class="section-note">スクリーンショットは英語版です。DayHandはデバイスの言語に従い、その他 → 言語で選んだ言語でも表示できます。</p>
 </section>
 
 <section class="wrap" id="use-cases" aria-labelledby="use-cases-heading">
@@ -440,45 +516,26 @@
     </div>
     <div class="idea i-review wide-idea">
       <h3>バックアップと、出口</h3>
-      <p>Appを開いた日には自動でバックアップが作成され、3つのコピーが順に保持されます。手動でバックアップを追加したり、以前のコピーを復元したり、より安全な場所に共有したりできます。CSVの読み込みと書き出しで、タスクを取り込んだり持ち出したりできます。</p>
+      <p>自動バックアップは、アプリを開いた日に作られ、3つのコピーが順番に保たれます。手動で追加のバックアップを取ったり、以前のコピーを復元したり、より安全な場所に共有したりできます。Appleのリマインダーや、TodoistのCSVエクスポートから読み込めるほか、DayHand独自のCSVの読み込みと書き出しも使えます。読み込みはコピーであり、元のアプリとの継続的な同期はありません。</p>
     </div>
   </div>
 </section>
 
-<section class="wrap" id="get-dayhand" aria-labelledby="install-heading">
-  <h2 id="install-heading">DayHandのベータ版を試す</h2>
-  <p class="section-intro">iPhone、iPad、Mac向けに、AppleのTestFlightで提供しています。</p>
-  <div class="install">
-    <div class="task">
-      <h3>iPhoneとiPad</h3>
-      <p class="req">iOS / iPadOS 17以降</p>
-      <ol class="steps">
-        <li>App StoreからAppleの<b>TestFlight</b>をインストールします。</li>
-        <li>iPhoneまたはiPadで、下のベータ版リンクを開きます。</li>
-        <li>招待を承諾して、DayHandをインストールします。</li>
-      </ol>
-      <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">ベータ版に参加</a>
-    </div>
-    <div class="task">
-      <h3>Mac</h3>
-      <p class="req">macOS 14以降</p>
-      <ol class="steps">
-        <li>Mac App Storeから<b>TestFlight</b>をインストールします。</li>
-        <li>Macで、同じベータ版リンクを下から開きます。</li>
-        <li>招待を承諾して、DayHandをインストールします。</li>
-      </ol>
-      <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Mac版ベータに参加</a>
-    </div>
+<section class="wrap" id="beta" aria-labelledby="beta-heading">
+  <h2 id="beta-heading">今後のバージョンを試す</h2>
+  <p class="section-intro">DayHandはAppleのTestFlightでも提供しており、App Storeに届く前の新バージョンを試せます。AppleのTestFlightアプリをインストールしてから、お使いのデバイス用のリンクを開いてください。ベータ版は、公開版のアプリより仕上がりが粗いことがあります。</p>
+  <div class="cta">
+    <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">ベータ版に参加<small>iPhone＆iPad · TestFlight</small>
+    </a>
+    <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Mac版ベータに参加<small>macOS · TestFlight</small>
+    </a>
   </div>
-  <details class="notice">
-    <summary>自分でビルドした以前のMac版から移行しますか？</summary>
-    <p>TestFlight版のAppは、データを別の場所に保存します。タスクが空の状態で開いても、以前のファイルは元の場所にそのまま残っています。iCloud Driveで同期していた場合は、<b>その他 → 既存の同期ファイルを使う</b>を開き、同じファイルをもう一度選ぶとタスクが戻ります。</p>
-  </details>
+  <p class="section-note">ベータ版で問題を見つけましたか?<a href="https://github.com/amouraux/DayHand/issues/new">GitHubで報告してください</a>。</p>
 </section>
 </main>
 
 <footer class="wrap">
-  <p>分かりにくい点がありますか？<a href="help.html">ヘルプページ</a>で、ほとんどのことが分かります。それでも解決しない場合は、TestFlightでベータ版のフィードバックを送るか、<a href="https://github.com/amouraux/DayHand/issues/new">GitHubで問題を報告</a>してください。</p>
+  <p>わかりにくい点がありますか?<a href="help.html">ヘルプページ</a>で、ほとんどのことが分かります。それでも解決しない場合は、<a href="https://github.com/amouraux/DayHand/issues/new">GitHubで問題を報告してください</a>。</p>
   <p>日本語、英語、フランス語、オランダ語、ドイツ語、スペイン語、イタリア語、ポルトガル語（ポルトガルとブラジル）、韓国語、スウェーデン語、デンマーク語、ノルウェー語、フィンランド語、ポーランド語に対応しています。</p>
   <!--privacy--><p>プライバシーポリシー: <a href="../privacy.html" hreflang="en" lang="en">English</a> · <a href="../de/privacy.html" hreflang="de" lang="de">Deutsch</a> · <a href="../es/privacy.html" hreflang="es" lang="es">Español</a> · <a href="../fr/privacy.html" hreflang="fr" lang="fr">Français</a> · <a href="../it/privacy.html" hreflang="it" lang="it">Italiano</a> · <a href="../nl/privacy.html" hreflang="nl" lang="nl">Nederlands</a> · <a href="../pt-pt/privacy.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a> · <a href="../pt-br/privacy.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a> · <a href="../ja/privacy.html" hreflang="ja" lang="ja">日本語</a> · <a href="../ko/privacy.html" hreflang="ko" lang="ko">한국어</a> · <a href="../sv/privacy.html" hreflang="sv" lang="sv">Svenska</a> · <a href="../da/privacy.html" hreflang="da" lang="da">Dansk</a> · <a href="../nb/privacy.html" hreflang="nb" lang="nb">Norsk bokmål</a> · <a href="../fi/privacy.html" hreflang="fi" lang="fi">Suomi</a> · <a href="../pl/privacy.html" hreflang="pl" lang="pl">Polski</a></p><!--/privacy-->
   <p>SwiftUIで作成 · <a href="https://github.com/amouraux/DayHand">GitHubのソースコード</a></p>

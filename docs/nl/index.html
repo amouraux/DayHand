@@ -120,36 +120,22 @@
   @media (min-width: 720px) { .wide-idea { grid-column: 1 / -1; } }
 
   /* ---------- screenshots ---------- */
-  .shots { display: grid; gap: 34px; grid-template-columns: 1fr; align-items: end; }
-  @media (min-width: 760px) { .shots { grid-template-columns: 1fr 1fr; } }
-  figure { margin: 0; text-align: center; }
+  .device { margin: 0 0 38px; }
+  .device h3 { margin: 0 0 4px; font-size: 19px; letter-spacing: -.012em; }
+  .device-blurb { margin: 0 0 14px; color: var(--ink-soft); font-size: 15.5px; }
+  /* A scrolling strip rather than a grid of 21 pictures; each device shows
+     its seven screens in the order the App Store listing does. */
+  .strip { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory;
+    padding: 4px 2px 14px; -webkit-overflow-scrolling: touch; }
+  .strip figure { flex: none; scroll-snap-align: start; margin: 0; text-align: center; }
+  .strip.phone figure { width: 210px; }
+  .strip.ipad figure { width: min(78vw, 440px); }
+  .strip.mac figure { width: min(86vw, 560px); }
   figure img {
     width: 100%; height: auto; display: block;
     border-radius: 16px; border: 1px solid var(--line); box-shadow: var(--shadow);
   }
-  figure.phone { max-width: 320px; margin-inline: auto; }
-  figcaption { margin-top: 14px; margin-bottom: 8px; color: var(--ink-soft); font-size: 14.5px; }
-  figcaption b { color: var(--ink); font-weight: 600; }
-  .wide { grid-column: 1 / -1; }
-
-  /* ---------- install ---------- */
-  .install { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-  .task {
-    background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
-    padding: 26px; box-shadow: var(--shadow);
-  }
-  .task h3 { margin: 0 0 6px; font-size: 19px; letter-spacing: -.012em; }
-  .task .req { color: var(--ink-soft); font-size: 14px; margin: 0 0 16px; }
-  .task p { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 18px; }
-  .task .steps { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 18px; padding-left: 20px; }
-  .task .steps li { margin-bottom: 7px; }
-  .task .steps li:last-child { margin-bottom: 0; }
-  /* The thing you would otherwise only find out by hitting it. */
-  .task .aside {
-    font-size: 14px; border-left: 2px solid var(--line);
-    padding-left: 12px; margin: 0 0 18px;
-  }
-  .task .btn { display: inline-flex; }
+  figcaption { margin-top: 10px; color: var(--ink-soft); font-size: 14.5px; }
 
   /* One task’s journey, including the pauses and changes of priority. */
   .walk {
@@ -176,13 +162,6 @@
     color: var(--ink-soft); font-size: 15px;
   }
 
-  .notice {
-    max-width: 640px; margin: 22px auto 0; padding: 16px 18px;
-    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
-    color: var(--ink-soft); font-size: 14.5px; line-height: 1.5;
-  }
-  .notice b { color: var(--ink); }
-
   footer.wrap {
     border-top: 1px solid var(--line); margin-top: 24px;
     padding: 34px 16px 64px; text-align: center;
@@ -199,19 +178,12 @@
     max-width: 62ch; margin: 22px auto 0; text-align: center;
     color: var(--ink-soft); font-size: 15px;
   }
-  details.notice { text-align: left; }
-  details.notice summary { cursor: pointer; color: var(--ink); font-weight: 600; }
-  details.notice p { margin: 12px 0 0; }
+  .section-note a { color: var(--today); }
   a:focus-visible, summary:focus-visible { outline: 3px solid var(--today); outline-offset: 4px; }
   @media (max-width: 480px) {
     header.wrap { padding-top: 42px; }
     section.wrap { padding-top: 42px; padding-bottom: 42px; }
   }
-  
-  
-  
-  
-  
   /*langmenu*/
   .langmenu { position: absolute; top: 14px; right: 16px; z-index: 5; font-size: 14px; text-align: left; }
   .langmenu summary { list-style: none; cursor: pointer; background: var(--panel); color: var(--ink-soft);
@@ -255,22 +227,21 @@
 
 <header class="wrap">
   <!--langmenu--><details class="langmenu"><summary>Talen</summary><div class="langlist"><a href="../index.html" hreflang="en" lang="en">English</a><a href="../de/index.html" hreflang="de" lang="de">Deutsch</a><a href="../es/index.html" hreflang="es" lang="es">Español</a><a href="../fr/index.html" hreflang="fr" lang="fr">Français</a><a href="../it/index.html" hreflang="it" lang="it">Italiano</a><span aria-current="page" lang="nl">Nederlands</span><a href="../pt-pt/index.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a><a href="../pt-br/index.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a><a href="../ja/index.html" hreflang="ja" lang="ja">日本語</a><a href="../ko/index.html" hreflang="ko" lang="ko">한국어</a><a href="../sv/index.html" hreflang="sv" lang="sv">Svenska</a><a href="../da/index.html" hreflang="da" lang="da">Dansk</a><a href="../nb/index.html" hreflang="nb" lang="nb">Norsk bokmål</a><a href="../fi/index.html" hreflang="fi" lang="fi">Suomi</a><a href="../pl/index.html" hreflang="pl" lang="pl">Polski</a></div></details><!--/langmenu-->
-  
-  
-  
-  
-  
   <img class="icon" src="../icon.png" alt="DayHand" width="132" height="132">
   <h1>DayHand</h1>
   <p class="tagline">Organiseer je taken rond je leven en je doelen, niet rond de kalender.</p>
-  <p class="sub">Een lezing voorbereiden, een manuscript schrijven, een functie bouwen, een kamer verbouwen: het meeste echte werk wordt niet op één bepaalde dag aangemaakt en afgerond. Als je alles rond een dag plant, kan onafgemaakt werk een lijst worden van dingen om te verzetten. Dus schuif je de data heen en weer, of hak je de taak in stukken, om de app met de werkelijkheid te laten kloppen.</p>
-  <p class="sub">DayHand laat een taak gewoon actief blijven zolang dat nodig is. Werk dat meerdere dagen duurt, is nog steeds werk in uitvoering: het vanavond niet afvinken betekent niet dat je de lijst van vandaag niet hebt gehaald.</p>
+  <p class="sub">Een lezing voorbereiden, een reis plannen, een functie bouwen, een kamer verbouwen: veel van wat telt past niet netjes in een dagelijkse checklist. Toch moedigen veel takenapps je aan een datum toe te wijzen voordat je weet wanneer het werk plaatsvindt. Als die dag voorbij is, worden onafgemaakte taken achterstallig. Je plant ze opnieuw in en voelt je achter, ook als het werk verloopt zoals het hoort.</p>
+  <p class="sub">DayHand laat een taak zo lang actief blijven als nodig is, zonder dat je hem elke ochtend een nieuwe dag hoeft te geven. Organiseer je leven en werk rond wat je nu doet (‘Nu’), wat daarna komt (‘Volgende’) en wat voor later is (‘Later’). Leg nieuwe taken vast in ‘Postvak’ tot je klaar bent om te beslissen.</p>
+  <p class="sub">Als je al een takenapp gebruikt, voelt DayHand vertrouwd: taken, projecten, notities en herinneringen. Het verfrissende is dat je werk ordent rond je intenties, met ruimte voor taken die meerdere dagen duren en begeleide reviews die je helpen opnieuw te bekijken wat telt.</p>
+  <!-- The two download links stay "#" until the app is live; paste the App
+       Store and Mac App Store URLs here and rebuild the translated pages. -->
   <div class="cta">
-    <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">Doe mee met de bèta<small>iPhone en iPad · TestFlight</small>
+    <a class="btn btn-primary" href="#">Download in de App Store<small>iPhone &amp; iPad · iOS 17 of nieuwer</small>
     </a>
-    <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Doe mee met de Mac-bèta<small>macOS · TestFlight</small>
+    <a class="btn btn-primary" href="#">Download in de Mac App Store<small>Mac · macOS 14 of nieuwer</small>
     </a>
     <a class="btn btn-secondary" href="help.html">Help en support<small>Hoe het werkt en wat te doen als het niet werkt</small></a>
+    <a class="btn btn-secondary" href="privacy.html">Privacy<small>Je taken blijven in je eigen bestanden</small></a>
   </div>
 </header>
 
@@ -363,6 +334,21 @@
   </div>
 </section>
 
+<section class="wrap" id="reviews" aria-labelledby="reviews-heading">
+  <h2 id="reviews-heading">Begeleide reviews, als je lijsten een nieuwe blik nodig hebben</h2>
+  <p class="section-intro">Waar hoort deze taak? Werk ik hier nog aan? Kan dit verder? Is het nog relevant? Een review stelt één vraag tegelijk, zodat je beslist in plaats van door een lange lijst te scrollen.</p>
+  <div class="ideas">
+    <div class="idea i-review">
+      <h3>Taken beoordelen</h3>
+      <p>Loop één stapel of al je taken langs, zonder taken te herhalen die je tijdens die ronde hebt verplaatst. Laat een taak staan waar hij staat, verplaats hem, bewerk hem of rond hem af.</p>
+    </div>
+    <div class="idea i-keep">
+      <h3>Projecten beoordelen</h3>
+      <p>Loop je projecten langs om te controleren of elk een duidelijke volgende stap heeft. Voeg de ontbrekende stap toe, bekijk de bijbehorende taken van het project of archiveer een afgerond project.</p>
+    </div>
+  </div>
+</section>
+
 <section class="wrap" id="history" aria-labelledby="history-heading">
   <h2 id="history-heading">Zie wat je in de loop van de tijd hebt bereikt</h2>
   <p class="section-intro">Een lijst met dingen om te doen is maar een deel van het plaatje. DayHand houdt ook bij welk werk je afrondt.</p>
@@ -381,20 +367,110 @@
 
 <section class="wrap" id="screens" aria-labelledby="screens-heading">
   <h2 id="screens-heading">Eén app op al je apparaten</h2>
-  <p class="section-intro">Vanaf het begin gebouwd voor iPhone, iPad en Mac. Werk met dezelfde taken op al je Apple-apparaten, met een consistente ervaring die bij elk scherm past.</p>
-  <div class="shots">
-    <figure class="phone">
-      <img src="../screenshots/iphone.png" alt="Voorbeeldscherm van de DayHand-bèta op iPhone, met taken geordend in stapels (interface in het Engels)"
-           loading="lazy" width="1206" height="2622">
-      <figcaption><b>iPhone</b> — taken in stapels, met optionele projectlabels.</figcaption>
-    </figure>
-    <figure>
-      <img src="../screenshots/ipad.png" alt="Voorbeeldscherm van de DayHand-bèta op iPad, met de projectfilterzijbalk naast de takenlijst (interface in het Engels)"
-           loading="lazy" width="2064" height="2752">
-      <figcaption><b>iPad</b> — een zijbalk houdt projecten naast je taken. De Mac gebruikt dezelfde indeling in een venster waarvan je het formaat kunt aanpassen.</figcaption>
-    </figure>
+  <p class="section-intro">Vanaf het begin ontworpen voor iPhone, iPad en Mac. Kies op elk apparaat hetzelfde bestand in je eigen iCloud Drive om je taken gesynchroniseerd te houden.</p>
+  <div class="device">
+    <h3>iPhone</h3>
+    <p class="device-blurb">Taken in stapels, met optionele projectlabels.</p>
+    <div class="strip phone">
+      <figure>
+        <img src="../screenshots/web/iphone-01-now.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>Nu</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-02-reminders.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>Herinneringen</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-03-task-actions.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>Taakacties</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-04-review-helper.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>Reviewhulp</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-05-timeline.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>Tijdlijn</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-06-project-review.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>Projectreview</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-07-dark-mode.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>Donkere modus</figcaption>
+      </figure>
+    </div>
   </div>
-  <p class="section-note">Voorbeeldschermen van de bèta met Engelse interface; indeling en bediening kunnen in actuele versies afwijken.</p>
+  <div class="device">
+    <h3>iPad</h3>
+    <p class="device-blurb">Een zijbalk houdt categorieën, groepen en projecten naast je taken.</p>
+    <div class="strip ipad">
+      <figure>
+        <img src="../screenshots/web/ipad-01-now.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>Nu</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-02-reminders.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>Herinneringen</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-03-task-actions.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>Taakacties</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-04-review-helper.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>Reviewhulp</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-05-timeline.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>Tijdlijn</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-06-project-review.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>Projectreview</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-07-dark-mode.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>Donkere modus</figcaption>
+      </figure>
+    </div>
+  </div>
+  <div class="device">
+    <h3>Mac</h3>
+    <p class="device-blurb">Dezelfde indeling met zijbalk, in een venster waarvan je het formaat kunt aanpassen.</p>
+    <div class="strip mac">
+      <figure>
+        <img src="../screenshots/web/mac-01-now.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>Nu</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-02-reminders.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>Herinneringen</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-03-task-actions.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>Taakacties</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-04-review-helper.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>Reviewhulp</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-05-timeline.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>Tijdlijn</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-06-project-review.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>Projectreview</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-07-dark-mode.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>Donkere modus</figcaption>
+      </figure>
+    </div>
+  </div>
+  <p class="section-note">De schermafbeeldingen tonen de Engelse versie. DayHand volgt de taal van je apparaat, of die je kiest onder Meer → Taal.</p>
 </section>
 
 <section class="wrap" id="use-cases" aria-labelledby="use-cases-heading">
@@ -440,45 +516,26 @@
     </div>
     <div class="idea i-review wide-idea">
       <h3>Back-ups en een uitweg</h3>
-      <p>Op dagen dat je de app opent, worden automatisch back-ups gemaakt, met drie roterende kopieën. Maak extra back-ups met de hand, herstel een eerdere kopie of deel er een naar een veiligere plek. Met CSV-import en -export haal je taken binnen of neem je ze mee.</p>
+      <p>Automatische back-ups worden gemaakt op dagen dat je de app opent, met drie roterende kopieën. Maak extra back-ups met de hand, herstel een eerdere kopie of deel er een op een veiliger plek. Importeer uit Apple Herinneringen of een Todoist-CSV-export, of gebruik de eigen CSV-import en -export van DayHand. Imports zijn kopieën, zonder doorlopende synchronisatie met de oorspronkelijke app.</p>
     </div>
   </div>
 </section>
 
-<section class="wrap" id="get-dayhand" aria-labelledby="install-heading">
-  <h2 id="install-heading">Probeer de DayHand-bèta</h2>
-  <p class="section-intro">Beschikbaar via Apples TestFlight voor iPhone, iPad en Mac.</p>
-  <div class="install">
-    <div class="task">
-      <h3>iPhone en iPad</h3>
-      <p class="req">iOS / iPadOS 17 of nieuwer</p>
-      <ol class="steps">
-        <li>Installeer Apples <b>TestFlight</b> uit de App Store.</li>
-        <li>Open de bètalink hieronder op je iPhone of iPad.</li>
-        <li>Accepteer de uitnodiging en installeer DayHand.</li>
-      </ol>
-      <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">Doe mee met de bèta</a>
-    </div>
-    <div class="task">
-      <h3>Mac</h3>
-      <p class="req">macOS 14 of nieuwer</p>
-      <ol class="steps">
-        <li>Installeer <b>TestFlight</b> uit de Mac App Store.</li>
-        <li>Open dezelfde bètalink hieronder op je Mac.</li>
-        <li>Accepteer de uitnodiging en installeer DayHand.</li>
-      </ol>
-      <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Doe mee met de Mac-bèta</a>
-    </div>
+<section class="wrap" id="beta" aria-labelledby="beta-heading">
+  <h2 id="beta-heading">Test komende versies</h2>
+  <p class="section-intro">DayHand staat ook in Apples TestFlight, waar je nieuwe versies kunt uitproberen voordat ze in de App Store verschijnen. Installeer Apples TestFlight-app en open dan de link voor je apparaat. Bètaversies kunnen minder verfijnd zijn dan de gepubliceerde app.</p>
+  <div class="cta">
+    <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Doe mee met de bèta<small>iPhone en iPad · TestFlight</small>
+    </a>
+    <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Doe mee met de Mac-bèta<small>macOS · TestFlight</small>
+    </a>
   </div>
-  <details class="notice">
-    <summary>Kom je van een oudere, zelfgebouwde Mac-versie?</summary>
-    <p>De TestFlight-app slaat haar gegevens op een andere plek op. Als ze zonder taken opent, staat je oude bestand nog waar het stond. Synchroniseerde je via iCloud Drive, open dan <b>Meer → Bestaand bestand gebruiken</b> en kies hetzelfde bestand opnieuw om je taken terug te krijgen.</p>
-  </details>
+  <p class="section-note">Een probleem gevonden in een bèta? <a href="https://github.com/amouraux/DayHand/issues/new">Meld het op GitHub</a>.</p>
 </section>
 </main>
 
 <footer class="wrap">
-  <p>Iets onduidelijk? De <a href="help.html">helppagina’s</a> behandelen het meeste. Anders stuur je bètafeedback in TestFlight of <a href="https://github.com/amouraux/DayHand/issues/new">meld je een probleem op GitHub</a>.</p>
+  <p>Iets onduidelijk? De <a href="help.html">helppagina’s</a> beantwoorden het meeste. Anders <a href="https://github.com/amouraux/DayHand/issues/new">meld je een probleem op GitHub</a>.</p>
   <p>In het Nederlands, Engels, Frans, Duits, Spaans, Italiaans, Portugees (Portugal en Brazilië), Japans, Koreaans, Zweeds, Deens, Noors, Fins en Pools.</p>
   <!--privacy--><p>Privacybeleid: <a href="../privacy.html" hreflang="en" lang="en">English</a> · <a href="../de/privacy.html" hreflang="de" lang="de">Deutsch</a> · <a href="../es/privacy.html" hreflang="es" lang="es">Español</a> · <a href="../fr/privacy.html" hreflang="fr" lang="fr">Français</a> · <a href="../it/privacy.html" hreflang="it" lang="it">Italiano</a> · <a href="../nl/privacy.html" hreflang="nl" lang="nl">Nederlands</a> · <a href="../pt-pt/privacy.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a> · <a href="../pt-br/privacy.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a> · <a href="../ja/privacy.html" hreflang="ja" lang="ja">日本語</a> · <a href="../ko/privacy.html" hreflang="ko" lang="ko">한국어</a> · <a href="../sv/privacy.html" hreflang="sv" lang="sv">Svenska</a> · <a href="../da/privacy.html" hreflang="da" lang="da">Dansk</a> · <a href="../nb/privacy.html" hreflang="nb" lang="nb">Norsk bokmål</a> · <a href="../fi/privacy.html" hreflang="fi" lang="fi">Suomi</a> · <a href="../pl/privacy.html" hreflang="pl" lang="pl">Polski</a></p><!--/privacy-->
   <p>Gebouwd met SwiftUI · <a href="https://github.com/amouraux/DayHand">Broncode op GitHub</a></p>

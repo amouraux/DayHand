@@ -32,7 +32,7 @@ PRIVACY = {
 ],
 "C7": "I dati delle attività attive vengono conservati finché non li modifichi o li elimini. I backup automatici ruotano; i backup manuali e le copie che condividi restano finché non vengono sostituiti o eliminati. I registri di eliminazione usati per la sincronizzazione possono conservare identificativi delle attività e date di eliminazione, ma non il contenuto delle attività. Rimuovere l’app non elimina i file iCloud salvati a parte, le esportazioni né le copie su altri dispositivi.",
 "C8": "Non c’è alcun account DayHand da chiudere. Lo sviluppatore non può recuperare né cancellare da remoto i file di attività che restano solo sui tuoi dispositivi o nel tuo account di archiviazione.",
-"U1": "Per domande su questa informativa o per una richiesta sulla privacy, contatta lo sviluppatore di DayHand tramite <s>la pagina di assistenza</s>. Durante la beta puoi inviare feedback con TestFlight. È disponibile anche GitHub Issues per domande generali e segnalazioni di errori.",
+"U1": "Per domande su questa informativa o per una richiesta sulla privacy, contatta lo sviluppatore di DayHand tramite <s>la pagina di assistenza</s>. È disponibile anche GitHub Issues per domande generali e segnalazioni di errori.",
 "U2": "Se invii un feedback, un report diagnostico o un messaggio di assistenza, lo sviluppatore riceve le informazioni che includi e quelle fornite dal canale usato, come un indirizzo di contatto, dettagli sul dispositivo o allegati. Queste informazioni servono per rispondere, risolvere i problemi e migliorare DayHand. I dati dell’assistenza possono essere conservati per il tempo necessario a risolvere la richiesta e a seguirne gli sviluppi; per chiedere l’eliminazione delle informazioni che hai fornito, contatta lo sviluppatore attraverso lo stesso canale. Apple e GitHub gestiscono le proprie copie e la loro conservazione secondo le proprie politiche.",
 "U3": "<strong>Le segnalazioni su GitHub sono pubbliche.</strong> Non pubblicarvi attività private, backup, credenziali o dati personali. Usa un esempio inventato quando possibile. Per una richiesta sulla privacy, inizia senza dettagli sensibili e chiedi un modo adeguato per proseguire.",
 "W1": "Questo sito web è ospitato su GitHub Pages. Non aggiunge script di analisi né cookie pubblicitari. GitHub può trattare informazioni di connessione, come indirizzi IP e registri delle richieste, per gestire e proteggere l’hosting. GitHub Issues e i link esterni sono regolati dalle politiche dei rispettivi fornitori: l’<g>informativa sulla privacy di GitHub</g> e l’<apple>informativa sulla privacy di Apple</apple>.",
@@ -57,7 +57,6 @@ SUPPORT = {
 "h2": ["Non trovo le mie attività", "Un promemoria è rimasto muto", "Le attività importate sembrano diverse", "Raccontamelo"],
 "S": {
 "M1": "Per prima cosa, cancella la ricerca, i filtri di categoria e progetto e la bandierina. Poi guarda negli altri stack e in {timeline}; un’attività che hai spuntato è lì. Se un secondo dispositivo mostra qualcosa di diverso, leggi <sync>la lista di controllo della sincronizzazione</sync> prima di sostituire o ripristinare qualsiasi cosa.",
-"M2": "Se sei passato da una versione per Mac compilata da te a quella di TestFlight, l’app conserva i dati in un altro posto e quindi parte vuota. Non si è perso nulla. Se usavi un file di sincronizzazione iCloud, scegli {existing} e puntalo allo stesso file, con {merge}.",
 "N": [
 "Le notifiche sono consentite per DayHand nelle impostazioni di sistema? Una modalità Focus le sta trattenendo?",
 "I promemoria scattano alle 9 del giorno previsto. Per un promemoria di oggi impostato dopo le 9 non arriverà alcuna notifica.",
@@ -66,7 +65,7 @@ SUPPORT = {
 ],
 "N_after": "Se la bandierina e il badge dell’icona mostrano numeri diversi, è voluto. <col>Ecco perché</col>.",
 "X1": "Ogni importazione ha i suoi limiti con le date, le attività ripetute e i dettagli aggiuntivi. La <imp>guida all’importazione</imp> li elenca. Guarda prima nelle {notes} dell’attività: ciò che DayHand non ha saputo collocare di solito viene conservato lì come testo.",
-"C1": "DayHand è fatto da una sola persona, quindi non esiste un servizio di ticket. Durante la beta usa <strong>Invia feedback sulla beta</strong> in TestFlight. Puoi anche <new>aprire una segnalazione su GitHub</new>, per un bug, una domanda o un’idea. Serve un account GitHub; per leggere queste pagine no.",
+"C1": "DayHand è fatto da una sola persona, quindi non esiste un servizio di ticket. Il modo migliore per raggiungermi è <new>aprire una segnalazione su GitHub</new>, per un bug, una domanda o un’idea. Serve un account GitHub; per leggere queste pagine no.",
 "C2": "Mi aiuta molto se mi indichi:",
 "T": [
 "il tuo dispositivo, la versione del sistema e la versione e il build di DayHand;",
@@ -80,6 +79,6 @@ SUPPORT = {
 "en_mark": "(in inglese)",
 "note": "Questa pagina è una traduzione della <en>pagina di assistenza</en> in inglese. Le guide collegate sono in inglese.",
 "langs_label": "Lingue",
-"footer_text": "Scritto per la beta, ottobre 2026. Se un pulsante sul tuo schermo ha un altro nome, l’app è andata avanti e questa pagina no — dimmelo.",
+"footer_text": "Ultimo aggiornamento: novembre 2026. Se un pulsante sul tuo schermo ha un altro nome, l’app è andata avanti e questa pagina no — dimmelo.",
 "footer": ["Assistenza", "Informativa sulla privacy", "Torna a DayHand"],
 }

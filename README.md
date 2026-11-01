@@ -3,7 +3,7 @@
 A to-do app for iPhone, iPad and Mac, built in SwiftUI — for work that takes
 longer than a day.
 
-**<https://amouraux.github.io/DayHand/>** · [join the TestFlight beta](https://testflight.apple.com/join/37FbdQp6)
+**<https://amouraux.github.io/DayHand/>** · [try the TestFlight beta](https://testflight.apple.com/join/37FbdQp6)
 
 [TestFlight field text and submission notes](docs/TESTFLIGHT.md) ·
 [App Store listing and submission fields](docs/APP_STORE.md).
@@ -95,15 +95,14 @@ no server, nothing to sign up for.
 
 ## Install it
 
-- **iPhone and iPad** — [join the TestFlight beta](https://testflight.apple.com/join/37FbdQp6), iOS 17 or later.
-- **Mac** — [the same TestFlight link](https://testflight.apple.com/join/37FbdQp6),
-  macOS 14 or later. TestFlight for the Mac is a separate app from the iPhone
-  one, from the Mac App Store, signed in to the same Apple Account.
+- **iPhone and iPad** — the App Store, iOS 17 or later.
+- **Mac** — the Mac App Store, macOS 14 or later.
+- **Beta builds** — [join the TestFlight beta](https://testflight.apple.com/join/37FbdQp6)
+  to try new versions before they are released. TestFlight for the Mac is a
+  separate app from the iPhone one, from the Mac App Store, signed in to the
+  same Apple Account.
 
-The TestFlight Mac build is sandboxed, so it keeps its data somewhere other
-than a build made in Xcode did: anyone moving across opens it to an empty list.
-Nothing is lost — the old file is where it always was, and re-picking the sync
-file in **More** brings it back.
+Problems and ideas go to [GitHub Issues](https://github.com/amouraux/DayHand/issues/new).
 
 A public `.dmg` is a separate, later channel. `scripts/release-mac.sh` builds a
 signed and notarised one — see the comment at the top of that script for the two

@@ -32,7 +32,7 @@ PRIVACY = {
 ],
 "C7": "Les données de tâches actives sont conservées jusqu’à ce que vous les modifiiez ou les supprimiez. Les sauvegardes automatiques tournent ; les sauvegardes manuelles et les copies que vous partagez restent jusqu’à ce qu’elles soient remplacées ou supprimées. Les enregistrements de suppression servant à la synchronisation peuvent conserver des identifiants de tâches et des dates de suppression, mais pas le contenu des tâches. Supprimer l’app ne supprime ni les fichiers iCloud enregistrés séparément, ni les exportations, ni les copies sur d’autres appareils.",
 "C8": "Il n’y a pas de compte DayHand à fermer. Le développeur ne peut ni récupérer ni effacer à distance les fichiers de tâches qui restent uniquement sur vos appareils ou dans votre compte de stockage.",
-"U1": "Pour toute question sur cette politique ou pour une demande relative à la confidentialité, contactez le développeur de DayHand via <s>la page d’assistance</s>. Pendant la bêta, vous pouvez envoyer vos retours par TestFlight. GitHub Issues est aussi disponible pour les questions générales et les signalements de bugs.",
+"U1": "Pour toute question sur cette politique ou pour une demande relative à la confidentialité, contactez le développeur de DayHand via <s>la page d’assistance</s>. GitHub Issues est aussi disponible pour les questions générales et les signalements de bugs.",
 "U2": "Si vous envoyez un retour, un rapport de diagnostic ou un message d’assistance, le développeur reçoit les informations que vous y joignez et celles que fournit le canal utilisé, comme une adresse de contact, des détails sur l’appareil ou des pièces jointes. Ces informations servent à répondre, à résoudre les problèmes et à améliorer DayHand. Les échanges d’assistance peuvent être conservés le temps nécessaire pour traiter la demande et en assurer le suivi ; pour demander la suppression des informations que vous avez fournies, contactez le développeur par le même canal. Apple et GitHub gèrent leurs propres copies et leur conservation selon leurs politiques.",
 "U3": "<strong>Les tickets GitHub sont publics.</strong> N’y publiez ni tâches privées, ni sauvegardes, ni identifiants, ni données personnelles. Utilisez si possible un exemple inventé. Pour une demande relative à la confidentialité, commencez sans détails sensibles et demandez un moyen approprié de poursuivre l’échange.",
 "W1": "Ce site web est hébergé sur GitHub Pages. Il n’ajoute ni scripts d’analyse ni cookies publicitaires. GitHub peut traiter des informations de connexion, comme les adresses IP et les journaux de requêtes, pour exploiter et sécuriser l’hébergement. GitHub Issues et les liens externes relèvent des politiques de leurs fournisseurs respectifs : la <g>déclaration de confidentialité de GitHub</g> et la <apple>politique de confidentialité d’Apple</apple>.",
@@ -57,7 +57,6 @@ SUPPORT = {
 "h2": ["Je ne retrouve pas mes tâches", "Un rappel est resté silencieux", "Mes tâches importées sont différentes", "Écrivez-moi"],
 "S": {
 "M1": "Commencez par effacer la recherche, les filtres de catégorie et de projet, et le drapeau. Regardez ensuite dans les autres piles et dans {timeline} ; une tâche que vous avez cochée s’y trouve. Si un second appareil affiche autre chose, lisez <sync>la liste de contrôle de la synchronisation</sync> avant de remplacer ou de restaurer quoi que ce soit.",
-"M2": "Si vous êtes passé d’une version Mac compilée par vous-même à celle de TestFlight, l’app range ses données ailleurs et démarre donc vide. Rien n’est perdu. Si vous utilisiez un fichier de synchronisation iCloud, choisissez {existing} et pointez-le vers le même fichier, avec {merge}.",
 "N": [
 "Les notifications sont-elles autorisées pour DayHand dans les réglages système ? Un mode de concentration les retient-il ?",
 "Les rappels se déclenchent à 9 h le jour prévu. Pour un rappel d’aujourd’hui défini après 9 h, aucune notification ne viendra.",
@@ -66,7 +65,7 @@ SUPPORT = {
 ],
 "N_after": "Si le drapeau et le badge de l’icône affichent des nombres différents, c’est voulu. <col>Voici pourquoi</col>.",
 "X1": "Chaque importation a ses limites pour les dates, les tâches récurrentes et les détails supplémentaires. Le <imp>guide d’importation</imp> les énumère. Regardez d’abord dans les {notes} de la tâche : ce que DayHand n’a pas pu placer y est généralement conservé sous forme de texte.",
-"C1": "DayHand est fait par une seule personne ; il n’y a donc pas de guichet de tickets. Pendant la bêta, utilisez <strong>Envoyer des commentaires sur la bêta</strong> dans TestFlight. Vous pouvez aussi <new>ouvrir un ticket sur GitHub</new>, pour un bug, une question ou une idée. Cela demande un compte GitHub ; lire ces pages, non.",
+"C1": "DayHand est fait par une seule personne ; il n’y a donc pas de guichet de tickets. Le meilleur moyen de me joindre est d’<new>ouvrir un ticket sur GitHub</new>, pour un bug, une question ou une idée. Cela demande un compte GitHub ; lire ces pages, non.",
 "C2": "Il m’est très utile que vous m’indiquiez :",
 "T": [
 "votre appareil, sa version du système, ainsi que la version et le numéro de build de DayHand ;",
@@ -80,6 +79,6 @@ SUPPORT = {
 "en_mark": "(en anglais)",
 "note": "Cette page est une traduction de la <en>page d’assistance</en> en anglais. Les guides liés sont en anglais.",
 "langs_label": "Langues",
-"footer_text": "Écrit pour la bêta, octobre 2026. Si un bouton de votre écran porte un autre nom, l’app a évolué et pas cette page — dites-le-moi.",
+"footer_text": "Dernière mise à jour : novembre 2026. Si un bouton de votre écran porte un autre nom, l’app a évolué et pas cette page — dites-le-moi.",
 "footer": ["Assistance", "Politique de confidentialité", "Retour à DayHand"],
 }

@@ -32,7 +32,7 @@ PRIVACY = {
 ],
 "C7": "Actieve taakgegevens worden bewaard totdat je ze wijzigt of verwijdert. Automatische back-ups roteren; handmatige back-ups en kopieën die je deelt blijven bestaan totdat ze worden vervangen of verwijderd. Verwijderingsgegevens die voor synchronisatie worden gebruikt, kunnen taak-id’s en verwijderdata bevatten, maar niet de inhoud van taken. Het verwijderen van de app verwijdert niet de apart opgeslagen iCloud-bestanden, exports of kopieën op andere apparaten.",
 "C8": "Er is geen DayHand-account om op te heffen. De ontwikkelaar kan takenbestanden die uitsluitend op je apparaten of in je opslagaccount staan, niet ophalen of op afstand wissen.",
-"U1": "Voor vragen over dit beleid of voor een privacyverzoek neem je contact op met de ontwikkelaar van DayHand via <s>de supportpagina</s>. Tijdens de bèta kun je feedback sturen via TestFlight. Ook GitHub Issues is beschikbaar voor algemene vragen en bugmeldingen.",
+"U1": "Voor vragen over dit beleid of voor een privacyverzoek neem je contact op met de ontwikkelaar van DayHand via <s>de supportpagina</s>. Ook GitHub Issues is beschikbaar voor algemene vragen en bugmeldingen.",
 "U2": "Als je feedback, een diagnoserapport of een supportbericht verstuurt, ontvangt de ontwikkelaar de gegevens die je meestuurt en de gegevens die het gebruikte kanaal meelevert, zoals een contactadres, apparaatgegevens of bijlagen. Deze gegevens worden gebruikt om te antwoorden, problemen op te lossen en DayHand te verbeteren. Supportgegevens kunnen worden bewaard zolang dat nodig is om het verzoek af te handelen en op te volgen; neem via hetzelfde kanaal contact op met de ontwikkelaar om verwijdering van de gegevens die je hebt doorgegeven te vragen. Apple en GitHub beheren hun eigen kopieën en bewaartermijnen volgens hun eigen beleid.",
 "U3": "<strong>GitHub-issues zijn openbaar.</strong> Plaats daar geen privétaken, back-ups, inloggegevens of persoonlijke gegevens. Gebruik waar mogelijk een verzonnen voorbeeld. Begin een privacyverzoek zonder gevoelige details en vraag om een geschikte manier om verder te praten.",
 "W1": "Deze website wordt gehost op GitHub Pages. Er worden geen analysescripts of advertentiecookies toegevoegd. GitHub kan verbindingsgegevens, zoals IP-adressen en verzoeklogboeken, verwerken om de hosting te laten werken en te beveiligen. GitHub Issues en externe links vallen onder het beleid van de betreffende aanbieders: de <g>privacyverklaring van GitHub</g> en het <apple>privacybeleid van Apple</apple>.",
@@ -57,7 +57,6 @@ SUPPORT = {
 "h2": ["Ik kan mijn taken niet vinden", "Een herinnering bleef stil", "Mijn geïmporteerde taken zien er anders uit", "Vertel het me"],
 "S": {
 "M1": "Wis eerst de zoekopdracht, de categorie- en projectfilters en de vlag. Kijk dan in de andere stapels en in de {timeline}; een taak die je hebt afgevinkt staat daar. Toont een tweede apparaat iets anders, lees dan <sync>de synchronisatiechecklist</sync> voordat je iets vervangt of herstelt.",
-"M2": "Als je bent overgestapt van een zelfgebouwde Mac-versie naar die van TestFlight, bewaart de app haar gegevens op een andere plek en begint ze dus leeg. Er is niets verloren. Als je een iCloud-synchronisatiebestand gebruikte, kies dan {existing} en wijs het naar hetzelfde bestand, met {merge}.",
 "N": [
 "Zijn meldingen voor DayHand toegestaan in de systeeminstellingen? Houdt een Focus-stand ze tegen?",
 "Herinneringen gaan op hun dag om 9 uur af. Voor een herinnering voor vandaag die na 9 uur is ingesteld, komt er geen melding meer.",
@@ -66,7 +65,7 @@ SUPPORT = {
 ],
 "N_after": "Als de vlag en de badge op het icoon verschillende getallen tonen, is dat de bedoeling. <col>Hier lees je waarom</col>.",
 "X1": "Elke import heeft zijn beperkingen bij data, terugkerende taken en extra details. De <imp>importgids</imp> somt ze op. Kijk eerst in de {notes} van de taak: wat DayHand niet kon plaatsen, staat daar meestal als tekst.",
-"C1": "DayHand wordt door één persoon gemaakt, dus er is geen ticketbalie. Gebruik tijdens de bèta <strong>Bètafeedback versturen</strong> in TestFlight. Je kunt ook <new>een issue openen op GitHub</new>, voor een bug, een vraag of een idee. Daarvoor heb je een GitHub-account nodig; om deze pagina’s te lezen niet.",
+"C1": "DayHand wordt door één persoon gemaakt, dus er is geen ticketbalie. Je bereikt me het best door <new>een issue te openen op GitHub</new>, voor een bug, een vraag of een idee. Daarvoor heb je een GitHub-account nodig; om deze pagina’s te lezen niet.",
 "C2": "Het helpt enorm als je me vertelt:",
 "T": [
 "je apparaat, de systeemversie en de versie en build van DayHand;",
@@ -80,6 +79,6 @@ SUPPORT = {
 "en_mark": "(Engels)",
 "note": "Deze pagina is een vertaling van de Engelstalige <en>supportpagina</en>. De gelinkte gidsen zijn in het Engels.",
 "langs_label": "Talen",
-"footer_text": "Geschreven voor de bèta, oktober 2026. Als een knop op je scherm anders heet, is de app verder gegaan en deze pagina niet — laat het me weten.",
+"footer_text": "Laatst bijgewerkt in november 2026. Als een knop op je scherm anders heet, is de app verder gegaan en deze pagina niet — laat het me weten.",
 "footer": ["Support", "Privacybeleid", "Terug naar DayHand"],
 }

@@ -32,7 +32,7 @@ PRIVACY = {
 ],
 "C7": "Aktiivisten tehtävien tiedot säilytetään, kunnes muutat tai poistat ne. Automaattiset varmuuskopiot kiertävät; manuaaliset varmuuskopiot ja jakamasi kopiot säilyvät, kunnes ne korvataan tai poistetaan. Synkronoinnissa käytettävät poistotiedot voivat säilyttää tehtävien tunnisteita ja poistopäivämääriä, mutta eivät tehtävien sisältöä. Sovelluksen poistaminen ei poista erikseen tallennettuja iCloud-tiedostoja, vientejä tai kopioita muilla laitteilla.",
 "C8": "Suljettavaa DayHand-tiliä ei ole. Kehittäjä ei voi noutaa tai poistaa etäyhteydellä tehtävätiedostoja, jotka ovat vain laitteillasi tai tallennustililläsi.",
-"U1": "Jos sinulla on kysyttävää tästä käytännöstä tai haluat tehdä tietosuojapyynnön, ota yhteyttä DayHandin kehittäjään <s>tukisivun</s> kautta. Betan aikana voit lähettää palautetta TestFlightin kautta. Yleisiä kysymyksiä ja virheilmoituksia varten käytettävissä on myös GitHub Issues.",
+"U1": "Jos sinulla on kysyttävää tästä käytännöstä tai haluat tehdä tietosuojapyynnön, ota yhteyttä DayHandin kehittäjään <s>tukisivun</s> kautta. Yleisiä kysymyksiä ja virheilmoituksia varten käytettävissä on myös GitHub Issues.",
 "U2": "Jos lähetät palautetta, diagnostiikkaraportin tai tukiviestin, kehittäjä saa mukaan liittämäsi tiedot sekä kanavan tarjoamat tiedot, kuten yhteysosoitteen, laitetiedot tai liitteet. Näitä tietoja käytetään vastaamiseen, vianmääritykseen ja DayHandin parantamiseen. Tukitietoja voidaan säilyttää niin kauan kuin pyynnön ratkaiseminen ja asian seuranta vaativat; jos haluat antamiesi tietojen poistamista, ota yhteyttä kehittäjään samaa kanavaa käyttäen. Apple ja GitHub hallitsevat omia kopioitaan ja säilytystään omien käytäntöjensä mukaisesti.",
 "U3": "<strong>GitHub-asiat ovat julkisia.</strong> Älä julkaise siellä yksityisiä tehtäviä, varmuuskopioita, tunnistetietoja tai henkilötietoja. Käytä mahdollisuuksien mukaan keksittyä esimerkkiä. Aloita tietosuojapyyntö ilman arkaluonteisia tietoja ja kysy sopivaa tapaa jatkaa.",
 "W1": "Tätä verkkosivustoa isännöidään GitHub Pagesissa. Se ei lisää analytiikkaskriptejä tai mainosevästeitä. GitHub voi käsitellä yhteystietoja, kuten IP-osoitteita ja pyyntölokeja, isännöinnin toimittamiseksi ja suojaamiseksi. GitHub Issuesiin ja ulkoisiin linkkeihin sovelletaan kunkin palveluntarjoajan käytäntöjä: <g>GitHubin tietosuojaseloste</g> ja <apple>Applen tietosuojakäytäntö</apple>.",
@@ -57,7 +57,6 @@ SUPPORT = {
 "h2": ["En löydä tehtäviäni", "Muistutus jäi äänettömäksi", "Tuomani tehtävät näyttävät erilaisilta", "Kerro minulle"],
 "S": {
 "M1": "Tyhjennä ensin haku, luokka- ja projektisuodattimet sekä lippu. Katso sitten muista pinoista ja kohdasta {timeline}; tehtävä, jonka olet rastittanut, on siellä. Jos toinen laite näyttää jotain muuta, lue <sync>synkronoinnin tarkistuslista</sync> ennen kuin korvaat tai palautat mitään.",
-"M2": "Jos olet vaihtanut itse rakentamastasi Mac-versiosta TestFlight-versioon, sovellus tallentaa tietonsa eri paikkaan ja alkaa siksi tyhjänä. Mitään ei ole kadonnut. Jos käytit iCloud-synkronointitiedostoa, valitse {existing} ja osoita se samaan tiedostoon käyttäen toimintoa {merge}.",
 "N": [
 "Onko ilmoitukset sallittu DayHandille järjestelmäasetuksissa? Pidättääkö jokin Keskittyminen-tila niitä?",
 "Muistutukset laukeavat kello 9 omana päivänään. Jos tämän päivän muistutus on asetettu kello 9:n jälkeen, ilmoitusta ei enää tule.",
@@ -66,7 +65,7 @@ SUPPORT = {
 ],
 "N_after": "Jos lippu ja kuvakkeen merkki näyttävät eri lukuja, se on tarkoituksellista. <col>Tässä syy</col>.",
 "X1": "Jokaisella tuonnilla on rajoituksensa päivämäärien, toistuvien tehtävien ja lisätietojen kanssa. <imp>Tuontiopas</imp> luettelee ne. Katso ensin tehtävän kohtaa {notes}: se, mitä DayHand ei voinut sijoittaa, säilyy yleensä siellä tekstinä.",
-"C1": "DayHandin tekee yksi ihminen, joten tukipalvelua ei ole. Betan aikana käytä TestFlightin toimintoa <strong>Lähetä beta-palaute</strong>. Voit myös <new>avata asian GitHubissa</new> virheen, kysymyksen tai idean vuoksi. Se vaatii GitHub-tilin; näiden sivujen lukeminen ei.",
+"C1": "DayHandin tekee yksi ihminen, joten tukipalvelua ei ole. Parhaiten tavoitat minut <new>avaamalla asian GitHubissa</new> virheen, kysymyksen tai idean vuoksi. Se vaatii GitHub-tilin; näiden sivujen lukeminen ei.",
 "C2": "Minua auttaa paljon, jos kerrot:",
 "T": [
 "laitteesi, sen järjestelmäversion sekä DayHandin version ja koontiversion;",
@@ -80,6 +79,6 @@ SUPPORT = {
 "en_mark": "(englanniksi)",
 "note": "Tämä sivu on englanninkielisen <en>tukisivun</en> käännös. Linkitetyt oppaat ovat englanniksi.",
 "langs_label": "Kielet",
-"footer_text": "Kirjoitettu betaa varten lokakuussa 2026. Jos näytölläsi oleva painike on nimeltään jokin muu, sovellus on mennyt eteenpäin eikä tämä sivu — kerro minulle.",
+"footer_text": "Päivitetty viimeksi marraskuussa 2026. Jos näytölläsi oleva painike on nimeltään jokin muu, sovellus on mennyt eteenpäin eikä tämä sivu — kerro minulle.",
 "footer": ["Tuki", "Tietosuojakäytäntö", "Takaisin DayHandiin"],
 }

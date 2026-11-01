@@ -239,10 +239,8 @@ The More sheet's root is deliberately not shown: its Testing control must be
 removed before submission, and until then no screenshot should include it. The `-EN` in the iPad file names marks the
 language of the interface; localised sets would carry their own suffix.
 
-The existing `docs/screenshots/iphone.png` and `ipad.png` are illustrative older
-beta screenshots. There is no current Mac screenshot in that folder. Refresh
-assets before submission; do not treat website images as an approved current
-App Store screenshot set.
+The website's `docs/screenshots/web/` holds resized JPEG copies of these three
+sets (21 files). They are for the page only; submit the full-size PNGs above.
 
 ## 5. App Review information
 

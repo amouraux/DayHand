@@ -32,7 +32,7 @@ PRIVACY = {
 ],
 "C7": "Aktive opgavedata opbevares, indtil du ændrer eller sletter dem. Automatiske backups roterer; manuelle backups og kopier, du deler, bliver, indtil de erstattes eller slettes. Sletningsposter, der bruges til synkronisering, kan indeholde opgave-id’er og slettedatoer, men ikke opgavernes indhold. Når du fjerner appen, fjernes separat gemte iCloud-filer, eksporter eller kopier på andre enheder ikke.",
 "C8": "Der er ingen DayHand-konto at lukke. Udvikleren kan ikke hente eller fjernslette opgavefiler, der kun findes på dine enheder eller i din lagringskonto.",
-"U1": "Ved spørgsmål om denne politik eller en anmodning om privatliv kontakter du DayHands udvikler via <s>supportsiden</s>. Under betaen kan du sende feedback via TestFlight. GitHub Issues er også tilgængelig til generelle spørgsmål og fejlrapporter.",
+"U1": "Ved spørgsmål om denne politik eller en anmodning om privatliv kontakter du DayHands udvikler via <s>supportsiden</s>. GitHub Issues er også tilgængelig til generelle spørgsmål og fejlrapporter.",
 "U2": "Hvis du sender feedback, en diagnoserapport eller en supportbesked, modtager udvikleren de oplysninger, du medtager, og dem, som kanalen leverer, f.eks. en kontaktadresse, enhedsoplysninger eller vedhæftede filer. Oplysningerne bruges til at svare, fejlfinde og forbedre DayHand. Supportoplysninger kan opbevares, så længe det er nødvendigt for at løse henvendelsen og følge op på problemet; kontakt udvikleren via samme kanal, hvis du vil have de oplysninger, du har givet, slettet. Apple og GitHub administrerer deres egne kopier og opbevaring efter deres egne politikker.",
 "U3": "<strong>GitHub-sager er offentlige.</strong> Del ikke private opgaver, backups, loginoplysninger eller personlige oplysninger dér. Brug et opdigtet eksempel, når det er muligt. Til en anmodning om privatliv skal du starte uden følsomme detaljer og spørge om en passende måde at følge op på.",
 "W1": "Denne hjemmeside hostes på GitHub Pages. Den tilføjer ingen analysescripts eller reklamecookies. GitHub kan behandle forbindelsesoplysninger som IP-adresser og forespørgselslogs for at drive og beskytte hostingen. GitHub Issues og eksterne links er omfattet af de respektive udbyderes politikker: <g>GitHubs privatlivserklæring</g> og <apple>Apples privatlivspolitik</apple>.",
@@ -57,7 +57,6 @@ SUPPORT = {
 "h2": ["Jeg kan ikke finde mine opgaver", "En påmindelse udeblev", "Mine importerede opgaver ser anderledes ud", "Fortæl mig det"],
 "S": {
 "M1": "Ryd først søgningen, kategori- og projektfiltrene og flaget. Kig derefter i de andre bunker og i {timeline}; en opgave, du har afkrydset, ligger dér. Hvis en anden enhed viser noget andet, så læs <sync>synkroniseringstjeklisten</sync>, før du erstatter eller gendanner noget.",
-"M2": "Hvis du er skiftet fra en Mac-version, du selv har bygget, til den i TestFlight, gemmer appen sine data et andet sted og starter derfor tom. Intet er tabt. Hvis du brugte en iCloud-synkroniseringsfil, så vælg {existing} og peg på den samme fil, med {merge}.",
 "N": [
 "Er beskeder tilladt for DayHand i systemindstillingerne? Holder en fokustilstand dem tilbage?",
 "Påmindelser lyder kl. 9 på dagen. For en påmindelse for i dag, der er sat efter kl. 9, kommer der ingen besked.",
@@ -66,7 +65,7 @@ SUPPORT = {
 ],
 "N_after": "Hvis flaget og mærket på ikonet viser forskellige tal, er det med vilje. <col>Her er forklaringen</col>.",
 "X1": "Hver import har sine begrænsninger med datoer, gentagne opgaver og ekstra detaljer. <imp>Importguiden</imp> opremser dem. Kig først i opgavens {notes}: Det, DayHand ikke kunne placere, ligger som regel dér som tekst.",
-"C1": "DayHand er lavet af én person, så der er ingen billetskranke. Under betaen kan du bruge <strong>Send betafeedback</strong> i TestFlight. Du kan også <new>oprette en sag på GitHub</new>, til en fejl, et spørgsmål eller en idé. Det kræver en GitHub-konto; at læse disse sider gør det ikke.",
+"C1": "DayHand er lavet af én person, så der er ingen billetskranke. Den bedste måde at nå mig på er at <new>oprette en sag på GitHub</new>, til en fejl, et spørgsmål eller en idé. Det kræver en GitHub-konto; at læse disse sider gør det ikke.",
 "C2": "Det hjælper meget, hvis du fortæller:",
 "T": [
 "din enhed, dens systemversion samt DayHands version og build;",
@@ -80,6 +79,6 @@ SUPPORT = {
 "en_mark": "(på engelsk)",
 "note": "Denne side er en oversættelse af den engelske <en>supportside</en>. De linkede vejledninger er på engelsk.",
 "langs_label": "Sprog",
-"footer_text": "Skrevet til betaen, oktober 2026. Hvis en knap på din skærm hedder noget andet, er appen gået videre og denne side ikke — sig til.",
+"footer_text": "Senest opdateret i november 2026. Hvis en knap på din skærm hedder noget andet, er appen gået videre og denne side ikke — sig til.",
 "footer": ["Support", "Privatlivspolitik", "Tilbage til DayHand"],
 }

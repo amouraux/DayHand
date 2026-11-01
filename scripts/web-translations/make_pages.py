@@ -233,7 +233,6 @@ def help_page(code, D, tok, ccode):
 <aside>{gnote}</aside>
 <h2 id="missing-tasks">{D["h2"][0]}</h2>
 {p(fill(S_["M1"]))}
-{p(fill(S_["M2"]))}
 <h2 id="notifications">{D["h2"][1]}</h2>
 {ul1}
 {p(fill(S_["N_after"]))}
@@ -314,7 +313,6 @@ def help_page_full(code, D, tok, ccode, gm):
 <p class="lead">{D["lead"]}</p>
 <h3 id="missing-tasks">{D["h2"][0]}</h3>
 {p(fill(S_["M1"]))}
-{p(fill(S_["M2"]))}
 <h3 id="notifications">{D["h2"][1]}</h3>
 {ul1}
 {p(fill(S_["N_after"]))}

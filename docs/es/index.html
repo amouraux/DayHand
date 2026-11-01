@@ -120,36 +120,22 @@
   @media (min-width: 720px) { .wide-idea { grid-column: 1 / -1; } }
 
   /* ---------- screenshots ---------- */
-  .shots { display: grid; gap: 34px; grid-template-columns: 1fr; align-items: end; }
-  @media (min-width: 760px) { .shots { grid-template-columns: 1fr 1fr; } }
-  figure { margin: 0; text-align: center; }
+  .device { margin: 0 0 38px; }
+  .device h3 { margin: 0 0 4px; font-size: 19px; letter-spacing: -.012em; }
+  .device-blurb { margin: 0 0 14px; color: var(--ink-soft); font-size: 15.5px; }
+  /* A scrolling strip rather than a grid of 21 pictures; each device shows
+     its seven screens in the order the App Store listing does. */
+  .strip { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory;
+    padding: 4px 2px 14px; -webkit-overflow-scrolling: touch; }
+  .strip figure { flex: none; scroll-snap-align: start; margin: 0; text-align: center; }
+  .strip.phone figure { width: 210px; }
+  .strip.ipad figure { width: min(78vw, 440px); }
+  .strip.mac figure { width: min(86vw, 560px); }
   figure img {
     width: 100%; height: auto; display: block;
     border-radius: 16px; border: 1px solid var(--line); box-shadow: var(--shadow);
   }
-  figure.phone { max-width: 320px; margin-inline: auto; }
-  figcaption { margin-top: 14px; margin-bottom: 8px; color: var(--ink-soft); font-size: 14.5px; }
-  figcaption b { color: var(--ink); font-weight: 600; }
-  .wide { grid-column: 1 / -1; }
-
-  /* ---------- install ---------- */
-  .install { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-  .task {
-    background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
-    padding: 26px; box-shadow: var(--shadow);
-  }
-  .task h3 { margin: 0 0 6px; font-size: 19px; letter-spacing: -.012em; }
-  .task .req { color: var(--ink-soft); font-size: 14px; margin: 0 0 16px; }
-  .task p { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 18px; }
-  .task .steps { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 18px; padding-left: 20px; }
-  .task .steps li { margin-bottom: 7px; }
-  .task .steps li:last-child { margin-bottom: 0; }
-  /* The thing you would otherwise only find out by hitting it. */
-  .task .aside {
-    font-size: 14px; border-left: 2px solid var(--line);
-    padding-left: 12px; margin: 0 0 18px;
-  }
-  .task .btn { display: inline-flex; }
+  figcaption { margin-top: 10px; color: var(--ink-soft); font-size: 14.5px; }
 
   /* One task’s journey, including the pauses and changes of priority. */
   .walk {
@@ -176,13 +162,6 @@
     color: var(--ink-soft); font-size: 15px;
   }
 
-  .notice {
-    max-width: 640px; margin: 22px auto 0; padding: 16px 18px;
-    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
-    color: var(--ink-soft); font-size: 14.5px; line-height: 1.5;
-  }
-  .notice b { color: var(--ink); }
-
   footer.wrap {
     border-top: 1px solid var(--line); margin-top: 24px;
     padding: 34px 16px 64px; text-align: center;
@@ -199,19 +178,12 @@
     max-width: 62ch; margin: 22px auto 0; text-align: center;
     color: var(--ink-soft); font-size: 15px;
   }
-  details.notice { text-align: left; }
-  details.notice summary { cursor: pointer; color: var(--ink); font-weight: 600; }
-  details.notice p { margin: 12px 0 0; }
+  .section-note a { color: var(--today); }
   a:focus-visible, summary:focus-visible { outline: 3px solid var(--today); outline-offset: 4px; }
   @media (max-width: 480px) {
     header.wrap { padding-top: 42px; }
     section.wrap { padding-top: 42px; padding-bottom: 42px; }
   }
-  
-  
-  
-  
-  
   /*langmenu*/
   .langmenu { position: absolute; top: 14px; right: 16px; z-index: 5; font-size: 14px; text-align: left; }
   .langmenu summary { list-style: none; cursor: pointer; background: var(--panel); color: var(--ink-soft);
@@ -255,22 +227,21 @@
 
 <header class="wrap">
   <!--langmenu--><details class="langmenu"><summary>Idiomas</summary><div class="langlist"><a href="../index.html" hreflang="en" lang="en">English</a><a href="../de/index.html" hreflang="de" lang="de">Deutsch</a><span aria-current="page" lang="es">Español</span><a href="../fr/index.html" hreflang="fr" lang="fr">Français</a><a href="../it/index.html" hreflang="it" lang="it">Italiano</a><a href="../nl/index.html" hreflang="nl" lang="nl">Nederlands</a><a href="../pt-pt/index.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a><a href="../pt-br/index.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a><a href="../ja/index.html" hreflang="ja" lang="ja">日本語</a><a href="../ko/index.html" hreflang="ko" lang="ko">한국어</a><a href="../sv/index.html" hreflang="sv" lang="sv">Svenska</a><a href="../da/index.html" hreflang="da" lang="da">Dansk</a><a href="../nb/index.html" hreflang="nb" lang="nb">Norsk bokmål</a><a href="../fi/index.html" hreflang="fi" lang="fi">Suomi</a><a href="../pl/index.html" hreflang="pl" lang="pl">Polski</a></div></details><!--/langmenu-->
-  
-  
-  
-  
-  
   <img class="icon" src="../icon.png" alt="DayHand" width="132" height="132">
   <h1>DayHand</h1>
   <p class="tagline">Organiza tus tareas en torno a tu vida y tus objetivos, no al calendario.</p>
-  <p class="sub">Preparar una charla, escribir un manuscrito, construir una función, reformar una habitación: la mayor parte del trabajo real no se crea ni se termina en un día concreto. Cuando lo planificas todo alrededor de un día, el trabajo sin terminar puede convertirse en una lista de cosas que reprogramar. Así que mueves las fechas, o troceas la tarea, para que la app coincida con la realidad.</p>
-  <p class="sub">DayHand deja que una tarea siga activa todo el tiempo que haga falta. El trabajo que abarca varios días sigue siendo trabajo en curso: no marcarlo esta noche no significa que no hayas terminado la lista de hoy.</p>
+  <p class="sub">Preparar una charla, planificar un viaje, desarrollar una función, reformar una habitación: gran parte de lo que importa no cabe bien en una lista diaria. Aun así, muchos gestores de tareas te animan a asignar una fecha antes de saber cuándo se hará el trabajo. Cuando pasa ese día, las tareas sin terminar se vuelven atrasadas. Las reprogramas y te sientes por detrás, incluso cuando el trabajo avanza como debe.</p>
+  <p class="sub">DayHand deja que una tarea siga activa todo el tiempo que haga falta, sin tener que asignarle un día nuevo cada mañana. Organiza tu vida y tu trabajo en torno a lo que haces ahora («Ahora»), lo que viene después («Siguiente») y lo que queda para más adelante («Más tarde»). Anota las tareas nuevas en «Bandeja» hasta que quieras decidir.</p>
+  <p class="sub">Si ya usas un gestor de tareas, DayHand te resultará familiar: tareas, proyectos, notas y recordatorios. Lo novedoso es organizar el trabajo según tus intenciones, con espacio para tareas que duran varios días y revisiones guiadas que te ayudan a replantearte lo que importa.</p>
+  <!-- The two download links stay "#" until the app is live; paste the App
+       Store and Mac App Store URLs here and rebuild the translated pages. -->
   <div class="cta">
-    <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">Unirse a la beta<small>iPhone y iPad · TestFlight</small>
+    <a class="btn btn-primary" href="#">Descargar en el App Store<small>iPhone y iPad · iOS 17 o posterior</small>
     </a>
-    <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Unirse a la beta para Mac<small>macOS · TestFlight</small>
+    <a class="btn btn-primary" href="#">Descargar en el Mac App Store<small>Mac · macOS 14 o posterior</small>
     </a>
     <a class="btn btn-secondary" href="help.html">Ayuda y soporte<small>Cómo funciona y qué hacer cuando no funciona</small></a>
+    <a class="btn btn-secondary" href="privacy.html">Privacidad<small>Tus tareas se quedan en tus propios archivos</small></a>
   </div>
 </header>
 
@@ -363,6 +334,21 @@
   </div>
 </section>
 
+<section class="wrap" id="reviews" aria-labelledby="reviews-heading">
+  <h2 id="reviews-heading">Revisiones guiadas, cuando tus listas necesitan un replanteamiento</h2>
+  <p class="section-intro">¿Dónde va esta tarea? ¿Sigo trabajando en esto? ¿Puede avanzar? ¿Sigue siendo relevante? Una revisión plantea una pregunta cada vez, para que decidas en lugar de recorrer una lista larga.</p>
+  <div class="ideas">
+    <div class="idea i-review">
+      <h3>Revisar tareas</h3>
+      <p>Revisa una sola pila o todas tus tareas, sin repetir las que has movido durante la pasada. Deja una tarea donde está, muévela, edítala o complétala.</p>
+    </div>
+    <div class="idea i-keep">
+      <h3>Revisar proyectos</h3>
+      <p>Recorre tus proyectos para comprobar que cada uno tiene un siguiente paso claro. Añade el paso que falta, revisa las tareas relacionadas del proyecto o archiva un proyecto terminado.</p>
+    </div>
+  </div>
+</section>
+
 <section class="wrap" id="history" aria-labelledby="history-heading">
   <h2 id="history-heading">Mira lo que has logrado, con el tiempo</h2>
   <p class="section-intro">Una lista de cosas por hacer es solo parte del cuadro. DayHand también guarda un registro del trabajo que terminas.</p>
@@ -381,20 +367,110 @@
 
 <section class="wrap" id="screens" aria-labelledby="screens-heading">
   <h2 id="screens-heading">Una sola app en todos tus dispositivos</h2>
-  <p class="section-intro">Pensada desde el principio para iPhone, iPad y Mac. Trabaja con las mismas tareas en todos tus dispositivos Apple, con una experiencia coherente que se adapta a cada pantalla.</p>
-  <div class="shots">
-    <figure class="phone">
-      <img src="../screenshots/iphone.png" alt="Pantalla de ejemplo de la beta de DayHand en iPhone, con tareas organizadas en pilas (interfaz en inglés)"
-           loading="lazy" width="1206" height="2622">
-      <figcaption><b>iPhone</b>: tareas en pilas, con etiquetas de proyecto opcionales.</figcaption>
-    </figure>
-    <figure>
-      <img src="../screenshots/ipad.png" alt="Pantalla de ejemplo de la beta de DayHand en iPad, con la barra lateral del filtro de proyectos junto a la lista de tareas (interfaz en inglés)"
-           loading="lazy" width="2064" height="2752">
-      <figcaption><b>iPad</b>: una barra lateral mantiene los proyectos junto a tus tareas. El Mac usa el mismo diseño en una ventana redimensionable.</figcaption>
-    </figure>
+  <p class="section-intro">Diseñada desde el principio para iPhone, iPad y Mac. Elige el mismo archivo de tu propio iCloud Drive en cada dispositivo para mantener tus tareas sincronizadas.</p>
+  <div class="device">
+    <h3>iPhone</h3>
+    <p class="device-blurb">Tareas en pilas, con etiquetas de proyecto opcionales.</p>
+    <div class="strip phone">
+      <figure>
+        <img src="../screenshots/web/iphone-01-now.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>Ahora</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-02-reminders.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>Recordatorios</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-03-task-actions.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>Acciones de tarea</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-04-review-helper.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>Asistente de revisión</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-05-timeline.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>Cronología</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-06-project-review.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>Revisión de proyecto</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/iphone-07-dark-mode.jpg" alt="" loading="lazy" width="440" height="956">
+        <figcaption>Modo oscuro</figcaption>
+      </figure>
+    </div>
   </div>
-  <p class="section-note">Pantallas de ejemplo de la beta, con la interfaz en inglés; el diseño y los controles pueden diferir en las versiones actuales.</p>
+  <div class="device">
+    <h3>iPad</h3>
+    <p class="device-blurb">Una barra lateral mantiene categorías, grupos y proyectos junto a tus tareas.</p>
+    <div class="strip ipad">
+      <figure>
+        <img src="../screenshots/web/ipad-01-now.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>Ahora</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-02-reminders.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>Recordatorios</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-03-task-actions.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>Acciones de tarea</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-04-review-helper.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>Asistente de revisión</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-05-timeline.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>Cronología</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-06-project-review.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>Revisión de proyecto</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/ipad-07-dark-mode.jpg" alt="" loading="lazy" width="920" height="690">
+        <figcaption>Modo oscuro</figcaption>
+      </figure>
+    </div>
+  </div>
+  <div class="device">
+    <h3>Mac</h3>
+    <p class="device-blurb">El mismo diseño con barra lateral, en una ventana de tamaño ajustable.</p>
+    <div class="strip mac">
+      <figure>
+        <img src="../screenshots/web/mac-01-now.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>Ahora</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-02-reminders.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>Recordatorios</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-03-task-actions.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>Acciones de tarea</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-04-review-helper.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>Asistente de revisión</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-05-timeline.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>Cronología</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-06-project-review.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>Revisión de proyecto</figcaption>
+      </figure>
+      <figure>
+        <img src="../screenshots/web/mac-07-dark-mode.jpg" alt="" loading="lazy" width="1120" height="700">
+        <figcaption>Modo oscuro</figcaption>
+      </figure>
+    </div>
+  </div>
+  <p class="section-note">Las capturas muestran la versión en inglés. DayHand sigue el idioma de tu dispositivo, o el que elijas en Más → Idioma.</p>
 </section>
 
 <section class="wrap" id="use-cases" aria-labelledby="use-cases-heading">
@@ -440,45 +516,26 @@
     </div>
     <div class="idea i-review wide-idea">
       <h3>Copias de seguridad y una salida</h3>
-      <p>Se hacen copias de seguridad automáticas los días en que abres la app, y se conservan tres copias rotativas. Haz copias adicionales a mano, restaura una copia anterior o comparte una en un lugar más seguro. La importación y exportación de CSV te permiten traer tareas o llevártelas.</p>
+      <p>Las copias automáticas se hacen los días en que abres la app y se conservan tres rotativas. Haz copias adicionales a mano, restaura una anterior o comparte una en un lugar más seguro. Importa desde Recordatorios de Apple o desde una exportación CSV de Todoist, o usa la importación y exportación CSV propias de DayHand. Las importaciones son copias, sin sincronización continua con la app original.</p>
     </div>
   </div>
 </section>
 
-<section class="wrap" id="get-dayhand" aria-labelledby="install-heading">
-  <h2 id="install-heading">Prueba la beta de DayHand</h2>
-  <p class="section-intro">Disponible mediante TestFlight de Apple para iPhone, iPad y Mac.</p>
-  <div class="install">
-    <div class="task">
-      <h3>iPhone y iPad</h3>
-      <p class="req">iOS / iPadOS 17 o posterior</p>
-      <ol class="steps">
-        <li>Instala <b>TestFlight</b> de Apple desde la App Store.</li>
-        <li>Abre el enlace de la beta que aparece abajo en tu iPhone o iPad.</li>
-        <li>Acepta la invitación e instala DayHand.</li>
-      </ol>
-      <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">Unirse a la beta</a>
-    </div>
-    <div class="task">
-      <h3>Mac</h3>
-      <p class="req">macOS 14 o posterior</p>
-      <ol class="steps">
-        <li>Instala <b>TestFlight</b> desde la Mac App Store.</li>
-        <li>Abre el mismo enlace de la beta que aparece abajo en tu Mac.</li>
-        <li>Acepta la invitación e instala DayHand.</li>
-      </ol>
-      <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Unirse a la beta para Mac</a>
-    </div>
+<section class="wrap" id="beta" aria-labelledby="beta-heading">
+  <h2 id="beta-heading">Prueba las próximas versiones</h2>
+  <p class="section-intro">DayHand también está en TestFlight de Apple, donde puedes probar versiones nuevas antes de que lleguen al App Store. Instala la app TestFlight de Apple y abre el enlace de tu dispositivo. Las versiones beta pueden estar menos pulidas que la app publicada.</p>
+  <div class="cta">
+    <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Unirse a la beta<small>iPhone y iPad · TestFlight</small>
+    </a>
+    <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Unirse a la beta para Mac<small>macOS · TestFlight</small>
+    </a>
   </div>
-  <details class="notice">
-    <summary>¿Vienes de una versión anterior para Mac compilada por ti?</summary>
-    <p>La app de TestFlight guarda sus datos en otro lugar. Si se abre sin tareas, tu archivo antiguo sigue donde estaba. Si sincronizabas mediante iCloud Drive, abre <b>Más → Usar un archivo existente</b> y elige de nuevo el mismo archivo para recuperar tus tareas.</p>
-  </details>
+  <p class="section-note">¿Has encontrado un problema en una beta? <a href="https://github.com/amouraux/DayHand/issues/new">Infórmalo en GitHub</a>.</p>
 </section>
 </main>
 
 <footer class="wrap">
-  <p>¿Algo poco claro? Las <a href="help.html">páginas de ayuda</a> lo cubren casi todo. Si no, envía comentarios de la beta en TestFlight o <a href="https://github.com/amouraux/DayHand/issues/new">informa de un problema en GitHub</a>.</p>
+  <p>¿Algo no está claro? Las <a href="help.html">páginas de ayuda</a> cubren casi todo. Si no, <a href="https://github.com/amouraux/DayHand/issues/new">informa de un problema en GitHub</a>.</p>
   <p>En español, inglés, francés, neerlandés, alemán, italiano, portugués (Portugal y Brasil), japonés, coreano, sueco, danés, noruego, finés y polaco.</p>
   <!--privacy--><p>Política de privacidad: <a href="../privacy.html" hreflang="en" lang="en">English</a> · <a href="../de/privacy.html" hreflang="de" lang="de">Deutsch</a> · <a href="../es/privacy.html" hreflang="es" lang="es">Español</a> · <a href="../fr/privacy.html" hreflang="fr" lang="fr">Français</a> · <a href="../it/privacy.html" hreflang="it" lang="it">Italiano</a> · <a href="../nl/privacy.html" hreflang="nl" lang="nl">Nederlands</a> · <a href="../pt-pt/privacy.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a> · <a href="../pt-br/privacy.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a> · <a href="../ja/privacy.html" hreflang="ja" lang="ja">日本語</a> · <a href="../ko/privacy.html" hreflang="ko" lang="ko">한국어</a> · <a href="../sv/privacy.html" hreflang="sv" lang="sv">Svenska</a> · <a href="../da/privacy.html" hreflang="da" lang="da">Dansk</a> · <a href="../nb/privacy.html" hreflang="nb" lang="nb">Norsk bokmål</a> · <a href="../fi/privacy.html" hreflang="fi" lang="fi">Suomi</a> · <a href="../pl/privacy.html" hreflang="pl" lang="pl">Polski</a></p><!--/privacy-->
   <p>Hecho con SwiftUI · <a href="https://github.com/amouraux/DayHand">Código fuente en GitHub</a></p>

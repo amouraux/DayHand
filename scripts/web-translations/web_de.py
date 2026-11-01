@@ -32,7 +32,7 @@ PRIVACY = {
 ],
 "C7": "Aktive Aufgabendaten bleiben gespeichert, bis Sie sie ändern oder löschen. Automatische Backups werden rotiert; manuelle Backups und von Ihnen geteilte Kopien bleiben bestehen, bis sie ersetzt oder gelöscht werden. Löschvermerke für den Sync können Aufgaben-IDs und Löschdaten enthalten, aber nicht den Inhalt der Aufgaben. Das Entfernen der App löscht weder separat gespeicherte iCloud-Dateien oder Exporte noch Kopien auf anderen Geräten.",
 "C8": "Es gibt kein DayHand-Konto, das geschlossen werden müsste. Der Entwickler kann Aufgabendateien, die ausschließlich auf Ihren Geräten oder in Ihrem Speicherkonto liegen, weder abrufen noch aus der Ferne löschen.",
-"U1": "Bei Fragen zu dieser Erklärung oder für eine Datenschutzanfrage wenden Sie sich über <s>die Support-Seite</s> an den Entwickler von DayHand. Während der Beta können Sie Feedback über TestFlight senden. Für allgemeine Fragen und Fehlerberichte steht außerdem GitHub Issues zur Verfügung.",
+"U1": "Bei Fragen zu dieser Erklärung oder für eine Datenschutzanfrage wenden Sie sich über <s>die Support-Seite</s> an den Entwickler von DayHand. Für allgemeine Fragen und Fehlerberichte steht außerdem GitHub Issues zur Verfügung.",
 "U2": "Wenn Sie Feedback, einen Diagnosebericht oder eine Support-Nachricht senden, erhält der Entwickler die von Ihnen mitgeschickten Informationen sowie die Angaben, die der jeweilige Kanal liefert, etwa eine Kontaktadresse, Geräteangaben oder Anhänge. Diese Informationen dienen dazu, zu antworten, Probleme zu analysieren und DayHand zu verbessern. Support-Unterlagen können so lange aufbewahrt werden, wie es zur Klärung der Anfrage und zur Nachverfolgung des Problems nötig ist; wenn Sie die Löschung der von Ihnen übermittelten Angaben wünschen, wenden Sie sich über denselben Kanal an den Entwickler. Apple und GitHub verwalten ihre eigenen Kopien und deren Aufbewahrung nach ihren eigenen Richtlinien.",
 "U3": "<strong>GitHub-Issues sind öffentlich.</strong> Veröffentlichen Sie dort keine privaten Aufgaben, Backups, Zugangsdaten oder persönlichen Angaben. Verwenden Sie nach Möglichkeit ein erfundenes Beispiel. Beginnen Sie eine Datenschutzanfrage ohne sensible Details und fragen Sie nach einem geeigneten Weg für die weitere Abstimmung.",
 "W1": "Diese Website wird auf GitHub Pages gehostet. Sie setzt keine Analyse-Skripte und keine Werbe-Cookies ein. GitHub kann Verbindungsinformationen wie IP-Adressen und Anfrageprotokolle verarbeiten, um das Hosting zu betreiben und abzusichern. Für GitHub Issues und externe Links gelten die Richtlinien der jeweiligen Anbieter: die <g>Datenschutzerklärung von GitHub</g> und die <apple>Datenschutzrichtlinie von Apple</apple>.",
@@ -57,7 +57,6 @@ SUPPORT = {
 "h2": ["Ich finde meine Aufgaben nicht", "Eine Erinnerung blieb stumm", "Meine importierten Aufgaben sehen anders aus", "Schreiben Sie mir"],
 "S": {
 "M1": "Löschen Sie zuerst die Suche, die Kategorie- und Projektfilter und die Flagge. Schauen Sie dann in die anderen Stapel und in die {timeline}; eine abgehakte Aufgabe finden Sie dort. Wenn ein zweites Gerät etwas anderes anzeigt, lesen Sie <sync>die Sync-Checkliste</sync>, bevor Sie etwas ersetzen oder wiederherstellen.",
-"M2": "Wenn Sie von einer selbst gebauten Mac-Version zur TestFlight-Version gewechselt sind, speichert die App ihre Daten an einem anderen Ort und startet deshalb leer. Es ist nichts verloren. Wenn Sie eine iCloud-Sync-Datei genutzt haben, wählen Sie {existing} und zeigen Sie auf dieselbe Datei, mit {merge}.",
 "N": [
 "Sind Mitteilungen für DayHand in den Systemeinstellungen erlaubt? Hält ein Fokus sie zurück?",
 "Erinnerungen werden an ihrem Tag um 9 Uhr ausgelöst. Für eine Erinnerung für heute, die nach 9 Uhr gesetzt wurde, kommt keine Mitteilung mehr.",
@@ -66,7 +65,7 @@ SUPPORT = {
 ],
 "N_after": "Wenn die Flagge und das Badge auf dem Symbol unterschiedliche Zahlen zeigen, ist das Absicht. <col>Hier steht, warum</col>.",
 "X1": "Jeder Import hat Grenzen bei Terminen, wiederkehrenden Aufgaben und zusätzlichen Details. Die <imp>Import-Anleitung</imp> listet sie auf. Schauen Sie zuerst in die {notes} der Aufgabe: Was DayHand nicht zuordnen konnte, steht meist dort als Text.",
-"C1": "DayHand wird von einer einzelnen Person gemacht, es gibt also kein Ticketsystem. Nutzen Sie während der Beta <strong>Beta-Feedback senden</strong> in TestFlight. Sie können auch <new>ein Issue auf GitHub eröffnen</new>, für einen Fehler, eine Frage oder eine Idee. Dafür brauchen Sie ein GitHub-Konto; zum Lesen dieser Seiten nicht.",
+"C1": "DayHand wird von einer einzelnen Person gemacht, es gibt also kein Ticketsystem. Am besten erreichen Sie mich, indem Sie <new>ein Issue auf GitHub eröffnen</new>, für einen Fehler, eine Frage oder eine Idee. Dafür brauchen Sie ein GitHub-Konto; zum Lesen dieser Seiten nicht.",
 "C2": "Es hilft sehr, wenn Sie mir Folgendes mitteilen:",
 "T": [
 "Ihr Gerät, dessen Systemversion sowie die Version und den Build von DayHand;",
@@ -80,6 +79,6 @@ SUPPORT = {
 "en_mark": "(Englisch)",
 "note": "Diese Seite ist eine Übersetzung der englischen <en>Support-Seite</en>. Die verlinkten Anleitungen sind auf Englisch.",
 "langs_label": "Sprachen",
-"footer_text": "Für die Beta geschrieben, Oktober 2026. Wenn eine Taste auf Ihrem Bildschirm anders heißt, hat sich die App weiterentwickelt und diese Seite nicht — sagen Sie es mir.",
+"footer_text": "Zuletzt aktualisiert im November 2026. Wenn eine Taste auf Ihrem Bildschirm anders heißt, hat sich die App weiterentwickelt und diese Seite nicht — sagen Sie es mir.",
 "footer": ["Support", "Datenschutzerklärung", "Zurück zu DayHand"],
 }

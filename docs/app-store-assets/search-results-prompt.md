@@ -1,6 +1,6 @@
 # Search results artwork
 
-Generated with the built-in image generation tool using docs/screenshots/iphone.png as reference, then resampled to 1920 × 1280 pixels. Opaque PNG. The source screenshot predates the current release; verify visual accuracy against the shipping version before submission. This is a generated composition based on the screenshot, not a pixel-exact screenshot composite.
+Generated with the built-in image generation tool using docs/screenshots/iphone.png (since removed from the site; it is in git history) as reference, then resampled to 1920 × 1280 pixels. Opaque PNG. The source screenshot predates the current release; verify visual accuracy against the shipping version before submission. This is a generated composition based on the screenshot, not a pixel-exact screenshot composite.
 
 ## Prompt
 
