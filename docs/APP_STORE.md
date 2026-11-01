@@ -388,7 +388,7 @@ four-category/five-project and paid-weekly-review proposals.
 | Purchase type | Non-consumable, single one-time purchase |
 | Unlock display name | `DayHand Unlimited` — 17 characters; proposed store name |
 | Unlock description | `Unlimited active projects and full completed history on all your devices.` — 73 characters |
-| Product identifiers | `com.andremouraux.tnt.unlock` (paid) and `com.andremouraux.tnt.trial` (free, display name "30-day Trial"), both non-consumable and wired into `Purchases.swift`; create them with exactly these IDs |
+| Product identifiers | `com.andremouraux.tnt.unlock` (paid) and `com.andremouraux.tnt.trial` (free, display name "30-day Trial"), both non-consumable and wired into `Purchases.swift`; create them with exactly these IDs. **Status (1 November 2026):** the trial exists in App Store Connect at a price of 0 EUR, which confirms a free non-consumable can be created. The unlock is still to create |
 | Price and storefront equivalents | **OWNER DECISION:** no price selected; public copy intentionally avoids an amount |
 | Family Sharing | Planned enabled, as recorded in `PROMPT.md`; configure and test in App Store Connect |
 | Restore Purchases | Required implementation work; expose in Settings and test on both platforms |
