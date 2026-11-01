@@ -454,12 +454,12 @@ final class TodoStore: ObservableObject {
 
     /// What typing this name into a task would do on this device.
     func projectAccess(named raw: String) -> Entitlement.ProjectAccess {
-        entitlement.projectAccess(named: raw, among: projects, now: Date())
+        entitlement.projectAccess(named: raw, among: projects, now: purchases.now)
     }
 
     /// Whether one more live project may be made, or an archived one brought back.
     var canAddProject: Bool {
-        entitlement.allowsAnotherProject(among: projects, now: Date())
+        entitlement.allowsAnotherProject(among: projects, now: purchases.now)
     }
 
     /// `ensureProject` for a name the user typed into a task. At the free

@@ -17,7 +17,7 @@ struct TimelineView: View {
     var body: some View {
         // The free version shows the last 30 days; what is held back is counted
         // and offered at the end, never silently left out.
-        let split = store.entitlement.splitHistory(cards, now: Date())
+        let split = store.entitlement.splitHistory(cards, now: store.purchases.now)
         let months = Timeline.months(of: split.shown)
         let busiest = Timeline.busiestDay(in: months)
         let total = months.reduce(0) { $0 + $1.completedCount }

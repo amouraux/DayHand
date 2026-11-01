@@ -1412,6 +1412,29 @@ struct Entitlement: Equatable {
 }
 
 
+/// The date the trial is counted by. StoreKit gives the trial's start, which
+/// cannot be forged; "now" is the device's clock, which can be set back to make
+/// a trial last longer. This remembers the latest date the app has seen and
+/// does not go back before it.
+///
+/// One safety valve, because a guard that can strand an honest user is worse
+/// than none: a clock more than `maxHold` behind the remembered date is taken
+/// as having been wrong (set far ahead by mistake, then corrected) and trusted
+/// again. Setting the clock back by less than that, which is all a trial
+/// needs, changes nothing.
+struct TrialClock: Equatable {
+    var latest: Date
+    static let maxHold: TimeInterval = 60 * 86_400
+
+    mutating func reading(_ deviceNow: Date) -> Date {
+        if deviceNow >= latest || latest.timeIntervalSince(deviceNow) > Self.maxHold {
+            latest = deviceNow
+            return deviceNow
+        }
+        return latest
+    }
+}
+
 extension Entitlement.Access {
     /// How the last confirmed state is kept on this device, so an offline launch
     /// can trust it until the App Store can be asked again: "free",

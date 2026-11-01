@@ -183,7 +183,7 @@ struct PurchasesSection: View {
                 Label("DayHand is unlocked. Thank you.", systemImage: "checkmark.seal")
                     .foregroundStyle(.secondary)
             case .trial:
-                if let days = entitlement.trialDaysLeft(now: Date()) {
+                if let days = entitlement.trialDaysLeft(now: store.purchases.now) {
                     LabeledContent("Trial days left") { Text("\(days)").monospacedDigit() }
                     UnlockButton()
                 } else {

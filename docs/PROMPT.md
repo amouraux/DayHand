@@ -2355,6 +2355,14 @@ start, so it follows the Apple ID across devices and survives a reinstall. It
 ends by returning to the free version, with no charge. Settings shows the days
 left quietly; nothing nags.
 
+**The clock.** StoreKit's start date cannot be forged, but "now" is the device's
+clock, and setting it back would make a trial last longer. Every entitlement check
+counts by `Purchases.now`, which never goes back before the latest date the app has
+seen (`TrialClock`; saved when it moves on by an hour). One valve: a clock more
+than 60 days behind that date is taken to have been wrong and trusted again, so
+a clock set far ahead by mistake and then corrected cannot strand anyone. A
+determined user can still defeat it by rolling back a long way; that is accepted.
+
 Because the history window is also 30 days, a trial user has little to see
 behind the history limit before the trial ends: it is felt first by someone
 who imports old finished tasks, and by everyone after the trial.

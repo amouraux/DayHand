@@ -815,7 +815,7 @@ struct ContentView: View {
                     // A search is looking for something in particular, so it
                     // still finds everything.
                     let split = bucket == .completed && searchTerms.isEmpty
-                        ? store.entitlement.splitHistory(everyCard, now: Date())
+                        ? store.entitlement.splitHistory(everyCard, now: store.purchases.now)
                         : (shown: everyCard, earlier: 0)
                     let cards = split.shown
                     // COMPLETED is capped; every other bucket shows everything.

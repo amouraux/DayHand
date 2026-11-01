@@ -36,6 +36,23 @@ final class Purchases: ObservableObject {
     private var updates: Task<Void, Never>?
 
     private static let cacheKey = "purchases.access.v1"
+    private static let clockKey = "purchases.latestSeen.v1"
+
+    /// Never goes back: see `TrialClock`.
+    private var clock = TrialClock(
+        latest: Date(timeIntervalSince1970: UserDefaults.standard.double(forKey: Purchases.clockKey))
+    )
+
+    /// The date every entitlement check counts by. Saved when it has moved on
+    /// by an hour, not on every read: views ask often.
+    var now: Date {
+        let before = clock.latest
+        let reading = clock.reading(Date())
+        if abs(clock.latest.timeIntervalSince(before)) > 3600 {
+            UserDefaults.standard.set(clock.latest.timeIntervalSince1970, forKey: Self.clockKey)
+        }
+        return reading
+    }
 
     init() {
         storeAccess = UserDefaults.standard.string(forKey: Self.cacheKey)

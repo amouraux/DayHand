@@ -2985,6 +2985,37 @@ do {
            "only a trial counts as a started trial")
 }
 
+// The trial is counted by a clock that does not go back.
+do {
+    let day: TimeInterval = 86_400
+    let t0 = Date(timeIntervalSince1970: 1_800_000_000)
+    var clock = TrialClock(latest: .distantPast)
+
+    expect(clock.reading(t0) == t0, "the first reading is the device's")
+    expect(clock.reading(t0 + day) == t0 + day, "time moving on is followed")
+    expect(clock.reading(t0 + day) == t0 + day, "the same time reads the same")
+    expect(clock.reading(t0 + 5 * day) == t0 + 5 * day && clock.latest == t0 + 5 * day, "and remembered")
+
+    // Setting the clock back changes nothing: the trial cannot be extended by it.
+    expect(clock.reading(t0) == t0 + 5 * day, "a clock set back is held at the latest date seen")
+    expect(clock.reading(t0 - 100) == t0 + 5 * day, "even by a little")
+    expect(clock.reading(t0 + 5 * day - 59 * day) == t0 + 5 * day, "up to two months back is held")
+
+    // A clock that was simply wrong, a long way ahead, does not strand anyone.
+    expect(clock.reading(t0 + 5 * day - 61 * day) == t0 + 5 * day - 61 * day, "far enough back is trusted again")
+    expect(clock.latest == t0 - 56 * day, "and becomes the new latest")
+
+    // What it is for: a trial that has ended stays ended.
+    let start = t0
+    let entitlement = Entitlement(access: .trial(startedAt: start))
+    var guarded = TrialClock(latest: .distantPast)
+    let afterEnd = start + Double(Entitlement.trialDays + 2) * day
+    expect(entitlement.hasFullAccess(now: guarded.reading(afterEnd)) == false, "the trial has ended")
+    expect(entitlement.hasFullAccess(now: guarded.reading(start + 3 * day)) == false,
+           "and setting the clock back to day 3 does not bring it back")
+    expect(entitlement.hasFullAccess(now: start + 3 * day), "which the device clock alone would have done")
+}
+
 // MARK: - App language
 
 do {
