@@ -19,7 +19,7 @@ GUIDE_IDS = ["getting-started", "stacks-and-dates", "reviews", "sync", "data", "
 # token -> catalogue key. Values are used as the app shows them, ellipsis and all,
 # except `edit_plain`, which drops it.
 UI = {
-    "more": "More", "appearance": "Appearance", "timeline": "Timeline", "review": "Review",
+    "more": "More", "purchases": "Purchases", "restore_purchases": "Restore Purchases", "start_trial": "Start 30-day trial", "appearance": "Appearance", "timeline": "Timeline", "review": "Review",
     "sync": "Sync", "create_sync": "Create Sync File…", "use_existing": "Use Existing Sync File…",
     "tasks": "Tasks", "import_reminders": "Import from Apple Reminders…",
     "import_todoist": "Import from Todoist…", "export_csv": "Export as CSV…",
