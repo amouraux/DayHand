@@ -395,9 +395,9 @@ four-category/five-project and paid-weekly-review proposals.
 | Trial | Planned, user-started 30-day unlimited access; returns to free without a charge |
 | Trial product display name | `30-day Trial` — planned separate zero-price non-consumable |
 | Trial product description | `Try unlimited projects and full completed history for 30 days. No charge.` |
-| Trial product identifier | **TO COMPLETE:** configure with StoreKit implementation; never invent a live identifier here |
-| Trial start and expiry | Use the verified transaction date across devices; explain the end conditions before starting |
-| TestFlight access | Grandfathered access is planned (`PROMPT.md`, rule 4); confirm entitlement implementation before claiming it. **Caution:** App Review also runs in a non-production sandbox, so a rule of “non-production environment means unlocked” would hide the limits from the reviewer and the purchase from the review screenshots. Settle how testers are recognised (for example Apple’s offer codes for in-app purchases — **TO CONFIRM** availability) before relying on environment detection |
+| Trial product identifier | `com.andremouraux.tnt.trial`, created in App Store Connect at 0 EUR (1 November 2026) |
+| Trial start and expiry | The verified transaction date from StoreKit, which follows the Apple ID across devices; the end is that date plus 30 days, counted by a clock that does not go back (`TrialClock`). The trial screen states the end conditions before it starts |
+| TestFlight access | **Decided:** no tester is unlocked by environment (`PROMPT.md`, rule 4). TestFlight and App Review buy in the sandbox for nothing, so testers get the unlock by buying it and the reviewer sees the real limits |
 | Distribution method | Public App Store release planned |
 | Countries / regions and launch date | **OWNER DECISION** |
 | Release option | **OWNER DECISION:** choose the release option in App Store Connect |
