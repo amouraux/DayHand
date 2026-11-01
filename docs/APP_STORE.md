@@ -32,7 +32,7 @@ in App Store Connect before editing them.
 | Made for Kids | **OWNER DECISION:** general-purpose positioning does not itself establish eligibility for the Kids category |
 | Content rights | **TO CONFIRM:** complete Apple’s declaration for the actual content and assets |
 | License agreement | **TO CONFIRM:** Apple’s standard EULA unless a custom agreement is chosen |
-| Privacy Policy URL | **TO COMPLETE:** a published policy describing the actual app and data practices |
+| Privacy Policy URL | https://amouraux.github.io/DayHand/privacy.html — verify after deployment from main |
 
 The first version and the Mac platform need their own version information and
 assets where App Store Connect requests them. Sharing an app record does not
@@ -137,7 +137,8 @@ App Store version. TestFlight changes alone do not establish that baseline.
 | --- | --- |
 | Marketing URL | https://amouraux.github.io/DayHand/ |
 | Support URL | https://amouraux.github.io/DayHand/help/support.html — verify after the Help pages are deployed from main |
-| Privacy Policy URL | **TO COMPLETE:** no dedicated published policy has been established in this repository |
+| Privacy Policy URL | https://amouraux.github.io/DayHand/privacy.html — verify after deployment from main |
+| User Privacy Choices URL | Optional: https://amouraux.github.io/DayHand/privacy.html#choices — verify after deployment |
 | Copyright | **TO COMPLETE:** `2026 [confirmed rights holder]`; do not assume the rights holder from Git author details |
 | Public App Store link | **TO COMPLETE after the record’s numeric Apple ID and availability are confirmed**; this is distinct from the TestFlight link |
 
@@ -248,7 +249,10 @@ Resolve them against the actual shipping build and the owner’s circumstances.
   evaluating a possible “Data Not Collected” response, not a substitute for the
   owner checking Apple’s definitions and the final binary. Separately account
   for support/feedback handling and any future analytics or purchase changes.
-- **Privacy policy:** publish the actual policy and enter its URL. The bundled
+- **Privacy policy:** `docs/privacy.html` covers storage, sync, imports, notifications,
+  support, retention and deletion. Publish it from main and verify its URL before
+  entering it in App Store Connect. Add an easily accessible link inside the app
+  before submission. The bundled
   `PrivacyInfo.xcprivacy` is a technical manifest, not a public privacy policy.
 - **Age rating:** complete the current questionnaire, including any capability
   questions presented. Do not hard-code a rating from the app’s productivity category.
