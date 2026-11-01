@@ -1,66 +1,16 @@
 <!doctype html>
-<html lang="ja">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>困ったときは — DayHand</title>
-<meta name="description" content="DayHandのトラブルシューティング: 見つからないタスク、鳴らないリマインダー、見え方が違う読み込み、問題の報告方法。">
-<link rel="icon" href="../icon.png">
-<link rel="stylesheet" href="../help/help.css">
-<link rel="canonical" href="https://amouraux.github.io/DayHand/ja/support.html">
-<link rel="alternate" hreflang="en" href="https://amouraux.github.io/DayHand/help/support.html">
-<link rel="alternate" hreflang="de" href="https://amouraux.github.io/DayHand/de/support.html">
-<link rel="alternate" hreflang="es" href="https://amouraux.github.io/DayHand/es/support.html">
-<link rel="alternate" hreflang="fr" href="https://amouraux.github.io/DayHand/fr/support.html">
-<link rel="alternate" hreflang="it" href="https://amouraux.github.io/DayHand/it/support.html">
-<link rel="alternate" hreflang="nl" href="https://amouraux.github.io/DayHand/nl/support.html">
-<link rel="alternate" hreflang="pt-PT" href="https://amouraux.github.io/DayHand/pt-pt/support.html">
-<link rel="alternate" hreflang="pt-BR" href="https://amouraux.github.io/DayHand/pt-br/support.html">
-<link rel="alternate" hreflang="ja" href="https://amouraux.github.io/DayHand/ja/support.html">
-<link rel="alternate" hreflang="ko" href="https://amouraux.github.io/DayHand/ko/support.html">
-<link rel="alternate" hreflang="sv" href="https://amouraux.github.io/DayHand/sv/support.html">
-<link rel="alternate" hreflang="da" href="https://amouraux.github.io/DayHand/da/support.html">
-<link rel="alternate" hreflang="nb" href="https://amouraux.github.io/DayHand/nb/support.html">
-<link rel="alternate" hreflang="fi" href="https://amouraux.github.io/DayHand/fi/support.html">
-<link rel="alternate" hreflang="pl" href="https://amouraux.github.io/DayHand/pl/support.html">
-<link rel="alternate" hreflang="x-default" href="https://amouraux.github.io/DayHand/help/support.html">
+<title>Moved — DayHand</title>
+<meta http-equiv="refresh" content="0; url=help.html#missing-tasks">
+<link rel="canonical" href="https://amouraux.github.io/DayHand/ja/help.html">
+<script>
+  var map = {};
+  var h = location.hash;
+  location.replace("help.html" + (map[h] || h || "#missing-tasks"));
+</script>
 </head>
-<body>
-<a class="skip" href="#main">本文へスキップ</a>
-<header><a class="brand" href="../index.html"><img src="../icon.png" alt="" width="36" height="36">DayHand</a><a href="../help/" hreflang="en" lang="en">Help</a></header>
-<div class="layout">
-<nav aria-label="トピック"><a href="#missing-tasks">タスクが見つからない</a><a href="#notifications">リマインダー</a><a href="#contact">お問い合わせ</a><a href="privacy.html">プライバシー</a><details class="langs"><summary>言語</summary><a href="../help/support.html" hreflang="en" lang="en">English</a><a href="../de/support.html" hreflang="de" lang="de">Deutsch</a><a href="../es/support.html" hreflang="es" lang="es">Español</a><a href="../fr/support.html" hreflang="fr" lang="fr">Français</a><a href="../it/support.html" hreflang="it" lang="it">Italiano</a><a href="../nl/support.html" hreflang="nl" lang="nl">Nederlands</a><a href="../pt-pt/support.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a><a href="../pt-br/support.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a><span aria-current="page" lang="ja">日本語</span><a href="../ko/support.html" hreflang="ko" lang="ko">한국어</a><a href="../sv/support.html" hreflang="sv" lang="sv">Svenska</a><a href="../da/support.html" hreflang="da" lang="da">Dansk</a><a href="../nb/support.html" hreflang="nb" lang="nb">Norsk bokmål</a><a href="../fi/support.html" hreflang="fi" lang="fi">Suomi</a><a href="../pl/support.html" hreflang="pl" lang="pl">Polski</a></details></nav>
-<main id="main">
-<p class="eyebrow">ヘルプ · サポート</p>
-<h1>困ったときは</h1>
-<p class="lead">まず、よくある原因を下から確認してみてください。どれにも当てはまらない場合は、私に連絡してください。何が起きたのか調べてみます。</p>
-<h2 id="missing-tasks">タスクが見つかりません</h2>
-<p>まず、検索、カテゴリとプロジェクトのフィルタ、フラグを解除してください。次に、ほかのスタックと<strong>タイムライン</strong>を確認します。完了にしたタスクはそこにあります。2台目のデバイスで表示が違う場合は、何かを置き換えたり復元したりする前に、<a href="../help/sync.html#troubleshooting" hreflang="en" lang="en">同期のチェックリスト</a> （英語）を読んでください。</p>
-<p>自分でビルドしたMac版からTestFlight版に移った場合、Appはデータを別の場所に保存するため、空の状態で始まります。何も失われてはいません。iCloudの同期ファイルを使っていた場合は、<strong>既存の同期ファイルを使う</strong>を選び、同じファイルを指定して、<strong>統合</strong>してください。</p>
-<h2 id="notifications">リマインダーが鳴りませんでした</h2>
-<ul>
-<li>システム設定で、DayHandの通知は許可されていますか？集中モードが通知を止めていませんか？</li>
-<li>リマインダーは、その日の午前9時に鳴ります。午前9時を過ぎてから今日のリマインダーを設定した場合、通知は届きません。</li>
-<li>完了したタスクや、削除したリマインダーは通知されません。その日にすでに対応したリマインダーも、通知する理由がありません。</li>
-<li>DayHandを開いてください。Appは起動時にスケジュールを更新します。ほかのデバイスで何かを変更したあとは、特に重要です。</li>
-</ul>
-<p>フラグとアイコンのバッジで数が違うのは、意図したものです。<a href="../help/tasks-and-dates.html#colours" hreflang="en" lang="en">理由はこちら</a> （英語）。</p>
-<h2>読み込んだタスクの見え方が違います</h2>
-<p>読み込みごとに、日付、繰り返しのタスク、追加の詳細について制限があります。<a href="../help/data.html" hreflang="en" lang="en">読み込みガイド</a> （英語）に一覧があります。まずタスクの<strong>メモ</strong>を見てください。DayHandが配置できなかった内容は、たいていそこにテキストとして残っています。</p>
-<h2 id="contact">ご連絡ください</h2>
-<p>DayHandは1人で作っているため、チケット窓口はありません。ベータ期間中は、TestFlightの<strong>ベータ版フィードバックを送信</strong>を使ってください。不具合、質問、アイデアについては、<a href="https://github.com/amouraux/DayHand/issues/new">GitHubでIssueを作成</a>することもできます。これにはGitHubアカウントが必要ですが、このページを読むのには必要ありません。</p>
-<p>次のことを教えてもらえると、とても助かります。</p>
-<ul>
-<li>お使いのデバイス、システムのバージョン、DayHandのバージョンとビルド</li>
-<li>行った操作、期待していたこと、実際に起きたこと</li>
-<li>画面に表示されたメッセージがあれば、その正確な文面</li>
-<li>同期の問題の場合は、どのデバイスか、それぞれの同期の状態</li>
-</ul>
-<aside><strong>GitHubのIssueは公開されます。</strong> スクリーンショットでは、個人的なタスクのタイトルを隠してください。タスクのファイルやバックアップ、パスワード、個人情報は添付しないでください。同じ問題を再現できる小さな架空の例のほうが、いずれにしても役に立ちます。</aside>
-<p>書き込む前に、<a href="https://github.com/amouraux/DayHand/issues">既存の報告を見て</a>ください。すでにほかの人が同じ問題に遭遇しているかもしれません。</p>
-<p>このページは英語版の<a href="../help/support.html" hreflang="en" lang="en">サポートページ</a>の翻訳です。リンク先のガイドは英語です。</p>
-<footer>ベータ版のために2026年10月に書きました。画面上のボタンの名前が違っていたら、Appのほうが先に進んでこのページが追いついていません。教えてください。<br>
-<a href="support.html">サポート</a> · <a href="privacy.html">プライバシーポリシー</a> · <a href="../index.html">DayHandに戻る</a></footer>
-</main>
-</div>
-</body></html>
+<body><p>This page has moved: <a href="help.html#missing-tasks">DayHand Help and support</a>.</p></body>
+</html>

@@ -2440,37 +2440,45 @@ changes task entry dates or the synced document.
 
 ## User help website
 
-`docs/help/` provides static English user documentation, linked from the homepage.
-It covers getting started, stacks and dates, reviews, sync, imports/backups,
-free/paid access and support. Shared styling is in `help.css`; pages work without
+The site is three pages: the homepage, **Help and support** (`docs/help/index.html`,
+one page) and the privacy policy. Help covers, in this order, getting started,
+stacks and dates, reviews, sync, imports and backups, free and paid, then
+**Troubleshooting** and **Contact** — how to use the app, what to do when it
+goes wrong, and how to reach me. It was eight pages once; the old addresses
+(`help/sync.html`, `help/support.html`, ...) are small redirect pages to the
+matching section. Shared styling is in `help.css`; pages work without
 JavaScript and support small screens, keyboard navigation and dark mode.
 Keep instructions aligned with the shipping UI. Label planned purchases and
 trials explicitly until available. Support routes are TestFlight beta feedback
 and public GitHub Issues; never ask users to publish task files or credentials.
-The proposed App Store Support URL is `/DayHand/help/support.html`; verify it
-after deployment. Pages deploy from main, not from a feature-branch push.
+The App Store Support URL is `/DayHand/help/`; verify it after deployment. Pages
+deploy from main, not from a feature-branch push.
+
+Every page carries the same header: the brand on the left, and on the right Help,
+Privacy and a **Languages** menu that goes to the same page in another language.
+The homepage has the menu alone in its top right corner.
 
 
 ## Public privacy policy
 
 `docs/privacy.html` explains local storage, iCloud file sync, imports, local
 notifications, Apple services, support disclosures and data controls. It is
-linked from the homepage and every Help footer. The optional Privacy Choices
+linked from the homepage and the Help page. The optional Privacy Choices
 URL uses `#choices`. Keep purchase statements aligned with the shipped StoreKit
 implementation; planned flows must not be described as already available.
 The More sheet's Help section links to it, under "Help and support", and
 opens the version in the language the app is being read in when the site has it.
 Website publication requires merging to main.
 
-### The homepage, the privacy policy and the support page, translated
+### The homepage, the privacy policy and the help page, translated
 
 All three exist in every language the app has, at `docs/<folder>/index.html`,
-`privacy.html` and `support.html`, with folders `de es fr it nl pt-pt pt-br ja ko sv
-da nb fi pl`. The help guides they link to are still English, and each such link
-says so. Every translation ends by saying the English page prevails, because a
+`privacy.html` and `help.html`, with folders `de es fr it nl pt-pt pt-br ja ko sv
+da nb fi pl`. The translated help page holds the troubleshooting and the contact routes; the
+how-to guides are English only, and it says so and links to them. Every translation ends by saying the English page prevails, because a
 privacy policy that differs between languages is a liability.
 
-The pages are generated. The privacy and support text lives in
+The pages are generated. The privacy and troubleshooting text lives in
 `scripts/web-translations/web_<code>.py` and `make_pages.py` writes the HTML;
 the homepage is cut into units listed in `home_units.py`, filled from
 `home_<code>.py` by `make_home.py`, so `docs/index.html` stays the one source of
@@ -2480,15 +2488,14 @@ words, read from `Localizable.xcstrings`. The homepage screenshots show the
 English interface and the pages say so; localised ones are a separate job. Button names in the policy ("More → Sync →
 Stop Using This File") are read from `Localizable.xcstrings`, so the page says
 what the screen says. **Change the English page, change the translations, run
-the scripts** — it also keeps the language list and the `hreflang` links on the
-English pages current. The translations were written in one pass and need a
+the scripts** — it also keeps the shared header, the `hreflang` links and the redirect pages
+current. The translations were written in one pass and need a
 native reader before they are relied on.
 
-Finding the right language: the left-hand menu of each page ends with a
-collapsible Languages group listing all of them;
+Finding the right language: the Languages menu in the top right of every page;
 the homepage footer lists the translated privacy policies; and `docs/lang.js`,
 loaded only by the three English pages that have translations (the homepage,
-the privacy policy and the support page), offers a banner
+the privacy policy and the help page), offers a banner
 in the reader's own language when their first browser language is one of the
 fourteen. It is a banner and never a redirect, and dismissing it is remembered
 in `localStorage` (the page works if that is blocked).

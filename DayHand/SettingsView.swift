@@ -721,19 +721,23 @@ struct SettingsView: View {
         return parts.joined(separator: ", ")
     }
 
-    private static let helpURL = URL(string: "https://amouraux.github.io/DayHand/help/")!
-
-    /// The privacy policy in the language the app is being read in, when the
-    /// site has it; English otherwise. The folder names are the site's own, so
-    /// they must match `docs/<folder>/privacy.html`. App Store Connect asks
-    /// for the same addresses; keep them in step.
-    private static var privacyURL: URL {
+    /// The site's pages in the language the app is being read in, when the site
+    /// has them; English otherwise. The folder names are the site's own, so they
+    /// must match `docs/<folder>/`. App Store Connect asks for the same
+    /// addresses; keep them in step.
+    private static func siteURL(help: Bool) -> URL {
         let translated: Set<String> = ["de", "es", "fr", "it", "nl", "pt-pt", "pt-br",
                                        "ja", "ko", "sv", "da", "nb", "fi", "pl"]
         let language = (Bundle.main.preferredLocalizations.first ?? "en").lowercased()
-        let folder = translated.contains(language) ? language + "/" : ""
-        return URL(string: "https://amouraux.github.io/DayHand/\(folder)privacy.html")!
+        let base = "https://amouraux.github.io/DayHand/"
+        if translated.contains(language) {
+            return URL(string: base + language + (help ? "/help.html" : "/privacy.html"))!
+        }
+        return URL(string: base + (help ? "help/" : "privacy.html"))!
     }
+
+    private static var helpURL: URL { siteURL(help: true) }
+    private static var privacyURL: URL { siteURL(help: false) }
 
     private static var versionLine: String {
         let info = Bundle.main.infoDictionary

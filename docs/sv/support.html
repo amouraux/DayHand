@@ -1,66 +1,16 @@
 <!doctype html>
-<html lang="sv">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>När något går fel — DayHand</title>
-<meta name="description" content="Felsökning för DayHand: uppgifter som saknas, påminnelser som uteblev, importer som ser annorlunda ut och hur du rapporterar ett problem.">
-<link rel="icon" href="../icon.png">
-<link rel="stylesheet" href="../help/help.css">
-<link rel="canonical" href="https://amouraux.github.io/DayHand/sv/support.html">
-<link rel="alternate" hreflang="en" href="https://amouraux.github.io/DayHand/help/support.html">
-<link rel="alternate" hreflang="de" href="https://amouraux.github.io/DayHand/de/support.html">
-<link rel="alternate" hreflang="es" href="https://amouraux.github.io/DayHand/es/support.html">
-<link rel="alternate" hreflang="fr" href="https://amouraux.github.io/DayHand/fr/support.html">
-<link rel="alternate" hreflang="it" href="https://amouraux.github.io/DayHand/it/support.html">
-<link rel="alternate" hreflang="nl" href="https://amouraux.github.io/DayHand/nl/support.html">
-<link rel="alternate" hreflang="pt-PT" href="https://amouraux.github.io/DayHand/pt-pt/support.html">
-<link rel="alternate" hreflang="pt-BR" href="https://amouraux.github.io/DayHand/pt-br/support.html">
-<link rel="alternate" hreflang="ja" href="https://amouraux.github.io/DayHand/ja/support.html">
-<link rel="alternate" hreflang="ko" href="https://amouraux.github.io/DayHand/ko/support.html">
-<link rel="alternate" hreflang="sv" href="https://amouraux.github.io/DayHand/sv/support.html">
-<link rel="alternate" hreflang="da" href="https://amouraux.github.io/DayHand/da/support.html">
-<link rel="alternate" hreflang="nb" href="https://amouraux.github.io/DayHand/nb/support.html">
-<link rel="alternate" hreflang="fi" href="https://amouraux.github.io/DayHand/fi/support.html">
-<link rel="alternate" hreflang="pl" href="https://amouraux.github.io/DayHand/pl/support.html">
-<link rel="alternate" hreflang="x-default" href="https://amouraux.github.io/DayHand/help/support.html">
+<title>Moved — DayHand</title>
+<meta http-equiv="refresh" content="0; url=help.html#missing-tasks">
+<link rel="canonical" href="https://amouraux.github.io/DayHand/sv/help.html">
+<script>
+  var map = {};
+  var h = location.hash;
+  location.replace("help.html" + (map[h] || h || "#missing-tasks"));
+</script>
 </head>
-<body>
-<a class="skip" href="#main">Hoppa till innehållet</a>
-<header><a class="brand" href="../index.html"><img src="../icon.png" alt="" width="36" height="36">DayHand</a><a href="../help/" hreflang="en" lang="en">Help</a></header>
-<div class="layout">
-<nav aria-label="Ämnen"><a href="#missing-tasks">Uppgifter som saknas</a><a href="#notifications">Påminnelser</a><a href="#contact">Kontakt</a><a href="privacy.html">Integritet</a><details class="langs"><summary>Språk</summary><a href="../help/support.html" hreflang="en" lang="en">English</a><a href="../de/support.html" hreflang="de" lang="de">Deutsch</a><a href="../es/support.html" hreflang="es" lang="es">Español</a><a href="../fr/support.html" hreflang="fr" lang="fr">Français</a><a href="../it/support.html" hreflang="it" lang="it">Italiano</a><a href="../nl/support.html" hreflang="nl" lang="nl">Nederlands</a><a href="../pt-pt/support.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a><a href="../pt-br/support.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a><a href="../ja/support.html" hreflang="ja" lang="ja">日本語</a><a href="../ko/support.html" hreflang="ko" lang="ko">한국어</a><span aria-current="page" lang="sv">Svenska</span><a href="../da/support.html" hreflang="da" lang="da">Dansk</a><a href="../nb/support.html" hreflang="nb" lang="nb">Norsk bokmål</a><a href="../fi/support.html" hreflang="fi" lang="fi">Suomi</a><a href="../pl/support.html" hreflang="pl" lang="pl">Polski</a></details></nav>
-<main id="main">
-<p class="eyebrow">Hjälp · Support</p>
-<h1>När något går fel</h1>
-<p class="lead">Gå igenom de vanliga misstänkta nedan. Om ingen av dem stämmer, skriv till mig så försöker jag ta reda på vad som hände.</p>
-<h2 id="missing-tasks">Jag hittar inte mina uppgifter</h2>
-<p>Rensa först sökningen, kategori- och projektfiltren och flaggan. Titta sedan i de andra högarna och i <strong>Tidslinje</strong>; en uppgift du bockat av finns där. Om en andra enhet visar något annat, läs <a href="../help/sync.html#troubleshooting" hreflang="en" lang="en">synkroniseringschecklistan</a> (på engelska) innan du ersätter eller återställer något.</p>
-<p>Om du bytt från en Mac-version du byggt själv till den i TestFlight sparar appen sina data på ett annat ställe och börjar därför tom. Inget är förlorat. Om du använde en iCloud-synkroniseringsfil väljer du <strong>Använd befintlig synkroniseringsfil</strong> och pekar på samma fil, med <strong>Slå ihop</strong>.</p>
-<h2 id="notifications">En påminnelse uteblev</h2>
-<ul>
-<li>Är aviseringar tillåtna för DayHand i systeminställningarna? Håller ett fokusläge tillbaka dem?</li>
-<li>Påminnelser går av klockan 9 den aktuella dagen. För en påminnelse för idag som satts efter klockan 9 kommer ingen avisering.</li>
-<li>En klar uppgift, eller en påminnelse du rensat, aviserar inte. En du redan besvarat den dagen har ingen anledning att göra det.</li>
-<li>Öppna DayHand. Appen uppdaterar sitt schema när den startar, vilket spelar störst roll efter att du ändrat något på en annan enhet.</li>
-</ul>
-<p>Om flaggan och märket på ikonen visar olika siffror är det med avsikt. <a href="../help/tasks-and-dates.html#colours" hreflang="en" lang="en">Så här kommer det sig</a> (på engelska).</p>
-<h2>Mina importerade uppgifter ser annorlunda ut</h2>
-<p>Varje import har sina begränsningar för datum, återkommande uppgifter och extra detaljer. <a href="../help/data.html" hreflang="en" lang="en">Importguiden</a> (på engelska) listar dem. Titta först i uppgiftens <strong>Anteckningar</strong>: det DayHand inte kunde placera sparas oftast där som text.</p>
-<h2 id="contact">Berätta för mig</h2>
-<p>DayHand görs av en enda person, så det finns ingen ärendedisk. Under betan använder du <strong>Skicka betafeedback</strong> i TestFlight. Du kan också <a href="https://github.com/amouraux/DayHand/issues/new">öppna ett ärende på GitHub</a>, för ett fel, en fråga eller en idé. Det kräver ett GitHub-konto; att läsa de här sidorna gör det inte.</p>
-<p>Det hjälper mycket om du berättar:</p>
-<ul>
-<li>din enhet, dess systemversion samt DayHands version och bygge;</li>
-<li>vad du gjorde, vad du förväntade dig och vad som hände;</li>
-<li>det exakta meddelandet på skärmen, om det fanns något;</li>
-<li>vid synkroniseringsproblem, vilka enheter det gäller och vad synkroniseringsstatusen säger på varje.</li>
-</ul>
-<aside><strong>GitHub-ärenden är offentliga.</strong> Sudda ut privata uppgiftstitlar i skärmdumpar. Bifoga inte din uppgiftsfil eller en säkerhetskopia, och inga lösenord eller personuppgifter. Ett litet påhittat exempel som visar samma problem är ändå bättre.</aside>
-<p>Innan du skriver kan du <a href="https://github.com/amouraux/DayHand/issues">titta på de befintliga rapporterna</a>; någon kan redan ha stött på det.</p>
-<p>Den här sidan är en översättning av den engelska <a href="../help/support.html" hreflang="en" lang="en">supportsidan</a>. De länkade guiderna är på engelska.</p>
-<footer>Skrivet för betan, oktober 2026. Om en knapp på din skärm heter något annat har appen gått vidare och den här sidan inte — säg till.<br>
-<a href="support.html">Support</a> · <a href="privacy.html">Integritetspolicy</a> · <a href="../index.html">Tillbaka till DayHand</a></footer>
-</main>
-</div>
-</body></html>
+<body><p>This page has moved: <a href="help.html#missing-tasks">DayHand Help and support</a>.</p></body>
+</html>

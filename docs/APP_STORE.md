@@ -136,7 +136,7 @@ App Store version. TestFlight changes alone do not establish that baseline.
 | Field | Value / action |
 | --- | --- |
 | Marketing URL | https://amouraux.github.io/DayHand/ |
-| Support URL | https://amouraux.github.io/DayHand/help/support.html — verify after the Help pages are deployed from main |
+| Support URL | https://amouraux.github.io/DayHand/help/ — the single Help and support page; verify after it is deployed from main |
 | Privacy Policy URL | https://amouraux.github.io/DayHand/privacy.html — verify after deployment from main |
 | User Privacy Choices URL | Optional: https://amouraux.github.io/DayHand/privacy.html#choices — verify after deployment |
 | Copyright | **TO COMPLETE:** `2026 [confirmed rights holder]`; do not assume the rights holder from Git author details |
@@ -144,7 +144,7 @@ App Store version. TestFlight changes alone do not establish that baseline.
 
 ### Localised URLs
 
-The homepage, the privacy policy and the support page exist in every app
+The homepage, the privacy policy and the help page exist in every app
 language. App Store Connect takes a Marketing URL, a Support URL and a Privacy
 Policy URL per localisation, so enter the matching one for each (the marketing
 URL is `…/DayHand/<folder>/`); a language without its own falls back to the English
@@ -152,20 +152,20 @@ pages above. Folders are the same for both pages:
 
 | App Store localisation | Folder | Privacy Policy URL | Support URL |
 | --- | --- | --- | --- |
-| German | `de` | …/DayHand/de/privacy.html | …/DayHand/de/support.html |
-| Spanish | `es` | …/DayHand/es/privacy.html | …/DayHand/es/support.html |
-| French | `fr` | …/DayHand/fr/privacy.html | …/DayHand/fr/support.html |
-| Italian | `it` | …/DayHand/it/privacy.html | …/DayHand/it/support.html |
-| Dutch | `nl` | …/DayHand/nl/privacy.html | …/DayHand/nl/support.html |
-| Portuguese (Portugal) | `pt-pt` | …/DayHand/pt-pt/privacy.html | …/DayHand/pt-pt/support.html |
-| Portuguese (Brazil) | `pt-br` | …/DayHand/pt-br/privacy.html | …/DayHand/pt-br/support.html |
-| Japanese | `ja` | …/DayHand/ja/privacy.html | …/DayHand/ja/support.html |
-| Korean | `ko` | …/DayHand/ko/privacy.html | …/DayHand/ko/support.html |
-| Swedish | `sv` | …/DayHand/sv/privacy.html | …/DayHand/sv/support.html |
-| Danish | `da` | …/DayHand/da/privacy.html | …/DayHand/da/support.html |
-| Norwegian | `nb` | …/DayHand/nb/privacy.html | …/DayHand/nb/support.html |
-| Finnish | `fi` | …/DayHand/fi/privacy.html | …/DayHand/fi/support.html |
-| Polish | `pl` | …/DayHand/pl/privacy.html | …/DayHand/pl/support.html |
+| German | `de` | …/DayHand/de/privacy.html | …/DayHand/de/help.html |
+| Spanish | `es` | …/DayHand/es/privacy.html | …/DayHand/es/help.html |
+| French | `fr` | …/DayHand/fr/privacy.html | …/DayHand/fr/help.html |
+| Italian | `it` | …/DayHand/it/privacy.html | …/DayHand/it/help.html |
+| Dutch | `nl` | …/DayHand/nl/privacy.html | …/DayHand/nl/help.html |
+| Portuguese (Portugal) | `pt-pt` | …/DayHand/pt-pt/privacy.html | …/DayHand/pt-pt/help.html |
+| Portuguese (Brazil) | `pt-br` | …/DayHand/pt-br/privacy.html | …/DayHand/pt-br/help.html |
+| Japanese | `ja` | …/DayHand/ja/privacy.html | …/DayHand/ja/help.html |
+| Korean | `ko` | …/DayHand/ko/privacy.html | …/DayHand/ko/help.html |
+| Swedish | `sv` | …/DayHand/sv/privacy.html | …/DayHand/sv/help.html |
+| Danish | `da` | …/DayHand/da/privacy.html | …/DayHand/da/help.html |
+| Norwegian | `nb` | …/DayHand/nb/privacy.html | …/DayHand/nb/help.html |
+| Finnish | `fi` | …/DayHand/fi/privacy.html | …/DayHand/fi/help.html |
+| Polish | `pl` | …/DayHand/pl/privacy.html | …/DayHand/pl/help.html |
 
 (`…` is `https://amouraux.github.io`.) The translations say that the English
 page prevails; verify each URL after the pages are deployed from main.

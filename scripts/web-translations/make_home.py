@@ -151,8 +151,8 @@ def build(folder, hl, ccode, name, tmpl):
     html = html.replace('<link rel="canonical" href="https://amouraux.github.io/DayHand/">', f'<link rel="canonical" href="{BASE}/{folder}/">')
     html = re.sub(r'(<img src="screenshots/iphone\.png" alt=")[^"]*"', lambda m: m.group(1) + M["alt_iphone"] + '"', html)
     html = re.sub(r'(<img src="screenshots/ipad\.png" alt=")[^"]*"', lambda m: m.group(1) + M["alt_ipad"] + '"', html)
-    # paths: the page lives one folder down; help becomes the translated support page
-    html = html.replace('href="help/"', 'href="support.html"')
+    # paths: the page lives one folder down; help becomes the translated help page
+    html = html.replace('href="help/"', 'href="help.html"')
     html = html.replace('href="icon.png"', 'href="../icon.png"').replace('src="icon.png"', 'src="../icon.png"')
     html = html.replace('src="screenshots/', 'src="../screenshots/')
     # generated pieces

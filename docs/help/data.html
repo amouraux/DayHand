@@ -3,62 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Imports, exports and backups — DayHand</title>
-<meta name="description" content="Importing from Apple Reminders and Todoist, exporting CSV, backups and restoring in DayHand.">
-<link rel="icon" href="../icon.png">
-<link rel="stylesheet" href="help.css">
-<link rel="canonical" href="https://amouraux.github.io/DayHand/help/data.html">
+<title>Moved — DayHand</title>
+<meta http-equiv="refresh" content="0; url=index.html#data">
+<link rel="canonical" href="https://amouraux.github.io/DayHand/help/index.html">
+<script>
+  var map = {};
+  var h = location.hash;
+  location.replace("index.html" + (map[h] || h || "#data"));
+</script>
 </head>
-<body>
-<a class="skip" href="#main">Skip to content</a>
-<header><a class="brand" href="../index.html"><img src="../icon.png" alt="" width="36" height="36">DayHand</a><a href="index.html">Help</a></header>
-<div class="layout">
-<nav aria-label="Help topics"><a href="index.html">Help home</a><a href="getting-started.html">Getting started</a><a href="tasks-and-dates.html">Stacks &amp; dates</a><a href="reviews.html">Reviews</a><a href="sync.html">Sync</a><a href="data.html" aria-current="page">Imports &amp; backups</a><a href="free-and-paid.html">Free &amp; paid</a><a href="support.html">Support</a><details class="langs"><summary>Support in other languages</summary><span aria-current="page" lang="en">English</span><a href="../de/support.html" hreflang="de" lang="de">Deutsch</a><a href="../es/support.html" hreflang="es" lang="es">Español</a><a href="../fr/support.html" hreflang="fr" lang="fr">Français</a><a href="../it/support.html" hreflang="it" lang="it">Italiano</a><a href="../nl/support.html" hreflang="nl" lang="nl">Nederlands</a><a href="../pt-pt/support.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a><a href="../pt-br/support.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a><a href="../ja/support.html" hreflang="ja" lang="ja">日本語</a><a href="../ko/support.html" hreflang="ko" lang="ko">한국어</a><a href="../sv/support.html" hreflang="sv" lang="sv">Svenska</a><a href="../da/support.html" hreflang="da" lang="da">Dansk</a><a href="../nb/support.html" hreflang="nb" lang="nb">Norsk bokmål</a><a href="../fi/support.html" hreflang="fi" lang="fi">Suomi</a><a href="../pl/support.html" hreflang="pl" lang="pl">Polski</a></details></nav>
-<main id="main">
-<p class="eyebrow">Help · Your data</p>
-<h1>Imports, exports and backups</h1>
-<p class="lead">Your tasks are yours: get them in, take them out, and get them back. An import is a one-time copy. DayHand does not stay connected to the app it came from.</p>
-<h2 id="apple-reminders">From Apple Reminders</h2>
-<ol>
-<li>Open <strong>More → Tasks → Import from Apple Reminders…</strong>.</li>
-<li>Allow access to Reminders. Apple only offers “full access” for reading lists. DayHand reads and never changes them.</li>
-<li>Pick the lists, the stack the tasks should go to, a project or category, and whether to bring the due dates.</li>
-<li>Look at the preview, then confirm.</li>
-</ol>
-<p>A due date becomes a DayHand reminder at 9 a.m., not a deadline, and the original date and time are kept in the Notes. Repeating reminders are skipped. Subtasks, tags, attachments and smart-list rules are not carried over. Notes, links, locations and priorities come along as text where they exist.</p>
-<p>A backup is taken first. Import the same lists again on the same device and the tasks you already imported are skipped, including the ones you deleted. On another device, or after resetting your account, you may get duplicates.</p>
-
-<h2 id="todoist">From Todoist</h2>
-<ol>
-<li>In Todoist, export your projects as CSV files.</li>
-<li>Open <strong>More → Tasks → Import from Todoist…</strong> and pick one or more of those files.</li>
-<li>For each file, choose the stack, project and category, and look at the date options.</li>
-<li>Read the preview and any warnings, then import.</li>
-</ol>
-<p>Todoist’s project export does not include completed tasks. Dates it recognises become reminders at 9 a.m.; deadlines stay deadlines. Descriptions, comments and the other details it can read go into the Notes. Subtasks become tasks of their own, with their parent and section noted. Attachments are not downloaded. Repeating schedules are not recreated. A date DayHand does not understand is flagged for you; if you import the task anyway, the original text of the date is kept in the Notes.</p>
-<p>A backup is taken first. Importing an unchanged file under the same name skips the rows already imported. Edit or rename the export and you may get duplicates.</p>
-<aside><strong>Mind your alerts.</strong> Apple Reminders and Todoist keep sending their own notifications, and a future reminder you import will also notify you from DayHand. Decide which app gets to nag you.</aside>
-
-<h2 id="csv">DayHand CSV</h2>
-<p><strong>More → Tasks → Export as CSV…</strong> saves a portable copy. <strong>Import from CSV…</strong> offers <strong>Add to Existing Tasks</strong>, which merges a DayHand CSV into your work, or <strong>Replace All Tasks</strong>, which clears the current tasks first. Think twice before choosing the second.</p>
-<p>For Todoist files, use the Todoist importer. CSV files from other apps will not match DayHand’s format. If you want to prepare a file yourself, export a few tasks first and copy the layout.</p>
-
-<h2 id="backups">Backups</h2>
-<p>Under <strong>More → Backups</strong>, tap <strong>Back Up Now</strong> before anything big. DayHand also makes its own, on days you open the app, in a few rotating slots: yesterday, the day before, and about a week ago. They are a safety net, not an archive. A second manual backup on the same day replaces the first.</p>
-<p>To keep a copy somewhere of your own choosing, use a backup’s <strong>Share</strong> action. On a Mac, right-click a backup for Restore, Share and Delete. On an iPhone or iPad, press and hold. Swiping works too.</p>
-
-<h2 id="restore">Restoring</h2>
-<ol>
-<li>If you might want the current tasks back, back them up or export them first.</li>
-<li>Tap a backup in the list, or choose <strong>Restore From File…</strong> and pick any DayHand file.</li>
-<li>Read the two counts in the confirmation: the tasks here, and the tasks in the file. Restoring replaces the current tasks, and brings back the categories and projects too.</li>
-<li>Confirm only if this is the copy you want.</li>
-</ol>
-<p><strong>Restore From File only reads the file.</strong> It does not link it for syncing. If you are syncing, that stays as it was, so what you restore will travel to your other devices. To look at a copy on its own, stop syncing first.</p>
-<p>For a continuing link to a shared file, see <a href="sync.html">Sync</a>.</p>
-<footer>Written for the beta, October 2026. If a button on your screen has another name, the app has moved on and this page has not — tell me.<br>
-<a href="support.html">Support</a> · <a href="../privacy.html">Privacy policy</a> · <a href="../index.html">Back to DayHand</a></footer>
-</main>
-</div>
-</body>
+<body><p>This page has moved: <a href="index.html#data">DayHand Help and support</a>.</p></body>
 </html>
