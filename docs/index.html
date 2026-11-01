@@ -207,11 +207,55 @@
     header.wrap { padding-top: 42px; }
     section.wrap { padding-top: 42px; padding-bottom: 42px; }
   }
+  
+  
+  
+  /*langmenu*/
+  .langmenu { position: absolute; top: 14px; right: 16px; z-index: 5; font-size: 14px; text-align: left; }
+  .langmenu summary { list-style: none; cursor: pointer; background: var(--panel); color: var(--ink-soft);
+    border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; box-shadow: var(--shadow); }
+  .langmenu summary::-webkit-details-marker { display: none; }
+  .langmenu summary::after { content: " \25BE"; }
+  .langmenu[open] summary::after { content: " \25B4"; }
+  .langmenu .langlist { position: absolute; right: 0; margin-top: 8px; min-width: 210px; max-height: 70vh; overflow-y: auto;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 6px; }
+  .langmenu .langlist a, .langmenu .langlist span { display: block; padding: 7px 12px; border-radius: 9px; text-decoration: none; color: var(--ink); }
+  .langmenu .langlist a:hover { background: var(--bg); }
+  .langmenu .langlist span[aria-current] { background: var(--bg); font-weight: 650; }
+  body > .langbar { display: flex; gap: 14px; align-items: center; justify-content: space-between; max-width: 720px;
+    margin: 14px auto 0; padding: 12px 16px; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; box-shadow: var(--shadow); font-size: 15px; }
+  body > .langbar p { margin: 0; }
+  body > .langbar button { flex: none; background: none; border: 0; color: var(--ink-soft); font: inherit; font-size: 22px;
+    line-height: 1; padding: 4px 8px; cursor: pointer; }
+  /*/langmenu*/
 </style>
+<!--alt-->
+<link rel="alternate" hreflang="en" href="https://amouraux.github.io/DayHand/">
+<link rel="alternate" hreflang="de" href="https://amouraux.github.io/DayHand/de/">
+<link rel="alternate" hreflang="es" href="https://amouraux.github.io/DayHand/es/">
+<link rel="alternate" hreflang="fr" href="https://amouraux.github.io/DayHand/fr/">
+<link rel="alternate" hreflang="it" href="https://amouraux.github.io/DayHand/it/">
+<link rel="alternate" hreflang="nl" href="https://amouraux.github.io/DayHand/nl/">
+<link rel="alternate" hreflang="pt-PT" href="https://amouraux.github.io/DayHand/pt-pt/">
+<link rel="alternate" hreflang="pt-BR" href="https://amouraux.github.io/DayHand/pt-br/">
+<link rel="alternate" hreflang="ja" href="https://amouraux.github.io/DayHand/ja/">
+<link rel="alternate" hreflang="ko" href="https://amouraux.github.io/DayHand/ko/">
+<link rel="alternate" hreflang="sv" href="https://amouraux.github.io/DayHand/sv/">
+<link rel="alternate" hreflang="da" href="https://amouraux.github.io/DayHand/da/">
+<link rel="alternate" hreflang="nb" href="https://amouraux.github.io/DayHand/nb/">
+<link rel="alternate" hreflang="fi" href="https://amouraux.github.io/DayHand/fi/">
+<link rel="alternate" hreflang="pl" href="https://amouraux.github.io/DayHand/pl/">
+<link rel="alternate" hreflang="x-default" href="https://amouraux.github.io/DayHand/">
+<!--/alt-->
 </head>
 <body>
 
 <header class="wrap">
+  <!--langmenu--><details class="langmenu"><summary>Languages</summary><div class="langlist"><span aria-current="page" lang="en">English</span><a href="de/index.html" hreflang="de" lang="de">Deutsch</a><a href="es/index.html" hreflang="es" lang="es">Español</a><a href="fr/index.html" hreflang="fr" lang="fr">Français</a><a href="it/index.html" hreflang="it" lang="it">Italiano</a><a href="nl/index.html" hreflang="nl" lang="nl">Nederlands</a><a href="pt-pt/index.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a><a href="pt-br/index.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a><a href="ja/index.html" hreflang="ja" lang="ja">日本語</a><a href="ko/index.html" hreflang="ko" lang="ko">한국어</a><a href="sv/index.html" hreflang="sv" lang="sv">Svenska</a><a href="da/index.html" hreflang="da" lang="da">Dansk</a><a href="nb/index.html" hreflang="nb" lang="nb">Norsk bokmål</a><a href="fi/index.html" hreflang="fi" lang="fi">Suomi</a><a href="pl/index.html" hreflang="pl" lang="pl">Polski</a></div></details><!--/langmenu-->
+  
+  
+  
   <img class="icon" src="icon.png" alt="DayHand" width="132" height="132">
   <h1>DayHand</h1>
   <p class="tagline">Organise your tasks around your life and your objectives, not the calendar.</p>
@@ -541,9 +585,10 @@
   <p>Something unclear? The <a href="help/">help pages</a> cover most of it. Otherwise, send beta feedback in TestFlight, or
      <a href="https://github.com/amouraux/DayHand/issues/new">report an issue on GitHub</a>.</p>
   <p>In English, French, Dutch, German, Spanish, Italian, Portuguese (Portugal and Brazil), Japanese, Korean, Swedish, Danish, Norwegian, Finnish and Polish.</p>
-  <p>Privacy policy: <a href="privacy.html">English</a> · <a href="de/privacy.html" hreflang="de" lang="de">Deutsch</a> · <a href="es/privacy.html" hreflang="es" lang="es">Español</a> · <a href="fr/privacy.html" hreflang="fr" lang="fr">Français</a> · <a href="it/privacy.html" hreflang="it" lang="it">Italiano</a> · <a href="nl/privacy.html" hreflang="nl" lang="nl">Nederlands</a> · <a href="pt-pt/privacy.html" hreflang="pt-pt" lang="pt-pt">Português (Portugal)</a> · <a href="pt-br/privacy.html" hreflang="pt-br" lang="pt-br">Português (Brasil)</a> · <a href="ja/privacy.html" hreflang="ja" lang="ja">日本語</a> · <a href="ko/privacy.html" hreflang="ko" lang="ko">한국어</a> · <a href="sv/privacy.html" hreflang="sv" lang="sv">Svenska</a> · <a href="da/privacy.html" hreflang="da" lang="da">Dansk</a> · <a href="nb/privacy.html" hreflang="nb" lang="nb">Norsk bokmål</a> · <a href="fi/privacy.html" hreflang="fi" lang="fi">Suomi</a> · <a href="pl/privacy.html" hreflang="pl" lang="pl">Polski</a></p>
+  <!--privacy--><p>Privacy policy: <a href="privacy.html" hreflang="en" lang="en">English</a> · <a href="de/privacy.html" hreflang="de" lang="de">Deutsch</a> · <a href="es/privacy.html" hreflang="es" lang="es">Español</a> · <a href="fr/privacy.html" hreflang="fr" lang="fr">Français</a> · <a href="it/privacy.html" hreflang="it" lang="it">Italiano</a> · <a href="nl/privacy.html" hreflang="nl" lang="nl">Nederlands</a> · <a href="pt-pt/privacy.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a> · <a href="pt-br/privacy.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a> · <a href="ja/privacy.html" hreflang="ja" lang="ja">日本語</a> · <a href="ko/privacy.html" hreflang="ko" lang="ko">한국어</a> · <a href="sv/privacy.html" hreflang="sv" lang="sv">Svenska</a> · <a href="da/privacy.html" hreflang="da" lang="da">Dansk</a> · <a href="nb/privacy.html" hreflang="nb" lang="nb">Norsk bokmål</a> · <a href="fi/privacy.html" hreflang="fi" lang="fi">Suomi</a> · <a href="pl/privacy.html" hreflang="pl" lang="pl">Polski</a></p><!--/privacy-->
   <p>Built in SwiftUI · <a href="https://github.com/amouraux/DayHand">Source on GitHub</a></p>
 </footer>
 
+<script src="lang.js" data-page="home" defer></script>
 </body>
 </html>

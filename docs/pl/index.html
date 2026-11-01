@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DayHand — Zadania dla Twojego życia i pracy</title>
+<meta name="description" content="Organizuj zadania wokół swojego życia i celów, a nie kalendarza. Zarządzanie zadaniami inspirowane Kanbanem na iPhone’a, iPada i Maca, z przypomnieniami, terminami i bez codziennego przenoszenia.">
+<link rel="icon" href="../icon.png">
+<meta property="og:title" content="DayHand — Zadania dla Twojego życia i pracy">
+<meta property="og:description" content="Organizuj zadania wokół swojego życia i celów, a nie kalendarza. Zainspirowany Kanbanem DayHand przenosi prostotę kart i stosów na zarządzanie Twoim życiem i pracą.">
+<meta property="og:image" content="https://amouraux.github.io/DayHand/icon.png">
+<meta property="og:url" content="https://amouraux.github.io/DayHand/pl/">
+<link rel="canonical" href="https://amouraux.github.io/DayHand/pl/">
+<style>
+  :root {
+    --bg:        #f2f2f7;
+    --panel:     #ffffff;
+    --ink:       #12131a;
+    --ink-soft:  #5c5f70;
+    --line:      rgba(18,19,26,.10);
+    --today:     #2f7bf6;
+    --tomorrow:  #e8871e;
+    --later:     #1da34f;
+    --night:     #2f3486;
+    --review:    #8a4bd0;
+    --flag:      #d92d20;
+    --keep:      #0f8a8a;
+    --waiting:   #6b7a90;
+    --shadow:    0 1px 2px rgba(18,19,26,.05), 0 8px 24px rgba(18,19,26,.07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:       #0d0e12;
+      --panel:    #17181e;
+      --ink:      #f3f4f8;
+      --ink-soft: #a0a4b6;
+      --line:     rgba(255,255,255,.12);
+      --today:    #6ea6ff;
+      --tomorrow: #f5b25c;
+      --later:    #5fd48a;
+      --night:    #9099ee;
+      --review:   #c18cf0;
+      --flag:     #ff7a70;
+      --keep:     #4fd0d0;
+      --waiting:  #9aa8bd;
+      --shadow:   0 1px 2px rgba(0,0,0,.4), 0 8px 28px rgba(0,0,0,.45);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 400 17px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1020px; margin: 0 auto; padding: 0 16px; }
+  a { color: inherit; }
+
+  /* ---------- hero ---------- */
+  header.wrap { padding: 76px 16px 38px; text-align: center; }
+  .icon {
+    width: 132px; height: 132px; border-radius: 30px;
+    box-shadow: var(--shadow); display: block; margin: 0 auto 26px;
+  }
+  h1 {
+    margin: 0; font-size: clamp(44px, 9vw, 68px); letter-spacing: -.028em;
+    font-weight: 700; line-height: 1.02;
+  }
+  .tagline {
+    margin: 16px auto 0; max-width: 30ch;
+    font-size: clamp(20px, 3.4vw, 25px); line-height: 1.32;
+    letter-spacing: -.012em; color: var(--ink);
+  }
+  .sub {
+    margin: 18px auto 0; max-width: 54ch;
+    color: var(--ink-soft); font-size: 17px;
+  }
+
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 34px 0 6px; }
+  .btn {
+    display: inline-flex; flex-direction: column; align-items: center;
+    gap: 2px; text-decoration: none; padding: 13px 26px; border-radius: 14px;
+    font-weight: 600; font-size: 17px; letter-spacing: -.01em;
+    border: 1px solid transparent; transition: transform .12s ease, filter .12s ease;
+  }
+  .btn:hover { transform: translateY(-1px); filter: brightness(1.06); }
+  .btn small { font-weight: 400; font-size: 12.5px; opacity: .8; letter-spacing: 0; }
+  .btn-primary { background: var(--today); color: #fff; }
+  .btn-secondary { background: var(--panel); color: var(--ink); border-color: var(--line); box-shadow: var(--shadow); }
+
+  /* ---------- ideas ---------- */
+  section.wrap { padding: 62px 16px; }
+  h2 {
+    font-size: 13px; text-transform: uppercase; letter-spacing: .1em;
+    color: var(--ink-soft); font-weight: 600; margin: 0 0 28px; text-align: center;
+  }
+  .ideas { display: grid; gap: 14px; grid-template-columns: 1fr; }
+  @media (min-width: 720px) { .ideas { grid-template-columns: 1fr 1fr; } }
+  .idea {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+    padding: 24px 24px 26px; box-shadow: var(--shadow);
+    border-left: 4px solid var(--accent, var(--today));
+  }
+  .idea h3 { margin: 0 0 8px; font-size: 18.5px; letter-spacing: -.012em; }
+  .idea p  { margin: 0; color: var(--ink-soft); font-size: 15.5px; line-height: 1.55; }
+  .i-inbox    { --accent: var(--ink-soft); }
+  .i-today    { --accent: var(--today); }
+  .i-tomorrow { --accent: var(--tomorrow); }
+  .i-later    { --accent: var(--later); }
+  .i-night    { --accent: var(--night); }
+  .i-review   { --accent: var(--review); }
+  .i-flag     { --accent: var(--flag); }
+  .i-keep     { --accent: var(--keep); }
+  .i-waiting  { --accent: var(--waiting); }
+  /* Full width: it is the answer to "then how do I know I am getting
+     anywhere?", which deserves more than a quarter of the grid. */
+  @media (min-width: 720px) { .wide-idea { grid-column: 1 / -1; } }
+
+  /* ---------- screenshots ---------- */
+  .shots { display: grid; gap: 34px; grid-template-columns: 1fr; align-items: end; }
+  @media (min-width: 760px) { .shots { grid-template-columns: 1fr 1fr; } }
+  figure { margin: 0; text-align: center; }
+  figure img {
+    width: 100%; height: auto; display: block;
+    border-radius: 16px; border: 1px solid var(--line); box-shadow: var(--shadow);
+  }
+  figure.phone { max-width: 320px; margin-inline: auto; }
+  figcaption { margin-top: 14px; margin-bottom: 8px; color: var(--ink-soft); font-size: 14.5px; }
+  figcaption b { color: var(--ink); font-weight: 600; }
+  .wide { grid-column: 1 / -1; }
+
+  /* ---------- install ---------- */
+  .install { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .task {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+    padding: 26px; box-shadow: var(--shadow);
+  }
+  .task h3 { margin: 0 0 6px; font-size: 19px; letter-spacing: -.012em; }
+  .task .req { color: var(--ink-soft); font-size: 14px; margin: 0 0 16px; }
+  .task p { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 18px; }
+  .task .steps { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 18px; padding-left: 20px; }
+  .task .steps li { margin-bottom: 7px; }
+  .task .steps li:last-child { margin-bottom: 0; }
+  /* The thing you would otherwise only find out by hitting it. */
+  .task .aside {
+    font-size: 14px; border-left: 2px solid var(--line);
+    padding-left: 12px; margin: 0 0 18px;
+  }
+  .task .btn { display: inline-flex; }
+
+  /* One task’s journey, including the pauses and changes of priority. */
+  .walk {
+    list-style: none; margin: 0 auto; padding: 0; max-width: 560px;
+    display: grid; gap: 10px;
+  }
+  .walk li {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 6px 10px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 18px; box-shadow: var(--shadow);
+    color: var(--ink-soft); font-size: 15.5px;
+  }
+  .walk b { color: var(--ink); min-width: 92px; }
+  .walk .step { grid-column: 1 / -1; grid-row: 2; }
+  .walk .to { grid-column: 2; grid-row: 1; font-weight: 600; color: var(--accent, var(--today)); }
+  .walk .w-inbox   { --accent: var(--ink-soft); }
+  .walk .w-now     { --accent: var(--today); }
+  .walk .w-later   { --accent: var(--later); }
+  .walk .w-done    { --accent: var(--later); }
+  .walk .w-waiting { --accent: var(--waiting); }
+  .walk .w-due     { --accent: var(--night); }
+  .walk-note {
+    max-width: 560px; margin: 16px auto 0; text-align: center;
+    color: var(--ink-soft); font-size: 15px;
+  }
+
+  .notice {
+    max-width: 640px; margin: 22px auto 0; padding: 16px 18px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    color: var(--ink-soft); font-size: 14.5px; line-height: 1.5;
+  }
+  .notice b { color: var(--ink); }
+
+  footer.wrap {
+    border-top: 1px solid var(--line); margin-top: 24px;
+    padding: 34px 16px 64px; text-align: center;
+    color: var(--ink-soft); font-size: 14.5px;
+  }
+  footer a { color: var(--today); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  footer p { margin: 6px 0; }
+  .section-intro {
+    max-width: 62ch; margin: -12px auto 28px; text-align: center;
+    color: var(--ink-soft); font-size: 16px;
+  }
+  .section-note {
+    max-width: 62ch; margin: 22px auto 0; text-align: center;
+    color: var(--ink-soft); font-size: 15px;
+  }
+  details.notice { text-align: left; }
+  details.notice summary { cursor: pointer; color: var(--ink); font-weight: 600; }
+  details.notice p { margin: 12px 0 0; }
+  a:focus-visible, summary:focus-visible { outline: 3px solid var(--today); outline-offset: 4px; }
+  @media (max-width: 480px) {
+    header.wrap { padding-top: 42px; }
+    section.wrap { padding-top: 42px; padding-bottom: 42px; }
+  }
+  
+  
+  
+  
+  /*langmenu*/
+  .langmenu { position: absolute; top: 14px; right: 16px; z-index: 5; font-size: 14px; text-align: left; }
+  .langmenu summary { list-style: none; cursor: pointer; background: var(--panel); color: var(--ink-soft);
+    border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; box-shadow: var(--shadow); }
+  .langmenu summary::-webkit-details-marker { display: none; }
+  .langmenu summary::after { content: " \25BE"; }
+  .langmenu[open] summary::after { content: " \25B4"; }
+  .langmenu .langlist { position: absolute; right: 0; margin-top: 8px; min-width: 210px; max-height: 70vh; overflow-y: auto;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 6px; }
+  .langmenu .langlist a, .langmenu .langlist span { display: block; padding: 7px 12px; border-radius: 9px; text-decoration: none; color: var(--ink); }
+  .langmenu .langlist a:hover { background: var(--bg); }
+  .langmenu .langlist span[aria-current] { background: var(--bg); font-weight: 650; }
+  body > .langbar { display: flex; gap: 14px; align-items: center; justify-content: space-between; max-width: 720px;
+    margin: 14px auto 0; padding: 12px 16px; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; box-shadow: var(--shadow); font-size: 15px; }
+  body > .langbar p { margin: 0; }
+  body > .langbar button { flex: none; background: none; border: 0; color: var(--ink-soft); font: inherit; font-size: 22px;
+    line-height: 1; padding: 4px 8px; cursor: pointer; }
+  /*/langmenu*/
+</style>
+<!--alt-->
+<link rel="alternate" hreflang="en" href="https://amouraux.github.io/DayHand/">
+<link rel="alternate" hreflang="de" href="https://amouraux.github.io/DayHand/de/">
+<link rel="alternate" hreflang="es" href="https://amouraux.github.io/DayHand/es/">
+<link rel="alternate" hreflang="fr" href="https://amouraux.github.io/DayHand/fr/">
+<link rel="alternate" hreflang="it" href="https://amouraux.github.io/DayHand/it/">
+<link rel="alternate" hreflang="nl" href="https://amouraux.github.io/DayHand/nl/">
+<link rel="alternate" hreflang="pt-PT" href="https://amouraux.github.io/DayHand/pt-pt/">
+<link rel="alternate" hreflang="pt-BR" href="https://amouraux.github.io/DayHand/pt-br/">
+<link rel="alternate" hreflang="ja" href="https://amouraux.github.io/DayHand/ja/">
+<link rel="alternate" hreflang="ko" href="https://amouraux.github.io/DayHand/ko/">
+<link rel="alternate" hreflang="sv" href="https://amouraux.github.io/DayHand/sv/">
+<link rel="alternate" hreflang="da" href="https://amouraux.github.io/DayHand/da/">
+<link rel="alternate" hreflang="nb" href="https://amouraux.github.io/DayHand/nb/">
+<link rel="alternate" hreflang="fi" href="https://amouraux.github.io/DayHand/fi/">
+<link rel="alternate" hreflang="pl" href="https://amouraux.github.io/DayHand/pl/">
+<link rel="alternate" hreflang="x-default" href="https://amouraux.github.io/DayHand/">
+<!--/alt-->
+</head>
+<body>
+
+<header class="wrap">
+  <!--langmenu--><details class="langmenu"><summary>Języki</summary><div class="langlist"><a href="../index.html" hreflang="en" lang="en">English</a><a href="../de/index.html" hreflang="de" lang="de">Deutsch</a><a href="../es/index.html" hreflang="es" lang="es">Español</a><a href="../fr/index.html" hreflang="fr" lang="fr">Français</a><a href="../it/index.html" hreflang="it" lang="it">Italiano</a><a href="../nl/index.html" hreflang="nl" lang="nl">Nederlands</a><a href="../pt-pt/index.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a><a href="../pt-br/index.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a><a href="../ja/index.html" hreflang="ja" lang="ja">日本語</a><a href="../ko/index.html" hreflang="ko" lang="ko">한국어</a><a href="../sv/index.html" hreflang="sv" lang="sv">Svenska</a><a href="../da/index.html" hreflang="da" lang="da">Dansk</a><a href="../nb/index.html" hreflang="nb" lang="nb">Norsk bokmål</a><a href="../fi/index.html" hreflang="fi" lang="fi">Suomi</a><span aria-current="page" lang="pl">Polski</span></div></details><!--/langmenu-->
+  
+  
+  
+  
+  <img class="icon" src="../icon.png" alt="DayHand" width="132" height="132">
+  <h1>DayHand</h1>
+  <p class="tagline">Organizuj zadania wokół swojego życia i celów, a nie kalendarza.</p>
+  <p class="sub">Przygotować wykład, napisać manuskrypt, zbudować funkcję, wyremontować pokój – większość prawdziwej pracy nie powstaje i nie kończy się w jednym konkretnym dniu. Kiedy planujesz wszystko wokół dnia, niedokończona praca może zamienić się w listę rzeczy do przełożenia. Więc przesuwasz daty albo kroisz zadanie na kawałki, żeby aplikacja zgadzała się z rzeczywistością.</p>
+  <p class="sub">DayHand pozwala po prostu zostawić zadanie aktywne tak długo, jak trzeba. Praca trwająca kilka dni to wciąż praca w toku – to, że nie odhaczysz jej dziś wieczorem, nie znaczy, że nie udało Ci się skończyć dzisiejszej listy.</p>
+  <div class="cta">
+    <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">Dołącz do bety<small>iPhone i iPad · TestFlight</small>
+    </a>
+    <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Dołącz do bety na Maca<small>macOS · TestFlight</small>
+    </a>
+    <a class="btn btn-secondary" href="support.html">Pomoc i wsparcie<small>Jak to działa i co robić, gdy nie działa</small></a>
+  </div>
+</header>
+
+<main>
+<section class="wrap" id="how-it-works" aria-labelledby="how-heading">
+  <h2 id="how-heading">Miejsce dla każdego zadania</h2>
+  <p class="section-intro">Zainspirowany Kanbanem DayHand przenosi prostotę kart i stosów na zarządzanie Twoim życiem i pracą. Stos pokazuje, gdzie zadanie należy w Twoim życiu teraz, a nie dzień w kalendarzu.</p>
+  <div class="ideas">
+    <div class="idea i-inbox wide-idea">
+      <h3>Skrzynka</h3>
+      <p>Zapisz zadanie, zanim zdecydujesz, co z nim zrobić. Nowe zadania zwykle trafiają tutaj, gotowe do posortowania, gdy tylko znajdziesz chwilę. Jeśli już wiesz, gdzie zadanie należy, wybierz inny stos przy jego dodawaniu.</p>
+    </div>
+    <div class="idea i-today">
+      <h3>Teraz</h3>
+      <p>To, nad czym aktywnie pracujesz. Zadanie może tu zostać przez kilka dni lub tygodni, gdy posuwasz je naprzód. „Teraz” oznacza w toku, a nie obietnicę skończenia wszystkiego dzisiaj.</p>
+    </div>
+    <div class="idea i-tomorrow">
+      <h3>Następne</h3>
+      <p>To, co zamierzasz podjąć w następnej kolejności, gdy będziesz mieć na to miejsce. Trzymaj kolejne kroki w zasięgu wzroku, nie przypisując ich do jutra i nie każąc im konkurować z pracą, która już trwa.</p>
+    </div>
+    <div class="idea i-later">
+      <h3>Później</h3>
+      <p>Pomysły, plany i zadania, które chcesz zachować na przyszłość. Postanawiasz na razie ich nie podejmować, ale mają miejsce, w którym poczekają, aż będziesz gotowy.</p>
+    </div>
+    <div class="idea i-waiting">
+      <h3>Oczekujące</h3>
+      <p>Praca, której nie możesz posunąć do przodu, dopóki nie nadejdzie odpowiedź, dostawa, czyjaś opinia albo coś innego. Trzymaj ją z dala od aktywnej pracy, a potem zdecyduj, gdzie należy, gdy znów będziesz mógł działać.</p>
+    </div>
+  </div>
+  <p class="section-note">Ty decydujesz, kiedy zadanie się przenosi. Upływ czasu nic nie zmienia w jego stosie. Odhacz je, gdy praca jest skończona, a trafi do „Ukończone”.</p>
+</section>
+
+<section class="wrap" id="dates" aria-labelledby="dates-heading">
+  <h2 id="dates-heading">Daty z sensem</h2>
+  <p class="section-intro">Większość zadań nie potrzebuje daty. Gdy data ma znaczenie, odróżnij to, kiedy chcesz pomyśleć o zadaniu, od tego, kiedy naprawdę musi być skończone.</p>
+  <div class="ideas">
+    <div class="idea i-flag">
+      <h3>Przypomnienia: kiedy o tym pomyśleć</h3>
+      <p>Wybierz dzień, w którym zadanie wróci do Twojej uwagi – żeby zacząć pracę, przemyśleć pomysł albo dopytać o coś w „Oczekujące”. Powiadomienie i kolorowa krawędź pomagają to zauważyć. Zmień lub usuń przypomnienie, gdy plany się zmienią; zadanie zostaje tam, gdzie je położyłeś.</p>
+    </div>
+    <div class="idea i-night">
+      <h3>Terminy: kiedy musi być skończone</h3>
+      <p>Dodaj opcjonalny termin obok przypomnienia dla prawdziwego zobowiązania: oddania pracy, odnowienia, dostawy. Pojawia się na zadaniu jako data zakończenia. Przypomnienie odpowiada za powiadomienia i kolorową krawędź; termin nie wysyła osobnego alertu i nie przenosi zadania.</p>
+    </div>
+  </div>
+  <p class="section-note">Żadna z tych dat nie wybiera stosu, nie przenosi zadania ani nie oznacza go jako ukończonego. Zadanie może zostać w „Teraz” przez cały tydzień, z przypomnieniem w poniedziałek i terminem w piątek.</p>
+</section>
+
+<section class="wrap" id="one-task" aria-labelledby="week-heading">
+  <h2 id="week-heading">Droga jednego zadania</h2>
+  <p class="section-intro">Ktoś prosi Cię o przygotowanie prezentacji na piątek. To jedno zadanie, nawet gdy zmieniają się priorytety, a praca trwa kilka dni.</p>
+  <ol class="walk">
+    <li><b>Poniedziałek</b><span class="step">Zapisujesz „Przygotować prezentację”, z przypomnieniem, by zacząć we wtorek, i terminem na piątek.</span>
+        <span class="to w-inbox">Skrzynka</span></li>
+    <li><b>Wtorek</b><span class="step">Przypomnienie zwraca je Twojej uwadze. Postanawiasz zacząć i przenosisz je do „Teraz”.</span>
+        <span class="to w-now">Teraz</span></li>
+    <li><b>Później tego dnia</b><span class="step">Coś pilniejszego wymaga Twojej uwagi. Odłóż prezentację na bok i ustaw przypomnienie na środę.</span>
+        <span class="to w-later">Później</span></li>
+    <li><b>Środa</b><span class="step">Przypomnienie zachęca Cię, by wrócić do zadania. Przenieś je z powrotem do „Teraz” i kontynuuj to samo zadanie.</span>
+        <span class="to w-now">Teraz</span></li>
+    <li><b>Czwartek</b><span class="step">Wysyłasz szkic koledze. Potrzebujesz jego opinii, zanim będziesz mógł skończyć; ustaw przypomnienie, by dopytać w piątek.</span>
+        <span class="to w-waiting">Oczekujące</span></li>
+    <li><b>Piątek</b><span class="step">Dopytujesz, gdy przychodzi przypomnienie. Opinia nadchodzi, a Ty przenosisz zadanie do „Teraz” na ostatnie poprawki.</span>
+        <span class="to w-now">Teraz</span></li>
+    <li><b>Gotowe</b><span class="step">Wygłaszasz prezentację w piątek i odhaczasz zadanie. Termin dotrzymany.</span>
+        <span class="to w-done">Ukończone</span></li>
+  </ol>
+  <p class="walk-note">Jedno zadanie od początku do końca. Jego piątkowy termin nigdy się nie zmienił. Przypomnienia zwracały je Twojej uwadze; Ty wybierałeś, kiedy je przenieść. Przerwy i nieodhaczone dni były częścią doprowadzania pracy do końca.</p>
+</section>
+
+<section class="wrap" id="organisation" aria-labelledby="organisation-heading">
+  <h2 id="organisation-heading">Trzymaj powiązaną pracę razem</h2>
+  <div class="ideas">
+    <div class="idea i-night">
+      <h3>Projekty dla wspólnego celu</h3>
+      <p>Trzymaj razem zadania dotyczące podróży, kursu, klienta lub jednej pracy. Zacznij zadanie od nazwy, na przykład <b>URLOP</b>, i zaakceptuj projekt zaproponowany pod polem albo wybierz go przyciskiem projektu. Każde zadanie może mieć jeden projekt, pokazany jako kolorowy prefiks.</p>
+    </div>
+    <div class="idea i-keep">
+      <h3>Kategorie dla różnych części życia</h3>
+      <p>Oddziel szerokie obszary, takie jak Praca, Dom i Kursy, własnymi etykietami, ikonami i kolorami. Projekt dostarcza swoim zadaniom kategorię początkową; możesz też nadać zadaniu kategorię bez przypisywania go do projektu.</p>
+    </div>
+    <div class="idea i-later">
+      <h3>Grupy dla powiązanych projektów</h3>
+      <p>Zbieraj projekty w grupy, takie jak Klienci, Kursy czy Urlopy. Zmieniaj ich nazwy i porządkuj je w filtrze. Gdy projekt jest skończony, zarchiwizuj go i zachowaj jego zadania do wglądu.</p>
+    </div>
+    <div class="idea i-tomorrow">
+      <h3>Znajdź swoje skupienie</h3>
+      <p>Przeszukuj tytuły zadań, nazwy projektów i nazwy grup. Filtruj według dowolnej mieszanki kategorii i projektów albo wybierz całą grupę. Pokaż projekty z otwartymi zadaniami, wszystkie aktywne projekty lub zarchiwizowane, gdy chcesz spojrzeć wstecz.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="history" aria-labelledby="history-heading">
+  <h2 id="history-heading">Zobacz, co udało Ci się osiągnąć w czasie</h2>
+  <p class="section-intro">Lista rzeczy do zrobienia to tylko część obrazu. DayHand prowadzi też zapis pracy, którą kończysz.</p>
+  <div class="ideas">
+    <div class="idea i-review">
+      <h3>Ten tydzień i zeszły tydzień</h3>
+      <p>Przeglądaj ukończone zadania pogrupowane według dnia, w którym je skończyłeś. Zobacz, co udało Ci się zrobić w tym tygodniu, albo spójrz na zeszły tydzień, zanim zdecydujesz, co dalej.</p>
+    </div>
+    <div class="idea i-night">
+      <h3>Dłuższa perspektywa</h3>
+      <p>Przeglądaj całą oś czasu ukończonych zadań według miesiąca i dnia albo otwórz Historię projektu, by zobaczyć jego zakończoną pracę. Dzienne liczby i proste słupki ułatwiają dostrzeżenie wzorca ukończeń.</p>
+    </div>
+  </div>
+  <p class="section-note">Ukończone zadania zostają na stosie „Ukończone”, więc możesz je ponownie znaleźć albo otworzyć na nowo pracę, która wymaga jeszcze jednego podejścia.</p>
+</section>
+
+<section class="wrap" id="screens" aria-labelledby="screens-heading">
+  <h2 id="screens-heading">Jedna aplikacja na wszystkich Twoich urządzeniach</h2>
+  <p class="section-intro">Zbudowana od początku z myślą o iPhonie, iPadzie i Macu. Pracuj na tych samych zadaniach na wszystkich urządzeniach Apple, ze spójnym działaniem dopasowanym do każdego ekranu.</p>
+  <div class="shots">
+    <figure class="phone">
+      <img src="../screenshots/iphone.png" alt="Przykładowy ekran bety DayHand na iPhonie z zadaniami uporządkowanymi w stosy (interfejs po angielsku)"
+           loading="lazy" width="1206" height="2622">
+      <figcaption><b>iPhone</b> – zadania w stosach, z opcjonalnymi etykietami projektów.</figcaption>
+    </figure>
+    <figure>
+      <img src="../screenshots/ipad.png" alt="Przykładowy ekran bety DayHand na iPadzie z paskiem bocznym filtra projektów obok listy zadań (interfejs po angielsku)"
+           loading="lazy" width="2064" height="2752">
+      <figcaption><b>iPad</b> – pasek boczny trzyma projekty obok zadań. Mac używa tego samego układu w oknie o zmiennym rozmiarze.</figcaption>
+    </figure>
+  </div>
+  <p class="section-note">Przykładowe ekrany bety z angielskim interfejsem; układ i elementy sterujące mogą się różnić w bieżących wersjach.</p>
+</section>
+
+<section class="wrap" id="use-cases" aria-labelledby="use-cases-heading">
+  <h2 id="use-cases-heading">Dla Twojego życia i pracy</h2>
+  <div class="ideas">
+    <div class="idea i-later">
+      <h3>Architekt</h3>
+      <p>Rysunki w toku w „Teraz”, kolejna rewizja w „Następne”, przyszłe pomysły w „Później”. Komplet wysłany klientowi trafia do „Oczekujące”, aż nadejdzie opinia. Zachowaj przypomnienie, by dopytać, i termin dla samego oddania.</p>
+    </div>
+    <div class="idea i-tomorrow">
+      <h3>Ogrodnik krajobrazu</h3>
+      <p>Ogród nabierający kształtu w „Teraz”, następna wizyta na budowie w „Następne”, przyszłe plany nasadzeń w „Później”. Zlecenie czekające na materiały lub akceptację klienta trafia do „Oczekujące”. Ustaw przypomnienie, by dopytać, i termin dla ustalonego przekazania.</p>
+    </div>
+    <div class="idea i-review">
+      <h3>Student</h3>
+      <p>Zrównoważ prace, powtórki i codzienne obowiązki. Trzymaj zadania każdego kursu w osobnym projekcie, skup się na pracy w „Teraz” i używaj prawdziwych terminów oddania jako terminów. Praca grupowa czekająca na wkład kolegi trafia do „Oczekujące”.</p>
+    </div>
+    <div class="idea i-keep">
+      <h3>Badacz</h3>
+      <p>Trzymaj analizę i pisanie w „Teraz”, podczas gdy manuskrypty u współautorów lub eksperymenty czekające na dane leżą w „Oczekujące”. Grupuj powiązane badania i granty oraz używaj historii projektu, by spojrzeć wstecz na to, co skończyłeś w trakcie pracy.</p>
+    </div>
+    <div class="idea i-today">
+      <h3>Programista webowy</h3>
+      <p>Funkcja może zostać w „Teraz” przez kilka dni, następna w „Następne”, a backlog w „Później”. Przenieś do „Oczekujące” pracę zablokowaną przez klucz API lub opinię klienta. Zachowaj termin wydania, nie przekładając w kółko zadania.</p>
+    </div>
+    <div class="idea i-night">
+      <h3>Dom i rodzina</h3>
+      <p>Załatwienie ubezpieczenia w „Teraz”, umówienie badania kontrolnego w „Następne”, pomysły na urlop w „Później”. Naprawa czekająca na wycenę fachowca trafia do „Oczekujące”. Ustaw przypomnienie, by dopytać, i zachowaj prawdziwą datę odnowienia jako termin.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="your-data" aria-labelledby="data-heading">
+  <h2 id="data-heading">Twoje zadania pozostają Twoje</h2>
+  <div class="ideas">
+    <div class="idea i-keep">
+      <h3>Bez konta i serwera DayHand</h3>
+      <p>DayHand używa Twoich urządzeń i Twojego własnego iCloud Drive do przechowywania i synchronizacji zadań. Nie ma konta DayHand do założenia ani serwera DayHand, który przechowuje Twoje dane.</p>
+    </div>
+    <div class="idea i-night">
+      <h3>Synchronizacja wbudowana w projekt</h3>
+      <p>Współdzielony plik w Twoim własnym iCloud Drive utrzymuje synchronizację zadań na iPhonie, iPadzie i Macu. Wybierz ten sam plik raz na każdym urządzeniu, a potem pracuj nad zadaniami, gdziekolwiek jesteś. iCloud Drive łączy Twoje urządzenia bez osobnej usługi DayHand.</p>
+    </div>
+    <div class="idea i-review wide-idea">
+      <h3>Kopie zapasowe i droga wyjścia</h3>
+      <p>Automatyczne kopie zapasowe powstają w dni, w które otwierasz aplikację, i przechowywane są trzy rotujące kopie. Twórz dodatkowe kopie ręcznie, przywracaj wcześniejszą kopię lub udostępnij ją w bezpieczniejsze miejsce. Import i eksport CSV pozwalają przenieść zadania do aplikacji lub zabrać je ze sobą.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="get-dayhand" aria-labelledby="install-heading">
+  <h2 id="install-heading">Wypróbuj betę DayHand</h2>
+  <p class="section-intro">Dostępna przez TestFlight Apple na iPhone’a, iPada i Maca.</p>
+  <div class="install">
+    <div class="task">
+      <h3>iPhone i iPad</h3>
+      <p class="req">iOS / iPadOS 17 lub nowszy</p>
+      <ol class="steps">
+        <li>Zainstaluj <b>TestFlight</b> Apple z App Store.</li>
+        <li>Otwórz poniższy link do bety na iPhonie lub iPadzie.</li>
+        <li>Zaakceptuj zaproszenie i zainstaluj DayHand.</li>
+      </ol>
+      <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">Dołącz do bety</a>
+    </div>
+    <div class="task">
+      <h3>Mac</h3>
+      <p class="req">macOS 14 lub nowszy</p>
+      <ol class="steps">
+        <li>Zainstaluj <b>TestFlight</b> z Mac App Store.</li>
+        <li>Otwórz ten sam poniższy link do bety na Macu.</li>
+        <li>Zaakceptuj zaproszenie i zainstaluj DayHand.</li>
+      </ol>
+      <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Dołącz do bety na Maca</a>
+    </div>
+  </div>
+  <details class="notice">
+    <summary>Przechodzisz ze starszej wersji na Maca, zbudowanej samodzielnie?</summary>
+    <p>Aplikacja z TestFlight przechowuje dane w innym miejscu. Jeśli otworzy się bez zadań, Twój stary plik nadal jest tam, gdzie był. Jeśli synchronizowałeś przez iCloud Drive, otwórz <b>Więcej → Użyj istniejącego pliku synchronizacji</b> i wybierz ten sam plik jeszcze raz, aby odzyskać zadania.</p>
+  </details>
+</section>
+</main>
+
+<footer class="wrap">
+  <p>Coś niejasnego? <a href="support.html">Strony pomocy</a> obejmują większość spraw. W przeciwnym razie wyślij opinię o becie w TestFlight albo <a href="https://github.com/amouraux/DayHand/issues/new">zgłoś problem na GitHubie</a>.</p>
+  <p>Po polsku, angielsku, francusku, niderlandzku, niemiecku, hiszpańsku, włosku, portugalsku (Portugalia i Brazylia), japońsku, koreańsku, szwedzku, duńsku, norwesku i fińsku.</p>
+  <!--privacy--><p>Polityka prywatności: <a href="../privacy.html" hreflang="en" lang="en">English</a> · <a href="../de/privacy.html" hreflang="de" lang="de">Deutsch</a> · <a href="../es/privacy.html" hreflang="es" lang="es">Español</a> · <a href="../fr/privacy.html" hreflang="fr" lang="fr">Français</a> · <a href="../it/privacy.html" hreflang="it" lang="it">Italiano</a> · <a href="../nl/privacy.html" hreflang="nl" lang="nl">Nederlands</a> · <a href="../pt-pt/privacy.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a> · <a href="../pt-br/privacy.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a> · <a href="../ja/privacy.html" hreflang="ja" lang="ja">日本語</a> · <a href="../ko/privacy.html" hreflang="ko" lang="ko">한국어</a> · <a href="../sv/privacy.html" hreflang="sv" lang="sv">Svenska</a> · <a href="../da/privacy.html" hreflang="da" lang="da">Dansk</a> · <a href="../nb/privacy.html" hreflang="nb" lang="nb">Norsk bokmål</a> · <a href="../fi/privacy.html" hreflang="fi" lang="fi">Suomi</a> · <a href="../pl/privacy.html" hreflang="pl" lang="pl">Polski</a></p><!--/privacy-->
+  <p>Zbudowano w SwiftUI · <a href="https://github.com/amouraux/DayHand">Kod źródłowy na GitHubie</a></p>
+</footer>
+
+</body>
+</html>

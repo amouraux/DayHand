@@ -2454,26 +2454,33 @@ The More sheet's Help section links to it, under "Help and support", and
 opens the version in the language the app is being read in when the site has it.
 Website publication requires merging to main.
 
-### The privacy policy and the support page, translated
+### The homepage, the privacy policy and the support page, translated
 
-Both exist in every language the app has, at `docs/<folder>/privacy.html` and
-`docs/<folder>/support.html`, with folders `de es fr it nl pt-pt pt-br ja ko sv
+All three exist in every language the app has, at `docs/<folder>/index.html`,
+`privacy.html` and `support.html`, with folders `de es fr it nl pt-pt pt-br ja ko sv
 da nb fi pl`. The help guides they link to are still English, and each such link
 says so. Every translation ends by saying the English page prevails, because a
 privacy policy that differs between languages is a liability.
 
-The pages are generated: the text lives in `scripts/web-translations/web_<code>.py`
-and `make_pages.py` writes the HTML. Button names in the policy ("More → Sync →
+The pages are generated. The privacy and support text lives in
+`scripts/web-translations/web_<code>.py` and `make_pages.py` writes the HTML;
+the homepage is cut into units listed in `home_units.py`, filled from
+`home_<code>.py` by `make_home.py`, so `docs/index.html` stays the one source of
+structure and styling. If its English text changes and no longer matches a unit,
+the script stops and names it. Stack names in the homepage are the app's own
+words, read from `Localizable.xcstrings`. The homepage screenshots show the
+English interface and the pages say so; localised ones are a separate job. Button names in the policy ("More → Sync →
 Stop Using This File") are read from `Localizable.xcstrings`, so the page says
 what the screen says. **Change the English page, change the translations, run
-the script** — it also keeps the language list and the `hreflang` links on the
+the scripts** — it also keeps the language list and the `hreflang` links on the
 English pages current. The translations were written in one pass and need a
 native reader before they are relied on.
 
 Finding the right language: the left-hand menu of each page ends with a
 collapsible Languages group listing all of them;
 the homepage footer lists the translated privacy policies; and `docs/lang.js`,
-loaded only by the two English pages that have translations, offers a banner
+loaded only by the three English pages that have translations (the homepage,
+the privacy policy and the support page), offers a banner
 in the reader's own language when their first browser language is one of the
 fourteen. It is a banner and never a redirect, and dismissing it is remembered
 in `localStorage` (the page works if that is blocked).

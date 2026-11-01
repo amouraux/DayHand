@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DayHand — Tehtävät elämääsi ja työhösi</title>
+<meta name="description" content="Järjestä tehtäväsi elämäsi ja tavoitteidesi ympärille, ei kalenterin. Kanbanista ammentava tehtävienhallinta iPhonelle, iPadille ja Macille, muistutuksilla ja määräajoilla ilman päivittäistä siirtelyä.">
+<link rel="icon" href="../icon.png">
+<meta property="og:title" content="DayHand — Tehtävät elämääsi ja työhösi">
+<meta property="og:description" content="Järjestä tehtäväsi elämäsi ja tavoitteidesi ympärille, ei kalenterin. Kanbanista ammentava DayHand tuo korttien ja pinojen yksinkertaisuuden elämäsi ja työsi hallintaan.">
+<meta property="og:image" content="https://amouraux.github.io/DayHand/icon.png">
+<meta property="og:url" content="https://amouraux.github.io/DayHand/fi/">
+<link rel="canonical" href="https://amouraux.github.io/DayHand/fi/">
+<style>
+  :root {
+    --bg:        #f2f2f7;
+    --panel:     #ffffff;
+    --ink:       #12131a;
+    --ink-soft:  #5c5f70;
+    --line:      rgba(18,19,26,.10);
+    --today:     #2f7bf6;
+    --tomorrow:  #e8871e;
+    --later:     #1da34f;
+    --night:     #2f3486;
+    --review:    #8a4bd0;
+    --flag:      #d92d20;
+    --keep:      #0f8a8a;
+    --waiting:   #6b7a90;
+    --shadow:    0 1px 2px rgba(18,19,26,.05), 0 8px 24px rgba(18,19,26,.07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:       #0d0e12;
+      --panel:    #17181e;
+      --ink:      #f3f4f8;
+      --ink-soft: #a0a4b6;
+      --line:     rgba(255,255,255,.12);
+      --today:    #6ea6ff;
+      --tomorrow: #f5b25c;
+      --later:    #5fd48a;
+      --night:    #9099ee;
+      --review:   #c18cf0;
+      --flag:     #ff7a70;
+      --keep:     #4fd0d0;
+      --waiting:  #9aa8bd;
+      --shadow:   0 1px 2px rgba(0,0,0,.4), 0 8px 28px rgba(0,0,0,.45);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 400 17px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1020px; margin: 0 auto; padding: 0 16px; }
+  a { color: inherit; }
+
+  /* ---------- hero ---------- */
+  header.wrap { padding: 76px 16px 38px; text-align: center; }
+  .icon {
+    width: 132px; height: 132px; border-radius: 30px;
+    box-shadow: var(--shadow); display: block; margin: 0 auto 26px;
+  }
+  h1 {
+    margin: 0; font-size: clamp(44px, 9vw, 68px); letter-spacing: -.028em;
+    font-weight: 700; line-height: 1.02;
+  }
+  .tagline {
+    margin: 16px auto 0; max-width: 30ch;
+    font-size: clamp(20px, 3.4vw, 25px); line-height: 1.32;
+    letter-spacing: -.012em; color: var(--ink);
+  }
+  .sub {
+    margin: 18px auto 0; max-width: 54ch;
+    color: var(--ink-soft); font-size: 17px;
+  }
+
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 34px 0 6px; }
+  .btn {
+    display: inline-flex; flex-direction: column; align-items: center;
+    gap: 2px; text-decoration: none; padding: 13px 26px; border-radius: 14px;
+    font-weight: 600; font-size: 17px; letter-spacing: -.01em;
+    border: 1px solid transparent; transition: transform .12s ease, filter .12s ease;
+  }
+  .btn:hover { transform: translateY(-1px); filter: brightness(1.06); }
+  .btn small { font-weight: 400; font-size: 12.5px; opacity: .8; letter-spacing: 0; }
+  .btn-primary { background: var(--today); color: #fff; }
+  .btn-secondary { background: var(--panel); color: var(--ink); border-color: var(--line); box-shadow: var(--shadow); }
+
+  /* ---------- ideas ---------- */
+  section.wrap { padding: 62px 16px; }
+  h2 {
+    font-size: 13px; text-transform: uppercase; letter-spacing: .1em;
+    color: var(--ink-soft); font-weight: 600; margin: 0 0 28px; text-align: center;
+  }
+  .ideas { display: grid; gap: 14px; grid-template-columns: 1fr; }
+  @media (min-width: 720px) { .ideas { grid-template-columns: 1fr 1fr; } }
+  .idea {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+    padding: 24px 24px 26px; box-shadow: var(--shadow);
+    border-left: 4px solid var(--accent, var(--today));
+  }
+  .idea h3 { margin: 0 0 8px; font-size: 18.5px; letter-spacing: -.012em; }
+  .idea p  { margin: 0; color: var(--ink-soft); font-size: 15.5px; line-height: 1.55; }
+  .i-inbox    { --accent: var(--ink-soft); }
+  .i-today    { --accent: var(--today); }
+  .i-tomorrow { --accent: var(--tomorrow); }
+  .i-later    { --accent: var(--later); }
+  .i-night    { --accent: var(--night); }
+  .i-review   { --accent: var(--review); }
+  .i-flag     { --accent: var(--flag); }
+  .i-keep     { --accent: var(--keep); }
+  .i-waiting  { --accent: var(--waiting); }
+  /* Full width: it is the answer to "then how do I know I am getting
+     anywhere?", which deserves more than a quarter of the grid. */
+  @media (min-width: 720px) { .wide-idea { grid-column: 1 / -1; } }
+
+  /* ---------- screenshots ---------- */
+  .shots { display: grid; gap: 34px; grid-template-columns: 1fr; align-items: end; }
+  @media (min-width: 760px) { .shots { grid-template-columns: 1fr 1fr; } }
+  figure { margin: 0; text-align: center; }
+  figure img {
+    width: 100%; height: auto; display: block;
+    border-radius: 16px; border: 1px solid var(--line); box-shadow: var(--shadow);
+  }
+  figure.phone { max-width: 320px; margin-inline: auto; }
+  figcaption { margin-top: 14px; margin-bottom: 8px; color: var(--ink-soft); font-size: 14.5px; }
+  figcaption b { color: var(--ink); font-weight: 600; }
+  .wide { grid-column: 1 / -1; }
+
+  /* ---------- install ---------- */
+  .install { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .task {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+    padding: 26px; box-shadow: var(--shadow);
+  }
+  .task h3 { margin: 0 0 6px; font-size: 19px; letter-spacing: -.012em; }
+  .task .req { color: var(--ink-soft); font-size: 14px; margin: 0 0 16px; }
+  .task p { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 18px; }
+  .task .steps { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 18px; padding-left: 20px; }
+  .task .steps li { margin-bottom: 7px; }
+  .task .steps li:last-child { margin-bottom: 0; }
+  /* The thing you would otherwise only find out by hitting it. */
+  .task .aside {
+    font-size: 14px; border-left: 2px solid var(--line);
+    padding-left: 12px; margin: 0 0 18px;
+  }
+  .task .btn { display: inline-flex; }
+
+  /* One task’s journey, including the pauses and changes of priority. */
+  .walk {
+    list-style: none; margin: 0 auto; padding: 0; max-width: 560px;
+    display: grid; gap: 10px;
+  }
+  .walk li {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 6px 10px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 18px; box-shadow: var(--shadow);
+    color: var(--ink-soft); font-size: 15.5px;
+  }
+  .walk b { color: var(--ink); min-width: 92px; }
+  .walk .step { grid-column: 1 / -1; grid-row: 2; }
+  .walk .to { grid-column: 2; grid-row: 1; font-weight: 600; color: var(--accent, var(--today)); }
+  .walk .w-inbox   { --accent: var(--ink-soft); }
+  .walk .w-now     { --accent: var(--today); }
+  .walk .w-later   { --accent: var(--later); }
+  .walk .w-done    { --accent: var(--later); }
+  .walk .w-waiting { --accent: var(--waiting); }
+  .walk .w-due     { --accent: var(--night); }
+  .walk-note {
+    max-width: 560px; margin: 16px auto 0; text-align: center;
+    color: var(--ink-soft); font-size: 15px;
+  }
+
+  .notice {
+    max-width: 640px; margin: 22px auto 0; padding: 16px 18px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    color: var(--ink-soft); font-size: 14.5px; line-height: 1.5;
+  }
+  .notice b { color: var(--ink); }
+
+  footer.wrap {
+    border-top: 1px solid var(--line); margin-top: 24px;
+    padding: 34px 16px 64px; text-align: center;
+    color: var(--ink-soft); font-size: 14.5px;
+  }
+  footer a { color: var(--today); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  footer p { margin: 6px 0; }
+  .section-intro {
+    max-width: 62ch; margin: -12px auto 28px; text-align: center;
+    color: var(--ink-soft); font-size: 16px;
+  }
+  .section-note {
+    max-width: 62ch; margin: 22px auto 0; text-align: center;
+    color: var(--ink-soft); font-size: 15px;
+  }
+  details.notice { text-align: left; }
+  details.notice summary { cursor: pointer; color: var(--ink); font-weight: 600; }
+  details.notice p { margin: 12px 0 0; }
+  a:focus-visible, summary:focus-visible { outline: 3px solid var(--today); outline-offset: 4px; }
+  @media (max-width: 480px) {
+    header.wrap { padding-top: 42px; }
+    section.wrap { padding-top: 42px; padding-bottom: 42px; }
+  }
+  
+  
+  
+  
+  /*langmenu*/
+  .langmenu { position: absolute; top: 14px; right: 16px; z-index: 5; font-size: 14px; text-align: left; }
+  .langmenu summary { list-style: none; cursor: pointer; background: var(--panel); color: var(--ink-soft);
+    border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; box-shadow: var(--shadow); }
+  .langmenu summary::-webkit-details-marker { display: none; }
+  .langmenu summary::after { content: " \25BE"; }
+  .langmenu[open] summary::after { content: " \25B4"; }
+  .langmenu .langlist { position: absolute; right: 0; margin-top: 8px; min-width: 210px; max-height: 70vh; overflow-y: auto;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 6px; }
+  .langmenu .langlist a, .langmenu .langlist span { display: block; padding: 7px 12px; border-radius: 9px; text-decoration: none; color: var(--ink); }
+  .langmenu .langlist a:hover { background: var(--bg); }
+  .langmenu .langlist span[aria-current] { background: var(--bg); font-weight: 650; }
+  body > .langbar { display: flex; gap: 14px; align-items: center; justify-content: space-between; max-width: 720px;
+    margin: 14px auto 0; padding: 12px 16px; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; box-shadow: var(--shadow); font-size: 15px; }
+  body > .langbar p { margin: 0; }
+  body > .langbar button { flex: none; background: none; border: 0; color: var(--ink-soft); font: inherit; font-size: 22px;
+    line-height: 1; padding: 4px 8px; cursor: pointer; }
+  /*/langmenu*/
+</style>
+<!--alt-->
+<link rel="alternate" hreflang="en" href="https://amouraux.github.io/DayHand/">
+<link rel="alternate" hreflang="de" href="https://amouraux.github.io/DayHand/de/">
+<link rel="alternate" hreflang="es" href="https://amouraux.github.io/DayHand/es/">
+<link rel="alternate" hreflang="fr" href="https://amouraux.github.io/DayHand/fr/">
+<link rel="alternate" hreflang="it" href="https://amouraux.github.io/DayHand/it/">
+<link rel="alternate" hreflang="nl" href="https://amouraux.github.io/DayHand/nl/">
+<link rel="alternate" hreflang="pt-PT" href="https://amouraux.github.io/DayHand/pt-pt/">
+<link rel="alternate" hreflang="pt-BR" href="https://amouraux.github.io/DayHand/pt-br/">
+<link rel="alternate" hreflang="ja" href="https://amouraux.github.io/DayHand/ja/">
+<link rel="alternate" hreflang="ko" href="https://amouraux.github.io/DayHand/ko/">
+<link rel="alternate" hreflang="sv" href="https://amouraux.github.io/DayHand/sv/">
+<link rel="alternate" hreflang="da" href="https://amouraux.github.io/DayHand/da/">
+<link rel="alternate" hreflang="nb" href="https://amouraux.github.io/DayHand/nb/">
+<link rel="alternate" hreflang="fi" href="https://amouraux.github.io/DayHand/fi/">
+<link rel="alternate" hreflang="pl" href="https://amouraux.github.io/DayHand/pl/">
+<link rel="alternate" hreflang="x-default" href="https://amouraux.github.io/DayHand/">
+<!--/alt-->
+</head>
+<body>
+
+<header class="wrap">
+  <!--langmenu--><details class="langmenu"><summary>Kielet</summary><div class="langlist"><a href="../index.html" hreflang="en" lang="en">English</a><a href="../de/index.html" hreflang="de" lang="de">Deutsch</a><a href="../es/index.html" hreflang="es" lang="es">Español</a><a href="../fr/index.html" hreflang="fr" lang="fr">Français</a><a href="../it/index.html" hreflang="it" lang="it">Italiano</a><a href="../nl/index.html" hreflang="nl" lang="nl">Nederlands</a><a href="../pt-pt/index.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a><a href="../pt-br/index.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a><a href="../ja/index.html" hreflang="ja" lang="ja">日本語</a><a href="../ko/index.html" hreflang="ko" lang="ko">한국어</a><a href="../sv/index.html" hreflang="sv" lang="sv">Svenska</a><a href="../da/index.html" hreflang="da" lang="da">Dansk</a><a href="../nb/index.html" hreflang="nb" lang="nb">Norsk bokmål</a><span aria-current="page" lang="fi">Suomi</span><a href="../pl/index.html" hreflang="pl" lang="pl">Polski</a></div></details><!--/langmenu-->
+  
+  
+  
+  
+  <img class="icon" src="../icon.png" alt="DayHand" width="132" height="132">
+  <h1>DayHand</h1>
+  <p class="tagline">Järjestä tehtäväsi elämäsi ja tavoitteidesi ympärille, ei kalenterin.</p>
+  <p class="sub">Esitelmän valmistelu, käsikirjoituksen kirjoittaminen, ominaisuuden rakentaminen, huoneen remontointi – suurin osa oikeasta työstä ei synny eikä valmistu yhtenä tiettynä päivänä. Kun suunnittelet kaiken yhden päivän ympärille, keskeneräisestä työstä voi tulla luettelo uudelleen ajoitettavista asioista. Niin siirtelet päivämääriä tai pilkot tehtävän osiin, jotta sovellus olisi samaa mieltä todellisuuden kanssa.</p>
+  <p class="sub">DayHand antaa tehtävän yksinkertaisesti pysyä aktiivisena niin kauan kuin se vie. Useita päiviä kestävä työ on yhä käynnissä olevaa työtä – se, ettet rastita sitä tänä iltana, ei tarkoita, ettet olisi saanut tämän päivän listaa valmiiksi.</p>
+  <div class="cta">
+    <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">Liity betaan<small>iPhone ja iPad · TestFlight</small>
+    </a>
+    <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Liity Mac-betaan<small>macOS · TestFlight</small>
+    </a>
+    <a class="btn btn-secondary" href="support.html">Ohje ja tuki<small>Miten se toimii ja mitä tehdä, kun se ei toimi</small></a>
+  </div>
+</header>
+
+<main>
+<section class="wrap" id="how-it-works" aria-labelledby="how-heading">
+  <h2 id="how-heading">Paikka jokaiselle tehtävälle</h2>
+  <p class="section-intro">Kanbanista ammentava DayHand tuo korttien ja pinojen yksinkertaisuuden elämäsi ja työsi hallintaan. Pino kertoo, mihin tehtävä kuuluu elämässäsi juuri nyt, ei mihin päivään kalenterissa.</p>
+  <div class="ideas">
+    <div class="idea i-inbox wide-idea">
+      <h3>Saapuneet</h3>
+      <p>Tallenna tehtävä ennen kuin päätät, mitä sille tehdään. Uudet tehtävät päätyvät yleensä tänne, valmiina lajiteltaviksi, kun sinulla on hetki aikaa. Jos jo tiedät, mihin tehtävä kuuluu, valitse sitä lisätessäsi toinen pino.</p>
+    </div>
+    <div class="idea i-today">
+      <h3>Nyt</h3>
+      <p>Se, mitä teet aktiivisesti. Tehtävä voi pysyä täällä useita päiviä tai viikkoja, kun viet sitä eteenpäin. ”Nyt” tarkoittaa käynnissä olevaa, ei lupausta saada kaikki valmiiksi tänään.</p>
+    </div>
+    <div class="idea i-tomorrow">
+      <h3>Seuraavaksi</h3>
+      <p>Se, minkä aiot ottaa työn alle seuraavaksi, kun sinulla on siihen tilaa. Pidä seuraavat askeleesi näkyvissä sijoittamatta niitä huomiselle tai antamatta niiden kilpailla jo käynnissä olevan työn kanssa.</p>
+    </div>
+    <div class="idea i-later">
+      <h3>Myöhemmin</h3>
+      <p>Ideat, suunnitelmat ja tehtävät, jotka haluat säilyttää tulevaisuutta varten. Päätät olla ottamatta niitä vielä tehtäväksesi, mutta niillä on paikka, jossa odottaa, kunnes olet valmis.</p>
+    </div>
+    <div class="idea i-waiting">
+      <h3>Odottaa</h3>
+      <p>Työ, jota et voi viedä eteenpäin ennen kuin vastaus, toimitus, jonkun palaute tai jokin muu saapuu. Pidä se erillään aktiivisesta työstäsi ja päätä sitten, mihin se kuuluu, kun voit taas toimia.</p>
+    </div>
+  </div>
+  <p class="section-note">Sinä päätät, milloin tehtävä siirtyy. Ajan kuluminen ei muuta sen pinoa mitenkään. Rastita se, kun työ on valmis, niin se siirtyy kohtaan ”Valmiit”.</p>
+</section>
+
+<section class="wrap" id="dates" aria-labelledby="dates-heading">
+  <h2 id="dates-heading">Päivämäärät tarkoituksella</h2>
+  <p class="section-intro">Useimmat tehtävät eivät tarvitse päivämäärää. Kun päivämäärällä on merkitystä, erota toisistaan hetki, jolloin haluat ajatella tehtävää, ja hetki, jolloin sen todella pitää olla valmis.</p>
+  <div class="ideas">
+    <div class="idea i-flag">
+      <h3>Muistutukset: milloin ajatella sitä</h3>
+      <p>Valitse päivä, jona tehtävä palaa huomiosi piiriin – aloittaaksesi työn, harkitaksesi ideaa uudelleen tai tiedustellaksesi jotakin kohdasta ”Odottaa”. Ilmoitus ja värillinen reunus auttavat huomaamaan sen. Muuta tai tyhjennä muistutus, kun suunnitelmasi muuttuvat; tehtävä pysyy siellä, minne sen laitoit.</p>
+    </div>
+    <div class="idea i-night">
+      <h3>Määräajat: milloin sen pitää olla valmis</h3>
+      <p>Lisää muistutuksen rinnalle valinnainen määräaika todellista sitoumusta varten: palautus, uusiminen, toimitus. Se näkyy tehtävässä päättymispäivänä. Muistutus hoitaa ilmoitukset ja värillisen reunuksen; määräaika ei lähetä erillistä hälytystä eikä siirrä tehtävää.</p>
+    </div>
+  </div>
+  <p class="section-note">Kumpikaan päivämäärä ei valitse pinoa, siirrä tehtävää tai merkitse sitä valmiiksi. Tehtävä voi pysyä kohdassa ”Nyt” koko viikon, muistutuksena maanantai ja määräaikana perjantai.</p>
+</section>
+
+<section class="wrap" id="one-task" aria-labelledby="week-heading">
+  <h2 id="week-heading">Tehtävän matka</h2>
+  <p class="section-intro">Sinua pyydetään valmistelemaan esitys perjantaiksi. Se on yksi tehtävä, vaikka prioriteetit muuttuisivat ja työ kestäisi useita päiviä.</p>
+  <ol class="walk">
+    <li><b>Maanantai</b><span class="step">Tallennat tehtävän ”Valmistele esitys”, muistutuksella aloittaa tiistaina ja määräajalla perjantaille.</span>
+        <span class="to w-inbox">Saapuneet</span></li>
+    <li><b>Tiistai</b><span class="step">Muistutus tuo sen takaisin huomiosi piiriin. Päätät aloittaa ja siirrät sen kohtaan ”Nyt”.</span>
+        <span class="to w-now">Nyt</span></li>
+    <li><b>Myöhemmin samana päivänä</b><span class="step">Jokin kiireellisempi vaatii huomiotasi. Laita esitys sivuun ja aseta muistutus keskiviikolle.</span>
+        <span class="to w-later">Myöhemmin</span></li>
+    <li><b>Keskiviikko</b><span class="step">Muistutus kehottaa ottamaan sen uudelleen työn alle. Siirrä se takaisin kohtaan ”Nyt” ja jatka samaa tehtävää.</span>
+        <span class="to w-now">Nyt</span></li>
+    <li><b>Torstai</b><span class="step">Lähetät luonnoksen kollegalle. Tarvitset hänen palautteensa ennen kuin voit saada työn valmiiksi; aseta muistutus tiedustelua varten perjantaille.</span>
+        <span class="to w-waiting">Odottaa</span></li>
+    <li><b>Perjantai</b><span class="step">Tiedustelet, kun muistutus tulee. Palaute saapuu, ja siirrät tehtävän kohtaan ”Nyt” viimeisiä muutoksia varten.</span>
+        <span class="to w-now">Nyt</span></li>
+    <li><b>Valmis</b><span class="step">Pidät esityksen perjantaina ja rastitat tehtävän. Määräaika pitää.</span>
+        <span class="to w-done">Valmiit</span></li>
+  </ol>
+  <p class="walk-note">Yksi tehtävä alusta loppuun. Perjantain määräaika ei muuttunut kertaakaan. Muistutukset toivat sen takaisin huomiosi piiriin; sinä päätit, milloin se siirtyy. Tauot ja rastittamattomat päivät kuuluivat työn valmiiksi saamiseen.</p>
+</section>
+
+<section class="wrap" id="organisation" aria-labelledby="organisation-heading">
+  <h2 id="organisation-heading">Pidä yhteen kuuluva työ yhdessä</h2>
+  <div class="ideas">
+    <div class="idea i-night">
+      <h3>Projektit yhteistä tarkoitusta varten</h3>
+      <p>Pidä matkan, kurssin, asiakkaan tai työn tehtävät yhdessä. Aloita tehtävä nimellä, kuten <b>LOMA</b>, ja hyväksy kentän alla tarjottu projekti tai valitse yksi projektipainikkeesta. Jokaisella tehtävällä voi olla yksi projekti, joka näkyy värillisenä etuliitteenä.</p>
+    </div>
+    <div class="idea i-keep">
+      <h3>Luokat elämäsi eri osille</h3>
+      <p>Erota laajat alueet, kuten Työ, Koti ja Kurssit, omilla nimilläsi, kuvakkeillasi ja väreilläsi. Projekti antaa tehtävilleen lähtöluokan; voit myös antaa tehtävälle luokan liittämättä sitä projektiin.</p>
+    </div>
+    <div class="idea i-later">
+      <h3>Ryhmät toisiinsa liittyville projekteille</h3>
+      <p>Kokoa projektit ryhmiin, kuten Asiakkaat, Kurssit tai Lomat. Nimeä ne uudelleen ja järjestä ne suodattimessa. Kun projekti on valmis, arkistoi se ja säilytä sen tehtävät viitteeksi.</p>
+    </div>
+    <div class="idea i-tomorrow">
+      <h3>Löydä keskittymisesi kohde</h3>
+      <p>Hae tehtävien otsikoista, projektien nimistä ja ryhmien nimistä. Suodata mitä tahansa luokkien ja projektien yhdistelmää tai valitse kokonainen ryhmä. Näytä projektit, joissa on avoimia tehtäviä, kaikki aktiiviset projektit tai arkistoidut, kun haluat katsoa taaksepäin.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="history" aria-labelledby="history-heading">
+  <h2 id="history-heading">Näe, mitä olet saanut aikaan ajan mittaan</h2>
+  <p class="section-intro">Tehtävälista on vain osa kuvaa. DayHand pitää myös kirjaa työstä, jonka saat valmiiksi.</p>
+  <div class="ideas">
+    <div class="idea i-review">
+      <h3>Tämä viikko ja viime viikko</h3>
+      <p>Käy läpi valmiit tehtävät ryhmiteltyinä sen päivän mukaan, jona ne valmistuivat. Katso, mitä sait tehtyä tällä viikolla, tai katso taaksepäin viime viikkoon ennen kuin päätät, mitä seuraavaksi.</p>
+    </div>
+    <div class="idea i-night">
+      <h3>Pidempi näkymä</h3>
+      <p>Selaa koko valmistumisten aikajanaasi kuukausi ja päivä kerrallaan tai avaa projektin historia nähdäksesi sen valmiin työn. Päivittäiset luvut ja yksinkertaiset palkit tekevät valmistumisten kuvion helposti nähtäväksi.</p>
+    </div>
+  </div>
+  <p class="section-note">Valmiit tehtävät pysyvät pinossa ”Valmiit”, joten voit löytää ne uudelleen tai avata uudelleen työn, joka tarvitsee vielä yhden kierroksen.</p>
+</section>
+
+<section class="wrap" id="screens" aria-labelledby="screens-heading">
+  <h2 id="screens-heading">Yksi sovellus kaikilla laitteillasi</h2>
+  <p class="section-intro">Rakennettu alusta alkaen iPhonelle, iPadille ja Macille. Työskentele samojen tehtävien parissa kaikilla Apple-laitteillasi, yhtenäisellä käyttökokemuksella, joka sopii jokaiseen näyttöön.</p>
+  <div class="shots">
+    <figure class="phone">
+      <img src="../screenshots/iphone.png" alt="Esimerkkinäkymä DayHandin betasta iPhonella, tehtävät järjestettyinä pinoihin (käyttöliittymä englanniksi)"
+           loading="lazy" width="1206" height="2622">
+      <figcaption><b>iPhone</b> – tehtävät pinoissa, valinnaisilla projektimerkinnöillä.</figcaption>
+    </figure>
+    <figure>
+      <img src="../screenshots/ipad.png" alt="Esimerkkinäkymä DayHandin betasta iPadilla, projektisuodattimen sivupalkki tehtävälistan vieressä (käyttöliittymä englanniksi)"
+           loading="lazy" width="2064" height="2752">
+      <figcaption><b>iPad</b> – sivupalkki pitää projektit tehtäviesi vieressä. Mac käyttää samaa asettelua ikkunassa, jonka kokoa voi muuttaa.</figcaption>
+    </figure>
+  </div>
+  <p class="section-note">Esimerkkinäkymiä betasta englanninkielisellä käyttöliittymällä; asettelu ja säätimet voivat poiketa nykyisissä versioissa.</p>
+</section>
+
+<section class="wrap" id="use-cases" aria-labelledby="use-cases-heading">
+  <h2 id="use-cases-heading">Elämääsi ja työhösi</h2>
+  <div class="ideas">
+    <div class="idea i-later">
+      <h3>Arkkitehti</h3>
+      <p>Työn alla olevat piirustukset kohdassa ”Nyt”, seuraava tarkistuskierros kohdassa ”Seuraavaksi”, tulevat ideat kohdassa ”Myöhemmin”. Asiakkaalle lähetetty piirustussarja siirtyy kohtaan ”Odottaa”, kunnes palaute saapuu. Pidä muistutus tiedustelua varten ja määräaika varsinaiselle palautukselle.</p>
+    </div>
+    <div class="idea i-tomorrow">
+      <h3>Maisemoitsija</h3>
+      <p>Muotoutuva puutarha kohdassa ”Nyt”, seuraava työmaakäynti kohdassa ”Seuraavaksi”, tulevat istutussuunnitelmat kohdassa ”Myöhemmin”. Työ, joka odottaa materiaaleja tai asiakkaan hyväksyntää, siirtyy kohtaan ”Odottaa”. Aseta muistutus tiedustelua varten ja määräaika sovitulle luovutukselle.</p>
+    </div>
+    <div class="idea i-review">
+      <h3>Opiskelija</h3>
+      <p>Tasapainota tehtävät, kertaus ja arjen velvollisuudet. Pidä kunkin kurssin tehtävät omassa projektissaan, keskity kohdan ”Nyt” työhön ja käytä todellisia palautuspäiviä määräaikoina. Ryhmätyö, joka odottaa tiimitoverin panosta, siirtyy kohtaan ”Odottaa”.</p>
+    </div>
+    <div class="idea i-keep">
+      <h3>Tutkija</h3>
+      <p>Pidä analyysi ja kirjoittaminen kohdassa ”Nyt”, kun taas käsikirjoitukset kanssakirjoittajilla ja dataa odottavat kokeet ovat kohdassa ”Odottaa”. Ryhmittele toisiinsa liittyvät tutkimukset ja apurahat ja käytä projektin historiaa katsoaksesi taaksepäin, mitä sait valmiiksi työn aikana.</p>
+    </div>
+    <div class="idea i-today">
+      <h3>Web-kehittäjä</h3>
+      <p>Ominaisuus voi pysyä kohdassa ”Nyt” useita päiviä, seuraava kohdassa ”Seuraavaksi” ja backlog kohdassa ”Myöhemmin”. Siirrä API-avaimen tai asiakkaan palautteen jumittama työ kohtaan ”Odottaa”. Pidä julkaisun määräaika aikatauluttamatta tehtävää uudelleen yhä uudestaan.</p>
+    </div>
+    <div class="idea i-night">
+      <h3>Koti ja perhe</h3>
+      <p>Vakuutusasioiden selvittäminen kohdassa ”Nyt”, terveystarkastuksen varaaminen kohdassa ”Seuraavaksi”, lomaideat kohdassa ”Myöhemmin”. Korjaus, joka odottaa ammattilaisen tarjousta, siirtyy kohtaan ”Odottaa”. Aseta muistutus tiedustelua varten ja pidä todellinen uusimispäivä määräaikana.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="your-data" aria-labelledby="data-heading">
+  <h2 id="data-heading">Tehtäväsi pysyvät sinun</h2>
+  <div class="ideas">
+    <div class="idea i-keep">
+      <h3>Ei DayHand-tiliä eikä palvelinta</h3>
+      <p>DayHand käyttää laitteitasi ja omaa iCloud Drivea tehtäviesi tallentamiseen ja synkronointiin. Luotavaa DayHand-tiliä ei ole, eikä tietojasi säilytä mikään DayHand-palvelin.</p>
+    </div>
+    <div class="idea i-night">
+      <h3>Synkronointi suunnitteluun rakennettuna</h3>
+      <p>Oman iCloud Drivesi jaettu tiedosto pitää tehtäväsi synkronoituina iPhonen, iPadin ja Macin välillä. Valitse sama tiedosto kerran jokaisella laitteella ja työskentele sitten tehtäviesi parissa missä tahansa. iCloud Drive yhdistää laitteesi ilman erillistä DayHand-palvelua.</p>
+    </div>
+    <div class="idea i-review wide-idea">
+      <h3>Varmuuskopiot ja tie ulos</h3>
+      <p>Automaattiset varmuuskopiot otetaan päivinä, jolloin avaat sovelluksen, ja kolme kiertävää kopiota säilytetään. Ota lisävarmuuskopioita käsin, palauta aiempi kopio tai jaa kopio turvallisempaan paikkaan. CSV-tuonnin ja -viennin avulla tuot tehtäviä sisään tai otat ne mukaasi.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="get-dayhand" aria-labelledby="install-heading">
+  <h2 id="install-heading">Kokeile DayHandin betaa</h2>
+  <p class="section-intro">Saatavilla Applen TestFlightin kautta iPhonelle, iPadille ja Macille.</p>
+  <div class="install">
+    <div class="task">
+      <h3>iPhone ja iPad</h3>
+      <p class="req">iOS / iPadOS 17 tai uudempi</p>
+      <ol class="steps">
+        <li>Asenna Applen <b>TestFlight</b> App Storesta.</li>
+        <li>Avaa alla oleva beta-linkki iPhonellasi tai iPadillasi.</li>
+        <li>Hyväksy kutsu ja asenna DayHand.</li>
+      </ol>
+      <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">Liity betaan</a>
+    </div>
+    <div class="task">
+      <h3>Mac</h3>
+      <p class="req">macOS 14 tai uudempi</p>
+      <ol class="steps">
+        <li>Asenna <b>TestFlight</b> Mac App Storesta.</li>
+        <li>Avaa sama beta-linkki alla Macillasi.</li>
+        <li>Hyväksy kutsu ja asenna DayHand.</li>
+      </ol>
+      <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Liity Mac-betaan</a>
+    </div>
+  </div>
+  <details class="notice">
+    <summary>Tuletko vanhemmasta, itse rakentamastasi Mac-versiosta?</summary>
+    <p>TestFlight-sovellus tallentaa tietonsa eri paikkaan. Jos se avautuu ilman tehtäviä, vanha tiedostosi on yhä siellä, missä se oli. Jos synkronoit iCloud Driven kautta, avaa <b>Lisää → Käytä olemassa olevaa synkronointitiedostoa</b> ja valitse sama tiedosto uudelleen saadaksesi tehtäväsi takaisin.</p>
+  </details>
+</section>
+</main>
+
+<footer class="wrap">
+  <p>Jokin epäselvää? <a href="support.html">Ohjesivut</a> kattavat suurimman osan. Muuten lähetä beta-palautetta TestFlightissa tai <a href="https://github.com/amouraux/DayHand/issues/new">ilmoita ongelmasta GitHubissa</a>.</p>
+  <p>Suomeksi, englanniksi, ranskaksi, hollanniksi, saksaksi, espanjaksi, italiaksi, portugaliksi (Portugali ja Brasilia), japaniksi, koreaksi, ruotsiksi, tanskaksi, norjaksi ja puolaksi.</p>
+  <!--privacy--><p>Tietosuojakäytäntö: <a href="../privacy.html" hreflang="en" lang="en">English</a> · <a href="../de/privacy.html" hreflang="de" lang="de">Deutsch</a> · <a href="../es/privacy.html" hreflang="es" lang="es">Español</a> · <a href="../fr/privacy.html" hreflang="fr" lang="fr">Français</a> · <a href="../it/privacy.html" hreflang="it" lang="it">Italiano</a> · <a href="../nl/privacy.html" hreflang="nl" lang="nl">Nederlands</a> · <a href="../pt-pt/privacy.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a> · <a href="../pt-br/privacy.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a> · <a href="../ja/privacy.html" hreflang="ja" lang="ja">日本語</a> · <a href="../ko/privacy.html" hreflang="ko" lang="ko">한국어</a> · <a href="../sv/privacy.html" hreflang="sv" lang="sv">Svenska</a> · <a href="../da/privacy.html" hreflang="da" lang="da">Dansk</a> · <a href="../nb/privacy.html" hreflang="nb" lang="nb">Norsk bokmål</a> · <a href="../fi/privacy.html" hreflang="fi" lang="fi">Suomi</a> · <a href="../pl/privacy.html" hreflang="pl" lang="pl">Polski</a></p><!--/privacy-->
+  <p>Tehty SwiftUI:lla · <a href="https://github.com/amouraux/DayHand">Lähdekoodi GitHubissa</a></p>
+</footer>
+
+</body>
+</html>

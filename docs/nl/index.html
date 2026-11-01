@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DayHand — Taken voor je leven en je werk</title>
+<meta name="description" content="Organiseer je taken rond je leven en je doelen, niet rond de kalender. Aan Kanban ontleend taakbeheer voor iPhone, iPad en Mac, met herinneringen, deadlines en zonder dagelijks doorschuiven.">
+<link rel="icon" href="../icon.png">
+<meta property="og:title" content="DayHand — Taken voor je leven en je werk">
+<meta property="og:description" content="Organiseer je taken rond je leven en je doelen, niet rond de kalender. DayHand is geïnspireerd op Kanban en past de eenvoud van kaarten en stapels toe op het beheren van je leven en werk.">
+<meta property="og:image" content="https://amouraux.github.io/DayHand/icon.png">
+<meta property="og:url" content="https://amouraux.github.io/DayHand/nl/">
+<link rel="canonical" href="https://amouraux.github.io/DayHand/nl/">
+<style>
+  :root {
+    --bg:        #f2f2f7;
+    --panel:     #ffffff;
+    --ink:       #12131a;
+    --ink-soft:  #5c5f70;
+    --line:      rgba(18,19,26,.10);
+    --today:     #2f7bf6;
+    --tomorrow:  #e8871e;
+    --later:     #1da34f;
+    --night:     #2f3486;
+    --review:    #8a4bd0;
+    --flag:      #d92d20;
+    --keep:      #0f8a8a;
+    --waiting:   #6b7a90;
+    --shadow:    0 1px 2px rgba(18,19,26,.05), 0 8px 24px rgba(18,19,26,.07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:       #0d0e12;
+      --panel:    #17181e;
+      --ink:      #f3f4f8;
+      --ink-soft: #a0a4b6;
+      --line:     rgba(255,255,255,.12);
+      --today:    #6ea6ff;
+      --tomorrow: #f5b25c;
+      --later:    #5fd48a;
+      --night:    #9099ee;
+      --review:   #c18cf0;
+      --flag:     #ff7a70;
+      --keep:     #4fd0d0;
+      --waiting:  #9aa8bd;
+      --shadow:   0 1px 2px rgba(0,0,0,.4), 0 8px 28px rgba(0,0,0,.45);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 400 17px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1020px; margin: 0 auto; padding: 0 16px; }
+  a { color: inherit; }
+
+  /* ---------- hero ---------- */
+  header.wrap { padding: 76px 16px 38px; text-align: center; }
+  .icon {
+    width: 132px; height: 132px; border-radius: 30px;
+    box-shadow: var(--shadow); display: block; margin: 0 auto 26px;
+  }
+  h1 {
+    margin: 0; font-size: clamp(44px, 9vw, 68px); letter-spacing: -.028em;
+    font-weight: 700; line-height: 1.02;
+  }
+  .tagline {
+    margin: 16px auto 0; max-width: 30ch;
+    font-size: clamp(20px, 3.4vw, 25px); line-height: 1.32;
+    letter-spacing: -.012em; color: var(--ink);
+  }
+  .sub {
+    margin: 18px auto 0; max-width: 54ch;
+    color: var(--ink-soft); font-size: 17px;
+  }
+
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 34px 0 6px; }
+  .btn {
+    display: inline-flex; flex-direction: column; align-items: center;
+    gap: 2px; text-decoration: none; padding: 13px 26px; border-radius: 14px;
+    font-weight: 600; font-size: 17px; letter-spacing: -.01em;
+    border: 1px solid transparent; transition: transform .12s ease, filter .12s ease;
+  }
+  .btn:hover { transform: translateY(-1px); filter: brightness(1.06); }
+  .btn small { font-weight: 400; font-size: 12.5px; opacity: .8; letter-spacing: 0; }
+  .btn-primary { background: var(--today); color: #fff; }
+  .btn-secondary { background: var(--panel); color: var(--ink); border-color: var(--line); box-shadow: var(--shadow); }
+
+  /* ---------- ideas ---------- */
+  section.wrap { padding: 62px 16px; }
+  h2 {
+    font-size: 13px; text-transform: uppercase; letter-spacing: .1em;
+    color: var(--ink-soft); font-weight: 600; margin: 0 0 28px; text-align: center;
+  }
+  .ideas { display: grid; gap: 14px; grid-template-columns: 1fr; }
+  @media (min-width: 720px) { .ideas { grid-template-columns: 1fr 1fr; } }
+  .idea {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+    padding: 24px 24px 26px; box-shadow: var(--shadow);
+    border-left: 4px solid var(--accent, var(--today));
+  }
+  .idea h3 { margin: 0 0 8px; font-size: 18.5px; letter-spacing: -.012em; }
+  .idea p  { margin: 0; color: var(--ink-soft); font-size: 15.5px; line-height: 1.55; }
+  .i-inbox    { --accent: var(--ink-soft); }
+  .i-today    { --accent: var(--today); }
+  .i-tomorrow { --accent: var(--tomorrow); }
+  .i-later    { --accent: var(--later); }
+  .i-night    { --accent: var(--night); }
+  .i-review   { --accent: var(--review); }
+  .i-flag     { --accent: var(--flag); }
+  .i-keep     { --accent: var(--keep); }
+  .i-waiting  { --accent: var(--waiting); }
+  /* Full width: it is the answer to "then how do I know I am getting
+     anywhere?", which deserves more than a quarter of the grid. */
+  @media (min-width: 720px) { .wide-idea { grid-column: 1 / -1; } }
+
+  /* ---------- screenshots ---------- */
+  .shots { display: grid; gap: 34px; grid-template-columns: 1fr; align-items: end; }
+  @media (min-width: 760px) { .shots { grid-template-columns: 1fr 1fr; } }
+  figure { margin: 0; text-align: center; }
+  figure img {
+    width: 100%; height: auto; display: block;
+    border-radius: 16px; border: 1px solid var(--line); box-shadow: var(--shadow);
+  }
+  figure.phone { max-width: 320px; margin-inline: auto; }
+  figcaption { margin-top: 14px; margin-bottom: 8px; color: var(--ink-soft); font-size: 14.5px; }
+  figcaption b { color: var(--ink); font-weight: 600; }
+  .wide { grid-column: 1 / -1; }
+
+  /* ---------- install ---------- */
+  .install { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .task {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+    padding: 26px; box-shadow: var(--shadow);
+  }
+  .task h3 { margin: 0 0 6px; font-size: 19px; letter-spacing: -.012em; }
+  .task .req { color: var(--ink-soft); font-size: 14px; margin: 0 0 16px; }
+  .task p { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 18px; }
+  .task .steps { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 18px; padding-left: 20px; }
+  .task .steps li { margin-bottom: 7px; }
+  .task .steps li:last-child { margin-bottom: 0; }
+  /* The thing you would otherwise only find out by hitting it. */
+  .task .aside {
+    font-size: 14px; border-left: 2px solid var(--line);
+    padding-left: 12px; margin: 0 0 18px;
+  }
+  .task .btn { display: inline-flex; }
+
+  /* One task’s journey, including the pauses and changes of priority. */
+  .walk {
+    list-style: none; margin: 0 auto; padding: 0; max-width: 560px;
+    display: grid; gap: 10px;
+  }
+  .walk li {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 6px 10px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 18px; box-shadow: var(--shadow);
+    color: var(--ink-soft); font-size: 15.5px;
+  }
+  .walk b { color: var(--ink); min-width: 92px; }
+  .walk .step { grid-column: 1 / -1; grid-row: 2; }
+  .walk .to { grid-column: 2; grid-row: 1; font-weight: 600; color: var(--accent, var(--today)); }
+  .walk .w-inbox   { --accent: var(--ink-soft); }
+  .walk .w-now     { --accent: var(--today); }
+  .walk .w-later   { --accent: var(--later); }
+  .walk .w-done    { --accent: var(--later); }
+  .walk .w-waiting { --accent: var(--waiting); }
+  .walk .w-due     { --accent: var(--night); }
+  .walk-note {
+    max-width: 560px; margin: 16px auto 0; text-align: center;
+    color: var(--ink-soft); font-size: 15px;
+  }
+
+  .notice {
+    max-width: 640px; margin: 22px auto 0; padding: 16px 18px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    color: var(--ink-soft); font-size: 14.5px; line-height: 1.5;
+  }
+  .notice b { color: var(--ink); }
+
+  footer.wrap {
+    border-top: 1px solid var(--line); margin-top: 24px;
+    padding: 34px 16px 64px; text-align: center;
+    color: var(--ink-soft); font-size: 14.5px;
+  }
+  footer a { color: var(--today); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  footer p { margin: 6px 0; }
+  .section-intro {
+    max-width: 62ch; margin: -12px auto 28px; text-align: center;
+    color: var(--ink-soft); font-size: 16px;
+  }
+  .section-note {
+    max-width: 62ch; margin: 22px auto 0; text-align: center;
+    color: var(--ink-soft); font-size: 15px;
+  }
+  details.notice { text-align: left; }
+  details.notice summary { cursor: pointer; color: var(--ink); font-weight: 600; }
+  details.notice p { margin: 12px 0 0; }
+  a:focus-visible, summary:focus-visible { outline: 3px solid var(--today); outline-offset: 4px; }
+  @media (max-width: 480px) {
+    header.wrap { padding-top: 42px; }
+    section.wrap { padding-top: 42px; padding-bottom: 42px; }
+  }
+  
+  
+  
+  
+  /*langmenu*/
+  .langmenu { position: absolute; top: 14px; right: 16px; z-index: 5; font-size: 14px; text-align: left; }
+  .langmenu summary { list-style: none; cursor: pointer; background: var(--panel); color: var(--ink-soft);
+    border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; box-shadow: var(--shadow); }
+  .langmenu summary::-webkit-details-marker { display: none; }
+  .langmenu summary::after { content: " \25BE"; }
+  .langmenu[open] summary::after { content: " \25B4"; }
+  .langmenu .langlist { position: absolute; right: 0; margin-top: 8px; min-width: 210px; max-height: 70vh; overflow-y: auto;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 6px; }
+  .langmenu .langlist a, .langmenu .langlist span { display: block; padding: 7px 12px; border-radius: 9px; text-decoration: none; color: var(--ink); }
+  .langmenu .langlist a:hover { background: var(--bg); }
+  .langmenu .langlist span[aria-current] { background: var(--bg); font-weight: 650; }
+  body > .langbar { display: flex; gap: 14px; align-items: center; justify-content: space-between; max-width: 720px;
+    margin: 14px auto 0; padding: 12px 16px; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; box-shadow: var(--shadow); font-size: 15px; }
+  body > .langbar p { margin: 0; }
+  body > .langbar button { flex: none; background: none; border: 0; color: var(--ink-soft); font: inherit; font-size: 22px;
+    line-height: 1; padding: 4px 8px; cursor: pointer; }
+  /*/langmenu*/
+</style>
+<!--alt-->
+<link rel="alternate" hreflang="en" href="https://amouraux.github.io/DayHand/">
+<link rel="alternate" hreflang="de" href="https://amouraux.github.io/DayHand/de/">
+<link rel="alternate" hreflang="es" href="https://amouraux.github.io/DayHand/es/">
+<link rel="alternate" hreflang="fr" href="https://amouraux.github.io/DayHand/fr/">
+<link rel="alternate" hreflang="it" href="https://amouraux.github.io/DayHand/it/">
+<link rel="alternate" hreflang="nl" href="https://amouraux.github.io/DayHand/nl/">
+<link rel="alternate" hreflang="pt-PT" href="https://amouraux.github.io/DayHand/pt-pt/">
+<link rel="alternate" hreflang="pt-BR" href="https://amouraux.github.io/DayHand/pt-br/">
+<link rel="alternate" hreflang="ja" href="https://amouraux.github.io/DayHand/ja/">
+<link rel="alternate" hreflang="ko" href="https://amouraux.github.io/DayHand/ko/">
+<link rel="alternate" hreflang="sv" href="https://amouraux.github.io/DayHand/sv/">
+<link rel="alternate" hreflang="da" href="https://amouraux.github.io/DayHand/da/">
+<link rel="alternate" hreflang="nb" href="https://amouraux.github.io/DayHand/nb/">
+<link rel="alternate" hreflang="fi" href="https://amouraux.github.io/DayHand/fi/">
+<link rel="alternate" hreflang="pl" href="https://amouraux.github.io/DayHand/pl/">
+<link rel="alternate" hreflang="x-default" href="https://amouraux.github.io/DayHand/">
+<!--/alt-->
+</head>
+<body>
+
+<header class="wrap">
+  <!--langmenu--><details class="langmenu"><summary>Talen</summary><div class="langlist"><a href="../index.html" hreflang="en" lang="en">English</a><a href="../de/index.html" hreflang="de" lang="de">Deutsch</a><a href="../es/index.html" hreflang="es" lang="es">Español</a><a href="../fr/index.html" hreflang="fr" lang="fr">Français</a><a href="../it/index.html" hreflang="it" lang="it">Italiano</a><span aria-current="page" lang="nl">Nederlands</span><a href="../pt-pt/index.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a><a href="../pt-br/index.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a><a href="../ja/index.html" hreflang="ja" lang="ja">日本語</a><a href="../ko/index.html" hreflang="ko" lang="ko">한국어</a><a href="../sv/index.html" hreflang="sv" lang="sv">Svenska</a><a href="../da/index.html" hreflang="da" lang="da">Dansk</a><a href="../nb/index.html" hreflang="nb" lang="nb">Norsk bokmål</a><a href="../fi/index.html" hreflang="fi" lang="fi">Suomi</a><a href="../pl/index.html" hreflang="pl" lang="pl">Polski</a></div></details><!--/langmenu-->
+  
+  
+  
+  
+  <img class="icon" src="../icon.png" alt="DayHand" width="132" height="132">
+  <h1>DayHand</h1>
+  <p class="tagline">Organiseer je taken rond je leven en je doelen, niet rond de kalender.</p>
+  <p class="sub">Een lezing voorbereiden, een manuscript schrijven, een functie bouwen, een kamer verbouwen: het meeste echte werk wordt niet op één bepaalde dag aangemaakt en afgerond. Als je alles rond een dag plant, kan onafgemaakt werk een lijst worden van dingen om te verzetten. Dus schuif je de data heen en weer, of hak je de taak in stukken, om de app met de werkelijkheid te laten kloppen.</p>
+  <p class="sub">DayHand laat een taak gewoon actief blijven zolang dat nodig is. Werk dat meerdere dagen duurt, is nog steeds werk in uitvoering: het vanavond niet afvinken betekent niet dat je de lijst van vandaag niet hebt gehaald.</p>
+  <div class="cta">
+    <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">Doe mee met de bèta<small>iPhone en iPad · TestFlight</small>
+    </a>
+    <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Doe mee met de Mac-bèta<small>macOS · TestFlight</small>
+    </a>
+    <a class="btn btn-secondary" href="support.html">Help en support<small>Hoe het werkt en wat te doen als het niet werkt</small></a>
+  </div>
+</header>
+
+<main>
+<section class="wrap" id="how-it-works" aria-labelledby="how-heading">
+  <h2 id="how-heading">Een plek voor elke taak</h2>
+  <p class="section-intro">Geïnspireerd op Kanban past DayHand de eenvoud van kaarten en stapels toe op het beheren van je leven en werk. Een stapel laat zien waar een taak nu in je leven thuishoort, in plaats van een dag op de kalender.</p>
+  <div class="ideas">
+    <div class="idea i-inbox wide-idea">
+      <h3>Postvak</h3>
+      <p>Leg een taak vast voordat je beslist wat je ermee doet. Nieuwe taken komen normaal gesproken hier terecht, klaar om te sorteren als je even tijd hebt. Weet je al waar een taak thuishoort, kies dan bij het toevoegen een andere stapel.</p>
+    </div>
+    <div class="idea i-today">
+      <h3>Nu</h3>
+      <p>Waar je actief aan werkt. Een taak kan hier meerdere dagen of weken blijven staan terwijl je hem vooruit helpt. ‘Nu’ betekent in uitvoering, niet de belofte om vandaag alles af te maken.</p>
+    </div>
+    <div class="idea i-tomorrow">
+      <h3>Volgende</h3>
+      <p>Wat je hierna wilt oppakken, zodra je er ruimte voor hebt. Houd je volgende stappen in beeld zonder ze aan morgen toe te wijzen of ze te laten concurreren met het werk dat al loopt.</p>
+    </div>
+    <div class="idea i-later">
+      <h3>Later</h3>
+      <p>Ideeën, plannen en taken die je voor de toekomst wilt bewaren. Je kiest ervoor ze nog niet op te pakken, maar ze hebben een plek om te wachten tot je eraan toe bent.</p>
+    </div>
+    <div class="idea i-waiting">
+      <h3>Wachtend</h3>
+      <p>Werk dat je niet verder kunt brengen totdat er een antwoord, een levering, iemands feedback of iets anders komt. Houd het buiten je actieve werk en bepaal later waar het thuishoort, zodra je weer kunt handelen.</p>
+    </div>
+  </div>
+  <p class="section-note">Jij bepaalt wanneer een taak verschuift. Tijd die verstrijkt, verandert niets aan zijn stapel. Vink hem af als het werk klaar is, en hij gaat naar ‘Voltooid’.</p>
+</section>
+
+<section class="wrap" id="dates" aria-labelledby="dates-heading">
+  <h2 id="dates-heading">Data met een doel</h2>
+  <p class="section-intro">De meeste taken hebben geen datum nodig. Als een datum ertoe doet, maak dan onderscheid tussen wanneer je aan de taak wilt denken en wanneer hij echt af moet zijn.</p>
+  <div class="ideas">
+    <div class="idea i-flag">
+      <h3>Herinneringen: wanneer eraan denken</h3>
+      <p>Kies een dag waarop een taak weer je aandacht krijgt: om te beginnen, een idee te heroverwegen of bij iets in ‘Wachtend’ na te vragen. Een melding en een gekleurde rand helpen je het op te merken. Wijzig of wis de herinnering als je plannen veranderen; de taak blijft waar je hem neerzette.</p>
+    </div>
+    <div class="idea i-night">
+      <h3>Deadlines: wanneer het af moet zijn</h3>
+      <p>Voeg naast een herinnering een optionele deadline toe voor een echte verplichting: een inzending, een verlenging, een levering. Hij wordt bij de taak getoond als einddatum. De herinnering regelt de meldingen en de gekleurde rand; de deadline stuurt geen aparte melding en verplaatst de taak niet.</p>
+    </div>
+  </div>
+  <p class="section-note">Geen van beide data kiest een stapel, verplaatst een taak of markeert hem als voltooid. Een taak kan de hele week in ‘Nu’ blijven, met een herinnering op maandag en een deadline op vrijdag.</p>
+</section>
+
+<section class="wrap" id="one-task" aria-labelledby="week-heading">
+  <h2 id="week-heading">De reis van een taak</h2>
+  <p class="section-intro">Je wordt gevraagd een presentatie voor vrijdag voor te bereiden. Het is één taak, ook als de prioriteiten veranderen en het werk meerdere dagen duurt.</p>
+  <ol class="walk">
+    <li><b>Maandag</b><span class="step">Je legt ‘De presentatie voorbereiden’ vast, met een herinnering om dinsdag te beginnen en een deadline op vrijdag.</span>
+        <span class="to w-inbox">Postvak</span></li>
+    <li><b>Dinsdag</b><span class="step">De herinnering brengt hem weer onder je aandacht. Je besluit te beginnen en verplaatst hem naar ‘Nu’.</span>
+        <span class="to w-now">Nu</span></li>
+    <li><b>Later die dag</b><span class="step">Iets dringenders vraagt je aandacht. Leg de presentatie opzij en stel een herinnering in voor woensdag.</span>
+        <span class="to w-later">Later</span></li>
+    <li><b>Woensdag</b><span class="step">De herinnering zet je ertoe aan hem weer op te pakken. Zet hem terug naar ‘Nu’ en werk door aan dezelfde taak.</span>
+        <span class="to w-now">Nu</span></li>
+    <li><b>Donderdag</b><span class="step">Je stuurt het concept naar een collega. Je hebt zijn feedback nodig voordat je kunt afronden; stel een herinnering in om vrijdag na te vragen.</span>
+        <span class="to w-waiting">Wachtend</span></li>
+    <li><b>Vrijdag</b><span class="step">Je vraagt na als de herinnering komt. De feedback komt binnen en je verplaatst de taak voor de laatste wijzigingen naar ‘Nu’.</span>
+        <span class="to w-now">Nu</span></li>
+    <li><b>Af</b><span class="step">Je presenteert op vrijdag en vinkt de taak af. De deadline is gehaald.</span>
+        <span class="to w-done">Voltooid</span></li>
+  </ol>
+  <p class="walk-note">Eén taak van begin tot eind. De deadline op vrijdag veranderde nooit. Herinneringen brachten hem weer onder je aandacht; jij koos wanneer je hem verplaatste. De pauzes en de niet-afgevinkte dagen hoorden bij het klaarmaken van het werk.</p>
+</section>
+
+<section class="wrap" id="organisation" aria-labelledby="organisation-heading">
+  <h2 id="organisation-heading">Houd bij elkaar horend werk bij elkaar</h2>
+  <div class="ideas">
+    <div class="idea i-night">
+      <h3>Projecten voor een gezamenlijk doel</h3>
+      <p>Houd de taken voor een reis, een cursus, een klant of een stuk werk bij elkaar. Begin een taak met een naam zoals <b>VAKANTIE</b> en accepteer het project dat onder het veld wordt aangeboden, of kies er een met de projectknop. Elke taak kan één project hebben, getoond als een gekleurd voorvoegsel.</p>
+    </div>
+    <div class="idea i-keep">
+      <h3>Categorieën voor de delen van je leven</h3>
+      <p>Scheid brede gebieden zoals Werk, Thuis en Cursussen met je eigen labels, symbolen en kleuren. Een project levert een startcategorie voor zijn taken; je kunt ook een taak een categorie geven zonder hem aan een project toe te wijzen.</p>
+    </div>
+    <div class="idea i-later">
+      <h3>Groepen voor samenhangende projecten</h3>
+      <p>Verzamel projecten in groepen zoals Klanten, Cursussen of Vakanties. Hernoem en herorden ze via het filter. Is een project afgerond, archiveer het dan en houd de taken beschikbaar als naslag.</p>
+    </div>
+    <div class="idea i-tomorrow">
+      <h3>Vind je focus</h3>
+      <p>Zoek in taaktitels, projectnamen en groepsnamen. Filter op elke combinatie van categorieën en projecten, of kies een hele groep. Toon projecten met openstaande taken, alle actieve projecten of gearchiveerde projecten als je terug wilt kijken.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="history" aria-labelledby="history-heading">
+  <h2 id="history-heading">Zie wat je in de loop van de tijd hebt bereikt</h2>
+  <p class="section-intro">Een lijst met dingen om te doen is maar een deel van het plaatje. DayHand houdt ook bij welk werk je afrondt.</p>
+  <div class="ideas">
+    <div class="idea i-review">
+      <h3>Deze week en vorige week</h3>
+      <p>Bekijk voltooide taken gegroepeerd per dag waarop je ze afrondde. Zie wat je deze week gedaan hebt, of kijk terug op vorige week voordat je beslist wat er daarna komt.</p>
+    </div>
+    <div class="idea i-night">
+      <h3>Het langere overzicht</h3>
+      <p>Blader door je volledige tijdlijn van voltooide taken per maand en dag, of open de geschiedenis van een project om het afgeronde werk te zien. Dagtellingen en eenvoudige balken maken het patroon van je voltooiingen makkelijk zichtbaar.</p>
+    </div>
+  </div>
+  <p class="section-note">Voltooide taken blijven in de stapel ‘Voltooid’, zodat je ze terug kunt vinden of werk dat nog een ronde nodig heeft opnieuw kunt openen.</p>
+</section>
+
+<section class="wrap" id="screens" aria-labelledby="screens-heading">
+  <h2 id="screens-heading">Eén app op al je apparaten</h2>
+  <p class="section-intro">Vanaf het begin gebouwd voor iPhone, iPad en Mac. Werk met dezelfde taken op al je Apple-apparaten, met een consistente ervaring die bij elk scherm past.</p>
+  <div class="shots">
+    <figure class="phone">
+      <img src="../screenshots/iphone.png" alt="Voorbeeldscherm van de DayHand-bèta op iPhone, met taken geordend in stapels (interface in het Engels)"
+           loading="lazy" width="1206" height="2622">
+      <figcaption><b>iPhone</b> — taken in stapels, met optionele projectlabels.</figcaption>
+    </figure>
+    <figure>
+      <img src="../screenshots/ipad.png" alt="Voorbeeldscherm van de DayHand-bèta op iPad, met de projectfilterzijbalk naast de takenlijst (interface in het Engels)"
+           loading="lazy" width="2064" height="2752">
+      <figcaption><b>iPad</b> — een zijbalk houdt projecten naast je taken. De Mac gebruikt dezelfde indeling in een venster waarvan je het formaat kunt aanpassen.</figcaption>
+    </figure>
+  </div>
+  <p class="section-note">Voorbeeldschermen van de bèta met Engelse interface; indeling en bediening kunnen in actuele versies afwijken.</p>
+</section>
+
+<section class="wrap" id="use-cases" aria-labelledby="use-cases-heading">
+  <h2 id="use-cases-heading">Voor je leven en je werk</h2>
+  <div class="ideas">
+    <div class="idea i-later">
+      <h3>Architect</h3>
+      <p>Tekeningen in uitvoering in ‘Nu’, de volgende revisie in ‘Volgende’, toekomstige ideeën in ‘Later’. Een set die naar de klant is gestuurd, gaat naar ‘Wachtend’ tot de feedback binnen is. Houd een herinnering om na te vragen en een deadline voor de eigenlijke inzending.</p>
+    </div>
+    <div class="idea i-tomorrow">
+      <h3>Hovenier</h3>
+      <p>Een tuin die vorm krijgt in ‘Nu’, het volgende werkbezoek in ‘Volgende’, toekomstige beplantingsplannen in ‘Later’. Een klus die wacht op materiaal of de goedkeuring van een klant gaat naar ‘Wachtend’. Stel een herinnering in om na te vragen en een deadline voor de afgesproken oplevering.</p>
+    </div>
+    <div class="idea i-review">
+      <h3>Student</h3>
+      <p>Breng opdrachten, studeren en dagelijkse verplichtingen in balans. Houd de taken van elke cursus in een eigen project, richt je op het werk in ‘Nu’ en gebruik echte inleverdata als deadlines. Groepswerk dat wacht op de bijdrage van een teamgenoot gaat naar ‘Wachtend’.</p>
+    </div>
+    <div class="idea i-keep">
+      <h3>Onderzoeker</h3>
+      <p>Houd analyse en schrijven in ‘Nu’ terwijl manuscripten bij coauteurs of experimenten die op data wachten in ‘Wachtend’ staan. Groepeer samenhangende studies en subsidies en gebruik de projectgeschiedenis om terug te kijken op wat je in de loop van het werk hebt afgerond.</p>
+    </div>
+    <div class="idea i-today">
+      <h3>Webontwikkelaar</h3>
+      <p>Een functie kan meerdere dagen in ‘Nu’ blijven, met de volgende in ‘Volgende’ en de backlog in ‘Later’. Zet werk dat vastzit door een API-sleutel of klantfeedback in ‘Wachtend’. Behoud de releasedeadline zonder de taak steeds te verplaatsen.</p>
+    </div>
+    <div class="idea i-night">
+      <h3>Thuis en gezin</h3>
+      <p>De verzekering regelen in ‘Nu’, een controle inplannen in ‘Volgende’, vakantie-ideeën in ‘Later’. Een reparatie die wacht op de offerte van een vakman gaat naar ‘Wachtend’. Stel een herinnering in om na te vragen en houd de werkelijke verlengingsdatum als deadline.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="your-data" aria-labelledby="data-heading">
+  <h2 id="data-heading">Je taken blijven van jou</h2>
+  <div class="ideas">
+    <div class="idea i-keep">
+      <h3>Geen DayHand-account of -server</h3>
+      <p>DayHand gebruikt je apparaten en je eigen iCloud Drive om je taken op te slaan en te synchroniseren. Er is geen DayHand-account om aan te maken en geen DayHand-server die je gegevens bewaart.</p>
+    </div>
+    <div class="idea i-night">
+      <h3>Synchronisatie ingebouwd in het ontwerp</h3>
+      <p>Een gedeeld bestand in je eigen iCloud Drive houdt je taken gesynchroniseerd op iPhone, iPad en Mac. Kies op elk apparaat één keer hetzelfde bestand en werk daarna overal aan je taken. iCloud Drive verbindt je apparaten zonder aparte DayHand-dienst.</p>
+    </div>
+    <div class="idea i-review wide-idea">
+      <h3>Back-ups en een uitweg</h3>
+      <p>Op dagen dat je de app opent, worden automatisch back-ups gemaakt, met drie roterende kopieën. Maak extra back-ups met de hand, herstel een eerdere kopie of deel er een naar een veiligere plek. Met CSV-import en -export haal je taken binnen of neem je ze mee.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="get-dayhand" aria-labelledby="install-heading">
+  <h2 id="install-heading">Probeer de DayHand-bèta</h2>
+  <p class="section-intro">Beschikbaar via Apples TestFlight voor iPhone, iPad en Mac.</p>
+  <div class="install">
+    <div class="task">
+      <h3>iPhone en iPad</h3>
+      <p class="req">iOS / iPadOS 17 of nieuwer</p>
+      <ol class="steps">
+        <li>Installeer Apples <b>TestFlight</b> uit de App Store.</li>
+        <li>Open de bètalink hieronder op je iPhone of iPad.</li>
+        <li>Accepteer de uitnodiging en installeer DayHand.</li>
+      </ol>
+      <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">Doe mee met de bèta</a>
+    </div>
+    <div class="task">
+      <h3>Mac</h3>
+      <p class="req">macOS 14 of nieuwer</p>
+      <ol class="steps">
+        <li>Installeer <b>TestFlight</b> uit de Mac App Store.</li>
+        <li>Open dezelfde bètalink hieronder op je Mac.</li>
+        <li>Accepteer de uitnodiging en installeer DayHand.</li>
+      </ol>
+      <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Doe mee met de Mac-bèta</a>
+    </div>
+  </div>
+  <details class="notice">
+    <summary>Kom je van een oudere, zelfgebouwde Mac-versie?</summary>
+    <p>De TestFlight-app slaat haar gegevens op een andere plek op. Als ze zonder taken opent, staat je oude bestand nog waar het stond. Synchroniseerde je via iCloud Drive, open dan <b>Meer → Bestaand bestand gebruiken</b> en kies hetzelfde bestand opnieuw om je taken terug te krijgen.</p>
+  </details>
+</section>
+</main>
+
+<footer class="wrap">
+  <p>Iets onduidelijk? De <a href="support.html">helppagina’s</a> behandelen het meeste. Anders stuur je bètafeedback in TestFlight of <a href="https://github.com/amouraux/DayHand/issues/new">meld je een probleem op GitHub</a>.</p>
+  <p>In het Nederlands, Engels, Frans, Duits, Spaans, Italiaans, Portugees (Portugal en Brazilië), Japans, Koreaans, Zweeds, Deens, Noors, Fins en Pools.</p>
+  <!--privacy--><p>Privacybeleid: <a href="../privacy.html" hreflang="en" lang="en">English</a> · <a href="../de/privacy.html" hreflang="de" lang="de">Deutsch</a> · <a href="../es/privacy.html" hreflang="es" lang="es">Español</a> · <a href="../fr/privacy.html" hreflang="fr" lang="fr">Français</a> · <a href="../it/privacy.html" hreflang="it" lang="it">Italiano</a> · <a href="../nl/privacy.html" hreflang="nl" lang="nl">Nederlands</a> · <a href="../pt-pt/privacy.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a> · <a href="../pt-br/privacy.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a> · <a href="../ja/privacy.html" hreflang="ja" lang="ja">日本語</a> · <a href="../ko/privacy.html" hreflang="ko" lang="ko">한국어</a> · <a href="../sv/privacy.html" hreflang="sv" lang="sv">Svenska</a> · <a href="../da/privacy.html" hreflang="da" lang="da">Dansk</a> · <a href="../nb/privacy.html" hreflang="nb" lang="nb">Norsk bokmål</a> · <a href="../fi/privacy.html" hreflang="fi" lang="fi">Suomi</a> · <a href="../pl/privacy.html" hreflang="pl" lang="pl">Polski</a></p><!--/privacy-->
+  <p>Gebouwd met SwiftUI · <a href="https://github.com/amouraux/DayHand">Broncode op GitHub</a></p>
+</footer>
+
+</body>
+</html>

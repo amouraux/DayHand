@@ -46,7 +46,9 @@
 
   try { if (localStorage.getItem("dh-lang-dismissed")) return; } catch (e) {}
 
-  var main = document.getElementById("main");
+  // The homepage has no #main; its banner goes above everything else.
+  var home = page === "home";
+  var main = home ? document.body : document.getElementById("main");
   if (!main) return;
   var text = T[folder];
   var bar = document.createElement("div");
@@ -56,7 +58,7 @@
   var p = document.createElement("p");
   p.appendChild(document.createTextNode(text[0] + " "));
   var a = document.createElement("a");
-  a.href = root + folder + "/" + page + ".html";
+  a.href = root + folder + "/" + (home ? "index" : page) + ".html";
   a.textContent = text[1];
   p.appendChild(a);
   var b = document.createElement("button");

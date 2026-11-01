@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DayHand — 暮らしと仕事のためのタスク管理</title>
+<meta name="description" content="カレンダーではなく、暮らしと目標を軸にタスクを整理します。カンバンから着想を得た、iPhone・iPad・Mac向けのタスク管理。リマインダーと期限に対応し、毎日の繰り越しはありません。">
+<link rel="icon" href="../icon.png">
+<meta property="og:title" content="DayHand — 暮らしと仕事のためのタスク管理">
+<meta property="og:description" content="カレンダーではなく、暮らしと目標を軸にタスクを整理します。カンバンに着想を得たDayHandは、カードとスタックのシンプルさを、暮らしと仕事の管理に取り入れました。">
+<meta property="og:image" content="https://amouraux.github.io/DayHand/icon.png">
+<meta property="og:url" content="https://amouraux.github.io/DayHand/ja/">
+<link rel="canonical" href="https://amouraux.github.io/DayHand/ja/">
+<style>
+  :root {
+    --bg:        #f2f2f7;
+    --panel:     #ffffff;
+    --ink:       #12131a;
+    --ink-soft:  #5c5f70;
+    --line:      rgba(18,19,26,.10);
+    --today:     #2f7bf6;
+    --tomorrow:  #e8871e;
+    --later:     #1da34f;
+    --night:     #2f3486;
+    --review:    #8a4bd0;
+    --flag:      #d92d20;
+    --keep:      #0f8a8a;
+    --waiting:   #6b7a90;
+    --shadow:    0 1px 2px rgba(18,19,26,.05), 0 8px 24px rgba(18,19,26,.07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:       #0d0e12;
+      --panel:    #17181e;
+      --ink:      #f3f4f8;
+      --ink-soft: #a0a4b6;
+      --line:     rgba(255,255,255,.12);
+      --today:    #6ea6ff;
+      --tomorrow: #f5b25c;
+      --later:    #5fd48a;
+      --night:    #9099ee;
+      --review:   #c18cf0;
+      --flag:     #ff7a70;
+      --keep:     #4fd0d0;
+      --waiting:  #9aa8bd;
+      --shadow:   0 1px 2px rgba(0,0,0,.4), 0 8px 28px rgba(0,0,0,.45);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 400 17px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1020px; margin: 0 auto; padding: 0 16px; }
+  a { color: inherit; }
+
+  /* ---------- hero ---------- */
+  header.wrap { padding: 76px 16px 38px; text-align: center; }
+  .icon {
+    width: 132px; height: 132px; border-radius: 30px;
+    box-shadow: var(--shadow); display: block; margin: 0 auto 26px;
+  }
+  h1 {
+    margin: 0; font-size: clamp(44px, 9vw, 68px); letter-spacing: -.028em;
+    font-weight: 700; line-height: 1.02;
+  }
+  .tagline {
+    margin: 16px auto 0; max-width: 30ch;
+    font-size: clamp(20px, 3.4vw, 25px); line-height: 1.32;
+    letter-spacing: -.012em; color: var(--ink);
+  }
+  .sub {
+    margin: 18px auto 0; max-width: 54ch;
+    color: var(--ink-soft); font-size: 17px;
+  }
+
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 34px 0 6px; }
+  .btn {
+    display: inline-flex; flex-direction: column; align-items: center;
+    gap: 2px; text-decoration: none; padding: 13px 26px; border-radius: 14px;
+    font-weight: 600; font-size: 17px; letter-spacing: -.01em;
+    border: 1px solid transparent; transition: transform .12s ease, filter .12s ease;
+  }
+  .btn:hover { transform: translateY(-1px); filter: brightness(1.06); }
+  .btn small { font-weight: 400; font-size: 12.5px; opacity: .8; letter-spacing: 0; }
+  .btn-primary { background: var(--today); color: #fff; }
+  .btn-secondary { background: var(--panel); color: var(--ink); border-color: var(--line); box-shadow: var(--shadow); }
+
+  /* ---------- ideas ---------- */
+  section.wrap { padding: 62px 16px; }
+  h2 {
+    font-size: 13px; text-transform: uppercase; letter-spacing: .1em;
+    color: var(--ink-soft); font-weight: 600; margin: 0 0 28px; text-align: center;
+  }
+  .ideas { display: grid; gap: 14px; grid-template-columns: 1fr; }
+  @media (min-width: 720px) { .ideas { grid-template-columns: 1fr 1fr; } }
+  .idea {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+    padding: 24px 24px 26px; box-shadow: var(--shadow);
+    border-left: 4px solid var(--accent, var(--today));
+  }
+  .idea h3 { margin: 0 0 8px; font-size: 18.5px; letter-spacing: -.012em; }
+  .idea p  { margin: 0; color: var(--ink-soft); font-size: 15.5px; line-height: 1.55; }
+  .i-inbox    { --accent: var(--ink-soft); }
+  .i-today    { --accent: var(--today); }
+  .i-tomorrow { --accent: var(--tomorrow); }
+  .i-later    { --accent: var(--later); }
+  .i-night    { --accent: var(--night); }
+  .i-review   { --accent: var(--review); }
+  .i-flag     { --accent: var(--flag); }
+  .i-keep     { --accent: var(--keep); }
+  .i-waiting  { --accent: var(--waiting); }
+  /* Full width: it is the answer to "then how do I know I am getting
+     anywhere?", which deserves more than a quarter of the grid. */
+  @media (min-width: 720px) { .wide-idea { grid-column: 1 / -1; } }
+
+  /* ---------- screenshots ---------- */
+  .shots { display: grid; gap: 34px; grid-template-columns: 1fr; align-items: end; }
+  @media (min-width: 760px) { .shots { grid-template-columns: 1fr 1fr; } }
+  figure { margin: 0; text-align: center; }
+  figure img {
+    width: 100%; height: auto; display: block;
+    border-radius: 16px; border: 1px solid var(--line); box-shadow: var(--shadow);
+  }
+  figure.phone { max-width: 320px; margin-inline: auto; }
+  figcaption { margin-top: 14px; margin-bottom: 8px; color: var(--ink-soft); font-size: 14.5px; }
+  figcaption b { color: var(--ink); font-weight: 600; }
+  .wide { grid-column: 1 / -1; }
+
+  /* ---------- install ---------- */
+  .install { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .task {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+    padding: 26px; box-shadow: var(--shadow);
+  }
+  .task h3 { margin: 0 0 6px; font-size: 19px; letter-spacing: -.012em; }
+  .task .req { color: var(--ink-soft); font-size: 14px; margin: 0 0 16px; }
+  .task p { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 18px; }
+  .task .steps { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 18px; padding-left: 20px; }
+  .task .steps li { margin-bottom: 7px; }
+  .task .steps li:last-child { margin-bottom: 0; }
+  /* The thing you would otherwise only find out by hitting it. */
+  .task .aside {
+    font-size: 14px; border-left: 2px solid var(--line);
+    padding-left: 12px; margin: 0 0 18px;
+  }
+  .task .btn { display: inline-flex; }
+
+  /* One task’s journey, including the pauses and changes of priority. */
+  .walk {
+    list-style: none; margin: 0 auto; padding: 0; max-width: 560px;
+    display: grid; gap: 10px;
+  }
+  .walk li {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 6px 10px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 18px; box-shadow: var(--shadow);
+    color: var(--ink-soft); font-size: 15.5px;
+  }
+  .walk b { color: var(--ink); min-width: 92px; }
+  .walk .step { grid-column: 1 / -1; grid-row: 2; }
+  .walk .to { grid-column: 2; grid-row: 1; font-weight: 600; color: var(--accent, var(--today)); }
+  .walk .w-inbox   { --accent: var(--ink-soft); }
+  .walk .w-now     { --accent: var(--today); }
+  .walk .w-later   { --accent: var(--later); }
+  .walk .w-done    { --accent: var(--later); }
+  .walk .w-waiting { --accent: var(--waiting); }
+  .walk .w-due     { --accent: var(--night); }
+  .walk-note {
+    max-width: 560px; margin: 16px auto 0; text-align: center;
+    color: var(--ink-soft); font-size: 15px;
+  }
+
+  .notice {
+    max-width: 640px; margin: 22px auto 0; padding: 16px 18px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    color: var(--ink-soft); font-size: 14.5px; line-height: 1.5;
+  }
+  .notice b { color: var(--ink); }
+
+  footer.wrap {
+    border-top: 1px solid var(--line); margin-top: 24px;
+    padding: 34px 16px 64px; text-align: center;
+    color: var(--ink-soft); font-size: 14.5px;
+  }
+  footer a { color: var(--today); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  footer p { margin: 6px 0; }
+  .section-intro {
+    max-width: 62ch; margin: -12px auto 28px; text-align: center;
+    color: var(--ink-soft); font-size: 16px;
+  }
+  .section-note {
+    max-width: 62ch; margin: 22px auto 0; text-align: center;
+    color: var(--ink-soft); font-size: 15px;
+  }
+  details.notice { text-align: left; }
+  details.notice summary { cursor: pointer; color: var(--ink); font-weight: 600; }
+  details.notice p { margin: 12px 0 0; }
+  a:focus-visible, summary:focus-visible { outline: 3px solid var(--today); outline-offset: 4px; }
+  @media (max-width: 480px) {
+    header.wrap { padding-top: 42px; }
+    section.wrap { padding-top: 42px; padding-bottom: 42px; }
+  }
+  
+  
+  
+  
+  /*langmenu*/
+  .langmenu { position: absolute; top: 14px; right: 16px; z-index: 5; font-size: 14px; text-align: left; }
+  .langmenu summary { list-style: none; cursor: pointer; background: var(--panel); color: var(--ink-soft);
+    border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; box-shadow: var(--shadow); }
+  .langmenu summary::-webkit-details-marker { display: none; }
+  .langmenu summary::after { content: " \25BE"; }
+  .langmenu[open] summary::after { content: " \25B4"; }
+  .langmenu .langlist { position: absolute; right: 0; margin-top: 8px; min-width: 210px; max-height: 70vh; overflow-y: auto;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 6px; }
+  .langmenu .langlist a, .langmenu .langlist span { display: block; padding: 7px 12px; border-radius: 9px; text-decoration: none; color: var(--ink); }
+  .langmenu .langlist a:hover { background: var(--bg); }
+  .langmenu .langlist span[aria-current] { background: var(--bg); font-weight: 650; }
+  body > .langbar { display: flex; gap: 14px; align-items: center; justify-content: space-between; max-width: 720px;
+    margin: 14px auto 0; padding: 12px 16px; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; box-shadow: var(--shadow); font-size: 15px; }
+  body > .langbar p { margin: 0; }
+  body > .langbar button { flex: none; background: none; border: 0; color: var(--ink-soft); font: inherit; font-size: 22px;
+    line-height: 1; padding: 4px 8px; cursor: pointer; }
+  /*/langmenu*/
+</style>
+<!--alt-->
+<link rel="alternate" hreflang="en" href="https://amouraux.github.io/DayHand/">
+<link rel="alternate" hreflang="de" href="https://amouraux.github.io/DayHand/de/">
+<link rel="alternate" hreflang="es" href="https://amouraux.github.io/DayHand/es/">
+<link rel="alternate" hreflang="fr" href="https://amouraux.github.io/DayHand/fr/">
+<link rel="alternate" hreflang="it" href="https://amouraux.github.io/DayHand/it/">
+<link rel="alternate" hreflang="nl" href="https://amouraux.github.io/DayHand/nl/">
+<link rel="alternate" hreflang="pt-PT" href="https://amouraux.github.io/DayHand/pt-pt/">
+<link rel="alternate" hreflang="pt-BR" href="https://amouraux.github.io/DayHand/pt-br/">
+<link rel="alternate" hreflang="ja" href="https://amouraux.github.io/DayHand/ja/">
+<link rel="alternate" hreflang="ko" href="https://amouraux.github.io/DayHand/ko/">
+<link rel="alternate" hreflang="sv" href="https://amouraux.github.io/DayHand/sv/">
+<link rel="alternate" hreflang="da" href="https://amouraux.github.io/DayHand/da/">
+<link rel="alternate" hreflang="nb" href="https://amouraux.github.io/DayHand/nb/">
+<link rel="alternate" hreflang="fi" href="https://amouraux.github.io/DayHand/fi/">
+<link rel="alternate" hreflang="pl" href="https://amouraux.github.io/DayHand/pl/">
+<link rel="alternate" hreflang="x-default" href="https://amouraux.github.io/DayHand/">
+<!--/alt-->
+</head>
+<body>
+
+<header class="wrap">
+  <!--langmenu--><details class="langmenu"><summary>言語</summary><div class="langlist"><a href="../index.html" hreflang="en" lang="en">English</a><a href="../de/index.html" hreflang="de" lang="de">Deutsch</a><a href="../es/index.html" hreflang="es" lang="es">Español</a><a href="../fr/index.html" hreflang="fr" lang="fr">Français</a><a href="../it/index.html" hreflang="it" lang="it">Italiano</a><a href="../nl/index.html" hreflang="nl" lang="nl">Nederlands</a><a href="../pt-pt/index.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a><a href="../pt-br/index.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a><span aria-current="page" lang="ja">日本語</span><a href="../ko/index.html" hreflang="ko" lang="ko">한국어</a><a href="../sv/index.html" hreflang="sv" lang="sv">Svenska</a><a href="../da/index.html" hreflang="da" lang="da">Dansk</a><a href="../nb/index.html" hreflang="nb" lang="nb">Norsk bokmål</a><a href="../fi/index.html" hreflang="fi" lang="fi">Suomi</a><a href="../pl/index.html" hreflang="pl" lang="pl">Polski</a></div></details><!--/langmenu-->
+  
+  
+  
+  
+  <img class="icon" src="../icon.png" alt="DayHand" width="132" height="132">
+  <h1>DayHand</h1>
+  <p class="tagline">カレンダーではなく、暮らしと目標を軸にタスクを整理しましょう。</p>
+  <p class="sub">講演の準備、原稿の執筆、機能の開発、部屋の改装。本当の仕事の多くは、ある特定の日に始まり、その日に終わるものではありません。すべてを日付に合わせて計画すると、終わらなかった仕事は予定を組み直す作業の山になりがちです。そこで日付を動かしたり、タスクを細切れにしたりして、アプリを現実に合わせることになります。</p>
+  <p class="sub">DayHandでは、タスクは必要なだけそのまま進行中にしておけます。何日もかかる仕事は、ずっと「作業中」です。今夜チェックを入れなかったからといって、今日のリストを終えられなかったわけではありません。</p>
+  <div class="cta">
+    <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">ベータ版に参加<small>iPhone＆iPad · TestFlight</small>
+    </a>
+    <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Mac版ベータに参加<small>macOS · TestFlight</small>
+    </a>
+    <a class="btn btn-secondary" href="support.html">ヘルプとサポート<small>使い方と、うまくいかないときの対処</small></a>
+  </div>
+</header>
+
+<main>
+<section class="wrap" id="how-it-works" aria-labelledby="how-heading">
+  <h2 id="how-heading">すべてのタスクに居場所を</h2>
+  <p class="section-intro">カンバンに着想を得たDayHandは、カードとスタックのシンプルさを、暮らしと仕事の管理に取り入れました。スタックが表すのは、カレンダー上の日付ではなく、そのタスクが今の暮らしのどこに属するかです。</p>
+  <div class="ideas">
+    <div class="idea i-inbox wide-idea">
+      <h3>インボックス</h3>
+      <p>どうするかを決める前に、まずタスクを書き留めておきます。新しいタスクは通常ここに入り、時間のあるときに振り分けられます。置き場所がすでに決まっているなら、追加するときに別のスタックを選びます。</p>
+    </div>
+    <div class="idea i-today">
+      <h3>今</h3>
+      <p>今、積極的に取り組んでいること。タスクは、進めている間、数日から数週間ここに置いておけます。「今」は進行中という意味で、今日中に全部終わらせるという約束ではありません。</p>
+    </div>
+    <div class="idea i-tomorrow">
+      <h3>次</h3>
+      <p>余裕ができたら次に手をつけるつもりのこと。明日に割り当てたり、すでに進めている仕事と競わせたりせずに、次の一歩を目に入るところに置いておきます。</p>
+    </div>
+    <div class="idea i-later">
+      <h3>あとで</h3>
+      <p>将来のために取っておきたいアイデア、計画、タスク。まだ手をつけないと決めたものでも、準備ができるまでの居場所があります。</p>
+    </div>
+    <div class="idea i-waiting">
+      <h3>待機中</h3>
+      <p>返事、届け物、誰かのフィードバックなど、何かが届くまで進められない仕事。進行中の仕事から切り離しておき、再び動けるようになったら置き場所を決めます。</p>
+    </div>
+  </div>
+  <p class="section-note">タスクをいつ動かすかは、あなたが決めます。時間が過ぎても、スタックは変わりません。仕事が終わったらチェックを入れると、「完了」に移ります。</p>
+</section>
+
+<section class="wrap" id="dates" aria-labelledby="dates-heading">
+  <h2 id="dates-heading">目的のある日付</h2>
+  <p class="section-intro">ほとんどのタスクに日付は必要ありません。日付が大切なときは、そのタスクのことを考えたい日と、本当に終えなければならない日を区別します。</p>
+  <div class="ideas">
+    <div class="idea i-flag">
+      <h3>リマインダー：いつ思い出すか</h3>
+      <p>タスクをもう一度意識に戻したい日を選びます。作業を始める、アイデアを見直す、「待機中」の件を催促する、といった場面です。通知と色付きの縁取りが気づかせてくれます。予定が変わったらリマインダーを変更または削除してください。タスクは置いた場所のままです。</p>
+    </div>
+    <div class="idea i-night">
+      <h3>期限：いつまでに終えるか</h3>
+      <p>提出、更新、納品など、本当の約束には、リマインダーに加えて任意の期限を付けられます。期限は終了日としてタスクに表示されます。通知と色付きの縁取りはリマインダーの役目で、期限が別の通知を出したり、タスクを動かしたりすることはありません。</p>
+    </div>
+  </div>
+  <p class="section-note">どちらの日付も、スタックを選んだり、タスクを動かしたり、完了にしたりはしません。タスクは、月曜にリマインダー、金曜に期限を付けたまま、一週間ずっと「今」に置いておけます。</p>
+</section>
+
+<section class="wrap" id="one-task" aria-labelledby="week-heading">
+  <h2 id="week-heading">あるタスクの道のり</h2>
+  <p class="section-intro">金曜に向けてプレゼンの準備を頼まれました。優先順位が変わり、作業が何日かかっても、これは1つのタスクです。</p>
+  <ol class="walk">
+    <li><b>月曜日</b><span class="step">「プレゼンの準備」を書き留め、火曜に始めるためのリマインダーと、金曜の期限を付けます。</span>
+        <span class="to w-inbox">インボックス</span></li>
+    <li><b>火曜日</b><span class="step">リマインダーがタスクを思い出させてくれます。始めることにして、「今」に移します。</span>
+        <span class="to w-now">今</span></li>
+    <li><b>その日のあと</b><span class="step">もっと急ぎのことが入りました。プレゼンは脇に置き、水曜のリマインダーを設定します。</span>
+        <span class="to w-later">あとで</span></li>
+    <li><b>水曜日</b><span class="step">リマインダーが再開を促します。「今」に戻して、同じタスクを続けます。</span>
+        <span class="to w-now">今</span></li>
+    <li><b>木曜日</b><span class="step">下書きを同僚に送ります。仕上げるには相手のフィードバックが必要なので、金曜に催促するリマインダーを設定します。</span>
+        <span class="to w-waiting">待機中</span></li>
+    <li><b>金曜日</b><span class="step">リマインダーが届いたら催促します。フィードバックが届いたので、最後の修正のためにタスクを「今」に移します。</span>
+        <span class="to w-now">今</span></li>
+    <li><b>完了</b><span class="step">金曜にプレゼンを行い、タスクにチェックを入れます。期限に間に合いました。</span>
+        <span class="to w-done">完了</span></li>
+  </ol>
+  <p class="walk-note">最初から最後まで、タスクは1つだけ。金曜の期限は一度も変わりませんでした。リマインダーが意識に戻してくれて、いつ動かすかはあなたが決めました。途中の中断と、チェックを入れなかった日々も、仕事を成し遂げる過程の一部でした。</p>
+</section>
+
+<section class="wrap" id="organisation" aria-labelledby="organisation-heading">
+  <h2 id="organisation-heading">関連する仕事をまとめておく</h2>
+  <div class="ideas">
+    <div class="idea i-night">
+      <h3>共通の目的のためのプロジェクト</h3>
+      <p>旅行、講義、顧客、ひとつの仕事に関するタスクをまとめておきます。<b>休暇</b>のような名前でタスクを書き始めると、入力欄の下に候補が出るので選ぶか、プロジェクトボタンから選びます。1つのタスクには1つのプロジェクトを付けられ、色付きの接頭辞として表示されます。</p>
+    </div>
+    <div class="idea i-keep">
+      <h3>暮らしの領域ごとのカテゴリ</h3>
+      <p>仕事、ホーム、講義のような大きな領域を、ご自身のラベル、アイコン、色で分けます。プロジェクトは、そのタスクに出発点となるカテゴリを与えます。プロジェクトに割り当てなくても、タスクにカテゴリを付けられます。</p>
+    </div>
+    <div class="idea i-later">
+      <h3>関連するプロジェクトのグループ</h3>
+      <p>プロジェクトを、クライアント、講義、休暇のようなグループにまとめます。名前の変更や並べ替えはフィルタから行います。プロジェクトが終わったらアーカイブし、タスクは参照用に残しておけます。</p>
+    </div>
+    <div class="idea i-tomorrow">
+      <h3>集中するものを見つける</h3>
+      <p>タスクのタイトル、プロジェクト名、グループ名を検索できます。カテゴリとプロジェクトを自由に組み合わせて絞り込んだり、グループごと選んだりできます。未完了のタスクがあるプロジェクト、進行中のすべてのプロジェクト、振り返りたいときはアーカイブ済みのものを表示できます。</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="history" aria-labelledby="history-heading">
+  <h2 id="history-heading">時間をかけて成し遂げたことを見る</h2>
+  <p class="section-intro">やることのリストは、全体像の一部にすぎません。DayHandは、終えた仕事の記録も残します。</p>
+  <div class="ideas">
+    <div class="idea i-review">
+      <h3>今週と先週</h3>
+      <p>完了したタスクを、終えた日ごとにまとめて確認できます。今週何を片付けたかを見たり、次に何をするかを決める前に先週を振り返ったりできます。</p>
+    </div>
+    <div class="idea i-night">
+      <h3>もっと長い目で</h3>
+      <p>これまでの完了を、月ごと・日ごとのタイムラインで見たり、プロジェクトの履歴を開いて、その終えた仕事を見たりできます。日ごとの件数とシンプルな棒グラフで、完了のパターンがひと目で分かります。</p>
+    </div>
+  </div>
+  <p class="section-note">完了したタスクは「完了」スタックに残るので、また見つけたり、もう一度手を入れたい仕事を開き直したりできます。</p>
+</section>
+
+<section class="wrap" id="screens" aria-labelledby="screens-heading">
+  <h2 id="screens-heading">すべてのデバイスで、ひとつのアプリ</h2>
+  <p class="section-intro">最初からiPhone、iPad、Mac向けに作られています。Appleのデバイスのどれでも同じタスクで作業でき、画面ごとにぴったり合う、一貫した使い心地です。</p>
+  <div class="shots">
+    <figure class="phone">
+      <img src="../screenshots/iphone.png" alt="DayHandベータ版のiPhone画面の例。タスクがスタックに整理されている（画面は英語表記）"
+           loading="lazy" width="1206" height="2622">
+      <figcaption><b>iPhone</b> — スタックに並ぶタスクと、任意のプロジェクトラベル。</figcaption>
+    </figure>
+    <figure>
+      <img src="../screenshots/ipad.png" alt="DayHandベータ版のiPad画面の例。タスク一覧の横にプロジェクトのフィルタのサイドバーがある（画面は英語表記）"
+           loading="lazy" width="2064" height="2752">
+      <figcaption><b>iPad</b> — サイドバーがプロジェクトをタスクの横に保ちます。Macではサイズを変更できるウインドウで同じレイアウトを使います。</figcaption>
+    </figure>
+  </div>
+  <p class="section-note">ベータ版の画面例（英語表記）です。現在のバージョンとはレイアウトや操作が異なる場合があります。</p>
+</section>
+
+<section class="wrap" id="use-cases" aria-labelledby="use-cases-heading">
+  <h2 id="use-cases-heading">暮らしにも、仕事にも</h2>
+  <div class="ideas">
+    <div class="idea i-later">
+      <h3>建築家</h3>
+      <p>進行中の図面は「今」、次の改訂は「次」、将来のアイデアは「あとで」に。クライアントに送った図面一式は、返事が届くまで「待機中」へ。フォローアップのリマインダーと、実際の提出日の期限を付けておきます。</p>
+    </div>
+    <div class="idea i-tomorrow">
+      <h3>造園業者</h3>
+      <p>形になりつつある庭は「今」、次の現場訪問は「次」、先の植栽計画は「あとで」に。資材や施主の承認を待っている仕事は「待機中」へ。フォローアップのリマインダーと、約束した引き渡しの期限を設定します。</p>
+    </div>
+    <div class="idea i-review">
+      <h3>学生</h3>
+      <p>課題、復習、日々の用事のバランスをとります。講義ごとのタスクはそれぞれのプロジェクトにまとめ、「今」の仕事に集中し、実際の提出日を期限にします。チームメイトの担当分を待っているグループ作業は「待機中」へ。</p>
+    </div>
+    <div class="idea i-keep">
+      <h3>研究者</h3>
+      <p>分析と執筆は「今」に置き、共著者に渡した原稿やデータ待ちの実験は「待機中」に。関連する研究や助成金をグループにまとめ、プロジェクトの履歴で、これまで成し遂げたことを振り返ります。</p>
+    </div>
+    <div class="idea i-today">
+      <h3>ウェブ開発者</h3>
+      <p>ひとつの機能は何日も「今」に置け、次の機能は「次」、バックログは「あとで」に。APIキーやクライアントのフィードバックで止まっている作業は「待機中」へ。タスクを何度も組み直さずに、リリースの期限を保てます。</p>
+    </div>
+    <div class="idea i-night">
+      <h3>家庭と家族</h3>
+      <p>保険の手続きは「今」、健康診断の予約は「次」、旅行のアイデアは「あとで」に。業者の見積もり待ちの修理は「待機中」へ。フォローアップのリマインダーを設定し、実際の更新日を期限にします。</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="your-data" aria-labelledby="data-heading">
+  <h2 id="data-heading">タスクはあなたのもの</h2>
+  <div class="ideas">
+    <div class="idea i-keep">
+      <h3>DayHandのアカウントもサーバもなし</h3>
+      <p>DayHandは、お使いのデバイスとご自身のiCloud Driveにタスクを保存・同期します。作成するDayHandアカウントはなく、データを預かるDayHandのサーバもありません。</p>
+    </div>
+    <div class="idea i-night">
+      <h3>設計に組み込まれた同期</h3>
+      <p>ご自身のiCloud Driveにある共有ファイルが、iPhone、iPad、Macのタスクを同期します。各デバイスで同じファイルを一度選ぶだけで、どこにいてもタスクを扱えます。iCloud Driveがデバイス同士をつなぐので、DayHandの別のサービスは不要です。</p>
+    </div>
+    <div class="idea i-review wide-idea">
+      <h3>バックアップと、出口</h3>
+      <p>Appを開いた日には自動でバックアップが作成され、3つのコピーが順に保持されます。手動でバックアップを追加したり、以前のコピーを復元したり、より安全な場所に共有したりできます。CSVの読み込みと書き出しで、タスクを取り込んだり持ち出したりできます。</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="get-dayhand" aria-labelledby="install-heading">
+  <h2 id="install-heading">DayHandのベータ版を試す</h2>
+  <p class="section-intro">iPhone、iPad、Mac向けに、AppleのTestFlightで提供しています。</p>
+  <div class="install">
+    <div class="task">
+      <h3>iPhoneとiPad</h3>
+      <p class="req">iOS / iPadOS 17以降</p>
+      <ol class="steps">
+        <li>App StoreからAppleの<b>TestFlight</b>をインストールします。</li>
+        <li>iPhoneまたはiPadで、下のベータ版リンクを開きます。</li>
+        <li>招待を承諾して、DayHandをインストールします。</li>
+      </ol>
+      <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">ベータ版に参加</a>
+    </div>
+    <div class="task">
+      <h3>Mac</h3>
+      <p class="req">macOS 14以降</p>
+      <ol class="steps">
+        <li>Mac App Storeから<b>TestFlight</b>をインストールします。</li>
+        <li>Macで、同じベータ版リンクを下から開きます。</li>
+        <li>招待を承諾して、DayHandをインストールします。</li>
+      </ol>
+      <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Mac版ベータに参加</a>
+    </div>
+  </div>
+  <details class="notice">
+    <summary>自分でビルドした以前のMac版から移行しますか？</summary>
+    <p>TestFlight版のAppは、データを別の場所に保存します。タスクが空の状態で開いても、以前のファイルは元の場所にそのまま残っています。iCloud Driveで同期していた場合は、<b>その他 → 既存の同期ファイルを使う</b>を開き、同じファイルをもう一度選ぶとタスクが戻ります。</p>
+  </details>
+</section>
+</main>
+
+<footer class="wrap">
+  <p>分かりにくい点がありますか？<a href="support.html">ヘルプページ</a>で、ほとんどのことが分かります。それでも解決しない場合は、TestFlightでベータ版のフィードバックを送るか、<a href="https://github.com/amouraux/DayHand/issues/new">GitHubで問題を報告</a>してください。</p>
+  <p>日本語、英語、フランス語、オランダ語、ドイツ語、スペイン語、イタリア語、ポルトガル語（ポルトガルとブラジル）、韓国語、スウェーデン語、デンマーク語、ノルウェー語、フィンランド語、ポーランド語に対応しています。</p>
+  <!--privacy--><p>プライバシーポリシー: <a href="../privacy.html" hreflang="en" lang="en">English</a> · <a href="../de/privacy.html" hreflang="de" lang="de">Deutsch</a> · <a href="../es/privacy.html" hreflang="es" lang="es">Español</a> · <a href="../fr/privacy.html" hreflang="fr" lang="fr">Français</a> · <a href="../it/privacy.html" hreflang="it" lang="it">Italiano</a> · <a href="../nl/privacy.html" hreflang="nl" lang="nl">Nederlands</a> · <a href="../pt-pt/privacy.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a> · <a href="../pt-br/privacy.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a> · <a href="../ja/privacy.html" hreflang="ja" lang="ja">日本語</a> · <a href="../ko/privacy.html" hreflang="ko" lang="ko">한국어</a> · <a href="../sv/privacy.html" hreflang="sv" lang="sv">Svenska</a> · <a href="../da/privacy.html" hreflang="da" lang="da">Dansk</a> · <a href="../nb/privacy.html" hreflang="nb" lang="nb">Norsk bokmål</a> · <a href="../fi/privacy.html" hreflang="fi" lang="fi">Suomi</a> · <a href="../pl/privacy.html" hreflang="pl" lang="pl">Polski</a></p><!--/privacy-->
+  <p>SwiftUIで作成 · <a href="https://github.com/amouraux/DayHand">GitHubのソースコード</a></p>
+</footer>
+
+</body>
+</html>

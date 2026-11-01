@@ -144,9 +144,10 @@ App Store version. TestFlight changes alone do not establish that baseline.
 
 ### Localised URLs
 
-The privacy policy and the support page exist in every app language. App Store
-Connect takes a Support URL and a Privacy Policy URL per localisation, so enter
-the matching one for each; a language without its own falls back to the English
+The homepage, the privacy policy and the support page exist in every app
+language. App Store Connect takes a Marketing URL, a Support URL and a Privacy
+Policy URL per localisation, so enter the matching one for each (the marketing
+URL is `…/DayHand/<folder>/`); a language without its own falls back to the English
 pages above. Folders are the same for both pages:
 
 | App Store localisation | Folder | Privacy Policy URL | Support URL |

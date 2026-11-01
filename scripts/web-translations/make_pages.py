@@ -10,7 +10,7 @@ Each web_<code>.py defines D, a dict of the translated text. Button labels that
 the app itself shows ({more}, {sync}, ...) are taken from Localizable.xcstrings
 so the page says exactly what the screen says.
 """
-import json, os, sys, importlib, re
+import json, os, sys, importlib, re, glob
 
 S = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(S))
@@ -213,6 +213,19 @@ def patch_english():
         open(path, "w").write(s)
 
 
+def patch_help_pages():
+    """The English guides have no translation, but the support page they lead to does:
+    each guide's menu ends with a way to the translated support pages."""
+    for path in sorted(glob.glob(f"{ROOT}/docs/help/*.html")):
+        if path.endswith("support.html"):
+            continue
+        s = open(path).read()
+        s = re.sub(r'<details class="langs".*?</details>\n?', "", s, flags=re.S)
+        if "</nav>" in s:
+            s = s.replace("</nav>", switcher("support", "en", "Support in other languages", "../") + "</nav>", 1)
+        open(path, "w").write(s)
+
+
 if __name__ == "__main__":
     only = sys.argv[1:]
     for folder, hl, ccode, name in LANGS:
@@ -226,4 +239,5 @@ if __name__ == "__main__":
         print("wrote", folder)
     if not only:
         patch_english()
+        patch_help_pages()
         print("patched English")

@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DayHand — Tarefas para a sua vida e o seu trabalho</title>
+<meta name="description" content="Organize as suas tarefas em torno da sua vida e dos seus objetivos, não do calendário. Gestão de tarefas inspirada no Kanban para iPhone, iPad e Mac, com lembretes, prazos e sem transporte diário.">
+<link rel="icon" href="../icon.png">
+<meta property="og:title" content="DayHand — Tarefas para a sua vida e o seu trabalho">
+<meta property="og:description" content="Organize as suas tarefas em torno da sua vida e dos seus objetivos, não do calendário. Inspirado no Kanban, o DayHand adapta a simplicidade de cartões e pilhas à gestão da sua vida e do seu trabalho.">
+<meta property="og:image" content="https://amouraux.github.io/DayHand/icon.png">
+<meta property="og:url" content="https://amouraux.github.io/DayHand/pt-pt/">
+<link rel="canonical" href="https://amouraux.github.io/DayHand/pt-pt/">
+<style>
+  :root {
+    --bg:        #f2f2f7;
+    --panel:     #ffffff;
+    --ink:       #12131a;
+    --ink-soft:  #5c5f70;
+    --line:      rgba(18,19,26,.10);
+    --today:     #2f7bf6;
+    --tomorrow:  #e8871e;
+    --later:     #1da34f;
+    --night:     #2f3486;
+    --review:    #8a4bd0;
+    --flag:      #d92d20;
+    --keep:      #0f8a8a;
+    --waiting:   #6b7a90;
+    --shadow:    0 1px 2px rgba(18,19,26,.05), 0 8px 24px rgba(18,19,26,.07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:       #0d0e12;
+      --panel:    #17181e;
+      --ink:      #f3f4f8;
+      --ink-soft: #a0a4b6;
+      --line:     rgba(255,255,255,.12);
+      --today:    #6ea6ff;
+      --tomorrow: #f5b25c;
+      --later:    #5fd48a;
+      --night:    #9099ee;
+      --review:   #c18cf0;
+      --flag:     #ff7a70;
+      --keep:     #4fd0d0;
+      --waiting:  #9aa8bd;
+      --shadow:   0 1px 2px rgba(0,0,0,.4), 0 8px 28px rgba(0,0,0,.45);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 400 17px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1020px; margin: 0 auto; padding: 0 16px; }
+  a { color: inherit; }
+
+  /* ---------- hero ---------- */
+  header.wrap { padding: 76px 16px 38px; text-align: center; }
+  .icon {
+    width: 132px; height: 132px; border-radius: 30px;
+    box-shadow: var(--shadow); display: block; margin: 0 auto 26px;
+  }
+  h1 {
+    margin: 0; font-size: clamp(44px, 9vw, 68px); letter-spacing: -.028em;
+    font-weight: 700; line-height: 1.02;
+  }
+  .tagline {
+    margin: 16px auto 0; max-width: 30ch;
+    font-size: clamp(20px, 3.4vw, 25px); line-height: 1.32;
+    letter-spacing: -.012em; color: var(--ink);
+  }
+  .sub {
+    margin: 18px auto 0; max-width: 54ch;
+    color: var(--ink-soft); font-size: 17px;
+  }
+
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 34px 0 6px; }
+  .btn {
+    display: inline-flex; flex-direction: column; align-items: center;
+    gap: 2px; text-decoration: none; padding: 13px 26px; border-radius: 14px;
+    font-weight: 600; font-size: 17px; letter-spacing: -.01em;
+    border: 1px solid transparent; transition: transform .12s ease, filter .12s ease;
+  }
+  .btn:hover { transform: translateY(-1px); filter: brightness(1.06); }
+  .btn small { font-weight: 400; font-size: 12.5px; opacity: .8; letter-spacing: 0; }
+  .btn-primary { background: var(--today); color: #fff; }
+  .btn-secondary { background: var(--panel); color: var(--ink); border-color: var(--line); box-shadow: var(--shadow); }
+
+  /* ---------- ideas ---------- */
+  section.wrap { padding: 62px 16px; }
+  h2 {
+    font-size: 13px; text-transform: uppercase; letter-spacing: .1em;
+    color: var(--ink-soft); font-weight: 600; margin: 0 0 28px; text-align: center;
+  }
+  .ideas { display: grid; gap: 14px; grid-template-columns: 1fr; }
+  @media (min-width: 720px) { .ideas { grid-template-columns: 1fr 1fr; } }
+  .idea {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+    padding: 24px 24px 26px; box-shadow: var(--shadow);
+    border-left: 4px solid var(--accent, var(--today));
+  }
+  .idea h3 { margin: 0 0 8px; font-size: 18.5px; letter-spacing: -.012em; }
+  .idea p  { margin: 0; color: var(--ink-soft); font-size: 15.5px; line-height: 1.55; }
+  .i-inbox    { --accent: var(--ink-soft); }
+  .i-today    { --accent: var(--today); }
+  .i-tomorrow { --accent: var(--tomorrow); }
+  .i-later    { --accent: var(--later); }
+  .i-night    { --accent: var(--night); }
+  .i-review   { --accent: var(--review); }
+  .i-flag     { --accent: var(--flag); }
+  .i-keep     { --accent: var(--keep); }
+  .i-waiting  { --accent: var(--waiting); }
+  /* Full width: it is the answer to "then how do I know I am getting
+     anywhere?", which deserves more than a quarter of the grid. */
+  @media (min-width: 720px) { .wide-idea { grid-column: 1 / -1; } }
+
+  /* ---------- screenshots ---------- */
+  .shots { display: grid; gap: 34px; grid-template-columns: 1fr; align-items: end; }
+  @media (min-width: 760px) { .shots { grid-template-columns: 1fr 1fr; } }
+  figure { margin: 0; text-align: center; }
+  figure img {
+    width: 100%; height: auto; display: block;
+    border-radius: 16px; border: 1px solid var(--line); box-shadow: var(--shadow);
+  }
+  figure.phone { max-width: 320px; margin-inline: auto; }
+  figcaption { margin-top: 14px; margin-bottom: 8px; color: var(--ink-soft); font-size: 14.5px; }
+  figcaption b { color: var(--ink); font-weight: 600; }
+  .wide { grid-column: 1 / -1; }
+
+  /* ---------- install ---------- */
+  .install { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .task {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+    padding: 26px; box-shadow: var(--shadow);
+  }
+  .task h3 { margin: 0 0 6px; font-size: 19px; letter-spacing: -.012em; }
+  .task .req { color: var(--ink-soft); font-size: 14px; margin: 0 0 16px; }
+  .task p { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 18px; }
+  .task .steps { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 18px; padding-left: 20px; }
+  .task .steps li { margin-bottom: 7px; }
+  .task .steps li:last-child { margin-bottom: 0; }
+  /* The thing you would otherwise only find out by hitting it. */
+  .task .aside {
+    font-size: 14px; border-left: 2px solid var(--line);
+    padding-left: 12px; margin: 0 0 18px;
+  }
+  .task .btn { display: inline-flex; }
+
+  /* One task’s journey, including the pauses and changes of priority. */
+  .walk {
+    list-style: none; margin: 0 auto; padding: 0; max-width: 560px;
+    display: grid; gap: 10px;
+  }
+  .walk li {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 6px 10px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 18px; box-shadow: var(--shadow);
+    color: var(--ink-soft); font-size: 15.5px;
+  }
+  .walk b { color: var(--ink); min-width: 92px; }
+  .walk .step { grid-column: 1 / -1; grid-row: 2; }
+  .walk .to { grid-column: 2; grid-row: 1; font-weight: 600; color: var(--accent, var(--today)); }
+  .walk .w-inbox   { --accent: var(--ink-soft); }
+  .walk .w-now     { --accent: var(--today); }
+  .walk .w-later   { --accent: var(--later); }
+  .walk .w-done    { --accent: var(--later); }
+  .walk .w-waiting { --accent: var(--waiting); }
+  .walk .w-due     { --accent: var(--night); }
+  .walk-note {
+    max-width: 560px; margin: 16px auto 0; text-align: center;
+    color: var(--ink-soft); font-size: 15px;
+  }
+
+  .notice {
+    max-width: 640px; margin: 22px auto 0; padding: 16px 18px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+    color: var(--ink-soft); font-size: 14.5px; line-height: 1.5;
+  }
+  .notice b { color: var(--ink); }
+
+  footer.wrap {
+    border-top: 1px solid var(--line); margin-top: 24px;
+    padding: 34px 16px 64px; text-align: center;
+    color: var(--ink-soft); font-size: 14.5px;
+  }
+  footer a { color: var(--today); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  footer p { margin: 6px 0; }
+  .section-intro {
+    max-width: 62ch; margin: -12px auto 28px; text-align: center;
+    color: var(--ink-soft); font-size: 16px;
+  }
+  .section-note {
+    max-width: 62ch; margin: 22px auto 0; text-align: center;
+    color: var(--ink-soft); font-size: 15px;
+  }
+  details.notice { text-align: left; }
+  details.notice summary { cursor: pointer; color: var(--ink); font-weight: 600; }
+  details.notice p { margin: 12px 0 0; }
+  a:focus-visible, summary:focus-visible { outline: 3px solid var(--today); outline-offset: 4px; }
+  @media (max-width: 480px) {
+    header.wrap { padding-top: 42px; }
+    section.wrap { padding-top: 42px; padding-bottom: 42px; }
+  }
+  
+  
+  
+  
+  /*langmenu*/
+  .langmenu { position: absolute; top: 14px; right: 16px; z-index: 5; font-size: 14px; text-align: left; }
+  .langmenu summary { list-style: none; cursor: pointer; background: var(--panel); color: var(--ink-soft);
+    border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; box-shadow: var(--shadow); }
+  .langmenu summary::-webkit-details-marker { display: none; }
+  .langmenu summary::after { content: " \25BE"; }
+  .langmenu[open] summary::after { content: " \25B4"; }
+  .langmenu .langlist { position: absolute; right: 0; margin-top: 8px; min-width: 210px; max-height: 70vh; overflow-y: auto;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 6px; }
+  .langmenu .langlist a, .langmenu .langlist span { display: block; padding: 7px 12px; border-radius: 9px; text-decoration: none; color: var(--ink); }
+  .langmenu .langlist a:hover { background: var(--bg); }
+  .langmenu .langlist span[aria-current] { background: var(--bg); font-weight: 650; }
+  body > .langbar { display: flex; gap: 14px; align-items: center; justify-content: space-between; max-width: 720px;
+    margin: 14px auto 0; padding: 12px 16px; background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; box-shadow: var(--shadow); font-size: 15px; }
+  body > .langbar p { margin: 0; }
+  body > .langbar button { flex: none; background: none; border: 0; color: var(--ink-soft); font: inherit; font-size: 22px;
+    line-height: 1; padding: 4px 8px; cursor: pointer; }
+  /*/langmenu*/
+</style>
+<!--alt-->
+<link rel="alternate" hreflang="en" href="https://amouraux.github.io/DayHand/">
+<link rel="alternate" hreflang="de" href="https://amouraux.github.io/DayHand/de/">
+<link rel="alternate" hreflang="es" href="https://amouraux.github.io/DayHand/es/">
+<link rel="alternate" hreflang="fr" href="https://amouraux.github.io/DayHand/fr/">
+<link rel="alternate" hreflang="it" href="https://amouraux.github.io/DayHand/it/">
+<link rel="alternate" hreflang="nl" href="https://amouraux.github.io/DayHand/nl/">
+<link rel="alternate" hreflang="pt-PT" href="https://amouraux.github.io/DayHand/pt-pt/">
+<link rel="alternate" hreflang="pt-BR" href="https://amouraux.github.io/DayHand/pt-br/">
+<link rel="alternate" hreflang="ja" href="https://amouraux.github.io/DayHand/ja/">
+<link rel="alternate" hreflang="ko" href="https://amouraux.github.io/DayHand/ko/">
+<link rel="alternate" hreflang="sv" href="https://amouraux.github.io/DayHand/sv/">
+<link rel="alternate" hreflang="da" href="https://amouraux.github.io/DayHand/da/">
+<link rel="alternate" hreflang="nb" href="https://amouraux.github.io/DayHand/nb/">
+<link rel="alternate" hreflang="fi" href="https://amouraux.github.io/DayHand/fi/">
+<link rel="alternate" hreflang="pl" href="https://amouraux.github.io/DayHand/pl/">
+<link rel="alternate" hreflang="x-default" href="https://amouraux.github.io/DayHand/">
+<!--/alt-->
+</head>
+<body>
+
+<header class="wrap">
+  <!--langmenu--><details class="langmenu"><summary>Idiomas</summary><div class="langlist"><a href="../index.html" hreflang="en" lang="en">English</a><a href="../de/index.html" hreflang="de" lang="de">Deutsch</a><a href="../es/index.html" hreflang="es" lang="es">Español</a><a href="../fr/index.html" hreflang="fr" lang="fr">Français</a><a href="../it/index.html" hreflang="it" lang="it">Italiano</a><a href="../nl/index.html" hreflang="nl" lang="nl">Nederlands</a><span aria-current="page" lang="pt-PT">Português (Portugal)</span><a href="../pt-br/index.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a><a href="../ja/index.html" hreflang="ja" lang="ja">日本語</a><a href="../ko/index.html" hreflang="ko" lang="ko">한국어</a><a href="../sv/index.html" hreflang="sv" lang="sv">Svenska</a><a href="../da/index.html" hreflang="da" lang="da">Dansk</a><a href="../nb/index.html" hreflang="nb" lang="nb">Norsk bokmål</a><a href="../fi/index.html" hreflang="fi" lang="fi">Suomi</a><a href="../pl/index.html" hreflang="pl" lang="pl">Polski</a></div></details><!--/langmenu-->
+  
+  
+  
+  
+  <img class="icon" src="../icon.png" alt="DayHand" width="132" height="132">
+  <h1>DayHand</h1>
+  <p class="tagline">Organize as suas tarefas em torno da sua vida e dos seus objetivos, não do calendário.</p>
+  <p class="sub">Preparar uma palestra, escrever um manuscrito, construir uma funcionalidade, remodelar uma divisão: a maior parte do trabalho real não é criada nem concluída num dia em particular. Quando planeia tudo em torno de um dia, o trabalho por concluir pode tornar-se uma lista de coisas a reagendar. Por isso muda as datas, ou corta a tarefa aos bocados, para que a app concorde com a realidade.</p>
+  <p class="sub">O DayHand deixa simplesmente uma tarefa ativa durante o tempo que for preciso. O trabalho que se estende por vários dias continua a ser trabalho em curso: não o assinalar esta noite não significa que não terminou a lista de hoje.</p>
+  <div class="cta">
+    <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">Aderir à beta<small>iPhone e iPad · TestFlight</small>
+    </a>
+    <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Aderir à beta para Mac<small>macOS · TestFlight</small>
+    </a>
+    <a class="btn btn-secondary" href="support.html">Ajuda e apoio<small>Como funciona e o que fazer quando não funciona</small></a>
+  </div>
+</header>
+
+<main>
+<section class="wrap" id="how-it-works" aria-labelledby="how-heading">
+  <h2 id="how-heading">Um lugar para cada tarefa</h2>
+  <p class="section-intro">Inspirado no Kanban, o DayHand adapta a simplicidade de cartões e pilhas à gestão da sua vida e do seu trabalho. Uma pilha reflete o lugar de uma tarefa na sua vida neste momento, e não um dia do calendário.</p>
+  <div class="ideas">
+    <div class="idea i-inbox wide-idea">
+      <h3>Entrada</h3>
+      <p>Registe uma tarefa antes de decidir o que fazer com ela. As tarefas novas chegam normalmente aqui, prontas a ser organizadas quando tiver um momento. Se já sabe onde uma tarefa se encaixa, escolha outra pilha ao adicioná-la.</p>
+    </div>
+    <div class="idea i-today">
+      <h3>Agora</h3>
+      <p>Aquilo em que está a trabalhar ativamente. Uma tarefa pode ficar aqui vários dias ou semanas enquanto a faz avançar. «Agora» quer dizer em curso, não a promessa de terminar tudo hoje.</p>
+    </div>
+    <div class="idea i-tomorrow">
+      <h3>A seguir</h3>
+      <p>O que pretende retomar a seguir, quando tiver espaço para isso. Mantenha os próximos passos à vista sem os atribuir a amanhã nem os pôr a competir com o trabalho já em curso.</p>
+    </div>
+    <div class="idea i-later">
+      <h3>Mais tarde</h3>
+      <p>Ideias, planos e tarefas que quer guardar para o futuro. Escolhe não pegar nelas ainda, mas têm um lugar onde esperar até estar pronto.</p>
+    </div>
+    <div class="idea i-waiting">
+      <h3>A aguardar</h3>
+      <p>Trabalho que não pode avançar até chegar uma resposta, uma entrega, a opinião de alguém ou outra coisa. Mantenha-o fora do seu trabalho ativo e decida depois onde se encaixa, quando puder voltar a agir.</p>
+    </div>
+  </div>
+  <p class="section-note">É o utilizador quem decide quando uma tarefa se move. O passar do tempo não muda nada na sua pilha. Assinale-a quando o trabalho estiver terminado e passa para «Concluídos».</p>
+</section>
+
+<section class="wrap" id="dates" aria-labelledby="dates-heading">
+  <h2 id="dates-heading">Datas com um propósito</h2>
+  <p class="section-intro">A maioria das tarefas não precisa de data. Quando uma data importa, distinga quando quer pensar na tarefa de quando ela tem mesmo de estar terminada.</p>
+  <div class="ideas">
+    <div class="idea i-flag">
+      <h3>Lembretes: quando pensar nisso</h3>
+      <p>Escolha um dia para trazer uma tarefa de volta à sua atenção: para começar, reconsiderar uma ideia ou insistir em algo que está em «A aguardar». Uma notificação e uma margem colorida ajudam-no a reparar. Altere ou limpe o lembrete quando os planos mudarem; a tarefa fica onde a pôs.</p>
+    </div>
+    <div class="idea i-night">
+      <h3>Prazos: quando tem de estar terminada</h3>
+      <p>Junte um prazo opcional a um lembrete para um compromisso real: uma entrega, uma renovação, um envio. É mostrado na tarefa como data de conclusão. O lembrete trata das notificações e da margem colorida; o prazo não envia um alerta separado nem move a tarefa.</p>
+    </div>
+  </div>
+  <p class="section-note">Nenhuma das datas escolhe uma pilha, move uma tarefa ou a marca como concluída. Uma tarefa pode ficar em «Agora» a semana toda, com um lembrete na segunda-feira e um prazo na sexta-feira.</p>
+</section>
+
+<section class="wrap" id="one-task" aria-labelledby="week-heading">
+  <h2 id="week-heading">O percurso de uma tarefa</h2>
+  <p class="section-intro">Pedem-lhe que prepare uma apresentação para sexta-feira. É uma só tarefa, mesmo quando as prioridades mudam e o trabalho leva vários dias.</p>
+  <ol class="walk">
+    <li><b>Segunda-feira</b><span class="step">Regista «Preparar a apresentação», com um lembrete para começar na terça-feira e um prazo na sexta-feira.</span>
+        <span class="to w-inbox">Entrada</span></li>
+    <li><b>Terça-feira</b><span class="step">O lembrete traz a tarefa de volta à sua atenção. Decide começar e passa-a para «Agora».</span>
+        <span class="to w-now">Agora</span></li>
+    <li><b>Mais tarde nesse dia</b><span class="step">Algo mais urgente exige a sua atenção. Deixe a apresentação de lado e defina um lembrete para quarta-feira.</span>
+        <span class="to w-later">Mais tarde</span></li>
+    <li><b>Quarta-feira</b><span class="step">O lembrete convida-o a retomá-la. Volte a passá-la para «Agora» e continue a mesma tarefa.</span>
+        <span class="to w-now">Agora</span></li>
+    <li><b>Quinta-feira</b><span class="step">Envia o rascunho a um colega. Precisa da opinião dele antes de poder terminar; defina um lembrete para insistir na sexta-feira.</span>
+        <span class="to w-waiting">A aguardar</span></li>
+    <li><b>Sexta-feira</b><span class="step">Insiste quando o lembrete chega. A opinião chega e passa a tarefa para «Agora» para as últimas alterações.</span>
+        <span class="to w-now">Agora</span></li>
+    <li><b>Terminada</b><span class="step">Faz a apresentação na sexta-feira e assinala a tarefa. O prazo foi cumprido.</span>
+        <span class="to w-done">Concluídos</span></li>
+  </ol>
+  <p class="walk-note">Uma só tarefa do princípio ao fim. O prazo de sexta-feira nunca mudou. Os lembretes trouxeram-na de volta à sua atenção; foi o utilizador que escolheu quando a mover. As pausas e os dias sem assinalar fizeram parte de levar o trabalho a bom termo.</p>
+</section>
+
+<section class="wrap" id="organisation" aria-labelledby="organisation-heading">
+  <h2 id="organisation-heading">Mantenha junto o trabalho relacionado</h2>
+  <div class="ideas">
+    <div class="idea i-night">
+      <h3>Projetos com um propósito comum</h3>
+      <p>Mantenha juntas as tarefas de uma viagem, de um curso, de um cliente ou de um trabalho. Comece uma tarefa com um nome como <b>FÉRIAS</b> e aceite o projeto proposto sob o campo, ou escolha um no botão de projeto. Cada tarefa pode ter um projeto, mostrado como prefixo colorido.</p>
+    </div>
+    <div class="idea i-keep">
+      <h3>Categorias para as partes da sua vida</h3>
+      <p>Separe grandes áreas como Trabalho, Casa e Cursos com as suas próprias etiquetas, ícones e cores. Um projeto fornece uma categoria inicial às suas tarefas; também pode dar uma categoria a uma tarefa sem a atribuir a um projeto.</p>
+    </div>
+    <div class="idea i-later">
+      <h3>Grupos para projetos relacionados</h3>
+      <p>Reúna projetos em grupos como Clientes, Cursos ou Férias. Mude-lhes o nome e reorganize-os a partir do filtro. Quando um projeto terminar, arquive-o e mantenha as tarefas disponíveis para consulta.</p>
+    </div>
+    <div class="idea i-tomorrow">
+      <h3>Encontre o seu foco</h3>
+      <p>Pesquise títulos de tarefas, nomes de projetos e nomes de grupos. Filtre por qualquer combinação de categorias e projetos, ou escolha um grupo inteiro. Mostre os projetos com tarefas abertas, todos os projetos ativos ou os arquivados quando quiser olhar para trás.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="history" aria-labelledby="history-heading">
+  <h2 id="history-heading">Veja o que realizou, ao longo do tempo</h2>
+  <p class="section-intro">Uma lista de coisas a fazer é apenas parte do quadro. O DayHand guarda também um registo do trabalho que conclui.</p>
+  <div class="ideas">
+    <div class="idea i-review">
+      <h3>Esta semana e a semana passada</h3>
+      <p>Reveja as tarefas concluídas agrupadas pelo dia em que as terminou. Veja o que fez esta semana, ou olhe para a semana passada antes de decidir o que vem a seguir.</p>
+    </div>
+    <div class="idea i-night">
+      <h3>A visão a mais longo prazo</h3>
+      <p>Percorra toda a sua cronologia de conclusões por mês e dia, ou abra o Histórico de um projeto para ver o seu trabalho concluído. As contagens diárias e umas barras simples tornam fácil ver o padrão das conclusões.</p>
+    </div>
+  </div>
+  <p class="section-note">As tarefas concluídas permanecem na pilha «Concluídos», para que as possa voltar a encontrar ou reabrir o trabalho que precise de mais uma passagem.</p>
+</section>
+
+<section class="wrap" id="screens" aria-labelledby="screens-heading">
+  <h2 id="screens-heading">Uma só app em todos os seus dispositivos</h2>
+  <p class="section-intro">Criada de raiz para iPhone, iPad e Mac. Trabalhe com as mesmas tarefas em todos os seus dispositivos Apple, com uma experiência coerente que se adapta a cada ecrã.</p>
+  <div class="shots">
+    <figure class="phone">
+      <img src="../screenshots/iphone.png" alt="Ecrã de exemplo da beta do DayHand no iPhone, com tarefas organizadas em pilhas (interface em inglês)"
+           loading="lazy" width="1206" height="2622">
+      <figcaption><b>iPhone</b> — tarefas em pilhas, com etiquetas de projeto opcionais.</figcaption>
+    </figure>
+    <figure>
+      <img src="../screenshots/ipad.png" alt="Ecrã de exemplo da beta do DayHand no iPad, com a barra lateral do filtro de projetos junto da lista de tarefas (interface em inglês)"
+           loading="lazy" width="2064" height="2752">
+      <figcaption><b>iPad</b> — uma barra lateral mantém os projetos junto das suas tarefas. O Mac usa a mesma disposição numa janela redimensionável.</figcaption>
+    </figure>
+  </div>
+  <p class="section-note">Ecrãs de exemplo da beta, com interface em inglês; a disposição e os controlos podem diferir nas versões atuais.</p>
+</section>
+
+<section class="wrap" id="use-cases" aria-labelledby="use-cases-heading">
+  <h2 id="use-cases-heading">Para a sua vida e o seu trabalho</h2>
+  <div class="ideas">
+    <div class="idea i-later">
+      <h3>Arquiteto</h3>
+      <p>Desenhos em curso em «Agora», a próxima revisão em «A seguir», ideias futuras em «Mais tarde». Um conjunto enviado ao cliente vai para «A aguardar» até chegar a resposta. Guarde um lembrete para insistir e um prazo para a entrega propriamente dita.</p>
+    </div>
+    <div class="idea i-tomorrow">
+      <h3>Paisagista</h3>
+      <p>Um jardim a ganhar forma em «Agora», a próxima visita à obra em «A seguir», futuros planos de plantação em «Mais tarde». Um trabalho à espera de materiais ou da aprovação de um cliente vai para «A aguardar». Defina um lembrete para insistir e um prazo para a entrega combinada.</p>
+    </div>
+    <div class="idea i-review">
+      <h3>Estudante</h3>
+      <p>Equilibre trabalhos, revisão da matéria e responsabilidades do dia a dia. Mantenha as tarefas de cada disciplina no seu próprio projeto, concentre-se no trabalho em «Agora» e use as datas de entrega reais como prazos. O trabalho de grupo à espera do contributo de um colega vai para «A aguardar».</p>
+    </div>
+    <div class="idea i-keep">
+      <h3>Investigador</h3>
+      <p>Mantenha a análise e a escrita em «Agora» enquanto os manuscritos com coautores ou as experiências à espera de dados ficam em «A aguardar». Agrupe estudos e bolsas relacionados e use o histórico do projeto para olhar para trás e ver o que concluiu ao longo do trabalho.</p>
+    </div>
+    <div class="idea i-today">
+      <h3>Programador web</h3>
+      <p>Uma funcionalidade pode ficar vários dias em «Agora», com a seguinte em «A seguir» e o backlog em «Mais tarde». Passe para «A aguardar» o trabalho bloqueado por uma chave de API ou pela opinião de um cliente. Mantenha o prazo de lançamento sem reagendar a tarefa vezes sem conta.</p>
+    </div>
+    <div class="idea i-night">
+      <h3>Casa e família</h3>
+      <p>Tratar do seguro em «Agora», marcar uma consulta de rotina em «A seguir», ideias de férias em «Mais tarde». Uma reparação à espera do orçamento de um técnico vai para «A aguardar». Defina um lembrete para insistir e mantenha a data real de renovação como prazo.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="your-data" aria-labelledby="data-heading">
+  <h2 id="data-heading">As suas tarefas continuam a ser suas</h2>
+  <div class="ideas">
+    <div class="idea i-keep">
+      <h3>Sem conta nem servidor DayHand</h3>
+      <p>O DayHand usa os seus dispositivos e o seu próprio iCloud Drive para guardar e sincronizar as suas tarefas. Não há nenhuma conta DayHand para criar nem nenhum servidor DayHand a guardar os seus dados.</p>
+    </div>
+    <div class="idea i-night">
+      <h3>Sincronização integrada na conceção</h3>
+      <p>Um ficheiro partilhado no seu próprio iCloud Drive mantém as tarefas sincronizadas no iPhone, no iPad e no Mac. Escolha esse mesmo ficheiro uma vez em cada dispositivo e trabalhe depois nas suas tarefas onde estiver. O iCloud Drive liga os seus dispositivos sem um serviço DayHand à parte.</p>
+    </div>
+    <div class="idea i-review wide-idea">
+      <h3>Cópias de segurança e uma saída</h3>
+      <p>São feitas cópias de segurança automáticas nos dias em que abre a app, mantendo-se três cópias rotativas. Faça cópias adicionais à mão, restaure uma cópia anterior ou partilhe uma num local mais seguro. A importação e a exportação de CSV permitem trazer tarefas ou levá-las consigo.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="get-dayhand" aria-labelledby="install-heading">
+  <h2 id="install-heading">Experimente a beta do DayHand</h2>
+  <p class="section-intro">Disponível através do TestFlight da Apple para iPhone, iPad e Mac.</p>
+  <div class="install">
+    <div class="task">
+      <h3>iPhone e iPad</h3>
+      <p class="req">iOS / iPadOS 17 ou posterior</p>
+      <ol class="steps">
+        <li>Instale o <b>TestFlight</b> da Apple a partir da App Store.</li>
+        <li>Abra a ligação da beta abaixo no seu iPhone ou iPad.</li>
+        <li>Aceite o convite e instale o DayHand.</li>
+      </ol>
+      <a class="btn btn-primary" href="https://testflight.apple.com/join/37FbdQp6">Aderir à beta</a>
+    </div>
+    <div class="task">
+      <h3>Mac</h3>
+      <p class="req">macOS 14 ou posterior</p>
+      <ol class="steps">
+        <li>Instale o <b>TestFlight</b> a partir da Mac App Store.</li>
+        <li>Abra a mesma ligação da beta abaixo no seu Mac.</li>
+        <li>Aceite o convite e instale o DayHand.</li>
+      </ol>
+      <a class="btn btn-secondary" href="https://testflight.apple.com/join/37FbdQp6">Aderir à beta para Mac</a>
+    </div>
+  </div>
+  <details class="notice">
+    <summary>Vem de uma versão anterior para Mac compilada por si?</summary>
+    <p>A app do TestFlight guarda os dados noutro local. Se abrir sem tarefas, o seu ficheiro antigo continua onde estava. Se sincronizava através do iCloud Drive, abra <b>Mais → Usar um ficheiro existente</b> e escolha de novo o mesmo ficheiro para recuperar as suas tarefas.</p>
+  </details>
+</section>
+</main>
+
+<footer class="wrap">
+  <p>Algo pouco claro? As <a href="support.html">páginas de ajuda</a> cobrem quase tudo. Caso contrário, envie comentários da beta no TestFlight ou <a href="https://github.com/amouraux/DayHand/issues/new">comunique um problema no GitHub</a>.</p>
+  <p>Em português, inglês, francês, neerlandês, alemão, espanhol, italiano, japonês, coreano, sueco, dinamarquês, norueguês, finlandês e polaco.</p>
+  <!--privacy--><p>Política de privacidade: <a href="../privacy.html" hreflang="en" lang="en">English</a> · <a href="../de/privacy.html" hreflang="de" lang="de">Deutsch</a> · <a href="../es/privacy.html" hreflang="es" lang="es">Español</a> · <a href="../fr/privacy.html" hreflang="fr" lang="fr">Français</a> · <a href="../it/privacy.html" hreflang="it" lang="it">Italiano</a> · <a href="../nl/privacy.html" hreflang="nl" lang="nl">Nederlands</a> · <a href="../pt-pt/privacy.html" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a> · <a href="../pt-br/privacy.html" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a> · <a href="../ja/privacy.html" hreflang="ja" lang="ja">日本語</a> · <a href="../ko/privacy.html" hreflang="ko" lang="ko">한국어</a> · <a href="../sv/privacy.html" hreflang="sv" lang="sv">Svenska</a> · <a href="../da/privacy.html" hreflang="da" lang="da">Dansk</a> · <a href="../nb/privacy.html" hreflang="nb" lang="nb">Norsk bokmål</a> · <a href="../fi/privacy.html" hreflang="fi" lang="fi">Suomi</a> · <a href="../pl/privacy.html" hreflang="pl" lang="pl">Polski</a></p><!--/privacy-->
+  <p>Feito com SwiftUI · <a href="https://github.com/amouraux/DayHand">Código-fonte no GitHub</a></p>
+</footer>
+
+</body>
+</html>
