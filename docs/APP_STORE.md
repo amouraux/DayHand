@@ -260,19 +260,48 @@ The reviewer can use core task management without an iCloud sync file.
 Cross-device sync uses the reviewer’s own iCloud Drive; never provide access
 to the developer’s personal Apple Account or tasks.
 
-### Review Notes — draft for the current implementation
+### Review Notes — iOS (iPhone and iPad)
 
-DayHand is a personal task manager for iPhone, iPad and Mac. No app account or demo login is required. Core task management can be reviewed without setting up sync.
+Paste into the iOS version's App Review Information. Written for the current
+implementation; replace the bracketed line before submission.
 
-Tap + to create a task. Tasks start in Inbox unless another stack is selected. Tap a task to move it between stacks, keep it where it is, set a reminder, complete it or choose Edit. The circular checkbox completes or reopens a task. Dates never move tasks automatically.
+```text
+DayHand is a task manager for iPhone and iPad. No account or sign-in is required, and no developer credentials are needed. Core features work without setting up sync.
 
-A reminder requests a notification on a selected day (at 9:00) and controls the task’s coloured edge; tapping the notification opens that task. Notification permission is requested when reminders are scheduled. The flag button gathers every task with a coloured edge, from any stack, and its number counts the red ones. The app icon badge counts only reminders that have arrived and not yet been answered. A deadline is an additional displayed finish date; it does not create a separate notification.
+Tap + to create a task. Tasks can be placed in Inbox, Now, Next, Later or Waiting. Tap a task to move it, set a reminder, complete it or edit it. Dates never move tasks automatically. Use the circular checkbox to complete a task.
 
-Filter opens projects, categories and groups. A project’s information button opens its editor and History. More (the ellipsis button) contains Review projects, Review all tasks, individual stack helpers, Timeline, category settings, sync, import/export and backups. Helpers save progress locally. The all-tasks helper avoids repeating tasks moved during the same pass. Project review lets you inspect tasks, add a task, review that project’s tasks, edit the project and return to a previous project.
+More (the ellipsis button) contains guided task and project reviews, the completion timeline, imports, exports and backups. On iPad in landscape, a sidebar lists categories, groups and projects.
 
-To test sync, use More → Create Sync File on one device and save the file in your iCloud Drive. On another device using the same iCloud Drive, use More → Use Existing Sync File and select that file. Choose Merge With This Device to retain tasks from both devices. No DayHand account or server is used.
+Reminders ask for notification permission when you set one. A reminder notifies at 9 a.m. on the chosen day, so to see a notification choose tomorrow or later: a reminder set for today after 9 a.m. is shown as due but sends no notification. Tapping the notification opens the task. The flag button gathers every task with a red or orange edge. Deadlines are displayed finish dates and do not generate separate notifications.
 
-Import from Apple Reminders requests permission to read reminders and lets the reviewer select what to import. Import from Todoist reads a CSV export. These are one-way imports, not continuous connections to those services. Use sample data when reviewing either importer.
+Import from Apple Reminders asks permission to read your reminders; Import from Todoist reads a CSV export. Both are one-time copies, not ongoing connections.
+
+To test sync, choose More > Sync > Create Sync File on one device and save it in iCloud Drive. On another device using the same iCloud Drive, choose More > Sync > Use Existing Sync File, select Merge With This Device, and choose the same file. No DayHand account or server is involved.
+
+[PURCHASES: add product ID, how to buy and restore, and the free limits here, or delete this line if the build has none.]
+```
+
+### Review Notes — macOS
+
+Paste into the macOS version's App Review Information. Reviewed against the
+Mac screenshots, not against a running Mac build: confirm the right-click on backups
+and the sidebar before submitting.
+
+```text
+DayHand is a task manager for Mac (also available for iPhone and iPad). No account or sign-in is required, and no developer credentials are needed. Core features work without setting up sync.
+
+Click + to create a task. Tasks can be placed in Inbox, Now, Next, Later or Waiting. Click a task to move it, set a reminder, complete it or edit it. Dates never move tasks automatically. Use the circular checkbox to complete a task.
+
+A sidebar lists categories, groups and projects; use it, or the Filter and Search buttons, to focus on part of your work. More (the ellipsis button) contains guided task and project reviews, the completion timeline, imports, exports and backups. In More > Backups, right-click a backup to restore, share or delete it.
+
+Reminders ask for notification permission when you set one. A reminder notifies at 9 a.m. on the chosen day, so to see a notification choose tomorrow or later: a reminder set for today after 9 a.m. is shown as due but sends no notification. Clicking the notification opens the task. The flag button gathers every task with a red or orange edge. Deadlines are displayed finish dates and do not generate separate notifications.
+
+Import from Apple Reminders asks permission to read your reminders; Import from Todoist and DayHand CSV import read a file you choose. These are one-time copies, not ongoing connections.
+
+To test sync, choose More > Sync > Create Sync File on one device and save it in iCloud Drive. On another device using the same iCloud Drive, choose More > Sync > Use Existing Sync File, select Merge With This Device, and choose the same file. DayHand is sandboxed and can only read the file you pick. No DayHand account or server is involved.
+
+[PURCHASES: add product ID, how to buy and restore, and the free limits here, or delete this line if the build has none.]
+```
 
 **Purchase review notes — complete before a paid launch:** the source currently
 contains the free/paid rules and unlock screen, but its purchase action is a
