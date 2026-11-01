@@ -229,9 +229,14 @@ tasks, or unsupported claims about instant sync or time tracking.
   helper, the timeline, the project review, and dark mode. Apple accepts
   2752 × 2064 or 2064 × 2752 for the 13-inch iPad slot.
 
-The More sheet is deliberately not shown: its Testing control must be removed
-before submission, and until then no screenshot should include it. The Mac set
-still has to be taken on a real Mac. The `-EN` in the iPad file names marks the
+- `docs/screenshots/appstore/mac-2560x1600/` — seven Mac shots at 2560 × 1600
+  (a 1280 × 800 pt window at 2×; one of the sizes the Mac App Store accepts),
+  same story and order, taken from the real Mac Catalyst app, not the simulator.
+  The window's rounded corners are flattened onto a plain background because
+  screenshots may not carry transparency.
+
+The More sheet's root is deliberately not shown: its Testing control must be
+removed before submission, and until then no screenshot should include it. The `-EN` in the iPad file names marks the
 language of the interface; localised sets would carry their own suffix.
 
 The existing `docs/screenshots/iphone.png` and `ipad.png` are illustrative older

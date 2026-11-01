@@ -53,10 +53,20 @@ and, when one is configured, to the user's sync file in iCloud Drive.
   `deletedCategories` and `deletedProjects` are **maps** of id to tombstone
   date, not arrays; and timestamps take exactly three fractional digits
   (`2026-09-26T09:15:00.123Z`), so Python's default microseconds throw.
-- The Mac window cannot be checked from here — the app shares the live file,
-  and screen capture needs a permission this process does not have. A **wide
-  iPad simulator is the proxy**: the sidebar layout keys off size class, not
-  `#if targetEnvironment(macCatalyst)`, so the iPad shows the Mac's layout.
+- The Mac window can be checked, but **never as the real app**. Build a copy
+  with its own bundle identifier and ad-hoc signing — `xcodebuild … -destination
+  'platform=macOS,variant=Mac Catalyst' -derivedDataPath <dir> build
+  PRODUCT_BUNDLE_IDENTIFIER=com.andremouraux.tnt.screens CODE_SIGN_STYLE=Manual
+  CODE_SIGN_IDENTITY=- DEVELOPMENT_TEAM=` — which gets its own sandbox container
+  and defaults, so no live cards and no sync bookmark. Launch it once, quit it,
+  put a demo `cards.json` in `~/Library/Containers/<that id>/Data/Library/
+  Application Support/`, and relaunch. Screen capture and clicking need Screen
+  Recording and Accessibility for the app running Claude; ask for them, and
+  click with real mouse events (CGEvent): `System Events`' `click at` presses the
+  accessibility element under the point, and found a task's checkbox under the
+  floating buttons. Target the copy by pid — the real app may be running too.
+  Without those permissions a **wide iPad simulator is the proxy**: the sidebar
+  layout keys off size class, not `#if targetEnvironment(macCatalyst)`.
 
 ## Dates never move cards
 
