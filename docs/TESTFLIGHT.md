@@ -52,7 +52,7 @@ One app across iPhone, iPad and Mac. A shared file in your own iCloud Drive keep
 
 Automatic backups are taken on days you open the app. Manual backups, sharing backups, and CSV import/export are also available.
 
-Available in English, French, Dutch, German, Spanish, Italian, Portuguese (Portugal and Brazil) and Japanese. Please send feedback through TestFlight.
+Available in English, French, Dutch, German, Spanish, Italian, Portuguese (Portugal and Brazil), Japanese, Korean, Swedish, Danish, Norwegian, Finnish and Polish. Please send feedback through TestFlight.
 
 ## What to Test — baseline text, adapt for each build
 

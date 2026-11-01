@@ -160,6 +160,12 @@
 				"pt-PT",
 				"pt-BR",
 				ja,
+				ko,
+				sv,
+				da,
+				nb,
+				fi,
+				pl,
 			);
 			mainGroup = A00000000000000000000002;
 			productRefGroup = A00000000000000000000003 /* Products */;

@@ -136,7 +136,8 @@ not an edit and must lose to one.
 ## Languages
 
 English, French, Dutch, German, Spanish, Italian, Portuguese (`pt-PT` and
-`pt-BR`, translated separately) and Japanese, through a String Catalog. The
+`pt-BR`, translated separately), Japanese, Korean, Swedish, Danish, Norwegian
+(Bokmål, `nb`), Finnish and Polish, through a String Catalog. The
 help pages and privacy policy are still English only.
 
 **More** carries a **Language** row showing the language the app is being read
@@ -166,7 +167,12 @@ Three things are easy to miss:
   calling them cards in six languages while English says task. German
   addresses the reader as **Sie**, Portuguese in the third person; Spanish,
   Italian and Dutch are informal; French uses **vous**; Japanese uses the polite
-  です／ます form and 「」 for quoted names. Brazilian Portuguese says *backup*,
+  です／ます form and 「」 for quoted names. Korean uses the polite 합니다／하세요 register; Swedish, Danish, Norwegian and
+  Finnish address the reader as *du*/*sinä*. Finnish and Polish inflect, so a
+  name taken from the user's data is never given a case ending: the sentence
+  is built around it ("Nic w: %@", "Poista projekti %@"). Polish needs four
+  plural forms (one, few, many, other) where English has two. Brazilian
+  Portuguese says *backup*,
   *arquivo*, *excluir*, *mesclar* and *Ajustes* where Portugal says *cópia de
   segurança*, *ficheiro*, *eliminar*, *unir* and *Definições*.
 - **Scripts without case need care in the model layer.** `looksLikeCode` asks
