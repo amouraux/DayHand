@@ -1,48 +1,45 @@
 {
-  "identifier" : "A1D2C3B4",
-  "nonRenewingSubscriptions" : [
-
-  ],
-  "products" : [
+  "identifier": "A1D2C3B4",
+  "nonRenewingSubscriptions": [],
+  "products": [
     {
-      "displayPrice" : "9.99",
-      "familyShareable" : true,
-      "internalID" : "6747000001",
-      "localizations" : [
+      "displayPrice": "4.99",
+      "familyShareable": true,
+      "internalID": "6747000001",
+      "localizations": [
         {
-          "description" : "Unlimited active projects and full completed history on all your devices.",
-          "displayName" : "DayHand Unlimited",
-          "locale" : "en_US"
+          "description": "Unlimited active projects and full completed history on all your devices.",
+          "displayName": "DayHand Unlimited",
+          "locale": "en_US"
         }
       ],
-      "productID" : "com.andremouraux.tnt.unlock",
-      "referenceName" : "DayHand Unlimited",
-      "type" : "NonConsumable"
+      "productID": "com.andremouraux.tnt.unlock",
+      "referenceName": "DayHand Unlimited",
+      "type": "NonConsumable"
     },
     {
-      "displayPrice" : "0.00",
-      "familyShareable" : false,
-      "internalID" : "6747000002",
-      "localizations" : [
+      "displayPrice": "0.00",
+      "familyShareable": false,
+      "internalID": "6747000002",
+      "localizations": [
         {
-          "description" : "Everything unlimited for 30 days. Ends by returning to the free version.",
-          "displayName" : "30-day Trial",
-          "locale" : "en_US"
+          "description": "Everything unlimited for 30 days. Ends by returning to the free version.",
+          "displayName": "30-day Trial",
+          "locale": "en_US"
         }
       ],
-      "productID" : "com.andremouraux.tnt.trial",
-      "referenceName" : "30-day Trial",
-      "type" : "NonConsumable"
+      "productID": "com.andremouraux.tnt.trial",
+      "referenceName": "30-day Trial",
+      "type": "NonConsumable"
     }
   ],
-  "settings" : {
-
+  "settings": {
+    "_locale": "en_BE",
+    "_storefront": "BEL"
   },
-  "subscriptionGroups" : [
-
-  ],
-  "version" : {
-    "major" : 3,
-    "minor" : 0
+  "subscriptionGroups": [],
+  "version": {
+    "major": 3,
+    "minor": 0
   }
 }
