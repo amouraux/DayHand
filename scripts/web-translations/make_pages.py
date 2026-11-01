@@ -114,7 +114,9 @@ def header(page, current, rel, help_label, privacy_label, langs_label):
     privacy_href = url("privacy", current, rel)
     hl = ' aria-current="page"' if page == "help" else ""
     pl = ' aria-current="page"' if page == "privacy" else ""
-    return (f'<header><a class="brand" href="{rel}index.html"><img src="{rel}icon.png" alt="" width="36" height="36">DayHand</a>'
+    # The brand goes home in the reader's language, not to the English page.
+    home = rel + "index.html" if current == "en" else f"{rel}{current}/index.html"
+    return (f'<header><a class="brand" href="{home}"><img src="{rel}icon.png" alt="" width="36" height="36">DayHand</a>'
             f'<div class="hright"><a href="{help_href}"{hl}>{help_label}</a><a href="{privacy_href}"{pl}>{privacy_label}</a>'
             f'{langmenu(page, current, rel, langs_label)}</div></header>')
 
@@ -176,7 +178,7 @@ def privacy(code, D, tok, ccode):
 <p class="lead">{D["lead"]}</p>
 {chr(10).join(body)}
 <p>{note}</p>
-<footer><a href="help.html">{f[1]}</a> · <a href="../index.html">{f[2]}</a></footer>
+<footer><a href="help.html">{f[1]}</a> · <a href="index.html">{f[2]}</a></footer>
 </main></div>
 </body></html>
 '''
@@ -246,7 +248,7 @@ def help_page(code, D, tok, ccode):
 {p(fill(S_["C3"]))}
 <p>{D["note"].replace("<en>", '<a href="../help/" hreflang="en" lang="en">').replace("</en>", "</a>")}</p>
 <footer>{D["footer_text"]}<br>
-<a href="privacy.html">{f[1]}</a> · <a href="../index.html">{f[2]}</a></footer>
+<a href="privacy.html">{f[1]}</a> · <a href="index.html">{f[2]}</a></footer>
 </main>
 </div>
 </body></html>
@@ -329,7 +331,7 @@ def help_page_full(code, D, tok, ccode, gm):
 </section>
 <p>{note}</p>
 <footer>{D["footer_text"]}<br>
-<a href="privacy.html">{f[1]}</a> · <a href="../index.html">{f[2]}</a></footer>
+<a href="privacy.html">{f[1]}</a> · <a href="index.html">{f[2]}</a></footer>
 </main>
 </div>
 </body></html>
