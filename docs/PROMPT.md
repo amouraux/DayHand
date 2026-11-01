@@ -2428,3 +2428,14 @@ trials explicitly until available. Support routes are TestFlight beta feedback
 and public GitHub Issues; never ask users to publish task files or credentials.
 The proposed App Store Support URL is `/DayHand/help/support.html`; verify it
 after deployment. Pages deploy from main, not from a feature-branch push.
+
+
+## Public privacy policy
+
+`docs/privacy.html` explains local storage, iCloud file sync, imports, local
+notifications, Apple services, support disclosures and data controls. It is
+linked from the homepage and every Help footer. The optional Privacy Choices
+URL uses `#choices`. Keep purchase statements aligned with the shipped StoreKit
+implementation; planned flows must not be described as already available.
+Website publication requires merging to main. An in-app policy link remains
+part of the App Store submission checklist.
