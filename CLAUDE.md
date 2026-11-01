@@ -132,6 +132,10 @@ deletions. Two consequences:
   "Research" back to "Home" everywhere — which is exactly what happened to the
   real file on 26 September 2026. A default is not an edit and must lose to
   one. The same goes for the seeded TRIP project.
+- **Raise `StoreDocument.currentFormat` for any change an older app would
+  misread**, and never remove the guard. An app writes only a format it knows
+  (`DocumentStorage.mayOverwrite`); otherwise an old device syncing through the
+  same iCloud file would flatten a newer one's. Format 1 is every 1.x release.
 - **A change to the file format must decode older files.** Every `init(from:)`
   is hand-written with `decodeIfPresent`, because a synthesised decoder demands
   every key and would throw away the user's cards. New CSV columns go last, so

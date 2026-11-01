@@ -710,6 +710,9 @@ struct SettingsView: View {
 
     /// Says what happened, not that it succeeded.
     private func syncSummary(_ sync: TodoStore.SyncOutcome) -> String {
+        if sync.needsNewerVersion {
+            return String(localized: "The sync file was saved by a newer version of DayHand. Update the app to keep syncing.")
+        }
         if sync.couldNotRead { return String(localized: "Could not read the sync file") }
         let c = sync.change
         if c.isNothing { return String(localized: "Already up to date") }
@@ -805,6 +808,9 @@ struct SettingsView: View {
                     return
                 case .some(.other):
                     syncReport = String(localized: "“\(url.lastPathComponent)” does not look like a DayHand file, so it was not used. Syncing would have overwritten what it holds. Nothing was changed.")
+                    return
+                case .some(.newerVersion):
+                    syncReport = String(localized: "“\(url.lastPathComponent)” was saved by a newer version of DayHand, so it was not used. Update DayHand to use it. Nothing was changed.")
                     return
                 case .some(.empty), .some(.dayHand):
                     break

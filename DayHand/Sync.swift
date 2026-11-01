@@ -490,6 +490,16 @@ struct StoreDocument: Codable, Equatable {
 
     static let empty = StoreDocument()
 
+    /// The version of the *file format*, not of the app. Every 1.x release
+    /// reads and writes format 1. A release that has to change the format in a
+    /// way older apps would misread bumps this, and from then on a 1.x device
+    /// recognises such a file, leaves it alone and says it needs a newer
+    /// DayHand (see `DocumentStorage.mayOverwrite`). Without that, an old
+    /// device syncing through the same iCloud file would overwrite it. A file
+    /// with no version is format 1: everything written before this existed.
+    static let currentFormat = 1
+    var formatVersion: Int = StoreDocument.currentFormat
+
     /// Put a few tasks back exactly as they were.
     ///
     /// Every undoable change touches a handful of tasks and either edits them
@@ -602,6 +612,7 @@ struct StoreDocument: Codable, Equatable {
         defaultCategoryID = try c.decodeIfPresent(UUID.self, forKey: .defaultCategoryID)
         defaultCategoryChangedAt =
             try c.decodeIfPresent(Date.self, forKey: .defaultCategoryChangedAt) ?? .distantPast
+        formatVersion = try c.decodeIfPresent(Int.self, forKey: .formatVersion) ?? 1
     }
 }
 
@@ -1082,6 +1093,11 @@ final class DocumentStorage {
 
     var syncFileName: String? { syncURL?.lastPathComponent }
 
+    /// True when the shared file was saved by a newer DayHand than this one, so
+    /// this device is reading nothing from it and writing nothing to it. Set
+    /// by the last read or write; the store turns it into a message.
+    private(set) var syncBlockedByNewerFormat = false
+
     /// The picked file wins; without one, the local copy is all there is.
     private var activeURL: URL { syncURL ?? localURL }
 
@@ -1302,6 +1318,7 @@ final class DocumentStorage {
             var coordinationError: NSError?
             NSFileCoordinator().coordinate(readingItemAt: target, options: [], error: &coordinationError) { url in
                 guard let data = try? Data(contentsOf: url) else { return }
+                if syncURL != nil { syncBlockedByNewerFormat = DocumentStorage.isNewerFormat(data) }
                 result = DocumentStorage.decode(data)
             }
             return result
@@ -1312,16 +1329,25 @@ final class DocumentStorage {
     func write(_ document: StoreDocument) -> Bool {
         guard let data = DocumentStorage.encode(document) else { return false }
 
+        // Never replace a file written in a newer format than this app knows:
+        // that is what an old device syncing into a newer one's file would do.
+        guard DocumentStorage.mayOverwrite(try? Data(contentsOf: localURL)) else { return false }
+
         // Always keep the local copy current too, so the app still works if the
         // picked file goes away or the user signs out of iCloud later.
         do { try data.write(to: localURL, options: .atomic) }
         catch { return false }
 
+        syncBlockedByNewerFormat = false
         if let target = syncURL {
             withAccess(target) { url in
                 var coordinationError: NSError?
                 var didWrite = false
                 NSFileCoordinator().coordinate(writingItemAt: url, options: .forReplacing, error: &coordinationError) { writeURL in
+                    guard DocumentStorage.mayOverwrite(try? Data(contentsOf: writeURL)) else {
+                        syncBlockedByNewerFormat = true
+                        return
+                    }
                     try? FileManager.default.createDirectory(
                         at: writeURL.deletingLastPathComponent(), withIntermediateDirectories: true
                     )
@@ -1351,7 +1377,33 @@ final class DocumentStorage {
     enum SyncFileContents: Equatable {
         case empty
         case dayHand
+        /// A DayHand file saved in a newer format than this app understands.
+        case newerVersion
         case other
+    }
+
+    // MARK: The file format's version
+
+    /// The format version a file declares. One that declares none — everything
+    /// written before the field existed, and a bare array of cards — is 1.
+    static func formatVersion(of data: Data) -> Int {
+        // Most files in the wild are ours and old: skip parsing them.
+        guard data.range(of: Data("\"formatVersion\"".utf8)) != nil,
+              let object = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
+              let version = object["formatVersion"] as? Int else { return 1 }
+        return version
+    }
+
+    static func isNewerFormat(_ data: Data) -> Bool {
+        formatVersion(of: data) > StoreDocument.currentFormat
+    }
+
+    /// Whether this app may replace a file that currently holds `existing`.
+    /// Nothing there, or an older or equal format, is fine. A newer format is
+    /// not: overwriting it would flatten what a newer DayHand saved.
+    static func mayOverwrite(_ existing: Data?) -> Bool {
+        guard let existing, !existing.isEmpty else { return true }
+        return !isNewerFormat(existing)
     }
 
     /// Whitespace alone counts as empty — a file just made in Files. Something
@@ -1367,10 +1419,16 @@ final class DocumentStorage {
         } else {
             claimsToBeOurs = json is [Any]    // a file from before syncing: a bare array
         }
-        return claimsToBeOurs && decode(data) != nil ? .dayHand : .other
+        guard claimsToBeOurs else { return .other }
+        if isNewerFormat(data) { return .newerVersion }
+        return decode(data) != nil ? .dayHand : .other
     }
 
+    /// A file in a newer format is not decoded at all: reading it as format 1
+    /// would drop whatever the newer version added, and the next save would
+    /// write that loss back.
     static func decode(_ data: Data) -> StoreDocument? {
+        if isNewerFormat(data) { return nil }
         let decoder = DocumentCoding.makeDecoder()
 
         if let document = try? decoder.decode(StoreDocument.self, from: data) {

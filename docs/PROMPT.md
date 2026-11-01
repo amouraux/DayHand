@@ -1557,6 +1557,23 @@ goes**, or the next person to read the file will believe it.
 The picked file takes precedence over local storage; keep writing the local copy
 too, so the app still works if the file is moved or deleted.
 
+**The document carries a format version, and an app only writes a format it
+knows.** `StoreDocument.formatVersion` is written into every file; a file without
+one is format 1, which covers every file before the field existed and keeps old
+files readable. Every 1.x release reads and writes format 1. A later release
+whose changes older apps would misread raises `StoreDocument.currentFormat`,
+and from then on a 1.x device meeting such a file does three things: it reads
+nothing from it (decoding it as format 1 would drop what the newer version added,
+and the next save would write the loss back), it writes nothing to it — not the
+shared file and not the local copy — and it says so: under Sync Now, "The sync file
+was saved by a newer version of DayHand. Update the app to keep syncing.", and
+when such a file is chosen, "… was saved by a newer version of DayHand, so it was
+not used", with nothing changed. The check happens before every write, so a
+newer file that appears between two saves is still protected. One gap is
+deliberate: a file still downloading from iCloud cannot be inspected and is
+treated as writable, as it always was. The rules are in `DocumentStorage`
+(`formatVersion(of:)`, `mayOverwrite(_:)`) and tested without any app data.
+
 **Say when there is no sync file, in Settings and nowhere else.** One device
 needs no sync file and must not be nagged about it — but a device that has *lost*
 one looks exactly like a device that never had one, and the only way to tell was

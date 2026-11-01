@@ -44910,6 +44910,186 @@
           }
         }
       }
+    },
+    "“%@” was saved by a newer version of DayHand, so it was not used. Update DayHand to use it. Nothing was changed.": {
+      "comment": "Shown when the chosen sync file was saved by a newer DayHand",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„%@“ wurde mit einer neueren Version von DayHand gespeichert und deshalb nicht verwendet. Aktualisieren Sie DayHand, um sie zu verwenden. Es wurde nichts geändert."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«%@» se guardó con una versión más reciente de DayHand, así que no se ha usado. Actualiza DayHand para usarlo. No se ha cambiado nada."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "« %@ » a été enregistré par une version plus récente de DayHand ; il n’a donc pas été utilisé. Mettez DayHand à jour pour l’utiliser. Rien n’a été modifié."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«%@» è stato salvato da una versione più recente di DayHand, quindi non è stato usato. Aggiorna DayHand per usarlo. Non è stato cambiato nulla."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” is opgeslagen door een nieuwere versie van DayHand en is daarom niet gebruikt. Werk DayHand bij om het te gebruiken. Er is niets gewijzigd."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«%@» foi guardado por uma versão mais recente do DayHand, por isso não foi utilizado. Atualize o DayHand para o utilizar. Não foi alterado nada."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「%@」はより新しいバージョンのDayHandで保存されたため、使用されませんでした。使うにはDayHandをアップデートしてください。何も変更されていません。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” foi salvo por uma versão mais recente do DayHand, então não foi usado. Atualize o DayHand para usá-lo. Nada foi alterado."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@”은(는) 더 최신 버전의 DayHand에서 저장되어 사용하지 않았습니다. 사용하려면 DayHand를 업데이트하세요. 아무것도 변경되지 않았습니다."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "”%@” sparades av en nyare version av DayHand, så den användes inte. Uppdatera DayHand för att använda den. Inget har ändrats."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” blev gemt af en nyere version af DayHand, så den blev ikke brugt. Opdatér DayHand for at bruge den. Intet er ændret."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«%@» ble lagret av en nyere versjon av DayHand, så den ble ikke brukt. Oppdater DayHand for å bruke den. Ingenting er endret."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "”%@” tallennettiin DayHandin uudemmalla versiolla, joten sitä ei käytetty. Päivitä DayHand käyttääksesi sitä. Mitään ei muutettu."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„%@” zapisano w nowszej wersji DayHand, więc nie został użyty. Zaktualizuj DayHand, aby go używać. Nic nie zostało zmienione."
+          }
+        }
+      }
+    },
+    "The sync file was saved by a newer version of DayHand. Update the app to keep syncing.": {
+      "comment": "Result line under Sync Now when the shared file needs a newer DayHand",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Sync-Datei wurde mit einer neueren Version von DayHand gespeichert. Aktualisieren Sie die App, um weiter zu synchronisieren."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El archivo de sincronización se guardó con una versión más reciente de DayHand. Actualiza la app para seguir sincronizando."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le fichier de synchronisation a été enregistré par une version plus récente de DayHand. Mettez l’app à jour pour continuer à synchroniser."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il file di sincronizzazione è stato salvato da una versione più recente di DayHand. Aggiorna l’app per continuare a sincronizzare."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Het synchronisatiebestand is opgeslagen door een nieuwere versie van DayHand. Werk de app bij om te blijven synchroniseren."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O ficheiro de sincronização foi guardado por uma versão mais recente do DayHand. Atualize a app para continuar a sincronizar."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "同期ファイルはより新しいバージョンのDayHandで保存されています。同期を続けるにはアプリをアップデートしてください。"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O arquivo de sincronização foi salvo por uma versão mais recente do DayHand. Atualize o app para continuar sincronizando."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "동기화 파일이 더 최신 버전의 DayHand에서 저장되었습니다. 계속 동기화하려면 앱을 업데이트하세요."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synkroniseringsfilen sparades av en nyare version av DayHand. Uppdatera appen för att fortsätta synkronisera."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synkroniseringsfilen blev gemt af en nyere version af DayHand. Opdatér appen for at fortsætte med at synkronisere."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synkroniseringsfilen ble lagret av en nyere versjon av DayHand. Oppdater appen for å fortsette å synkronisere."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synkronointitiedosto tallennettiin DayHandin uudemmalla versiolla. Päivitä sovellus jatkaaksesi synkronointia."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plik synchronizacji został zapisany w nowszej wersji DayHand. Zaktualizuj aplikację, aby dalej synchronizować."
+          }
+        }
+      }
     }
   },
   "version": "1.1"

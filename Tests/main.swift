@@ -2908,6 +2908,44 @@ do {
     expect(DocumentStorage.classify(Data([0xFF, 0xD8, 0xFF, 0xE0])) == .other, "binary data is not ours")
 }
 
+// The file format has a version, so an old app never overwrites a newer one's file.
+do {
+    func data(_ s: String) -> Data { Data(s.utf8) }
+    expect(StoreDocument.currentFormat == 1, "this is format 1; a 2.0 that changes the format raises it")
+
+    expect(DocumentStorage.formatVersion(of: data("{\"cards\":[]}")) == 1, "a file with no version is format 1")
+    expect(DocumentStorage.formatVersion(of: data("[]")) == 1, "a bare list from before syncing is format 1")
+    expect(DocumentStorage.formatVersion(of: data("{\"formatVersion\":1,\"cards\":[]}")) == 1, "a declared 1 is 1")
+    expect(DocumentStorage.formatVersion(of: data("{\"formatVersion\" : 2, \"cards\":[]}")) == 2, "a declared 2 is 2, spaces and all")
+    expect(DocumentStorage.formatVersion(of: Data([0xFF, 0xD8])) == 1, "unreadable bytes claim nothing")
+
+    // What this app writes says so, and reads back as the same version.
+    let saved = try! DocumentCoding.makeEncoder().encode(StoreDocument(cards: [TodoItem(title: "x")]))
+    expect(String(decoding: saved, as: UTF8.self).contains("\"formatVersion\""), "a saved document declares its format")
+    expect(DocumentStorage.formatVersion(of: saved) == 1, "and it is this app's")
+    expect(DocumentStorage.decode(saved)?.formatVersion == 1, "a saved document reads back")
+
+    // A file from before the field existed still loads, as format 1.
+    let old = DocumentStorage.decode(data("{\"cards\":[],\"categories\":[]}"))
+    expect(old != nil && old?.formatVersion == 1, "an older file still decodes, as format 1")
+
+    // A newer file is neither read nor overwritten.
+    let newer = data("{\"formatVersion\":2,\"cards\":[],\"categories\":[]}")
+    expect(DocumentStorage.isNewerFormat(newer), "format 2 is newer than this app")
+    expect(DocumentStorage.decode(newer) == nil, "a newer file is not read as if it were ours")
+    expect(DocumentStorage.classify(newer) == .newerVersion, "a newer DayHand file is named as such, not as someone else's")
+    expect(DocumentStorage.mayOverwrite(newer) == false, "and is not overwritten")
+    expect(DocumentStorage.mayOverwrite(nil), "a file that is not there may be written")
+    expect(DocumentStorage.mayOverwrite(Data()), "an empty file may be written")
+    expect(DocumentStorage.mayOverwrite(saved), "a file in this format may be written")
+    expect(DocumentStorage.mayOverwrite(data("{\"cards\":[]}")), "an older file may be written")
+    expect(DocumentStorage.mayOverwrite(data("not json at all")), "unreadable bytes are not a newer format")
+
+    // Merging produces this app's format whatever the inputs were.
+    expect(StoreDocument().merged(with: StoreDocument()).formatVersion == StoreDocument.currentFormat,
+           "a merged document is written in this app's format")
+}
+
 // MARK: - App language
 
 do {

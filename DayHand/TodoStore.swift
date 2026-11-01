@@ -32,6 +32,9 @@ final class TodoStore: ObservableObject {
         let at: Date
         let change: StoreDocument.Change
         let couldNotRead: Bool
+        /// The shared file was saved by a newer DayHand. This device leaves it
+        /// alone rather than overwrite it.
+        var needsNewerVersion = false
     }
     /// What this device may do: free, in a trial, or unlocked. Device-local, and
     /// deliberately not part of the document.
@@ -912,6 +915,9 @@ final class TodoStore: ObservableObject {
     /// brings both sides together instead of one flattening the other.
     @discardableResult
     func useSyncFile(at url: URL, replacingLocal: Bool = false) -> Bool {
+        // Syncing writes into the file; one saved by a newer DayHand would be
+        // flattened. The settings screen explains this before getting here.
+        guard storage.inspectSyncFile(at: url) != .newerVersion else { return false }
         let existing = storage.adoptSyncFile(at: url)
 
         if let existing {
@@ -1193,6 +1199,9 @@ final class TodoStore: ObservableObject {
 
     private func save() {
         storage.write(document)
+        if storage.syncBlockedByNewerFormat {
+            lastSync = SyncOutcome(at: Date(), change: .init(), couldNotRead: true, needsNewerVersion: true)
+        }
         lastSeenSyncDate = storage.syncFileModifiedAt()
     }
 
@@ -1206,7 +1215,8 @@ final class TodoStore: ObservableObject {
     @discardableResult
     private func pullRemoteChanges() -> SyncOutcome {
         guard let remote = storage.read() else {
-            return SyncOutcome(at: Date(), change: .init(), couldNotRead: true)
+            return SyncOutcome(at: Date(), change: .init(), couldNotRead: true,
+                               needsNewerVersion: storage.syncBlockedByNewerFormat)
         }
         // Reading back our own write is the common case; bailing out when the
         // file already matches is what keeps this from looping.
