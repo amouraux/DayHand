@@ -2450,5 +2450,22 @@ notifications, Apple services, support disclosures and data controls. It is
 linked from the homepage and every Help footer. The optional Privacy Choices
 URL uses `#choices`. Keep purchase statements aligned with the shipped StoreKit
 implementation; planned flows must not be described as already available.
-The More sheet's Help section links to it, under "Help and support".
+The More sheet's Help section links to it, under "Help and support", and
+opens the version in the language the app is being read in when the site has it.
 Website publication requires merging to main.
+
+### The privacy policy and the support page, translated
+
+Both exist in every language the app has, at `docs/<folder>/privacy.html` and
+`docs/<folder>/support.html`, with folders `de es fr it nl pt-pt pt-br ja ko sv
+da nb fi pl`. The help guides they link to are still English, and each such link
+says so. Every translation ends by saying the English page prevails, because a
+privacy policy that differs between languages is a liability.
+
+The pages are generated: the text lives in `scripts/web-translations/web_<code>.py`
+and `make_pages.py` writes the HTML. Button names in the policy ("More → Sync →
+Stop Using This File") are read from `Localizable.xcstrings`, so the page says
+what the screen says. **Change the English page, change the translations, run
+the script** — it also keeps the language list and the `hreflang` links on the
+English pages current. The translations were written in one pass and need a
+native reader before they are relied on.

@@ -142,6 +142,33 @@ App Store version. TestFlight changes alone do not establish that baseline.
 | Copyright | **TO COMPLETE:** `2026 [confirmed rights holder]`; do not assume the rights holder from Git author details |
 | Public App Store link | **TO COMPLETE after the record’s numeric Apple ID and availability are confirmed**; this is distinct from the TestFlight link |
 
+### Localised URLs
+
+The privacy policy and the support page exist in every app language. App Store
+Connect takes a Support URL and a Privacy Policy URL per localisation, so enter
+the matching one for each; a language without its own falls back to the English
+pages above. Folders are the same for both pages:
+
+| App Store localisation | Folder | Privacy Policy URL | Support URL |
+| --- | --- | --- | --- |
+| German | `de` | …/DayHand/de/privacy.html | …/DayHand/de/support.html |
+| Spanish | `es` | …/DayHand/es/privacy.html | …/DayHand/es/support.html |
+| French | `fr` | …/DayHand/fr/privacy.html | …/DayHand/fr/support.html |
+| Italian | `it` | …/DayHand/it/privacy.html | …/DayHand/it/support.html |
+| Dutch | `nl` | …/DayHand/nl/privacy.html | …/DayHand/nl/support.html |
+| Portuguese (Portugal) | `pt-pt` | …/DayHand/pt-pt/privacy.html | …/DayHand/pt-pt/support.html |
+| Portuguese (Brazil) | `pt-br` | …/DayHand/pt-br/privacy.html | …/DayHand/pt-br/support.html |
+| Japanese | `ja` | …/DayHand/ja/privacy.html | …/DayHand/ja/support.html |
+| Korean | `ko` | …/DayHand/ko/privacy.html | …/DayHand/ko/support.html |
+| Swedish | `sv` | …/DayHand/sv/privacy.html | …/DayHand/sv/support.html |
+| Danish | `da` | …/DayHand/da/privacy.html | …/DayHand/da/support.html |
+| Norwegian | `nb` | …/DayHand/nb/privacy.html | …/DayHand/nb/support.html |
+| Finnish | `fi` | …/DayHand/fi/privacy.html | …/DayHand/fi/support.html |
+| Polish | `pl` | …/DayHand/pl/privacy.html | …/DayHand/pl/support.html |
+
+(`…` is `https://amouraux.github.io`.) The translations say that the English
+page prevails; verify each URL after the pages are deployed from main.
+
 ## 3. Version and build fields
 
 Complete these separately for iOS and macOS where required.

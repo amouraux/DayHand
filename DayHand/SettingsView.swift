@@ -722,8 +722,17 @@ struct SettingsView: View {
 
     private static let helpURL = URL(string: "https://amouraux.github.io/DayHand/help/")!
 
-    // App Store Connect asks for this same address; keep the two in step.
-    private static let privacyURL = URL(string: "https://amouraux.github.io/DayHand/privacy.html")!
+    /// The privacy policy in the language the app is being read in, when the
+    /// site has it; English otherwise. The folder names are the site's own, so
+    /// they must match `docs/<folder>/privacy.html`. App Store Connect asks
+    /// for the same addresses; keep them in step.
+    private static var privacyURL: URL {
+        let translated: Set<String> = ["de", "es", "fr", "it", "nl", "pt-pt", "pt-br",
+                                       "ja", "ko", "sv", "da", "nb", "fi", "pl"]
+        let language = (Bundle.main.preferredLocalizations.first ?? "en").lowercased()
+        let folder = translated.contains(language) ? language + "/" : ""
+        return URL(string: "https://amouraux.github.io/DayHand/\(folder)privacy.html")!
+    }
 
     private static var versionLine: String {
         let info = Bundle.main.infoDictionary
