@@ -2908,5 +2908,24 @@ do {
     expect(DocumentStorage.classify(Data([0xFF, 0xD8, 0xFF, 0xE0])) == .other, "binary data is not ours")
 }
 
+// MARK: - App language
+
+do {
+    expect(AppLanguage.all.count == 15, "English and fourteen translations")
+    expect(Set(AppLanguage.all.map(\.code)).count == AppLanguage.all.count, "codes are unique")
+    expect(AppLanguage.matching("de")?.code == "de", "an exact tag")
+    expect(AppLanguage.matching("de-BE")?.code == "de", "a regional tag counts as its language")
+    expect(AppLanguage.matching("en-GB")?.code == "en", "British English is English")
+    expect(AppLanguage.matching("zh-Hans-CN") == nil, "a language we do not ship is no choice")
+    expect(AppLanguage.matching("pt-PT")?.code == "pt-PT" && AppLanguage.matching("pt_BR")?.code == "pt-BR",
+           "the two Portuguese stay apart, with either separator")
+    expect(AppLanguage.matching("pt")?.code == "pt-BR" && AppLanguage.matching("pt-AO")?.code == "pt-BR",
+           "a bare pt means Brazil")
+    expect(AppLanguage.matching("pt-PT-u-nu-latn")?.code == "pt-PT", "extensions do not hide the region")
+    expect(AppLanguage.matching("no")?.code == "nb" && AppLanguage.matching("nn-NO")?.code == "nb",
+           "every Norwegian tag is Bokmål")
+    expect(AppLanguage.matching("")?.code == nil, "nothing stored is no choice")
+}
+
 print(failures == 0 ? "All \(checks) assertions passed." : "\(failures) of \(checks) failed.")
 exit(failures == 0 ? 0 : 1)

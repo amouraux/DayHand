@@ -7882,90 +7882,90 @@
         }
       }
     },
-    "DayHand follows your device's language. To read it in another one, pick a language for this app in the system settings.": {
+    "Automatic follows your device's language. A change applies the next time DayHand opens.": {
       "localizations": {
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“Automatisk” følger enhedens sprog. En ændring gælder, næste gang du åbner DayHand."
+          }
+        },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "DayHand folgt der Sprache Ihres Geräts. Um es in einer anderen zu lesen, wählen Sie in den Systemeinstellungen eine Sprache für diese App."
+            "value": "„Automatisch“ folgt der Sprache Ihres Geräts. Eine Änderung gilt, sobald DayHand das nächste Mal geöffnet wird."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "DayHand sigue el idioma de tu dispositivo. Para leerlo en otro, elige un idioma para esta app en los ajustes del sistema."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DayHand suit la langue de votre appareil. Pour le lire dans une autre, choisissez une langue pour cette app dans les réglages du système."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DayHand segue la lingua del dispositivo. Per leggerlo in un'altra, scegli una lingua per questa app nelle impostazioni di sistema."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DayHand volgt de taal van je apparaat. Wil je het in een andere taal lezen, kies dan een taal voor deze app in de systeeminstellingen."
-          }
-        },
-        "pt-PT": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "O DayHand segue o idioma do seu dispositivo. Para o ler noutro, escolha um idioma para esta app nas definições do sistema."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DayHandはデバイスの言語に従います。別の言語で使うには、システム設定でこのAppの言語を選んでください。"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "O DayHand segue o idioma do seu dispositivo. Para ler o app em outro idioma, escolha um idioma para ele nos ajustes do sistema."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DayHand는 기기의 언어를 따릅니다. 다른 언어로 보려면 시스템 설정에서 이 앱의 언어를 선택하세요."
-          }
-        },
-        "sv": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DayHand följer enhetens språk. Om du vill läsa appen på ett annat språk väljer du ett språk för den i systeminställningarna."
-          }
-        },
-        "da": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DayHand følger enhedens sprog. Hvis du vil læse appen på et andet sprog, skal du vælge et sprog til den i systemindstillingerne."
-          }
-        },
-        "nb": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "DayHand følger språket på enheten din. Hvis du vil lese appen på et annet språk, velger du et språk for den i systeminnstillingene."
+            "value": "«Automático» sigue el idioma de tu dispositivo. El cambio se aplica la próxima vez que abras DayHand."
           }
         },
         "fi": {
           "stringUnit": {
             "state": "translated",
-            "value": "DayHand noudattaa laitteesi kieltä. Jos haluat lukea sitä toisella kielellä, valitse sovellukselle kieli järjestelmäasetuksista."
+            "value": "”Automaattinen” noudattaa laitteen kieltä. Muutos tulee voimaan, kun avaat DayHandin seuraavan kerran."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "« Automatique » suit la langue de votre appareil. Un changement s’applique à la prochaine ouverture de DayHand."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«Automatico» segue la lingua del dispositivo. La modifica si applica alla prossima apertura di DayHand."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「自動」はデバイスの言語に従います。変更は、次にDayHandを開いたときに反映されます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "‘자동’은 기기의 언어를 따릅니다. 변경 사항은 다음에 DayHand를 열 때 적용됩니다."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«Automatisk» følger språket på enheten. En endring gjelder neste gang du åpner DayHand."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "‘Automatisch’ volgt de taal van je apparaat. Een wijziging gaat in de volgende keer dat je DayHand opent."
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "DayHand używa języka Twojego urządzenia. Aby korzystać z niego w innym języku, wybierz język dla tej aplikacji w ustawieniach systemu."
+            "value": "„Automatyczny” podąża za językiem urządzenia. Zmiana zacznie obowiązywać przy następnym otwarciu DayHand."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“Automático” segue o idioma do seu dispositivo. A mudança vale na próxima vez que você abrir o DayHand."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«Automático» segue o idioma do seu dispositivo. A alteração aplica-se da próxima vez que abrir o DayHand."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "”Automatiskt” följer enhetens språk. En ändring gäller nästa gång du öppnar DayHand."
           }
         }
       }

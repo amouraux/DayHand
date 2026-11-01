@@ -1664,3 +1664,55 @@ struct ProjectReviewSession: Codable, Equatable {
         }
     }
 }
+
+// MARK: - App language
+
+/// A language the app is translated into, as a choice in More.
+///
+/// `code` is what goes into `AppleLanguages`, the key iOS and macOS read to pick
+/// the app's localisation at launch — the same one the system's own per-app
+/// language screen writes, so the two never disagree. `name` is the language in
+/// itself and is never translated: someone who has landed in a language they
+/// cannot read must still be able to find their own.
+struct AppLanguage: Identifiable, Equatable {
+    let code: String
+    let name: String
+    var id: String { code }
+
+    static let all: [AppLanguage] = [
+        AppLanguage(code: "en", name: "English"),
+        AppLanguage(code: "de", name: "Deutsch"),
+        AppLanguage(code: "es", name: "Español"),
+        AppLanguage(code: "fr", name: "Français"),
+        AppLanguage(code: "it", name: "Italiano"),
+        AppLanguage(code: "nl", name: "Nederlands"),
+        AppLanguage(code: "pt-PT", name: "Português (Portugal)"),
+        AppLanguage(code: "pt-BR", name: "Português (Brasil)"),
+        AppLanguage(code: "ja", name: "日本語"),
+        AppLanguage(code: "ko", name: "한국어"),
+        AppLanguage(code: "sv", name: "Svenska"),
+        AppLanguage(code: "da", name: "Dansk"),
+        AppLanguage(code: "nb", name: "Norsk bokmål"),
+        AppLanguage(code: "fi", name: "Suomi"),
+        AppLanguage(code: "pl", name: "Polski"),
+    ]
+
+    /// The choice a stored `AppleLanguages` entry stands for, or nil for a
+    /// language the app is not translated into.
+    ///
+    /// The system writes tags with a region or a script ("de-BE", "en-GB",
+    /// "zh-Hans-CN"); the options are plain languages, so a tag counts as the
+    /// language it begins with. Portuguese is the exception that needs a rule:
+    /// the two are separate translations, and a bare "pt" means Brazil, where
+    /// most Portuguese speakers are.
+    static func matching(_ stored: String) -> AppLanguage? {
+        let tag = stored.replacingOccurrences(of: "_", with: "-").lowercased()
+        if let exact = all.first(where: { $0.code.lowercased() == tag }) { return exact }
+        let base = tag.split(separator: "-").first.map(String.init) ?? tag
+        switch base {
+        case "pt": return all.first { $0.code == (tag.hasPrefix("pt-pt") ? "pt-PT" : "pt-BR") }
+        case "no", "nn", "nb": return all.first { $0.code == "nb" }
+        default: return all.first { $0.code.lowercased() == base }
+        }
+    }
+}

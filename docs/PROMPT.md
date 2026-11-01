@@ -138,16 +138,24 @@ not an edit and must lose to one.
 English, French, Dutch, German, Spanish, Italian, Portuguese (`pt-PT` and
 `pt-BR`, translated separately), Japanese, Korean, Swedish, Danish, Norwegian
 (Bokmål, `nb`), Finnish and Polish, through a String Catalog. The
-help pages and privacy policy are still English only.
+homepage, privacy policy and support page are translated too; the help guides
+are still English only.
 
-**More** carries a **Language** row showing the language the app is being read
-in, which opens the system's own per-app language screen. Nothing is
-reimplemented: iOS gives any app shipping more than one localization its own
-Language screen, and macOS keeps the same choice in Language & Region. An
-in-app override would mean restarting the app to take effect, and would
-disagree with what the system believes. No right-to-left language: the swipe
-gestures are written in terms of left and right, and mirroring them is work this
-has not done.
+**More** carries a **Language** picker: Automatic, then each language under its
+own name ("Deutsch", "日本語"), which is never translated, so that someone in a
+language they cannot read can still find theirs. Automatic follows the device.
+A choice is written to `AppleLanguages` in the app's own defaults — the key the
+system's per-app language screen writes too, so the two agree — and takes
+effect the next time the app opens; the footer says so. It could not be
+immediate: a SwiftUI view cannot swap the bundle its strings come from while
+running, and an override that half-applied would be worse than a restart.
+The picker shows a choice only if one is stored for this app: the standard
+defaults also answer with the system's list, which would make every device look
+as if it had chosen. `AppLanguage.matching` (in `Models.swift`, tested) turns a
+stored tag such as "de-BE" or "pt" into the option it stands for; the two
+Portuguese are separate and a bare "pt" means Brazil. No right-to-left
+language: the swipe gestures are written in terms of left and right, and
+mirroring them is work this has not done.
 
 Three things are easy to miss:
 

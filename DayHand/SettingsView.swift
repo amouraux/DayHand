@@ -28,6 +28,7 @@ struct SettingsView: View {
     @State private var replaceOnSync = false
     @State private var isConfirmingDeleteAll = false
     @AppStorage(Appearance.key) private var appearance = Appearance.automatic
+    @State private var languageCode = SettingsView.storedLanguageCode()
     @State private var pendingRestore: BackupFile?
     @State private var isChoosingRestoreFile = false
     /// A file picked by hand, read and waiting for the user to confirm.
@@ -234,20 +235,19 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    Button {
-                        openLanguageSettings()
-                    } label: {
-                        LabeledContent {
-                            Text(currentLanguage)
-                                .foregroundStyle(.secondary)
-                        } label: {
-                            Label("Language", systemImage: "globe")
+                    Picker(selection: $languageCode) {
+                        Text("Automatic").tag("")
+                        ForEach(AppLanguage.all) { language in
+                            Text(verbatim: language.name).tag(language.code)
                         }
+                    } label: {
+                        Label("Language", systemImage: "globe")
                     }
+                    .onChange(of: languageCode) { _, chosen in Self.storeLanguage(chosen) }
                 } header: {
                     Text("Language")
                 } footer: {
-                    Text("DayHand follows your device's language. To read it in another one, pick a language for this app in the system settings.")
+                    Text("Automatic follows your device's language. A change applies the next time DayHand opens.")
                 }
 
                 Section {
@@ -685,18 +685,29 @@ struct SettingsView: View {
         }
     }
 
-    /// The language the app is actually being read in, named in that language:
-    /// "Français", not "French", which is what the system settings will show.
-    private var currentLanguage: String {
-        let code = Bundle.main.preferredLocalizations.first ?? "en"
-        let locale = Locale(identifier: code)
-        let name = locale.localizedString(forLanguageCode: code) ?? code
-        return name.capitalized(with: locale)
+    /// The choice stored for this app alone, "" when it follows the device.
+    ///
+    /// Only the app's own domain is read: the standard defaults also answer with
+    /// the system's list, which would make every device look like a choice.
+    private static func storedLanguageCode() -> String {
+        let domain = UserDefaults.standard.persistentDomain(forName: Bundle.main.bundleIdentifier ?? "")
+        guard let stored = (domain?["AppleLanguages"] as? [String])?.first else { return "" }
+        return AppLanguage.matching(stored)?.code ?? ""
     }
 
-    /// iOS gives every app that ships more than one language its own Language
-    /// screen, so there is nothing to reimplement here — just a way to reach
-    /// it. macOS keeps the same choice in Language & Region instead.
+    /// Writes the choice where the system looks for it at launch. It is the key
+    /// the system's own per-app Language screen writes, so the two agree. A
+    /// SwiftUI view cannot swap the bundle it reads its strings from while
+    /// running, which is why the footer promises the next launch and no more.
+    private static func storeLanguage(_ code: String) {
+        guard code != storedLanguageCode() else { return }
+        if code.isEmpty {
+            UserDefaults.standard.removeObject(forKey: "AppleLanguages")
+        } else {
+            UserDefaults.standard.set([code], forKey: "AppleLanguages")
+        }
+    }
+
     /// Says what happened, not that it succeeded.
     private func syncSummary(_ sync: TodoStore.SyncOutcome) -> String {
         if sync.couldNotRead { return String(localized: "Could not read the sync file") }
@@ -708,16 +719,6 @@ struct SettingsView: View {
         if c.changed > 0 { parts.append(String(localized: "\(c.changed) tasks updated")) }
         if c.removed > 0 { parts.append(String(localized: "\(c.removed) tasks removed")) }
         return parts.joined(separator: ", ")
-    }
-
-    private func openLanguageSettings() {
-        #if targetEnvironment(macCatalyst)
-        let url = URL(string: "x-apple.systempreferences:com.apple.Localization-Settings.extension")
-        #else
-        let url = URL(string: UIApplication.openSettingsURLString)
-        #endif
-        guard let url else { return }
-        UIApplication.shared.open(url)
     }
 
     private static let helpURL = URL(string: "https://amouraux.github.io/DayHand/help/")!
