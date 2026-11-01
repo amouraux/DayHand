@@ -172,7 +172,9 @@ struct TrialView: View {
 /// Restore Purchases always, as the App Store requires. Nothing here nags.
 struct PurchasesSection: View {
     @EnvironmentObject private var store: TodoStore
-    @State private var showsTrial = false
+    /// Owned by the screen that shows this section, which also presents the
+    /// trial sheet and the alert; see `SettingsView`.
+    @Binding var showsTrial: Bool
 
     var body: some View {
         let access = store.purchases.storeAccess
@@ -202,8 +204,6 @@ struct PurchasesSection: View {
         } header: {
             Text("Purchases")
         }
-        .sheet(isPresented: $showsTrial) { TrialView().environmentObject(store) }
-        .purchaseNotice()
         .task { await store.purchases.loadProducts() }
     }
 }

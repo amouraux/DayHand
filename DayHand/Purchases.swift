@@ -79,9 +79,14 @@ final class Purchases: ObservableObject {
     func loadProducts() async {
         guard unlock == nil || trial == nil else { return }
         guard let products = try? await Product.products(for: [Self.unlockID, Self.trialID]) else { return }
-        unlock = products.first { $0.id == Self.unlockID }
-        trial = products.first { $0.id == Self.trialID }
-        unlockPrice = unlock?.displayPrice
+        // Assigning an @Published value announces a change even when it is the
+        // same, and every announcement rebuilds the screens above. Only say so
+        // when something is new.
+        let newUnlock = products.first { $0.id == Self.unlockID }
+        let newTrial = products.first { $0.id == Self.trialID }
+        if unlock?.id != newUnlock?.id { unlock = newUnlock }
+        if trial?.id != newTrial?.id { trial = newTrial }
+        if unlockPrice != newUnlock?.displayPrice { unlockPrice = newUnlock?.displayPrice }
     }
 
     /// Read what the Apple ID owns. Nothing it reports can take a granted state
@@ -98,7 +103,7 @@ final class Purchases: ObservableObject {
             cached: storeAccess, observedUnlocked: unlocked,
             observedTrialStart: trialStart, unlockRevoked: unlockRevoked
         )
-        storeAccess = access
+        if storeAccess != access { storeAccess = access }
         UserDefaults.standard.set(access.cacheValue, forKey: Self.cacheKey)
     }
 

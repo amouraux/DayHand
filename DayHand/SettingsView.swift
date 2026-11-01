@@ -29,6 +29,10 @@ struct SettingsView: View {
     @State private var isConfirmingDeleteAll = false
     @AppStorage(Appearance.key) private var appearance = Appearance.automatic
     @State private var languageCode = SettingsView.storedLanguageCode()
+    /// The trial screen is presented from here, with the other sheets, and not
+    /// from the row that opens it: a row is rebuilt whenever the store
+    /// publishes, and a sheet hanging off it would go with it.
+    @State private var showsTrial = false
     @State private var pendingRestore: BackupFile?
     @State private var isChoosingRestoreFile = false
     /// A file picked by hand, read and waiting for the user to confirm.
@@ -46,7 +50,7 @@ struct SettingsView: View {
                 // Free: the trial and the unlock come first. Otherwise the
                 // purchase stays quietly at the bottom.
                 if store.purchases.storeAccess == .free {
-                    PurchasesSection()
+                    PurchasesSection(showsTrial: $showsTrial)
                 }
 
                 Section {
@@ -471,7 +475,7 @@ struct SettingsView: View {
                 }
 
                 if store.purchases.storeAccess != .free {
-                    PurchasesSection()
+                    PurchasesSection(showsTrial: $showsTrial)
                 }
 
                 Section {
@@ -499,6 +503,8 @@ struct SettingsView: View {
             }
             .environment(\.editMode, $categoryEdit)
             .navigationTitle("More")
+            .sheet(isPresented: $showsTrial) { TrialView().environmentObject(store) }
+            .purchaseNotice()
             .sheet(isPresented: $isImportingReminders) {
                 RemindersImportView().environmentObject(store)
             }
