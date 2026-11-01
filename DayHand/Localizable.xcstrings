@@ -45090,6 +45090,1176 @@
           }
         }
       }
+    },
+    "Start 30-day trial": {
+      "comment": "Button that starts the free 30-day trial",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30-Tage-Test starten"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empezar la prueba de 30 días"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commencer l’essai de 30 jours"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inizia la prova di 30 giorni"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 dagen proefperiode starten"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iniciar a avaliação de 30 dias"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iniciar o teste de 30 dias"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30日間のお試しを始める"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30일 체험 시작"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Starta 30 dagars provperiod"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start 30 dages prøveperiode"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start 30 dagers prøveperiode"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aloita 30 päivän kokeilu"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rozpocznij 30-dniowy okres próbny"
+          }
+        }
+      }
+    },
+    "30-day trial": {
+      "comment": "Title of the trial screen",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30-Tage-Test"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prueba de 30 días"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Essai de 30 jours"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prova di 30 giorni"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 dagen proefperiode"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avaliação de 30 dias"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Teste de 30 dias"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30日間のお試し"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30일 체험"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 dagars provperiod"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 dages prøveperiode"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 dagers prøveperiode"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30 päivän kokeilu"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "30-dniowy okres próbny"
+          }
+        }
+      }
+    },
+    "Try everything for %lld days: unlimited active projects and your whole history of finished tasks. When the trial ends, DayHand goes back to the free version, which keeps up to %lld active projects and shows the last %lld days of finished tasks. Nothing is deleted, and nothing is charged.": {
+      "comment": "Explains the trial before it starts: duration, then the free limits, then no deletion and no charge",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Testen Sie alles %lld Tage lang: unbegrenzt viele aktive Projekte und Ihr gesamter Verlauf erledigter Aufgaben. Wenn die Testphase endet, kehrt DayHand zur kostenlosen Version zurück, die bis zu %lld aktive Projekte erlaubt und die letzten %lld Tage erledigter Aufgaben zeigt. Es wird nichts gelöscht und nichts berechnet."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prueba todo durante %lld días: proyectos activos ilimitados y todo tu historial de tareas terminadas. Cuando acabe la prueba, DayHand vuelve a la versión gratuita, que permite hasta %lld proyectos activos y muestra los últimos %lld días de tareas terminadas. No se elimina nada y no se cobra nada."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Essayez tout pendant %lld jours : des projets actifs illimités et tout l’historique de vos tâches terminées. À la fin de l’essai, DayHand revient à la version gratuite, qui permet jusqu’à %lld projets actifs et affiche les %lld derniers jours de tâches terminées. Rien n’est supprimé et rien n’est facturé."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prova tutto per %lld giorni: progetti attivi illimitati e tutta la cronologia delle attività finite. Alla fine della prova, DayHand torna alla versione gratuita, che consente fino a %lld progetti attivi e mostra gli ultimi %lld giorni di attività finite. Non viene eliminato nulla e non viene addebitato nulla."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Probeer alles %lld dagen uit: onbeperkt actieve projecten en je hele geschiedenis van afgeronde taken. Als de proefperiode afloopt, gaat DayHand terug naar de gratis versie, die tot %lld actieve projecten toestaat en de laatste %lld dagen afgeronde taken toont. Er wordt niets verwijderd en er wordt niets in rekening gebracht."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Experimente tudo durante %lld dias: projetos ativos ilimitados e todo o histórico de tarefas concluídas. Quando a avaliação terminar, o DayHand volta à versão gratuita, que permite até %lld projetos ativos e mostra os últimos %lld dias de tarefas concluídas. Não se elimina nada e não se cobra nada."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Experimente tudo por %lld dias: projetos ativos ilimitados e todo o histórico de tarefas concluídas. Quando o teste terminar, o DayHand volta à versão gratuita, que permite até %lld projetos ativos e mostra os últimos %lld dias de tarefas concluídas. Nada é excluído e nada é cobrado."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld日間、すべてをお試しいただけます。アクティブなプロジェクトは無制限で、完了したタスクの全履歴も見られます。お試しが終わると、DayHandは無料版に戻り、アクティブなプロジェクトは%lld個まで、完了したタスクは直近%lld日分が表示されます。何も削除されず、料金も発生しません。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld일 동안 모든 것을 체험해 보세요. 활성 프로젝트는 무제한이고 완료한 할 일의 전체 기록을 볼 수 있습니다. 체험이 끝나면 DayHand는 무료 버전으로 돌아가며, 활성 프로젝트는 %lld개까지, 완료한 할 일은 최근 %lld일분까지 표시됩니다. 삭제되는 것은 없고 요금도 청구되지 않습니다."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prova allt i %lld dagar: obegränsat med aktiva projekt och hela historiken över slutförda uppgifter. När provperioden tar slut går DayHand tillbaka till den gratis versionen, som tillåter upp till %lld aktiva projekt och visar de senaste %lld dagarna av slutförda uppgifter. Inget tas bort och inget debiteras."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prøv det hele i %lld dage: ubegrænsede aktive projekter og hele historikken over afsluttede opgaver. Når prøveperioden slutter, går DayHand tilbage til den gratis version, som tillader op til %lld aktive projekter og viser de seneste %lld dage af afsluttede opgaver. Intet slettes, og intet opkræves."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prøv alt i %lld dager: ubegrensede aktive prosjekter og hele historikken over fullførte oppgaver. Når prøveperioden er over, går DayHand tilbake til den gratis versjonen, som tillater opptil %lld aktive prosjekter og viser de siste %lld dagene med fullførte oppgaver. Ingenting slettes, og ingenting belastes."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kokeile kaikkea %lld päivää: rajattomasti aktiivisia projekteja ja koko valmiiden tehtävien historia. Kun kokeilu päättyy, DayHand palaa ilmaiseen versioon, jossa saa olla enintään %lld aktiivista projektia ja joka näyttää viimeiset %lld päivää valmiita tehtäviä. Mitään ei poisteta, eikä mitään veloiteta."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wypróbuj wszystko przez %lld dni: nieograniczone aktywne projekty i cała historia ukończonych zadań. Po zakończeniu okresu próbnego DayHand wraca do wersji bezpłatnej, która pozwala na maksymalnie %lld aktywne projekty i pokazuje ostatnie %lld dni ukończonych zadań. Nic nie zostanie usunięte i nic nie zostanie pobrane."
+          }
+        }
+      }
+    },
+    "The one-time unlock is %@. No subscription.": {
+      "comment": "Price line on the trial screen",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die einmalige Freischaltung kostet %@. Kein Abo."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El desbloqueo, de pago único, cuesta %@. Sin suscripción."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le déblocage, en un seul paiement, coûte %@. Pas d’abonnement."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lo sblocco, con un solo pagamento, costa %@. Nessun abbonamento."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De eenmalige ontgrendeling kost %@. Geen abonnement."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O desbloqueio, de pagamento único, custa %@. Sem subscrição."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O desbloqueio, de pagamento único, custa %@. Sem assinatura."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "買い切りのアンロックは%@です。サブスクリプションではありません。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "한 번만 결제하는 잠금 해제는 %@입니다. 구독이 아닙니다."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den engångsbetalda upplåsningen kostar %@. Ingen prenumeration."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den engangsbetalte oplåsning koster %@. Intet abonnement."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Den engangsbetalte opplåsingen koster %@. Ikke noe abonnement."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kertaluonteinen avaus maksaa %@. Ei tilausta."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jednorazowe odblokowanie kosztuje %@. Bez subskrypcji."
+          }
+        }
+      }
+    },
+    "Trial days left": {
+      "comment": "Settings row: days remaining in the trial",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verbleibende Testtage"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Días de prueba restantes"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jours d’essai restants"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giorni di prova rimasti"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resterende proefdagen"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dias de avaliação restantes"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dias de teste restantes"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "お試しの残り日数"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "남은 체험 일수"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Provdagar kvar"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prøvedage tilbage"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prøvedager igjen"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kokeilupäiviä jäljellä"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pozostałe dni próbne"
+          }
+        }
+      }
+    },
+    "Unlock DayHand for %@": {
+      "comment": "Unlock button with the price",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand freischalten für %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desbloquear DayHand por %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Débloquer DayHand pour %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sblocca DayHand per %@"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand ontgrendelen voor %@"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desbloquear o DayHand por %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desbloquear o DayHand por %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHandをアンロック(%@)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand 잠금 해제 (%@)"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lås upp DayHand för %@"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lås DayHand op for %@"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lås opp DayHand for %@"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avaa DayHand hintaan %@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Odblokuj DayHand za %@"
+          }
+        }
+      }
+    },
+    "Restore Purchases": {
+      "comment": "Required by the App Store",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Käufe wiederherstellen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurar compras"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurer les achats"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ripristina acquisti"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aankopen herstellen"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurar compras"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurar compras"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "購入を復元"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "구입 복원"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Återställ köp"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gendan køb"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gjenopprett kjøp"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Palauta ostot"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Przywróć zakupy"
+          }
+        }
+      }
+    },
+    "DayHand is unlocked. Thank you.": {
+      "comment": "Settings line once bought",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand ist freigeschaltet. Vielen Dank."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand está desbloqueado. Gracias."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand est débloqué. Merci."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand è sbloccato. Grazie."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand is ontgrendeld. Bedankt."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O DayHand está desbloqueado. Obrigado."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O DayHand está desbloqueado. Obrigado."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHandはアンロックされています。ありがとうございます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand의 잠금이 해제되었습니다. 감사합니다."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand är upplåst. Tack."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand er låst op. Tak."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand er låst opp. Takk."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand on avattu. Kiitos."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DayHand jest odblokowany. Dziękuję."
+          }
+        }
+      }
+    },
+    "Your trial has ended. Everything you made is still here.": {
+      "comment": "Settings line after the trial",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ihre Testphase ist beendet. Alles, was Sie angelegt haben, ist noch da."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu prueba ha terminado. Todo lo que creaste sigue aquí."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre essai est terminé. Tout ce que vous avez créé est toujours là."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La tua prova è terminata. Tutto ciò che hai creato è ancora qui."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Je proefperiode is afgelopen. Alles wat je hebt gemaakt, staat er nog."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A sua avaliação terminou. Tudo o que criou continua aqui."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seu teste terminou. Tudo o que você criou continua aqui."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "お試し期間は終了しました。作成したものはすべてそのまま残っています。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "체험이 끝났습니다. 만든 것은 모두 그대로 남아 있습니다."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Din provperiod har tagit slut. Allt du har skapat finns kvar."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Din prøveperiode er slut. Alt, hvad du har lavet, er her stadig."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prøveperioden din er over. Alt du har laget er her fortsatt."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kokeilusi on päättynyt. Kaikki tekemäsi on yhä tallessa."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Twój okres próbny się skończył. Wszystko, co stworzyłeś, nadal tu jest."
+          }
+        }
+      }
+    },
+    "Purchases": {
+      "comment": "Settings section header",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Käufe"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compras"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Achats"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acquisti"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aankopen"
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compras"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compras"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "購入"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "구입"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Köp"
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Køb"
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kjøp"
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ostot"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zakupy"
+          }
+        }
+      }
+    },
+    "The App Store could not be reached. Try again later.": {
+      "comment": "Shown when a purchase action fails",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der App Store ist nicht erreichbar. Versuchen Sie es später erneut."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se ha podido conectar con el App Store. Inténtalo más tarde."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de joindre l’App Store. Réessayez plus tard."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossibile raggiungere l’App Store. Riprova più tardi."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De App Store is niet bereikbaar. Probeer het later opnieuw."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível contactar a App Store. Tente novamente mais tarde."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível acessar a App Store. Tente novamente mais tarde."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Storeに接続できませんでした。後でもう一度お試しください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Store에 연결할 수 없습니다. 나중에 다시 시도하세요."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Store kunde inte nås. Försök igen senare."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Store kunne ikke nås. Prøv igen senere."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Store kunne ikke nås. Prøv igjen senere."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Storeen ei saatu yhteyttä. Yritä myöhemmin uudelleen."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie udało się połączyć z App Store. Spróbuj ponownie później."
+          }
+        }
+      }
+    },
+    "Purchases restored.": {
+      "comment": "Shown after Restore Purchases finds the unlock",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Käufe wiederhergestellt."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compras restauradas."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Achats restaurés."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acquisti ripristinati."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aankopen hersteld."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compras restauradas."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compras restauradas."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "購入が復元されました。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "구입이 복원되었습니다."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Köp återställda."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Køb gendannet."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kjøp gjenopprettet."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ostot palautettu."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zakupy przywrócone."
+          }
+        }
+      }
+    },
+    "No earlier purchase was found for this Apple Account.": {
+      "comment": "Shown after Restore Purchases finds nothing",
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Für diesen Apple-Account wurde kein früherer Kauf gefunden."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se ha encontrado ninguna compra anterior en esta cuenta de Apple."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun achat antérieur n’a été trouvé pour ce compte Apple."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non è stato trovato alcun acquisto precedente per questo account Apple."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Er is geen eerdere aankoop gevonden voor dit Apple Account."
+          }
+        },
+        "pt-PT": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi encontrada nenhuma compra anterior nesta conta Apple."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhuma compra anterior foi encontrada nesta conta Apple."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "このApple Accountでは以前の購入が見つかりませんでした。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 Apple 계정에서 이전 구입 내역을 찾을 수 없습니다."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inget tidigare köp hittades för det här Apple-kontot."
+          }
+        },
+        "da": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Der blev ikke fundet noget tidligere køb for denne Apple-konto."
+          }
+        },
+        "nb": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fant ingen tidligere kjøp for denne Apple-kontoen."
+          }
+        },
+        "fi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tälle Apple-tilille ei löytynyt aiempaa ostoa."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nie znaleziono wcześniejszego zakupu na tym koncie Apple."
+          }
+        }
+      }
     }
   },
   "version": "1.1"

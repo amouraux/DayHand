@@ -1411,6 +1411,53 @@ struct Entitlement: Equatable {
     }
 }
 
+
+extension Entitlement.Access {
+    /// How the last confirmed state is kept on this device, so an offline launch
+    /// can trust it until the App Store can be asked again: "free",
+    /// "unlocked", or "trial:<seconds since 1970>".
+    var cacheValue: String {
+        switch self {
+        case .free: return "free"
+        case .unlocked: return "unlocked"
+        case .trial(let start): return "trial:\(start.timeIntervalSince1970)"
+        }
+    }
+
+    init?(cacheValue: String) {
+        switch cacheValue {
+        case "free": self = .free
+        case "unlocked": self = .unlocked
+        default:
+            guard cacheValue.hasPrefix("trial:"),
+                  let seconds = Double(cacheValue.dropFirst("trial:".count)) else { return nil }
+            self = .trial(startedAt: Date(timeIntervalSince1970: seconds))
+        }
+    }
+
+    /// What this device may do, given what was last confirmed and what the App
+    /// Store reports now. The rule is that a granted state is only ever taken
+    /// away by an explicit refund (`unlockRevoked`), never by silence: an
+    /// offline device, or a first launch before StoreKit has answered, reports
+    /// nothing, and that must not read as "not bought". A finished trial is
+    /// not a demotion either; the date ends it (see `Entitlement.hasFullAccess`).
+    static func resolve(cached: Entitlement.Access, observedUnlocked: Bool,
+                        observedTrialStart: Date?, unlockRevoked: Bool) -> Entitlement.Access {
+        if observedUnlocked { return .unlocked }
+        let observed: Entitlement.Access = observedTrialStart.map { .trial(startedAt: $0) } ?? .free
+        if unlockRevoked { return observed }
+        if cached == .unlocked { return .unlocked }
+        if case .free = observed, case .trial = cached { return cached }
+        return observed
+    }
+
+    /// Whether the one trial has been started, running or over.
+    var hasStartedTrial: Bool {
+        if case .trial = self { return true }
+        return false
+    }
+}
+
 // MARK: - Dates
 
 /// Date helpers. Buckets are stored on the card, so dates never decide where a

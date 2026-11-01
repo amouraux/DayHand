@@ -1,0 +1,48 @@
+{
+  "identifier" : "A1D2C3B4",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "9.99",
+      "familyShareable" : true,
+      "internalID" : "6747000001",
+      "localizations" : [
+        {
+          "description" : "Unlimited active projects and full completed history on all your devices.",
+          "displayName" : "DayHand Unlimited",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.andremouraux.tnt.unlock",
+      "referenceName" : "DayHand Unlimited",
+      "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "0.00",
+      "familyShareable" : false,
+      "internalID" : "6747000002",
+      "localizations" : [
+        {
+          "description" : "Everything unlimited for 30 days. Ends by returning to the free version.",
+          "displayName" : "30-day Trial",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.andremouraux.tnt.trial",
+      "referenceName" : "30-day Trial",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

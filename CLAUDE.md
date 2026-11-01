@@ -276,9 +276,11 @@ the spec is "Free and paid" in `docs/PROMPT.md`. Three things to hold on to:
   call it directly. User-typed names go through `ensureProjectWithinLimit`.
 - The entitlement is device-local (`Purchases`, reached as `store.purchases`).
   It is never written to the document.
-- The More → Testing switch must never work in a customer's copy. It is
-  guarded by `Purchases.detectEnvironment`; do not weaken that guard, and
-  remove the switch before the final submission.
+- There is **no test switch** and none may come back: a customer's copy and a
+  reviewer's copy must behave the same. Try the limits with `DayHand.storekit`
+  (Xcode's StoreKit transaction manager), and see "Testing the purchase" in
+  docs/PROMPT.md. `Entitlement.Access.resolve` is the rule that silence is
+  never a refund; keep it that way.
 
 ## Finishing a change
 

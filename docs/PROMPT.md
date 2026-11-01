@@ -2309,11 +2309,16 @@ shared by every device on the Apple ID (universal purchase, Family Sharing on).
 There is no subscription, no account and no server. Decided 24 and 27 October
 2026.
 
-**Built so far (27 October):** the entitlement rules (`Entitlement` in
-`Models.swift`, tested), both limits wherever they bite, the unlock screen, and
-a temporary test switch. **Not built yet:** the purchase, the 30-day trial and
-Restore Purchases. Until they are, `Purchases.storeAccess` is unlocked, so
-nothing is limited for anyone who has not chosen Free in the test switch.
+**Built (1 November 2026), for version 1.0:** the entitlement rules
+(`Entitlement` in `Models.swift`, tested), both limits wherever they bite, the
+unlock screen, the StoreKit purchase, the user-started trial and Restore
+Purchases. Two non-consumable products: `com.andremouraux.tnt.unlock` (paid) and
+`com.andremouraux.tnt.trial` (free). `Purchases.storeAccess` starts as free and
+becomes what the Apple ID owns; there is no switch between the two versions.
+The unlock and trial screens live in `PaywallView.swift`; Settings has a
+Purchases section, at the top while the version is free and quietly at the
+bottom otherwise. Only the real purchase flow cannot be tried without the App
+Store: see "Testing the purchase" below.
 
 In the app the limit is worded as **active projects** (matching Organise), and
 the spec's "live" means the same thing.
@@ -2365,9 +2370,16 @@ who imports old finished tasks, and by everyone after the trial.
 3. **Nothing is deleted or lost for non-payment.** The file, the backups and
    CSV export always hold every task, including finished tasks the history
    limit collapses. Collapsed rows show a count, not a blank.
-4. **TestFlight testers are grandfathered** and see everything unlocked.
-5. **Works offline.** The last verified state is trusted until StoreKit can
-   confirm again; an unverifiable expiry never takes away what was granted.
+4. **Nobody is unlocked by environment.** TestFlight and App Review use sandbox
+   purchases, which cost nothing, so a tester buys the unlock or starts the trial
+   like anyone else and a reviewer sees the real limits. An environment check
+   could not tell the two apart, and unlocking both would hide the paywall from
+   App Review.
+5. **Works offline.** The last verified state is kept on the device and trusted
+   until StoreKit can confirm again. Silence is never a refund: only a revoked
+   unlock transaction takes the unlock away (`Entitlement.Access.resolve`, tested).
+   A finished trial is not a demotion either: the date ends it, and the record
+   stays, so it cannot be started twice.
 6. **Restore Purchases** is in Settings, as the App Store requires.
 7. The limits live in one place (an entitlement the views ask), so a limit is
    never enforced by a view guessing from counts of its own.
@@ -2375,16 +2387,14 @@ who imports old finished tasks, and by everyone after the trial.
 User-facing wording follows the task/card rule: the paywall says tasks and
 projects, never cards.
 
-**The test switch.** More → Testing offers Automatic (what the store says),
-Free and Paid, so both versions can be tried on one device. It is device-local,
-persisted in `UserDefaults`, and only exists where the app is not a customer's
-copy: in a debug build, or when StoreKit's `AppTransaction` reports a
-non-production environment (TestFlight, App Review's sandbox, Xcode). Anything
-that cannot be confirmed counts as production, so an offline first launch
-never switches it on, and a copy installed from the App Store can never use it.
-A Release build run straight from Xcode usually cannot confirm either, so use
-Debug or TestFlight. It is temporary: remove it, or hide it behind a gesture,
-before the final submission.
+**Testing the purchase.** There is no switch, so the limits are tried the way a
+customer meets them. `DayHand.storekit` declares the two products and the scheme
+points at it: run from Xcode, and Debug → StoreKit → Manage Transactions buys,
+refunds and expires them, and Clear Purchase History starts again. The unlock's
+price there is a placeholder; the real one is set in App Store Connect. A
+simulator or a device launched any other way has no App Store, so the unlock shows
+no price and says it could not be reached. In TestFlight the purchases are
+sandbox purchases and cost nothing.
 
 **Where the limits bite.**
 

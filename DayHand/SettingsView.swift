@@ -43,9 +43,10 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
-                // Temporary: for trying the free and the paid app on one device.
-                if store.purchases.testingAvailable {
-                    PaywallTestingSection()
+                // Free: the trial and the unlock come first. Otherwise the
+                // purchase stays quietly at the bottom.
+                if store.purchases.storeAccess == .free {
+                    PurchasesSection()
                 }
 
                 Section {
@@ -467,6 +468,10 @@ struct SettingsView: View {
                     .disabled(store.cardCount == 0)
                 } footer: {
                     Text("Removes every task on this device. Categories are kept. If a sync file is in use, the deletion reaches your other devices too.")
+                }
+
+                if store.purchases.storeAccess != .free {
+                    PurchasesSection()
                 }
 
                 Section {

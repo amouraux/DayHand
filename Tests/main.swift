@@ -2946,6 +2946,45 @@ do {
            "a merged document is written in this app's format")
 }
 
+// What this device may do, given what was last confirmed and what the App Store says now.
+do {
+    typealias Access = Entitlement.Access
+    let start = Date(timeIntervalSince1970: 1_800_000_000)
+
+    // Kept on the device as text, and read back exactly.
+    expect(Access(cacheValue: Access.free.cacheValue) == .free, "free survives the cache")
+    expect(Access(cacheValue: Access.unlocked.cacheValue) == .unlocked, "unlocked survives the cache")
+    expect(Access(cacheValue: Access.trial(startedAt: start).cacheValue) == .trial(startedAt: start),
+           "a trial and its start survive the cache")
+    expect(Access(cacheValue: "") == nil && Access(cacheValue: "trial:soon") == nil && Access(cacheValue: "paid") == nil,
+           "nonsense in the cache is ignored, not trusted")
+
+    func resolve(_ cached: Access, unlocked: Bool = false, trial: Date? = nil, revoked: Bool = false) -> Access {
+        Access.resolve(cached: cached, observedUnlocked: unlocked, observedTrialStart: trial, unlockRevoked: revoked)
+    }
+    expect(resolve(.free, unlocked: true) == .unlocked, "buying unlocks")
+    expect(resolve(.trial(startedAt: start), unlocked: true) == .unlocked, "buying during the trial unlocks")
+    expect(resolve(.free, trial: start) == .trial(startedAt: start), "starting the trial starts it, from the App Store's date")
+    expect(resolve(.free) == .free, "a first launch with nothing owned is free")
+
+    // Silence is not a refund: offline, or before StoreKit answers, nothing is observed.
+    expect(resolve(.unlocked) == .unlocked, "an offline device keeps what it was granted")
+    expect(resolve(.trial(startedAt: start)) == .trial(startedAt: start), "an offline device keeps its trial")
+    expect(resolve(.unlocked, trial: start) == .unlocked, "a trial record never replaces an unlock")
+
+    // Only an explicit refund takes the unlock away, and it leaves whatever else is owned.
+    expect(resolve(.unlocked, revoked: true) == .free, "a refunded unlock is gone")
+    expect(resolve(.unlocked, trial: start, revoked: true) == .trial(startedAt: start), "a refund leaves the trial record")
+
+    // The trial ending is the date's doing, not a change of state.
+    let ended = Entitlement(access: .trial(startedAt: start))
+    let after = Calendar.current.date(byAdding: .day, value: Entitlement.trialDays + 1, to: start)!
+    expect(ended.hasFullAccess(now: after) == false, "a finished trial is the free version")
+    expect(resolve(.trial(startedAt: start)) == .trial(startedAt: start), "and stays recorded, so it cannot be started twice")
+    expect(Access.trial(startedAt: start).hasStartedTrial && !Access.free.hasStartedTrial && !Access.unlocked.hasStartedTrial,
+           "only a trial counts as a started trial")
+}
+
 // MARK: - App language
 
 do {

@@ -242,8 +242,7 @@ tasks, or unsupported claims about instant sync or time tracking.
   The window's rounded corners are flattened onto a plain background because
   screenshots may not carry transparency.
 
-The More sheet's root is deliberately not shown: its Testing control must be
-removed before submission, and until then no screenshot should include it. The `-EN` in the iPad file names marks the
+None of these sets shows the More sheet's root (it held the temporary Testing control when they were taken; it now shows Purchases). The `-EN` in the iPad file names marks the
 language of the interface; localised sets would carry their own suffix.
 
 The website's `docs/screenshots/web/` holds resized JPEG copies of these three
@@ -270,7 +269,8 @@ to the developer’s personal Apple Account or tasks.
 ### Review Notes — iOS (iPhone and iPad)
 
 Paste into the iOS version's App Review Information. Written for the current
-implementation; replace the bracketed line before submission.
+implementation. The in-app purchase paragraph is accurate for the build in the
+repository; confirm the product names against App Store Connect before submitting.
 
 ```text
 DayHand is a task manager for iPhone and iPad. No account or sign-in is required, and no developer credentials are needed. Core features work without setting up sync.
@@ -285,7 +285,7 @@ Import from Apple Reminders asks permission to read your reminders; Import from 
 
 To test sync, choose More > Sync > Create Sync File on one device and save it in iCloud Drive. On another device using the same iCloud Drive, choose More > Sync > Use Existing Sync File, select Merge With This Device, and choose the same file. No DayHand account or server is involved.
 
-[PURCHASES: add product ID, how to buy and restore, and the free limits here, or delete this line if the build has none.]
+IN-APP PURCHASES: DayHand is free to download. One non-consumable purchase, "DayHand Unlimited" (com.andremouraux.tnt.unlock), unlocks unlimited active projects and the full history of finished tasks. The free version keeps up to three active projects and shows the last 30 days of finished tasks; nothing is ever deleted, and every task can still be added and edited. A free non-consumable, "30-day Trial" (com.andremouraux.tnt.trial), lets the user try everything for 30 days; it starts only when the user chooses it and ends by returning to the free version, with no charge. To see the limits, create a fourth active project (the Filter button, under Organise). To buy or start the trial, use the unlock screen that appears, or More > Purchases. Restore Purchases is in More > Purchases.
 ```
 
 ### Review Notes — macOS
@@ -307,17 +307,18 @@ Import from Apple Reminders asks permission to read your reminders; Import from 
 
 To test sync, choose More > Sync > Create Sync File on one device and save it in iCloud Drive. On another device using the same iCloud Drive, choose More > Sync > Use Existing Sync File, select Merge With This Device, and choose the same file. DayHand is sandboxed and can only read the file you pick. No DayHand account or server is involved.
 
-[PURCHASES: add product ID, how to buy and restore, and the free limits here, or delete this line if the build has none.]
+IN-APP PURCHASES: DayHand is free to download. One non-consumable purchase, "DayHand Unlimited" (com.andremouraux.tnt.unlock), unlocks unlimited active projects and the full history of finished tasks. The free version keeps up to three active projects and shows the last 30 days of finished tasks; nothing is ever deleted, and every task can still be added and edited. A free non-consumable, "30-day Trial" (com.andremouraux.tnt.trial), lets the user try everything for 30 days; it starts only when the user chooses it and ends by returning to the free version, with no charge. To see the limits, create a fourth active project (the Filter button, under Organise). To buy or start the trial, use the unlock screen that appears, or More > Purchases. Restore Purchases is in More > Purchases.
 ```
 
-**Purchase review notes — complete before a paid launch:** the source currently
-contains the free/paid rules and unlock screen, but its purchase action is a
-stub and automatic access is unlocked. Before submission, implement and test
-purchase, Restore Purchases and the intended trial; replace this maintainer
-note with the actual product identifiers and reviewer steps. The intended free
-limits are three active projects and 30 days of completed history. Older tasks
-remain in the data, backups and exports, and are searchable. No task capture is
-blocked. Remove the temporary Testing control from the production review flow.
+**Purchase review notes.** The source now implements the purchase (StoreKit 2),
+Restore Purchases and the user-started trial; there is no test switch and
+nothing is unlocked by environment, so the reviewer sees the real limits and
+buys in the sandbox. Before submission, create both products in App Store
+Connect with the identifiers above and attach each product's review screenshot
+(the unlock screen is in More > Purchases, or by creating a fourth active
+project). The free limits are three active projects and 30 days of completed
+history; older tasks remain in the data, backups and exports, and are
+searchable. No task capture is blocked.
 
 ## 6. App Privacy, age rating and compliance
 
@@ -366,10 +367,11 @@ optional labels as a substitute for testing.
 
 ### Current implementation and launch plan
 
-Implemented: free/paid entitlement rules, a three-active-project limit, a
-rolling 30-day completed-history limit, the unlock screen and a test switch.
-Not yet implemented: the StoreKit purchase, Restore Purchases, and the
-user-started 30-day trial. `Purchases.storeAccess` currently defaults to unlocked.
+Implemented for 1.0: free/paid entitlement rules, a three-active-project limit, a
+rolling 30-day completed-history limit, the unlock screen, the StoreKit purchase,
+Restore Purchases and the user-started 30-day trial (a free non-consumable).
+`Purchases.storeAccess` starts as free. Still to do outside the code: create the
+two products in App Store Connect and choose the price.
 
 The launch plan in `PROMPT.md` is a free download with one non-consumable unlock,
 shared across iPhone, iPad and Mac on the same Apple Account, with Family Sharing.
@@ -386,7 +388,7 @@ four-category/five-project and paid-weekly-review proposals.
 | Purchase type | Non-consumable, single one-time purchase |
 | Unlock display name | `DayHand Unlimited` — 17 characters; proposed store name |
 | Unlock description | `Unlimited active projects and full completed history on all your devices.` — 73 characters |
-| Product identifier | **TO COMPLETE:** configure one stable product ID shared across platforms; no identifier is wired into source yet |
+| Product identifiers | `com.andremouraux.tnt.unlock` (paid) and `com.andremouraux.tnt.trial` (free, display name "30-day Trial"), both non-consumable and wired into `Purchases.swift`; create them with exactly these IDs |
 | Price and storefront equivalents | **OWNER DECISION:** no price selected; public copy intentionally avoids an amount |
 | Family Sharing | Planned enabled, as recorded in `PROMPT.md`; configure and test in App Store Connect |
 | Restore Purchases | Required implementation work; expose in Settings and test on both platforms |
