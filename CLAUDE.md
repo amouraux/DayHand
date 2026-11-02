@@ -282,6 +282,16 @@ the spec is "Free and paid" in `docs/PROMPT.md`. Three things to hold on to:
   docs/PROMPT.md. `Entitlement.Access.resolve` is the rule that silence is
   never a refund; keep it that way.
 
+## Never block the main thread on the network
+
+**Do not call `ProcessInfo.hostName` (or `Host.name`, `NSHost`).** It resolves the
+name over the network, synchronously, so on a first launch the main thread waits
+for the lookup, iOS shows a "devices on local networks" prompt the app never
+asked for, and the launch watchdog (0x8BADF00D, about 20 seconds) kills the app.
+That is exactly what build 249 did on its first TestFlight run. Use
+`UIDevice.current.name`, and never do anything that waits on a system service
+during launch. A crash report's main thread says what it was waiting for.
+
 ## Finishing a change
 
 Run the tests, build both platforms, then commit with a message that explains

@@ -1093,6 +1093,14 @@ final class DocumentStorage {
 
     var syncFileName: String? { syncURL?.lastPathComponent }
 
+    /// What this device calls itself, set by the app at start (a Foundation-only
+    /// file cannot ask UIKit). **Never `ProcessInfo.hostName`:** it looks the
+    /// name up on the network, blocking the calling thread until the lookup
+    /// returns, and iOS asks about "devices on local networks" because of it. On
+    /// a first launch the main thread sat in it until the launch watchdog killed
+    /// the app (build 249, TestFlight, 2 November 2026).
+    var rawDeviceName = ""
+
     /// True when the shared file was saved by a newer DayHand than this one, so
     /// this device is reading nothing from it and writing nothing to it. Set
     /// by the last read or write; the store turns it into a message.
@@ -2212,7 +2220,7 @@ extension DocumentStorage {
     }
 
     var deviceName: String {
-        BackupFilename.device(from: ProcessInfo.processInfo.hostName, id: installID)
+        BackupFilename.device(from: rawDeviceName, id: installID)
     }
 
     private func url(for kind: BackupKind) -> URL {

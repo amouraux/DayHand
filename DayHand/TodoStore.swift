@@ -1,6 +1,7 @@
 import Combine
 import Foundation
 import SwiftUI
+import UIKit
 
 /// Owns the cards and persists them, to iCloud Drive when it is available and
 /// to Application Support otherwise, so a companion Mac app can share the same
@@ -62,6 +63,9 @@ final class TodoStore: ObservableObject {
 
     init(storage: DocumentStorage = DocumentStorage()) {
         self.storage = storage
+        // A plain name, read once: see `DocumentStorage.rawDeviceName` for why
+        // it is not the host name.
+        storage.rawDeviceName = UIDevice.current.name
         // The store is what every view watches, so a change of version has to
         // reach them through it.
         purchasesChange = purchases.objectWillChange.sink { [weak self] _ in
