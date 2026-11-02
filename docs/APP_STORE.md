@@ -310,6 +310,33 @@ To test sync, choose More > Sync > Create Sync File on one device and save it in
 IN-APP PURCHASES: DayHand is free to download. One non-consumable purchase, "DayHand Unlimited" (com.andremouraux.tnt.unlock), unlocks unlimited active projects and the full history of finished tasks. The free version keeps up to three active projects and shows the last 30 days of finished tasks; nothing is ever deleted, and every task can still be added and edited. A free non-consumable, "30-day Trial" (com.andremouraux.tnt.trial), lets the user try everything for 30 days; it starts only when the user chooses it and ends by returning to the free version, with no charge. To see the limits, create a fourth active project (the Filter button, under Organise). To buy or start the trial, use the unlock screen that appears, or More > Purchases. Restore Purchases is in More > Purchases.
 ```
 
+**In-app purchase review notes.** Paste each into the product's *App Review
+Information → Review Notes*. The price is left as `<price>` because it is set in
+App Store Connect.
+
+*DayHand Unlimited* (`com.andremouraux.tnt.unlock`):
+
+```text
+Non-consumable, one-time purchase that unlocks unlimited active projects and the full history of finished tasks. It is not a subscription.
+
+The free version allows up to 3 active projects and shows the last 30 days of finished tasks. Nothing is ever deleted; everything stays in the user's data, backups and CSV exports.
+
+To find it: open More (the ellipsis button at the bottom of the screen). The Purchases section at the top shows "Unlock DayHand for <price>". The same screen is shown when a fourth active project is created. Restore Purchases is in More > Purchases.
+```
+
+*30-day free trial* (`com.andremouraux.tnt.trial`):
+
+```text
+Free non-consumable (price 0) that gives the user a one-time 30-day trial of the unlocked features. It follows the Apple Account across devices and can be taken once.
+
+It is never started automatically. Open More > Purchases > "Start 30-day trial". The screen first states the duration, what stops when the trial ends, that existing projects stay visible and everything can still be exported, and the price of the unlock. The user then taps "Start 30-day trial" and confirms. Nothing is charged.
+
+When the trial ends the app goes back to the free version. Nothing is deleted. The days left are shown in More > Purchases while the trial runs.
+```
+
+A clean install has no finished tasks older than 30 days, so the notes point to
+More > Purchases and not to the "earlier tasks · Unlock" row.
+
 **In-app purchase review screenshots.** `docs/screenshots/appstore/iap-review/`
 holds one for each product, taken from the iPhone 17 simulator (1206 × 2622, no
 alpha) on a build run from Xcode with `DayHand.storekit`, so the price is the
