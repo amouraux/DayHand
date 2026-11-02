@@ -418,8 +418,8 @@ Restore Purchases and the user-started 30-day trial (a free non-consumable).
 two products in App Store Connect and choose the price.
 
 The launch plan in `PROMPT.md` is a free download with one non-consumable unlock,
-shared across iPhone, iPad and Mac on the same Apple Account, with Family Sharing.
-There is no subscription or category limit. This supersedes the earlier
+shared across iPhone, iPad and Mac on the same Apple Account (Family Sharing is
+off at launch; see the table). There is no subscription or category limit. This supersedes the earlier
 four-category/five-project and paid-weekly-review proposals.
 
 | Decision / field | Value / action |
@@ -434,7 +434,7 @@ four-category/five-project and paid-weekly-review proposals.
 | Unlock description | `Unlimited active projects and full completed history on all your devices.` — 73 characters |
 | Product identifiers | `com.andremouraux.tnt.unlock` (paid) and `com.andremouraux.tnt.trial` (free, display name "30-day Trial"), both non-consumable and wired into `Purchases.swift`; create them with exactly these IDs. **Status (1 November 2026):** both products now exist in App Store Connect and are in "Prepare for Submission": "30-day free trial" at 0 EUR, and "DayHand Unlimited". Each still needs its localisations, its review screenshot and, for the unlock, the price, then attaching to the version |
 | Price and storefront equivalents | **Agreed 27 October 2026**, a one-time unlock set in the base country's price list with Apple converting the other storefronts: about **€4.99** for the first few weeks, to gather early reviews, then **€7.99**; €9.99 is possible once reviews exist and nothing higher for 1.0. Net is roughly €5.60 a sale at €7.99 (VAT first, then Apple's 15% small-business rate; **TO CONFIRM** enrolment in the Small Business Program). The step from the launch price to €7.99 can be scheduled in App Store Connect's Price Schedule, and the app shows whatever price the App Store reports, so no update is needed to change it. Public copy still avoids an amount |
-| Family Sharing | Planned enabled, as recorded in `PROMPT.md`; configure and test in App Store Connect |
+| Family Sharing | **Decided 2 November 2026: off for 1.0, on both products.** A to-do list is personal, so few households would share one unlock, and the setting can be turned on later but never off again, so off keeps the choice open. Leave it off on the trial in any case. Revisit if users ask; `Access.resolve` already demotes a revoked shared unlock, and `DayHand.storekit` must be switched to match before testing it |
 | Restore Purchases | Required implementation work; expose in Settings and test on both platforms |
 | Trial | Planned, user-started 30-day unlimited access; returns to free without a charge |
 | Trial product display name | `30-day Trial` — planned separate zero-price non-consumable |
@@ -453,8 +453,8 @@ restoration and the absence of an automatic charge. Verify Apple’s current
 submission requirements when configuring these products.
 
 Do not publish trial or purchase claims until the submitted build implements
-them. Verify universal purchase and restoration on iPhone/iPad and Mac, and
-Family Sharing separately. The free version retains existing tasks and projects;
+them. Verify universal purchase and restoration on iPhone/iPad and Mac. Family
+Sharing is off for 1.0; test it separately if it is ever turned on. The free version retains existing tasks and projects;
 manual creation above the limit is restricted, while imports, sync and exports
 preserve the complete data. Search can find older completed tasks.
 

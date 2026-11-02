@@ -2348,7 +2348,9 @@ review creates a fresh snapshot including kept tasks and new arrivals.
 ## Free and paid
 
 DayHand is a free app with one in-app unlock: a single non-consumable purchase,
-shared by every device on the Apple ID (universal purchase, Family Sharing on).
+shared by every device on the Apple ID (universal purchase). Family Sharing is
+off for 1.0: the setting can be turned on later but never off again, and a task
+list is personal. Decided 2 November 2026.
 There is no subscription, no account and no server. Decided 24 and 27 October
 2026.
 
