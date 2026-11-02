@@ -50,7 +50,7 @@
             ReferencedContainer = "container:DayHand.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-         <StoreKitConfigurationFileReference
+      <StoreKitConfigurationFileReference
          identifier = "../../DayHand.storekit">
       </StoreKitConfigurationFileReference>
    </LaunchAction>

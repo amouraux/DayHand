@@ -17,19 +17,20 @@
 		D00000000000000000000008 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000000000000000000008 /* SettingsView.swift */; };
 		D00000000000000000000009 /* Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000000000000000000009 /* Sync.swift */; };
 		D0000000000000000000000B /* ProjectEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000B /* ProjectEditor.swift */; };
-		D0000000000000000000001A /* FilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001A /* FilterView.swift */; };
-		D0000000000000000000001B /* ReminderScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001B /* ReminderScheduler.swift */; };
-		D0000000000000000000001F /* Purchases.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001F /* Purchases.swift */; };
-		D00000000000000000000020 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000000000000000000020 /* PaywallView.swift */; };
-		D0000000000000000000000E /* InboxReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000E /* InboxReviewView.swift */; };
-		D0000000000000000000001C /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001C /* TimelineView.swift */; };
 		D0000000000000000000000C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000C /* PrivacyInfo.xcprivacy */; };
 		D0000000000000000000000D /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000D /* Localizable.xcstrings */; };
+		D0000000000000000000000E /* InboxReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000000E /* InboxReviewView.swift */; };
+		D0000000000000000000001A /* FilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001A /* FilterView.swift */; };
+		D0000000000000000000001B /* ReminderScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001B /* ReminderScheduler.swift */; };
+		D0000000000000000000001C /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001C /* TimelineView.swift */; };
 		D0000000000000000000001D /* RemindersImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001D /* RemindersImportView.swift */; };
 		D0000000000000000000001E /* TodoistImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001E /* TodoistImportView.swift */; };
+		D0000000000000000000001F /* Purchases.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001F /* Purchases.swift */; };
+		D00000000000000000000020 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000000000000000000020 /* PaywallView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9451790A3097E60900375861 /* DayHand.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = DayHand.storekit; sourceTree = "<group>"; };
 		A00000000000000000000005 /* DayHand.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DayHand.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C00000000000000000000001 /* DayHandApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayHandApp.swift; sourceTree = "<group>"; };
 		C00000000000000000000002 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
@@ -41,17 +42,17 @@
 		C00000000000000000000008 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C00000000000000000000009 /* Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync.swift; sourceTree = "<group>"; };
 		C0000000000000000000000A /* DayHand.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DayHand.entitlements; sourceTree = "<group>"; };
-		C0000000000000000000001F /* Purchases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Purchases.swift; sourceTree = "<group>"; };
-		C00000000000000000000020 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
-		C0000000000000000000000E /* InboxReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxReviewView.swift; sourceTree = "<group>"; };
-		C0000000000000000000001C /* TimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
 		C0000000000000000000000B /* ProjectEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectEditor.swift; sourceTree = "<group>"; };
-		C0000000000000000000001A /* FilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterView.swift; sourceTree = "<group>"; };
-		C0000000000000000000001B /* ReminderScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderScheduler.swift; sourceTree = "<group>"; };
 		C0000000000000000000000C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		C0000000000000000000000D /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		C0000000000000000000000E /* InboxReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxReviewView.swift; sourceTree = "<group>"; };
+		C0000000000000000000001A /* FilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterView.swift; sourceTree = "<group>"; };
+		C0000000000000000000001B /* ReminderScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderScheduler.swift; sourceTree = "<group>"; };
+		C0000000000000000000001C /* TimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
 		C0000000000000000000001D /* RemindersImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersImportView.swift; sourceTree = "<group>"; };
 		C0000000000000000000001E /* TodoistImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoistImportView.swift; sourceTree = "<group>"; };
+		C0000000000000000000001F /* Purchases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Purchases.swift; sourceTree = "<group>"; };
+		C00000000000000000000020 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +69,7 @@
 		A00000000000000000000002 = {
 			isa = PBXGroup;
 			children = (
+				9451790A3097E60900375861 /* DayHand.storekit */,
 				B00000000000000000000006 /* DayHand */,
 				A00000000000000000000003 /* Products */,
 			);
