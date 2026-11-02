@@ -310,6 +310,15 @@ To test sync, choose More > Sync > Create Sync File on one device and save it in
 IN-APP PURCHASES: DayHand is free to download. One non-consumable purchase, "DayHand Unlimited" (com.andremouraux.tnt.unlock), unlocks unlimited active projects and the full history of finished tasks. The free version keeps up to three active projects and shows the last 30 days of finished tasks; nothing is ever deleted, and every task can still be added and edited. A free non-consumable, "30-day Trial" (com.andremouraux.tnt.trial), lets the user try everything for 30 days; it starts only when the user chooses it and ends by returning to the free version, with no charge. To see the limits, create a fourth active project (the Filter button, under Organise). To buy or start the trial, use the unlock screen that appears, or More > Purchases. Restore Purchases is in More > Purchases.
 ```
 
+**In-app purchase review screenshots.** `docs/screenshots/appstore/iap-review/`
+holds one for each product, taken from the iPhone 17 simulator (1206 × 2622, no
+alpha) on a build run from Xcode with `DayHand.storekit`, so the price is the
+test file's €4.99: `iap-unlock-EN.png` (the unlock screen, for DayHand
+Unlimited) and `iap-trial-EN.png` (the trial explanation, for the 30-day free
+trial). They are enough to complete each product's metadata so it can be
+tested in TestFlight. Replace them with TestFlight screenshots if the real
+price differs, and keep the interface in English.
+
 **Purchase testing status (2 November 2026).** The owner ran the trial, the
 unlock, a refund and Restore Purchases in Xcode's StoreKit test environment (the
 simulator, with `DayHand.storekit`), and all behaved as specified. **Not yet
