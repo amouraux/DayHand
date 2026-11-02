@@ -104,6 +104,9 @@ no server, nothing to sign up for.
 
 Problems and ideas go to [GitHub Issues](https://github.com/amouraux/DayHand/issues/new).
 
+The source is public so you can read it and check what the app does with your
+data, but it is not open source: see [LICENSE](LICENSE).
+
 A public `.dmg` is a separate, later channel. `scripts/release-mac.sh` builds a
 signed and notarised one — see the comment at the top of that script for the two
 one-time steps — but it needs a **Developer ID Application** certificate, which

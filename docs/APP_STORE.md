@@ -139,7 +139,7 @@ App Store version. TestFlight changes alone do not establish that baseline.
 | Support URL | https://amouraux.github.io/DayHand/help/ — the single Help and support page; verify after it is deployed from main |
 | Privacy Policy URL | https://amouraux.github.io/DayHand/privacy.html — verify after deployment from main |
 | User Privacy Choices URL | Optional: https://amouraux.github.io/DayHand/privacy.html#choices — verify after deployment |
-| Copyright | **TO COMPLETE:** `2026 [confirmed rights holder]`; do not assume the rights holder from Git author details |
+| Copyright | **TO COMPLETE** (the repository's `LICENSE`, added 2 November 2026, assumes `2026 André Mouraux`; confirm that is the rights holder): `2026 [confirmed rights holder]`; do not assume the rights holder from Git author details |
 | Public App Store link | **TO COMPLETE after the record’s numeric Apple ID and availability are confirmed**; this is distinct from the TestFlight link |
 
 ### Localised URLs
