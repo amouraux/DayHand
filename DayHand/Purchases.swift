@@ -21,6 +21,13 @@ final class Purchases: ObservableObject {
     static let unlockID = "com.andremouraux.tnt.unlock"
     static let trialID = "com.andremouraux.tnt.trial"
 
+    /// Whether the trial screen calls the unlock's price an introductory one.
+    /// The price itself always comes from the App Store, but nothing there says
+    /// it is a launch price, so this is set by hand: change it to `false` in
+    /// the update that ships before the price is raised, or the screen goes on
+    /// calling the higher price an introductory one.
+    static let priceIsIntroductory = true
+
     /// What the App Store says this Apple ID has: the last confirmed state, until
     /// StoreKit can be asked again.
     @Published private(set) var storeAccess: Entitlement.Access

@@ -135,11 +135,19 @@ struct TrialView: View {
                 Section {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("30-day trial").font(.title3.weight(.semibold))
-                        Text("Try everything for \(Entitlement.trialDays) days: unlimited active projects and your whole history of finished tasks. When the trial ends, DayHand goes back to the free version, which keeps up to \(Entitlement.freeProjectLimit) active projects and shows the last \(Entitlement.freeHistoryDays) days of finished tasks. Nothing is deleted, and nothing is charged.")
+                        Text("Try everything for \(Entitlement.trialDays) days: unlimited active projects and your whole history of finished tasks.")
+                            .foregroundStyle(.secondary)
+                        Text("When the trial ends, DayHand goes back to the free version: you can no longer create more than \(Entitlement.freeProjectLimit) active projects, and finished tasks older than \(Entitlement.freeHistoryDays) days are collapsed. Your existing active projects stay visible and editable, everything can still be exported, and nothing is deleted or charged.")
                             .foregroundStyle(.secondary)
                         if let price = store.purchases.unlockPrice {
-                            Text("The one-time unlock is \(price). No subscription.")
-                                .foregroundStyle(.secondary)
+                            Group {
+                                if Purchases.priceIsIntroductory {
+                                    Text("The one-time unlock is \(price), an introductory price. No subscription.")
+                                } else {
+                                    Text("The one-time unlock is \(price). No subscription.")
+                                }
+                            }
+                            .foregroundStyle(.secondary)
                         }
                     }
                     .padding(.vertical, 4)
