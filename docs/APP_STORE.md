@@ -312,10 +312,11 @@ IN-APP PURCHASES: DayHand is free to download. One non-consumable purchase, "Day
 
 **Purchase testing status (2 November 2026).** The owner ran the trial, the
 unlock, a refund and Restore Purchases in Xcode's StoreKit test environment (the
-simulator, with `DayHand.storekit`) and all behaved as specified. **Not yet
-covered:** the trial running out (changing the clock by 31 days) and the clock
-guard, restoring on a second device, and a real sandbox purchase against the
-products in App Store Connect. The last two need a TestFlight build.
+simulator, with `DayHand.storekit`), and all behaved as specified. **Not yet
+covered:** restoring on a second device, and a real sandbox purchase against
+the products in App Store Connect; both need a TestFlight build. The trial running
+out (clock moved forward 31 days) and the clock guard (moved back again) were
+also tried by the owner and behaved as specified.
 
 **Purchase review notes.** The source now implements the purchase (StoreKit 2),
 Restore Purchases and the user-started trial; there is no test switch and
