@@ -310,6 +310,13 @@ To test sync, choose More > Sync > Create Sync File on one device and save it in
 IN-APP PURCHASES: DayHand is free to download. One non-consumable purchase, "DayHand Unlimited" (com.andremouraux.tnt.unlock), unlocks unlimited active projects and the full history of finished tasks. The free version keeps up to three active projects and shows the last 30 days of finished tasks; nothing is ever deleted, and every task can still be added and edited. A free non-consumable, "30-day Trial" (com.andremouraux.tnt.trial), lets the user try everything for 30 days; it starts only when the user chooses it and ends by returning to the free version, with no charge. To see the limits, create a fourth active project (the Filter button, under Organise). To buy or start the trial, use the unlock screen that appears, or More > Purchases. Restore Purchases is in More > Purchases.
 ```
 
+**Purchase testing status (2 November 2026).** The owner ran the trial, the
+unlock, a refund and Restore Purchases in Xcode's StoreKit test environment (the
+simulator, with `DayHand.storekit`) and all behaved as specified. **Not yet
+covered:** the trial running out (changing the clock by 31 days) and the clock
+guard, restoring on a second device, and a real sandbox purchase against the
+products in App Store Connect. The last two need a TestFlight build.
+
 **Purchase review notes.** The source now implements the purchase (StoreKit 2),
 Restore Purchases and the user-started trial; there is no test switch and
 nothing is unlocked by environment, so the reviewer sees the real limits and
