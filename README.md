@@ -3,9 +3,8 @@
 A to-do app for iPhone, iPad and Mac, built in SwiftUI — for work that takes
 longer than a day.
 
-**<https://amouraux.github.io/DayHand/>** · [try the TestFlight beta](https://testflight.apple.com/join/37FbdQp6)
+**<https://amouraux.github.io/DayHand/>**
 
-[TestFlight field text and submission notes](docs/TESTFLIGHT.md) ·
 [App Store listing and submission fields](docs/APP_STORE.md).
 
 ## A task is not a date
@@ -97,10 +96,6 @@ no server, nothing to sign up for.
 
 - **iPhone and iPad** — the App Store, iOS 17 or later.
 - **Mac** — the Mac App Store, macOS 14 or later.
-- **Beta builds** — [join the TestFlight beta](https://testflight.apple.com/join/37FbdQp6)
-  to try new versions before they are released. TestFlight for the Mac is a
-  separate app from the iPhone one, from the Mac App Store, signed in to the
-  same Apple Account.
 
 Problems and ideas go to [GitHub Issues](https://github.com/amouraux/DayHand/issues/new).
 
@@ -110,7 +105,7 @@ data, but it is not open source: see [LICENSE](LICENSE).
 A public `.dmg` is a separate, later channel. `scripts/release-mac.sh` builds a
 signed and notarised one — see the comment at the top of that script for the two
 one-time steps — but it needs a **Developer ID Application** certificate, which
-TestFlight does not.
+App Store distribution does not use.
 
 ## Building it
 
