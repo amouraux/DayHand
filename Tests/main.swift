@@ -3016,6 +3016,55 @@ do {
     expect(entitlement.hasFullAccess(now: start + 3 * day), "which the device clock alone would have done")
 }
 
+// The example tasks a new install arrives with, and getting rid of them.
+do {
+    let now = Date(timeIntervalSince1970: 1_800_000_000)
+    let starter = StoreDocument.starter(now: now)
+
+    expect(starter.cards.allSatisfy(\.isSample), "every starter task is marked as an example")
+    for bucket in Bucket.allCases {
+        expect(starter.cards.contains { $0.bucket == bucket }, "there is an example in \(bucket)")
+    }
+    expect(starter.projects.count == 1 && starter.projects[0].modifiedAt == .distantPast,
+           "the example project is stamped as seeded, so it loses to any real edit")
+    let reread = DocumentStorage.decode(try! DocumentCoding.makeEncoder().encode(starter))
+    expect(reread?.projects.first?.modifiedAt == .distantPast, "and that stamp survives saving and loading")
+
+    // Removing them is a deletion like any other, so another device cannot bring them back.
+    let removed = starter.removingExamples(now: now)
+    expect(removed.cards.isEmpty, "the examples are gone")
+    expect(removed.projects.isEmpty, "and so is the example project, which nothing else used")
+    expect(Set(removed.deletedCards.keys) == Set(starter.cards.map { $0.id.uuidString }),
+           "each removed example leaves a deletion record")
+    expect(removed.deletedCards.values.allSatisfy { $0 == now }, "stamped when it happened")
+    expect(removed.deletedProjects.count == 1, "the example project leaves one too")
+    expect(removed.categories == starter.categories, "the categories stay")
+
+    // An example that has been edited is the user's now, and stays; so does a project it keeps in use.
+    var edited = starter
+    let keptID = edited.cards[0].id
+    edited.cards[0].isSample = false
+    let projectUser = edited.cards.firstIndex { $0.projectID != nil }!
+    edited.cards[projectUser].isSample = false
+    let partly = edited.removingExamples(now: now)
+    expect(partly.cards.count == 2 && partly.cards.contains { $0.id == keptID }, "an edited example stays")
+    expect(partly.projects.count == 1 && partly.deletedProjects.isEmpty, "a project still in use stays")
+    expect(partly.deletedCards[keptID.uuidString] == nil, "and is not recorded as deleted")
+
+    // A project the user made or edited is never mistaken for the example one.
+    var mine = starter
+    mine.projects[0].modifiedAt = now
+    expect(mine.removingExamples(now: now).projects.count == 1, "an edited project is kept even if unused")
+
+    // Nothing to remove: nothing changes.
+    expect(removed.removingExamples(now: now) == removed, "removing twice changes nothing more")
+    expect(StoreDocument.empty.removingExamples(now: now) == StoreDocument.empty, "an empty document is left alone")
+    expect(!removed.hasSampleCards && starter.hasSampleCards, "hasSampleCards says whether any remain")
+
+    // The silent sweep sync uses is unchanged: it leaves no records.
+    expect(starter.removingSampleCards().deletedCards.isEmpty, "the sync sweep still records nothing")
+}
+
 // MARK: - App language
 
 do {

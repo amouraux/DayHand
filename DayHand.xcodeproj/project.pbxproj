@@ -27,6 +27,7 @@
 		D0000000000000000000001E /* TodoistImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001E /* TodoistImportView.swift */; };
 		D0000000000000000000001F /* Purchases.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0000000000000000000001F /* Purchases.swift */; };
 		D00000000000000000000020 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000000000000000000020 /* PaywallView.swift */; };
+		D00000000000000000000021 /* IntroView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C00000000000000000000021 /* IntroView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,6 +54,7 @@
 		C0000000000000000000001E /* TodoistImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoistImportView.swift; sourceTree = "<group>"; };
 		C0000000000000000000001F /* Purchases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Purchases.swift; sourceTree = "<group>"; };
 		C00000000000000000000020 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+		C00000000000000000000021 /* IntroView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 				C0000000000000000000001B /* ReminderScheduler.swift */,
 				C0000000000000000000001F /* Purchases.swift */,
 				C00000000000000000000020 /* PaywallView.swift */,
+				C00000000000000000000021 /* IntroView.swift */,
 				C0000000000000000000000E /* InboxReviewView.swift */,
 				C0000000000000000000001C /* TimelineView.swift */,
 				C00000000000000000000002 /* Models.swift */,
@@ -230,6 +233,7 @@
 				D0000000000000000000001B /* ReminderScheduler.swift in Sources */,
 				D0000000000000000000001F /* Purchases.swift in Sources */,
 				D00000000000000000000020 /* PaywallView.swift in Sources */,
+				D00000000000000000000021 /* IntroView.swift in Sources */,
 				D0000000000000000000000E /* InboxReviewView.swift in Sources */,
 				D0000000000000000000001C /* TimelineView.swift in Sources */,
 				D00000000000000000000001 /* DayHandApp.swift in Sources */,

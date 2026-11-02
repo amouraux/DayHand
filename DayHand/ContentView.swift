@@ -12,6 +12,10 @@ struct ContentView: View {
     @State private var remindPickItem: TodoItem?
     @State private var datePickItem: TodoItem?
     @State private var isAdding = false
+    /// The introduction is offered once, on the first launch (`TodoStore.isFirstRun`),
+    /// and counts as seen however its sheet is closed.
+    @AppStorage("introSeen.v1") private var introSeen = false
+    @State private var showsIntro = false
     @State private var reviewingStack: ReviewStack?
     @State private var isShowingSettings = false
     /// The unlock, offered when a limit of the free version is met.
@@ -168,11 +172,19 @@ struct ContentView: View {
             .onAppear {
                 guard !didAnchorToToday else { return }
                 didAnchorToToday = true
+                if store.isFirstRun && !introSeen { showsIntro = true }
                 // One runloop hop so the sections exist before we jump.
                 // Dated cards were already filed by the store on load.
                 DispatchQueue.main.async {
-                    jumpToToday(proxy, animated: false)
+                    // While the examples are there the list starts from the top,
+                    // where the card that removes them is, and not at Now.
+                    if !store.hasExamples { jumpToToday(proxy, animated: false) }
                     store.beginLiveSync()
+                }
+            }
+            .sheet(isPresented: $showsIntro, onDismiss: { introSeen = true }) {
+                IntroView(offersChoice: true) { keepExamples in
+                    if !keepExamples { store.removeExamples() }
                 }
             }
             .sheet(isPresented: $isAdding) { addCardSheet }
@@ -809,6 +821,12 @@ struct ContentView: View {
             // the scroll view extends under the status bar, and a pinned header
             // parks there permanently, blurred behind the clock.
             LazyVStack(alignment: .leading, spacing: 10) {
+                // Below the floating buttons, which sit over the top of the list.
+                if store.hasExamples && !isSearching {
+                    ExamplesCard()
+                        .padding(.top, 56)
+                        .transition(.opacity)
+                }
                 ForEach(Bucket.allCases) { bucket in
                     let everyCard = cards(in: bucket)
                     // The free version lists the last 30 days of finished work.

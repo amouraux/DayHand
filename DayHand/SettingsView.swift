@@ -33,6 +33,7 @@ struct SettingsView: View {
     /// from the row that opens it: a row is rebuilt whenever the store
     /// publishes, and a sheet hanging off it would go with it.
     @State private var showsTrial = false
+    @State private var showsIntro = false
     @State private var pendingRestore: BackupFile?
     @State private var isChoosingRestoreFile = false
     /// A file picked by hand, read and waiting for the user to confirm.
@@ -470,6 +471,16 @@ struct SettingsView: View {
                     #endif
                 }
 
+                if store.hasExamples {
+                    Section {
+                        Button {
+                            withAnimation { store.removeExamples() }
+                        } label: {
+                            Label("Remove examples", systemImage: "rectangle.stack.badge.minus")
+                        }
+                    }
+                }
+
                 Section {
                     Button(role: .destructive) {
                         isConfirmingDeleteAll = true
@@ -486,6 +497,11 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    Button {
+                        showsIntro = true
+                    } label: {
+                        Label("How DayHand works", systemImage: "play.circle")
+                    }
                     Link(destination: Self.helpURL) {
                         LabeledContent {
                             Image(systemName: "arrow.up.right").foregroundStyle(.secondary)
@@ -511,6 +527,7 @@ struct SettingsView: View {
             .environment(\.editMode, $categoryEdit)
             .navigationTitle("More")
             .sheet(isPresented: $showsTrial) { TrialView().environmentObject(store) }
+            .sheet(isPresented: $showsIntro) { IntroView(offersChoice: false) }
             .purchaseNotice()
             .sheet(isPresented: $isImportingReminders) {
                 RemindersImportView().environmentObject(store)

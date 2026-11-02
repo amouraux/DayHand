@@ -29,6 +29,10 @@ final class TodoStore: ObservableObject {
     /// button. Cleared when the sync file is given up.
     @Published private(set) var lastSync: SyncOutcome?
 
+    /// True for the launch on which the app found no document and made the
+    /// starter one: the only time the introduction is offered.
+    @Published private(set) var isFirstRun = false
+
     struct SyncOutcome: Equatable {
         let at: Date
         let change: StoreDocument.Change
@@ -1153,8 +1157,26 @@ final class TodoStore: ObservableObject {
         } else {
             // A first run: arrive with a few cards that show what the app does.
             apply(StoreDocument.starter())
+            isFirstRun = true
             save()
         }
+    }
+
+    // MARK: - The example tasks
+
+    /// Whether any of the tasks a new install arrives with are still untouched.
+    var hasExamples: Bool { items.contains { $0.isSample } }
+
+    /// Remove them, as a deletion: a device that already has them in the shared
+    /// file must not bring them back. No undo, and no confirmation: they are
+    /// there to be thrown away.
+    func removeExamples() {
+        let before = document
+        let after = before.removingExamples()
+        guard after != before else { return }
+        apply(after)
+        rescheduleNotifications()
+        save()
     }
 
     /// Real cards from another device mean the sample ones have done their job.

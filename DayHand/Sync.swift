@@ -742,6 +742,7 @@ extension StoreDocument {
                 card(String(localized: "Swipe a task left to push it forward", comment: "Starter task"), .today, category: work),
                 card(String(localized: "Swipe right to edit, or to set a date", comment: "Starter task"), .tomorrow, category: work),
                 card(String(localized: "Nothing rolls over: tasks stay where you put them", comment: "Starter task"), .tomorrow, category: home),
+                card(String(localized: "Waiting on someone? Put the task in Waiting", comment: "Starter task"), .waiting, category: work),
                 card(String(localized: "book flights", comment: "Starter task, tagged TRIP"), .later, category: home, project: trip.id, due: inAWeek),
                 card(String(localized: "Start a task with a code like BIO2140 to file it under one", comment: "Starter task"), .inbox, category: home),
                 done
@@ -751,6 +752,28 @@ extension StoreDocument {
     }
 
     var hasSampleCards: Bool { cards.contains { $0.isSample } }
+
+    /// What "Remove examples" does. Unlike `removingSampleCards`, which sync
+    /// uses to sweep cards that never left this device, this is a deletion like
+    /// any other and leaves a deletion record for each: once a sync file is in
+    /// use the examples may already be in it, and another device would put them
+    /// back. The example project is the one seeded project (stamped
+    /// `.distantPast`, and not edited since) that nothing else uses; it is found
+    /// that way and not by its name, which is translated.
+    func removingExamples(now: Date = .stamp()) -> StoreDocument {
+        guard hasSampleCards else { return self }
+        var result = self
+        for card in cards where card.isSample {
+            result.deletedCards[card.id.uuidString] = now
+        }
+        result.cards.removeAll { $0.isSample }
+        let used = Set(result.cards.compactMap(\.projectID))
+        for project in projects where project.modifiedAt == .distantPast && !used.contains(project.id) {
+            result.deletedProjects[project.id.uuidString] = now
+            result.projects.removeAll { $0.id == project.id }
+        }
+        return result
+    }
 
     /// Drops the sample cards still untouched, and the starter project with
     /// them when nothing else uses it.

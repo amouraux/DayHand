@@ -1534,6 +1534,49 @@ sheet, where a popover would fill the screen regardless.
 Wording throughout says **every device**, never "both" — a sync file can be
 pointed at by as many as the user likes.
 
+## First launch
+
+A new install opens with **example tasks** and a short **introduction**, and
+getting rid of the first is one tap.
+
+**The examples.** Seven untouched tasks, one in every stack, and one example
+project, all marked `isSample` and stamped as seeded (`.distantPast`) so they
+lose to any real edit. Editing one makes it the user's. Real tasks arriving
+through sync sweep the rest away silently, as before.
+
+**The introduction** is three pages, skippable on every one, shown once and only
+on a genuine first run (`TodoStore.isFirstRun`, true only on the launch that found
+no document), so a second device that already has data never sees it. Page 1,
+"A place for every task", lists the five stacks in their own colours with a line
+each. Page 2 says nothing rolls over and the user decides when a task moves.
+Page 3 says a reminder brings a task back with a coloured edge, a deadline is
+only a finish date, and neither moves the task. The last page asks what to start
+with: **Look around with example tasks** or **Start with an empty list**.
+Skipping, or closing the sheet any other way, keeps the examples, which is how the
+app opened before the introduction existed. It counts as seen however it closes
+(`introSeen.v1`). More → Help → **How DayHand works** shows it again, ending in a
+plain Done.
+
+**Removing the examples.** While any example is untouched, a card above the list
+says "These are example tasks. Remove them whenever you like." with a **Remove
+examples** button, and More has a row of the same name above Delete All Tasks.
+Both go once the examples do. Removal is a deletion like any other, with a
+deletion record for each task and for the example project, because once a sync
+file is in use the examples may already be in it and another device would
+otherwise put them back (`StoreDocument.removingExamples`). It asks for no
+confirmation and has no undo: they exist to be thrown away. The example project
+is found by its seeded stamp, not its name, which is translated.
+
+While examples remain the list starts at the top, where the card is, instead of
+scrolling to Now.
+
+**No example has a reminder.** A reminder would ask for notification permission on
+the first launch, before the user understands what the app is for. The coloured
+edge is explained on the third page instead.
+
+**Strings.** Eighteen, translated in all 14 languages; the introduction is kept
+short because every sentence has to be.
+
 ## Persistence and sync
 
 One JSON document holding categories, tasks, projects, tombstones and the
