@@ -70,13 +70,14 @@ Please report confusing labels or gestures, layout or translation problems, miss
 
 ### Per-build record — fill before distributing
 
-- App version / build: **TO COMPLETE from the actual uploaded build**.
-- Source commit: **TO COMPLETE**.
-- Platforms included: **TO CONFIRM — iPhone/iPad, Mac**.
-- Main changes since the previous distributed build: **TO COMPLETE**.
-- Testing priorities specific to this build: **TO COMPLETE**.
-- Known issues and available workarounds: **TO COMPLETE after checking this build**.
-- Devices / OS versions actually checked: **TO COMPLETE**.
+**Build 1.0 (249)**
+- App version / build: 1.0 (249), uploaded 2 November 2026.
+- Source commit: `f35b4fd` on `main`.
+- Platforms included: iPhone/iPad uploaded; Mac **TO CONFIRM** (same commit, separate archive).
+- Main changes since the previous distributed build: the purchase is real (an unlock and a free 30-day trial, with Restore Purchases); the More → Testing switch is gone; a sync file saved in a newer format is never overwritten; the trial cannot be extended by setting the clock back.
+- Testing priorities specific to this build: the purchase, the trial, Restore Purchases and the free limits; see the What to Test text for this build.
+- Known issues and available workarounds: none known. Products can take up to an hour to appear in the sandbox after a change in App Store Connect.
+- Devices / OS versions actually checked: simulator only, so far; **TO COMPLETE** after installing from TestFlight.
 
 This baseline covers the app broadly. Trim it and put a build’s main changes
 first when a shorter testing brief would help. Do not present every existing
