@@ -2316,8 +2316,9 @@ Purchases. Two non-consumable products: `com.andremouraux.tnt.unlock` (paid) and
 `com.andremouraux.tnt.trial` (free). `Purchases.storeAccess` starts as free and
 becomes what the Apple ID owns; there is no switch between the two versions.
 The unlock and trial screens live in `PaywallView.swift`; Settings has a
-Purchases section, at the top while the version is free and quietly at the
-bottom otherwise. Only the real purchase flow cannot be tried without the App
+Purchases section, at the top whenever the app lacks full access (the free
+version, or a trial that has ended) and quietly at the bottom while it is
+unlocked or a trial is running. Only the real purchase flow cannot be tried without the App
 Store: see "Testing the purchase" below.
 
 In the app the limit is worded as **active projects** (matching Organise), and

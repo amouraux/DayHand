@@ -40,6 +40,12 @@ struct SettingsView: View {
     /// An automatic backup the user asked to delete, held for confirmation.
     @State private var pendingBackupDeletion: BackupFile?
 
+    /// Unlocked, or in a trial that is still running. An ended trial is still
+    /// recorded as a trial, so the stored state alone cannot say.
+    private var hasFullAccess: Bool {
+        store.entitlement.hasFullAccess(now: store.purchases.now)
+    }
+
     private func caption(_ text: String) -> some View {
         Text(text).font(.caption).foregroundStyle(.secondary)
     }
@@ -47,9 +53,10 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
-                // Free: the trial and the unlock come first. Otherwise the
-                // purchase stays quietly at the bottom.
-                if store.purchases.storeAccess == .free {
+                // Without full access, which includes a trial that has ended, the
+                // trial and the unlock come first. Otherwise the purchase stays
+                // quietly at the bottom.
+                if !hasFullAccess {
                     PurchasesSection(showsTrial: $showsTrial)
                 }
 
@@ -474,7 +481,7 @@ struct SettingsView: View {
                     Text("Removes every task on this device. Categories are kept. If a sync file is in use, the deletion reaches your other devices too.")
                 }
 
-                if store.purchases.storeAccess != .free {
+                if hasFullAccess {
                     PurchasesSection(showsTrial: $showsTrial)
                 }
 
