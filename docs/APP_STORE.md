@@ -178,7 +178,7 @@ Complete these separately for iOS and macOS where required.
 | --- | --- |
 | Version | Source currently declares `1.0`; confirm the version being submitted |
 | Build | Select the processed production build for that platform; **TO COMPLETE** its uploaded build number |
-| Source commit | **TO COMPLETE:** record the exact revision used for the archive |
+| Source commit | `f35b4fd` on `main` (2 November 2026): the revision archived for build 249. Both platforms are archived from this one commit, so they share the number |
 | Minimum OS | Currently documented as iOS/iPadOS 17+ and macOS 14+; verify the archived products |
 | Build processing / compliance | **TO CONFIRM:** resolve any processing errors and outstanding compliance questions |
 | App Review attachment | Supply a demonstration or other explanatory attachment if useful or requested |
@@ -427,7 +427,7 @@ Connect. Account-specific values and financial details do not belong here.
 
 ## 9. Submission record and final checks
 
-- [ ] Record iOS version, uploaded build and source commit: **TO COMPLETE**.
+- [x] iOS: version 1.0, build **249**, from `f35b4fd`, uploaded on 2 November 2026 (processing at the time of writing).
 - [ ] Record macOS version, uploaded build and source commit: **TO COMPLETE**.
 - [ ] Verify both platforms are attached to the intended existing app record.
 - [ ] Copy and save the approved metadata in every intended language/platform.
