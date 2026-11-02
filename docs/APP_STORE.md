@@ -178,7 +178,7 @@ Complete these separately for iOS and macOS where required.
 | --- | --- |
 | Version | Source currently declares `1.0`; confirm the version being submitted |
 | Build | Select the processed production build for that platform; **TO COMPLETE** its uploaded build number |
-| Source commit | `f35b4fd` on `main` (2 November 2026): the revision archived for build 249. Both platforms are archived from this one commit, so they share the number |
+| Source commit | The build number is the commit count when archived, so it names its commit: 249 `f35b4fd` (crashed on first launch; superseded), 252 `0678917` (the fix), 253 `32c49dc` (first-launch introduction), 254 `462ac09` and 255 `b74b28b` (same app as 253, documentation only). Builds 252–255 were uploaded on 2 November 2026; **TO CONFIRM** which one is attached to the submitted 1.0. Both platforms are archived from one commit, so they share the number |
 | Minimum OS | Currently documented as iOS/iPadOS 17+ and macOS 14+; verify the archived products |
 | Build processing / compliance | **TO CONFIRM:** resolve any processing errors and outstanding compliance questions |
 | App Review attachment | Supply a demonstration or other explanatory attachment if useful or requested |
@@ -463,7 +463,7 @@ Connect. Account-specific values and financial details do not belong here.
 
 ## 9. Submission record and final checks
 
-- [x] iOS: version 1.0, build **249**, from `f35b4fd`, uploaded on 2 November 2026 (processing at the time of writing).
+- [x] iOS: version 1.0, builds **249** (`f35b4fd`, crashed on first launch), **252** (`0678917`), **253** (`32c49dc`), **254** (`462ac09`) and **255** (`b74b28b`), uploaded on 2 November 2026. 255 was tested on a real iPhone from TestFlight. 253, 254 and 255 are the same app. Submitted to App Review on 2 November 2026 (iOS 1.0 with its two in-app purchases, and macOS 1.0); **TO CONFIRM** which build was attached.
 - [ ] Record macOS version, uploaded build and source commit: **TO COMPLETE**.
 - [ ] Verify both platforms are attached to the intended existing app record.
 - [ ] Copy and save the approved metadata in every intended language/platform.

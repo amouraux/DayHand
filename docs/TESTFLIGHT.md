@@ -76,8 +76,23 @@ Please report confusing labels or gestures, layout or translation problems, miss
 - Platforms included: iPhone/iPad uploaded; Mac **TO CONFIRM** (same commit, separate archive).
 - Main changes since the previous distributed build: the purchase is real (an unlock and a free 30-day trial, with Restore Purchases); the More → Testing switch is gone; a sync file saved in a newer format is never overwritten; the trial cannot be extended by setting the clock back.
 - Testing priorities specific to this build: the purchase, the trial, Restore Purchases and the free limits; see the What to Test text for this build.
-- Known issues and available workarounds: none known. Products can take up to an hour to appear in the sandbox after a change in App Store Connect.
-- Devices / OS versions actually checked: simulator only, so far; **TO COMPLETE** after installing from TestFlight.
+- Known issues and available workarounds: **crashed on its first launch** on a real iPhone, then ran normally on the next one. It asked the system for the host name, which waits on a network lookup, and the launch watchdog ended the app. Fixed in build 252; do not distribute 249.
+- Devices / OS versions actually checked: a real iPhone from TestFlight (the crash above).
+
+**Builds 1.0 (252) to 1.0 (255)** — the number is the repository's commit count
+at the time of the archive, so each one names its source commit. Uploaded on
+2 November 2026; Mac **TO CONFIRM** for all four.
+
+| Build | Source commit | What it is |
+| --- | --- | --- |
+| 252 | `0678917` | Stops reading the host name, so the first launch no longer crashes and the "devices on local networks" prompt is gone. The device name now comes from `UIDevice.current.name` |
+| 253 | `32c49dc` | A first-launch introduction (three pages), example tasks that can be removed from a card on the list or from More, and "How DayHand works" in More |
+| 254 | `462ac09` | The same app as 253; only documentation and the in-app purchase review screenshots were added |
+| 255 | `b74b28b` | The same app as 253; only the in-app purchase review notes were added |
+
+- Checked on a real iPhone from TestFlight with build 255: no crash on the first launch, no local-network prompt, and the introduction and examples work. At first the unlock showed no price and the trial button was missing, because the App Store returned neither product. They appeared later in the day, after the products and the agreements in App Store Connect had settled, with no change to the app.
+- Known issues and available workarounds: none known in the app. A new or changed product can take hours to reach TestFlight, and the unlock shows no price until it does.
+- Still to check from TestFlight: starting the trial, buying the unlock, Restore Purchases after a reinstall, and the free limits.
 
 This baseline covers the app broadly. Trim it and put a build’s main changes
 first when a shorter testing brief would help. Do not present every existing
